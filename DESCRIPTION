@@ -1,0 +1,31 @@
+Package: seqNdisplayR
+Type: Package
+Title: Genome Coverage Plots
+Version: 0.1.0
+Authors@R: c(
+    person("Soeren", "Lykke Andersen", email = "sla@mbg.au.dk", role = c("cre", "aut")),
+    person("Jerome", "Rouviere", email = "rouviere@mbg.au.dk", role = "aut"),
+    person("Manfred", "Schmid", email = "ms@mbg.au.dk", role = "aut"))
+Description: Produce reproducible, pretty genome coverage plots using highly customizable layout and coverage normalization, batch correction etc.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Depends:
+    R (>= 4.0),
+    dplyr (>= 0.7),
+    rtracklayer,
+    GenomicRanges,
+    IRanges,
+    rlist,
+    limma,
+    readxl,
+    writexl
+Suggests:
+    xml2,
+    shiny,
+    shinyBS,
+    shinyjs,
+    spsComps,
+    shinyTree,
+    shinybusy
+RoxygenNote: 7.1.2
