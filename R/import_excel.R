@@ -638,10 +638,10 @@ get_parameters <- function(samples_df, params_df){
   params <- lapply(dataset_names, function(dataset) {
     para <- params[[dataset]]
     whichSamples <- params_df$whichSamples[params_df$dataset == dataset][[1]]
-    if ( is.null(whichSamples) ) {
+    if ( is.null(whichSamples) | whichSamples == 'NULL' ) {
       #include all
       para['whichSamples'] <- list(NULL)
-    } else if ( is.na(whichSamples) ) {
+    } else if ( is.na(whichSamples) | whichSamples == 'NA' ) {
       #exclude all
       para$whichSamples <- NA
     } else {
