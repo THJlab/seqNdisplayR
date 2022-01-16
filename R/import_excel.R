@@ -643,7 +643,7 @@ get_parameters <- function(samples_df, params_df){
       para['whichSamples'] <- list(NULL)
     } else if ( is.na(whichSamples) ) {
       #exclude all
-      para$whichSamples <- 'NA'
+      para$whichSamples <- NA
     } else {
       #include specific ones
       para$whichSamples <- empty_to_null(jsonlite::fromJSON(whichSamples))
