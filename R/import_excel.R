@@ -25,13 +25,13 @@ load_excel <- function(xl_fname, load_annotations=FALSE) {
   samples_df <- NULL
   tryCatch(
     {noout <- capture.output(
-      samples_df <- readxl::read_excel(xl_fname, sheet = 'Samples')
+      samples_df <- readxl::read_excel(xl_fname, sheet = 'SAMPLES')
     )
     cat('  Samples Table               --> OK\n') #@ cat('    --> OK\n')
     },
     error=function(cond) {
-     cat('  Samples Table               --> ERROR: Required sheet "Samples" not found in file\n')
-     error('Required sheet "Samples" not found in file\n')
+     cat('  Samples Table               --> ERROR: Required sheet "SAMPLES" not found in file\n')
+     error('Required sheet "SAMPLES" not found in file\n')
     }
   )
   samples_df = fill_df(samples_df)
@@ -42,12 +42,12 @@ load_excel <- function(xl_fname, load_annotations=FALSE) {
   tryCatch(
     {
       noout <- capture.output(
-        params_df <- readxl::read_excel(xl_fname, sheet = 'Dataset_options')
+        params_df <- readxl::read_excel(xl_fname, sheet = 'DATASET_OPTIONS')
       )
       cat('  Dataset-specific options    --> OK\n')  #@ cat('    --> OK\n')
     },
     error=function(cond) {
-      cat('  Dataset-specific options    --> Sheet "Dataset_options" was not found in file or empty; using defaults.\n')#@ cat('    --> Sheet Dataset_options was not found in file; using defaults.\n')
+      cat('  Dataset-specific options    --> Sheet "DATASET_OPTIONS" was not found in file or empty; using defaults.\n')#@ cat('    --> Sheet DATASET_OPTIONS was not found in file; using defaults.\n')
     }
   )
   params = get_parameters(samples_df, params_df)
@@ -59,14 +59,14 @@ load_excel <- function(xl_fname, load_annotations=FALSE) {
   tryCatch(
     {
       noout <- capture.output(
-        anno_df <- readxl::read_excel(xl_fname, sheet = 'Annotations')
+        anno_df <- readxl::read_excel(xl_fname, sheet = 'ANNOTATIONS')
       )
 
       annot_and_options <- get_annotations(anno_df)
       cat('  Annotations                 --> OK\n')  #@ cat('    --> OK\n')
     },
     error=function(cond) {
-      cat('  Annotations                 --> Sheet "Annotations" was not found in excel file or empty; proceeding without annotations.\n')
+      cat('  Annotations                 --> Sheet "ANNOTATIONS" was not found in excel file or empty; proceeding without annotations.\n')
     }
   )
 
@@ -75,14 +75,14 @@ load_excel <- function(xl_fname, load_annotations=FALSE) {
   tryCatch(
     {
       noout <- capture.output(
-        options_df <- readxl::read_excel(xl_fname, sheet = 'Global_options')
+        options_df <- readxl::read_excel(xl_fname, sheet = 'GLOBAL_OPTIONS')
       )
 
       options <- suppressWarnings(get_plot_options(options_df))
       cat('  Other plotting options      --> OK\n') #@ cat('    --> OK\n')
     },
     error=function(cond) {
-      cat('  Other plotting options      --> Sheet "Global_options" was not found in excel file or empty; using default options.\n')
+      cat('  Other plotting options      --> Sheet "GLOBAL_OPTIONS" was not found in excel file or empty; using default options.\n')
     }
   )
 
@@ -172,15 +172,15 @@ ordered_split <- function(x, f, drop=TRUE){
 #'
 #' @param annotations Data frame
 #'
-#' @details annotations is a data.frame with at least 2 columns *Path* and *Name*, both
+#' @details annotations is a data.frame with at least 2 columns *annotation_file* and *annotation_name*, both
 #'   case-sensitive and the space is required.
 #'
-#' @return Named list of path, or named list of GRanges. Names used are entries in the *Name* column.
+#' @return Named list of path, or named list of GRanges. Names used are entries in the *annotation_name* column.
 #'
 #' @export
 get_annotations <- function(annotations) {
-  annot=as.list(annotations$Path)
-  names(annot) <- annotations$Name
+  annot=as.list(annotations$annotation_file)
+  names(annot) <- annotations$annotation_name
 
   default_options = default_annotation_options()
 
@@ -190,7 +190,7 @@ get_annotations <- function(annotations) {
     } else {
       l <- rep(default_options[[opt]], nrow(annotations))
     }
-    names(l) <- annotations$Name
+    names(l) <- annotations$annotation_name
     l
   })
   names(annot_plot_options) <- names(default_options)
