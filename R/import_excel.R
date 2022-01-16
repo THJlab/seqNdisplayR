@@ -378,12 +378,7 @@ empty_df <- function(df) {
     cols <- c('bigwig_directory', 'dataset', colnames(df)[grepl('^subgroup_', colnames(df))])
 
     for ( i in 2:nrow(emptied_df) ) {
-      print(i)
-      #print(emptied_df[i,])
       for ( col in cols ) {
-        #print(col)
-        print(emptied_df[[col]][[i]])
-        print(df[[col]][[i-1]])
         if ( is.na(emptied_df[[col]][[i]]) ) {
           emptied_df[[col]][[i]] <- ''
         } else if ( !is.na(df[[col]][[i - 1]]) & emptied_df[[col]][[i]] == df[[col]][[i-1]] ) {
