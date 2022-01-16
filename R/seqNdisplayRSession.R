@@ -273,6 +273,30 @@ session_to_xlsx <- function(session, path, ...) {
   para_df <- data.frame(dataset = names(session$parameters))
   para_df <- dplyr::bind_cols(para_df,
                               dplyr::bind_rows(lapply(session$parameters, function(para) sapply(para, deparse_option) ) ))
+  #special handling for whichSamples
+  para_df$whichSamples <- sapply(names(session$parameters), function(dataset) {
+    whichSamples <- session$parameters[[dataset]]$whichSamples
+    if ( !is.null(whichSamples) ) {
+      if ( length(whichSamples) == 0 ){
+        #exclude entire dataset
+        'NA'
+      }else{
+        #specific samples from dataset or all
+        whichSamples_str <- jsonlite::toJSON(whichSamples)
+        samples_str <- jsonlite::toJSON(session$samples[[dataset]])
+        if( whichSamples_str == samples_str ) {
+          #include all
+          'NULL'
+        } else {
+          #specific samples
+          whichSamples_str
+        }
+      }
+    } else {
+      #include all
+      'NULL'
+    }
+  })
 
   session_options <- session[!names(session) %in% c('samples', 'colors', 'bigwigs', 'bigwig_dirs', 'parameters', 'annotation_files', 'annots', anno_display_option_names)]
 
