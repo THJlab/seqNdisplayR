@@ -272,7 +272,7 @@ session_to_xlsx <- function(session, path, ...) {
 
   para_df <- data.frame(dataset = names(session$parameters))
   para_df <- dplyr::bind_cols(para_df,
-                              dplyr::bind_rows(lapply(session$parameters, function(para) sapply(para, deparse_option) ) ))
+                              dplyr::bind_rows(lapply(session$parameters, function(para) sapply(para[names(para) != 'whichSamples'], deparse_option) ) ))
   #special handling for whichSamples
   para_df$whichSamples <- sapply(names(session$parameters), function(dataset) {
     whichSamples <- session$parameters[[dataset]]$whichSamples
