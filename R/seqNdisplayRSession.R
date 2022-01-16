@@ -277,7 +277,7 @@ session_to_xlsx <- function(session, path, ...) {
   para_df$whichSamples <- sapply(names(session$parameters), function(dataset) {
     whichSamples <- session$parameters[[dataset]]$whichSamples
     if ( !is.null(whichSamples) ) {
-      if ( length(whichSamples) == 0 ){
+      if ( length(whichSamples) == 0 | is.na(whichSamples)){
         #exclude entire dataset
         'NA'
       }else{
