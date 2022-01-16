@@ -557,8 +557,22 @@ get_bigwigs <- function(filled_df) {
 
 
 
-
 ## STEP 5: extract batch info for parameters
+#' Zero-length object to null
+#'
+#' @details: Helper used for parsing parameters$<dataset>$whichSamples
+empty_to_null <- function(x){
+  if ( !is.list(x) ) {
+    x
+  } else if ( length(x) == 0 ) {
+    NULL
+  } else {
+    lapply(x, empty_to_null)
+  }
+}
+
+
+
 #' Get Parameters
 #'
 #' @param samples_df a filled data frame with sample information(see details)
@@ -618,6 +632,25 @@ get_parameters <- function(samples_df, params_df){
 
   #create params list used by seqNdisplayR except for batch
   params <- lapply(split(params_df, params_df$dataset), function(xl) lapply(as.list(xl[,colnames(xl)!='dataset']), parse_option))
+
+  # fix special case whichSamples
+  dataset_names <- names(params)
+  params <- lapply(dataset_names, function(dataset) {
+    para <- params[[dataset]]
+    whichSamples <- params_df$whichSamples[params_df$dataset == dataset][[1]]
+    if ( is.null(whichSamples) ) {
+      #include all
+      para['whichSamples'] <- list(NULL)
+    } else if ( is.na(whichSamples) ) {
+      #exclude all
+      para$whichSamples <- 'NA'
+    } else {
+      #include specific ones
+      para$whichSamples <- empty_to_null(jsonlite::fromJSON(whichSamples))
+    }
+    para
+  })
+  names(params) <- dataset_names
 
   # add batch info from filled_df
   df_plus <- samples_df[samples_df$strand != 'minus' | isempty(samples_df$strand),]
