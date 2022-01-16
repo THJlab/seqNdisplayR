@@ -261,12 +261,12 @@ session_to_xlsx <- function(session, path, ...) {
   annos = NULL
   anno_display_option_names <- names(default_annotation_options())
   if (!is.null(session$annotation_files)){
-    annos <- data.frame('Name' = names(session$annotation_files),
-                        'Path' = as.character(session$annotation_files))
+    annos <- data.frame('annotation_name' = names(session$annotation_files),
+                        'annotation_file' = as.character(session$annotation_files))
 
     #@anno_display_option_names <- names(default_annotation_options())
     anno_display_options <- session[anno_display_option_names]
-    anno_display_options_df <- as.data.frame(lapply(anno_display_options, function(x) x[annos$Name]))
+    anno_display_options_df <- as.data.frame(lapply(anno_display_options, function(x) x[annos$annotation_name]))
     annos <- dplyr::bind_cols(annos, anno_display_options_df)
   }
 
@@ -284,15 +284,15 @@ session_to_xlsx <- function(session, path, ...) {
 
   #@
   if (!is.null(annos)){
-    writexl::write_xlsx(list('Samples' = samples,
-                             'Dataset_options' = para_df,
-                             'Annotations' = annos,
-                             'Global_options' = options),
+    writexl::write_xlsx(list('SAMPLES' = samples,
+                             'DATASET_OPTIONS' = para_df,
+                             'ANNOTATIONS' = annos,
+                             'GLOBAL_OPTIONS' = options),
                         path)
   }else{
-    writexl::write_xlsx(list('Samples' = samples,
-                             'Dataset_options' = para_df,
-                             'Global_options' = options),
+    writexl::write_xlsx(list('SAMPLES' = samples,
+                             'DATASET_OPTIONS' = para_df,
+                             'GLOBAL_OPTIONS' = options),
                         path)
   }
 }
