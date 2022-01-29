@@ -20,6 +20,11 @@ session$horizontal_panels_list
 ## arguments to be tested in the context of only one plotted region:
 feat = 'LMO4'
 plot(session, feature=feat)
+
+#session[['parameters']][['TT-seq']][['calcMean']] = FALSE
+#session[['parameters']][['RNA-seq']][['calcMean']] = FALSE
+#plot(session, feature=feat, replicate_names='')
+
 plot(session, feature='eggplant')
 plot(session, feature=feat, dummy_plot=TRUE, bin_start='xyz', verbosity='off', interface='shiny')
 plot(session, feature=feat, dummy_plot=TRUE, bin_start='xyz', verbosity='no warnings', interface='shiny')
