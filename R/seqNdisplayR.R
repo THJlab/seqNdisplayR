@@ -352,7 +352,8 @@ seqNdisplay = function(
   }
   .estimated.plot.heights = AdjustEstimatedPlotHeights(structure(lapply(names(.plotted.region), function(.strand) EstimatePlotHeights(.annot.info[[.strand]], .incl.feature.names, .annotation.packing, .incl.feature.brackets, .plotting.segment.order[[.strand]], .tracks.listed[[.strand]], track_height_cm, full_height_cm, .stranded.beds[[.strand]], .plot.vertical.parameters, .verbosity, .interface)), names=names(.plotted.region)), full_height_cm, track_height_cm)
   .est.track.height.cm.range = c(.estimated.plot.heights[[.strand]][['min.track.height.cm.est']], .estimated.plot.heights[[.strand]][['max.track.height.cm.est']])
-  .rec.font.sizes = RecommendedFontSizes(max(.est.track.height.cm.range), .plot.vertical.parameters)
+  .est.min.annot.height = min(unlist(lapply(names(.plotted.region), function(.strand) unlist(.estimated.plot.heights[[.strand]][['annot.heights.incl.text']]))))
+  .rec.font.sizes = RecommendedFontSizes(max(.est.track.height.cm.range), .est.min.annot.height, .plot.vertical.parameters)
   #cat(paste(names(.rec.font.sizes), collapse=' '), '\n') #@
   #cat(paste(.rec.font.sizes, collapse=' '), '\n') #@
   if (is.null(header_font_sizes)){
@@ -2194,7 +2195,7 @@ EstimatePlotHeights = function(annot_info, incl_feature_names, annotation_packin
           .min.annot.heights.incl.text[[.annot]] = .annot.heights[[.annot]] + ifelse(incl_feature_names[.annot], 1, 0) * (plot_vertical_parameters['annot_text_segment'] * .min.bracket.lines + ifelse(incl_feature_brackets[.annot], 1, 0) * .min.bracket.heights)
           .max.bracket.lines = length(annot_info[[.annot]][['collapsed2']])
           .max.bracket.heights = as.numeric(plot_vertical_parameters['annot'] * .max.bracket.lines)
-          .max.annot.heights.incl.text[[.annot]] = .annot.heights[[.annot]] + ifelse(incl_feature_names[.annot], 1, 0) * (plot_vertical_parameters['annot_text_segment'] * .max.bracket.lines + ifelse(incl_feature_brackets[.annot], 1, 0) * .max.bracket.heights)
+          .max.annot.heights.incl.text[[.annot]] = as.numeric(.annot.heights[[.annot]] + ifelse(incl_feature_names[.annot], 1, 0) * (plot_vertical_parameters['annot_text_segment'] * .max.bracket.lines + ifelse(incl_feature_brackets[.annot], 1, 0) * .max.bracket.heights))
         }
         .min.annot.heights.combined = sum(unlist(.min.annot.heights.incl.text[[.annot]]))
         .max.annot.heights.combined = sum(unlist(.max.annot.heights.incl.text[[.annot]]))
@@ -2240,7 +2241,7 @@ EstimatePlotHeights = function(annot_info, incl_feature_names, annotation_packin
     # if (length(.messages[['errors']]) > 0){
     #   cat(paste(unlist(.messages[['errors']]), collapse='\n'), '\n')
     # }
-    return(list('min.track.height.cm.est'=.min.track.height.cm, 'max.track.height.cm.est'=.max.track.height.cm, 'min.full.height.cm.est'=.min.full.height.cm, 'max.full.height.cm.est'=.max.full.height.cm, 'track.vector'=.track.vector, 'min.tracks.annots'=.min.tracks.annots, 'max.tracks.annots'=.max.tracks.annots, 'max.annot.lines'=.max.annot.lines, 'annot.heights'=.annot.heights))
+    return(list('min.track.height.cm.est'=.min.track.height.cm, 'max.track.height.cm.est'=.max.track.height.cm, 'min.full.height.cm.est'=.min.full.height.cm, 'max.full.height.cm.est'=.max.full.height.cm, 'track.vector'=.track.vector, 'min.tracks.annots'=.min.tracks.annots, 'max.tracks.annots'=.max.tracks.annots, 'max.annot.lines'=.max.annot.lines, 'annot.heights'=.annot.heights, 'annot.heights.incl.text'=.max.annot.heights.incl.text))
   }else{
     # messages
     PrintOutput(.messages, verbosity)
@@ -2299,9 +2300,25 @@ AdjustEstimatedPlotHeights = function(estimated_plot_heights, full_height_cm, tr
 #' @details
 #' Internal function:
 #'
-RecommendedFontSizes = function(est_track_height_cm, plot_vertical_parameters){
-  .max.font.size.std = round( est_track_height_cm / std_letter_height, 0)
-  .recommended.font.sizes = round(structure(.max.font.size.std * c(1, 0.6*plot_vertical_parameters['header'], 0.4*plot_vertical_parameters['header'], 0.4*plot_vertical_parameters['header'], 0.9*plot_vertical_parameters['scale'], 0.7, 1.1*plot_vertical_parameters['annot_text_segment']), names=c('std', 'main', 'sub', 'scale', 'genomic_axis', 'signal_axis', 'annotation_features')), 0)
+RecommendedFontSizes = function(est_track_height_cm, est_min_annot_height, plot_vertical_parameters){
+  .max.font.size.std.tracks = round( est_track_height_cm / std_letter_height, 0)
+  .est.min.annot.height.cm = est_track_height_cm * est_min_annot_height
+  .max.font.size.std.annot = round( .est.min.annot.height.cm / std_letter_height, 0) + 2
+  .max.font.size.std = min(.max.font.size.std.tracks, .max.font.size.std.annot)
+  #c('std', 'main', 'sub', 'scale', 'genomic_axis', 'signal_axis', 'annotation_features')
+  .plot.vertical.parameters.cm = est_track_height_cm * plot_vertical_parameters
+  .main = round(as.numeric(9*.plot.vertical.parameters.cm['header']/0.66), 0)
+  .sub = round(as.numeric(6*.plot.vertical.parameters.cm['header']/0.66), 0)
+  .scale = round(as.numeric(6*.plot.vertical.parameters.cm['header']/0.66), 0)
+  .genomic.axis = round(as.numeric(5*.plot.vertical.parameters.cm['scale']/0.24), 0)
+  .signal.axis = round(as.numeric(0.7*.max.font.size.std), 0)
+  .annotation.features = round(as.numeric(6*.plot.vertical.parameters.cm['annot_text_segment']/0.24), 0)
+  .recommended.font.sizes = structure(c(.max.font.size.std, .main, .sub, .scale, .genomic.axis, .signal.axis, .annotation.features), names=c('std', 'main', 'sub', 'scale', 'genomic_axis', 'signal_axis', 'annotation_features'))
+                                      #@ round(structure(.max.font.size.std * c(1, 0.6*plot_vertical_parameters['header'], 0.4*plot_vertical_parameters['header'], 0.4*plot_vertical_parameters['header'], 0.9*plot_vertical_parameters['scale'], 0.7, 1.1*plot_vertical_parameters['annot_text_segment']), names=c('std', 'main', 'sub', 'scale', 'genomic_axis', 'signal_axis', 'annotation_features')), 0)
+  if (.recommended.font.sizes['std'] >= .recommended.font.sizes['main']){
+    .recommended.font.sizes['std'] = max(.recommended.font.sizes['main']-1, min_font_size)
+    .recommended.font.sizes['signal_axis'] = round(.recommended.font.sizes['std'] * 0.7, 0)
+  }
   return(.recommended.font.sizes)
 }
 
