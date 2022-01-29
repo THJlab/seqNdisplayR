@@ -1,7 +1,10 @@
 ### seqNdisplayR
+#library(seqNdisplayR)
 
-xl_fname <- system.file('extdata', 'example_excel_template.xlsx', package='seqNdisplayR')
-session <- load_excel(xl_fname, load_annotations = T)
+xl_fname = system.file('extdata', 'seqNdisplayR_sample_sheet_simple.xlsx', package='seqNdisplayR')
+session = load_excel(xl_fname, load_annotations = T)
+
+session = load_excel('inst/extdata/seqNdisplayR_sample_sheet_simple.xlsx', load_annotations = T)
 
 datasets=session$samples
 colors=session$colors
@@ -26,7 +29,7 @@ bgr_alpha=0.2
 strands_alpha=c(100,100)
 feature='LMO4' # "NEAT1" # feat # 'TAF1D' # NULL #
 locus=NULL # c("chr11", "-", 93648282, 93866057) #
-extra_space=c(1.5,1.5)
+extra_space=c(0.5,0.5)
 annotation_packing='collapsed2' # 'collapsed' # 'expanded' #
 annot_cols=NULL
 annot_panel_color='steelblue'
@@ -37,7 +40,7 @@ bins_per_cm=250
 track_width_cm=15 # NULL #
 full_width_cm=NULL #15 #
 full_height_cm=NULL
-track_height_cm=0.3
+track_height_cm=0.5
 title_field_height_cm=0.66
 genomic_scale_height_cm=0.24
 annotation_height_cm=0.24
@@ -58,7 +61,7 @@ print_one_line_sample_names=FALSE
 replicate_names='rep' # NULL # ""  #
 incl_track_scales=TRUE
 scientific_scale=c('allow', 'all', 'none')[1]
-force_scale=list('+'=c('TT-seq'=200, 'RNA-seq'=200, '3-seq'=200, 'ChIP-seq'=20), '-'=c('TT-seq'=20, 'RNA-seq'=20, '3-seq'=20)) # NULL
+force_scale=NULL # list('+'=c('TT-seq'=200, 'RNA-seq'=200, '3-seq'=200, 'ChIP-seq'=20), '-'=c('TT-seq'=20, 'RNA-seq'=20, '3-seq'=20)) # NULL
 scale_font_size=NULL
 scale_panel_width_cm='auto' # 0.6 #
 scale_font_color='darkred'
@@ -74,8 +77,8 @@ incl_feature_names=session$incl_feature_names
 feature_names_above=session$feature_names_above
 feature_names_alternating=TRUE
 feature_names_font_size=NULL
-incl_feature_brackets=session$incl_feature_brackets
-incl_feature_shadings=session$incl_feature_shadings
+incl_feature_brackets=FALSE # session$incl_feature_brackets
+incl_feature_shadings=FALSE # session$incl_feature_shadings
 feature_shading_colors=c('steelblue', 'hotpink')
 feature_shading_alpha=0.05
 center_of_mass=FALSE
@@ -85,6 +88,9 @@ pdf=FALSE
 pdf_name=NULL
 pdf_dir='./testplotting'
 scaling_factor=1.2
+verbosity = 'detailed'
+interface='R'
+
 
 ### OrganizeAnnotatedFeaturesInRegion
 .strand = '+'

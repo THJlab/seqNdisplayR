@@ -1,12 +1,9 @@
-
-
-
 # TEST data information
 
 ## sequencing experiments
-#datasets = c("TT-seq", "RNA-seq", "3'-seq", "ChIP-seq")
+#seqtypes = c("TT-seq", "RNA-seq", "3'-seq", "ChIP-seq")
 
-#datasets = c("TT-seq", "RNA-seq", "3'-seq")
+#seqtypes = c("TT-seq", "RNA-seq", "3'-seq")
 
 ## samples under each sequencing experiment
 # single- or multi-level experiments (number of levels will determine number of panes with sample name designations in the plot - will be overruled by the number of levels supplied by whichSamples)
@@ -191,20 +188,25 @@ bigwigs = list('+'=bigwigs_plus,
 rm(bigwigs_plus, bigwigs_minus)
 
 # parameters for each 'dataset'
+parameters = list("TT-seq" = list('whichSamples'=NULL, 'bin_stats' = 'mean', 'enhance_signals'=FALSE, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=T, 'batch'=c(1,2,1,2,1,2,1,2,2,2), 'whichReps'=NULL, 'calcMean'=T, 'negValsSet0'=T, 'preMean'=F),
+                  "RNA-seq" = list('whichSamples'=NULL, 'bin_stats' = 'mean', 'enhance_signals'=FALSE, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=T, 'batch'=c(1,2,1,2,1,2,1,2,2,2), 'whichReps'=NULL, 'calcMean'=T, 'negValsSet0'=T, 'preMean'=F),
+                  "3'-seq" = list('whichSamples'=NULL, 'bin_stats' = 'mean', 'enhance_signals'=FALSE, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=F, 'batch'=NULL, 'whichReps'=NULL, 'calcMean'=T, 'negValsSet0'=T, 'preMean'=F),
+                  "ChIP-seq" = list('whichSamples'=NULL, 'bin_stats' = 'mean', 'enhance_signals'=FALSE, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=F, 'batch'=NULL, 'whichReps'=NULL, 'calcMean'=T, 'negValsSet0'=T, 'preMean'=F)
+)
+
+## individual replicates
 if (FALSE){
-  parameters = list("TT-seq" = list('whichSamples'=NULL, 'bin_stats' = 'mean', 'enhance_signals'=FALSE, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=T, 'batch'=c(1,2,1,2,1,2,1,2,2,2), 'whichReps'=NULL, 'calcMean'=T, 'negValsSet0'=T, 'preMean'=F, 'negative_valued_bw'=F),
-                    "RNA-seq" = list('whichSamples'=NULL, 'bin_stats' = 'mean', 'enhance_signals'=FALSE, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=T, 'batch'=c(1,2,1,2,1,2,1,2,2,2), 'whichReps'=NULL, 'calcMean'=T, 'negValsSet0'=T, 'preMean'=F, 'negative_valued_bw'=F),
-                    "3'-seq" = list('whichSamples'=NULL, 'bin_stats' = 'mean', 'enhance_signals'=FALSE, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=F, 'batch'=NULL, 'whichReps'=NULL, 'calcMean'=T, 'negValsSet0'=T, 'preMean'=F, 'negative_valued_bw'=F),
-                    "ChIP-seq" = list('whichSamples'=NULL, 'bin_stats' = 'mean', 'enhance_signals'=FALSE, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=F, 'batch'=NULL, 'whichReps'=NULL, 'calcMean'=T, 'negValsSet0'=T, 'preMean'=F, 'negative_valued_bw'=F)
-  )
-}else{
-  ## individual replicates
-  parameters = list("TT-seq" = list('whichSamples'=NULL, 'bin_stats' = 'mean', 'enhance_signals'=FALSE, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=F, 'batch'=c(1,2,1,2,1,2,1,2,2,2), 'whichReps'=NULL, 'calcMean'=F, 'negValsSet0'=T, 'preMean'=F, 'negative_valued_bw'=F),
-                    "RNA-seq" = list('whichSamples'=NULL, 'bin_stats' = 'mean', 'enhance_signals'=FALSE, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=F, 'batch'=c(1,2,1,2,1,2,1,2,2,2), 'whichReps'=NULL, 'calcMean'=F, 'negValsSet0'=T, 'preMean'=F, 'negative_valued_bw'=F),
-                    "3'-seq" = list('whichSamples'=NULL, 'bin_stats' = 'mean', 'enhance_signals'=FALSE, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=F, 'batch'=NULL, 'whichReps'=NULL, 'calcMean'=F, 'negValsSet0'=T, 'preMean'=F, 'negative_valued_bw'=F),
-                    "ChIP-seq" = list('whichSamples'=NULL, 'bin_stats' = 'mean', 'enhance_signals'=FALSE, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=F, 'batch'=NULL, 'whichReps'=NULL, 'calcMean'=F, 'negValsSet0'=T, 'preMean'=F, 'negative_valued_bw'=F)
-  )
+parameters = list("TT-seq" = list('whichSamples'=NULL, 'bin_stats' = 'mean', 'enhance_signals'=FALSE, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=F, 'batch'=c(1,2,1,2,1,2,1,2,2,2), 'whichReps'=NULL, 'calcMean'=F, 'negValsSet0'=T, 'preMean'=F),
+                  "RNA-seq" = list('whichSamples'=NULL, 'bin_stats' = 'mean', 'enhance_signals'=FALSE, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=F, 'batch'=c(1,2,1,2,1,2,1,2,2,2), 'whichReps'=NULL, 'calcMean'=F, 'negValsSet0'=T, 'preMean'=F),
+                  "3'-seq" = list('whichSamples'=NULL, 'bin_stats' = 'mean', 'enhance_signals'=FALSE, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=F, 'batch'=NULL, 'whichReps'=NULL, 'calcMean'=F, 'negValsSet0'=T, 'preMean'=F),
+                  "ChIP-seq" = list('whichSamples'=NULL, 'bin_stats' = 'mean', 'enhance_signals'=FALSE, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=F, 'batch'=NULL, 'whichReps'=NULL, 'calcMean'=F, 'negValsSet0'=T, 'preMean'=F)
+)
 }
+
+# parameters = list("TT-seq" = list('whichSamples'=NULL, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=T, 'batch'=c(1,2,1,2,1,2,1,2,2,2), 'whichReps'=NULL, 'calcMean'=T, 'negValsSet0'=T, 'preMean'=F),
+#                 "RNA-seq" = list('whichSamples'=NULL, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=T, 'batch'=c(1,2,1,2,1,2,1,2,2,2), 'whichReps'=NULL, 'calcMean'=T, 'negValsSet0'=T, 'preMean'=F),
+#                 "3'-seq" = list('whichSamples'=NULL, 'log2transform'=F, 'pseudoCount'=1, 'batchCorrect'=F, 'batch'=NULL, 'whichReps'=NULL, 'calcMean'=T, 'negValsSet0'=T, 'preMean'=F)
+#                 )
 
 parameters[["TT-seq"]][['whichSamples']] = c('CTRL', 'INTS11')
 parameters[["RNA-seq"]][['whichSamples']] = c('CTRL', 'INTS11')
@@ -216,335 +218,127 @@ if (FALSE){
 }
 
 
-# gc21 = 'http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/Annotations/Gencode/gencode.v21.annotation.nohosted.bed'
-# annots=list('gencode v21'=gc21)
-
-ChIP_peaks = GenomicRanges::GRanges(seqnames='chr11', ranges=IRanges::IRanges(start=c(93661501, 93740981, 93783892), end=c(93662500, 93741980, 93784891)), name=c("peak1", "peak2", "peak3"))
-#rtracklayer::export.bed(ChIP_peaks, 'inst/extdata/ChIP_peaks.bed')
+gc21 = 'http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/Annotations/Gencode/gencode.v21.annotation.nohosted.bed'
+annots=list('gencode v21'=gc21)
 
 system.file('inst/extdata/hg38_TAF1D.bed', package='Seq2PlotR')
 bed=rtracklayer::import('inst/extdata/hg38_TAF1D.bed')
-annots=list('ChIP peaks'=ChIP_peaks, 'gencode v21'=bed)
+annots=list('gencode v21'=bed)
 
 #### Example 1:
 # TAF1D
-# datasets: TT-seq, RNA-seq, 3'-seq, ChIP-seq
-# individual replicates plotted
+# seqtypes: TT-seq, RNA-seq, 3'-seq, ChIP-seq
 # auto-panels (track_width_cm=15, full_width_cm=NULL)
-Seq2Plot(samples, colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
+Seq2Plot(samples[1:2], colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
          both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, actual_strand_direction=TRUE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,50),
-         feature='TAF1D', locus=NULL, extra_space=c(1.5,1.5),
-         annots=annots, annotation_packing='collapsed', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
+         feature='SGK1', locus=NULL, extra_space=c(1.5,1.5),
+         annots=annots, annotation_packing='expanded', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
          bin_start=NULL, bin_size='auto', bins_per_cm=250, track_width_cm=15, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3,
          panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=NULL, panel_font_sizes=NULL, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
          horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names=NULL,
          incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
          header=NULL, suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
          include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
-         incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=c(FALSE,TRUE), incl_feature_shadings=c(FALSE,TRUE), feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
+         incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=TRUE, incl_feature_shadings=TRUE, feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
          dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1.2)
 
-
-Seq2Plot(samples, colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
+#### Example 2:
+# TAF1D
+# seqtypes: TT-seq, RNA-seq, 3'-seq
+# auto-panels (track_width_cm=15, full_width_cm=NULL)
+Seq2Plot(samples[1:3], colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
          both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, actual_strand_direction=TRUE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,50),
          feature='TAF1D', locus=NULL, extra_space=c(1.5,1.5),
-         annots=annots, annotation_packing='collapsed', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
+         annots=annots, annotation_packing='collapsed2', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
          bin_start=NULL, bin_size='auto', bins_per_cm=250, track_width_cm=15, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3,
          panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=NULL, panel_font_sizes=NULL, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
          horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names='rep',
          incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
          header=NULL, suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
          include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
-         incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=c(FALSE,TRUE), incl_feature_shadings=c(FALSE,TRUE), feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
+         incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=TRUE, incl_feature_shadings=TRUE, feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
          dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1.2)
-
-
-#### FAIL Example 1.v2 using full annotation:
-# TAF1D
-# datasets: TT-seq, RNA-seq, 3'-seq, ChIP-seq
-# individual replicates plotted
-# auto-panels (track_width_cm=15, full_width_cm=NULL)
-
-annots=list('ChIP peaks'=ChIP_peaks, 'gencode v21'=rtracklayer::import('http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/Annotations/Gencode/gencode.v21.annotation.nohosted.bed'))
-
-
-Seq2Plot(samples, colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
-         both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, actual_strand_direction=TRUE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,50),
-         feature='TAF1D', locus=NULL, extra_space=c(1.5,1.5),
-         annots=annots, annotation_packing='collapsed', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
-         bin_start=NULL, bin_size='auto', bins_per_cm=250, track_width_cm=15, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3,
-         panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=NULL, panel_font_sizes=NULL, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
-         horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names=NULL,
-         incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
-         header=NULL, suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
-         include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
-         incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=c(FALSE,TRUE), incl_feature_shadings=c(FALSE,TRUE), feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
-         dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1.2)
-
-
-#### RESCUED FAIL Example 1.v3 using full annotation:
-# TAF1D
-# datasets: TT-seq, RNA-seq, 3'-seq, ChIP-seq
-# individual replicates plotted
-# auto-panels (track_width_cm=15, full_width_cm=NULL)
-gc21 = 'http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/Annotations/Gencode/gencode.v21.annotation.nohosted.bed'
-gc21_gr = ReadInAnnotations(list('gencode v21'=gc21))
-
-annots=list('ChIP peaks'=ChIP_peaks, 'gencode v21'=gc21_gr[['gencode v21']])
-
-
-Seq2Plot(samples, colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
-         both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, actual_strand_direction=TRUE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,50),
-         feature='TAF1D', locus=NULL, extra_space=c(1.5,1.5),
-         annots=annots, annotation_packing='collapsed', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
-         bin_start=NULL, bin_size='auto', bins_per_cm=250, track_width_cm=15, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3,
-         panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=NULL, panel_font_sizes=NULL, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
-         horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names=NULL,
-         incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
-         header=NULL, suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
-         include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
-         incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=c(FALSE,TRUE), incl_feature_shadings=c(FALSE,TRUE), feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
-         dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1.2)
-
-
-
-#### Example 2:
-# TAF1D
-# datasets: TT-seq, RNA-seq, 3'-seq, ChIP-seq
-# individual replicates plotted
-# strand not intermingled
-# auto-panels (track_width_cm=15, full_width_cm=NULL)
-Seq2Plot(samples, colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
-         both_strands=TRUE, strands_intermingled=FALSE, neg_vals_neg_strand=TRUE, actual_strand_direction=TRUE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,50),
-         feature='TAF1D', locus=NULL, extra_space=c(1.5,1.5),
-         annots=annots, annotation_packing='collapsed', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
-         bin_start=NULL, bin_size='auto', bins_per_cm=250, track_width_cm=15, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3,
-         panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=NULL, panel_font_sizes=NULL, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
-         horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names=NULL,
-         incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
-         header=NULL, suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
-         include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
-         incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=c(FALSE,TRUE), incl_feature_shadings=c(FALSE,TRUE), feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
-         dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1.2)
-
 
 #### Example 3:
 # TAF1D
-# datasets: TT-seq, RNA-seq, 3'-seq
-# individual replicates plotted
+# seqtypes: TT-seq, RNA-seq, 3'-seq
 # auto-panels (track_width_cm=15, full_width_cm=NULL)
+# bin_stats and enhance_signal specified for each seqtype
+parameters[["3'-seq"]][['bin_stats']] = 'max'
+parameters[["3'-seq"]][['enhance_signals']] = TRUE
+
 Seq2Plot(samples[1:3], colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
          both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, actual_strand_direction=TRUE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,50),
          feature='TAF1D', locus=NULL, extra_space=c(1.5,1.5),
          annots=annots, annotation_packing='collapsed2', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
          bin_start=NULL, bin_size='auto', bins_per_cm=250, track_width_cm=15, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3,
          panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=NULL, panel_font_sizes=NULL, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
-         horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names=NULL,
+         horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names='rep',
          incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
          header=NULL, suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
          include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
-         incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=c(FALSE,TRUE), incl_feature_shadings=c(FALSE,TRUE), feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
+         incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=TRUE, incl_feature_shadings=TRUE, feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
          dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1.2)
+
 
 #### Example 4:
 # TAF1D
-# datasets: TT-seq, RNA-seq, 3'-seq
-# individual replicates plotted
-# auto-panels (track_width_cm=15, full_width_cm=NULL)
-# bin_stats and enhance_signal specified for each dataset
-parameters[["3'-seq"]][['bin_stats']] = 'max'
-parameters[["3'-seq"]][['enhance_signals']] = TRUE
-
-Seq2Plot(samples[1:3], colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
-          both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, actual_strand_direction=TRUE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,50),
-          feature='TAF1D', locus=NULL, extra_space=c(1.5,1.5),
-          annots=annots, annotation_packing='collapsed2', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
-          bin_start=NULL, bin_size='auto', bins_per_cm=250, track_width_cm=15, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3,
-          panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=NULL, panel_font_sizes=NULL, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
-          horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names=NULL,
-          incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
-          header=NULL, suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
-          include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
-          incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=c(FALSE,TRUE), incl_feature_shadings=c(FALSE,TRUE), feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
-          dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1.2)
-
-
-#### Example 5:
-# TAF1D
-# datasets: TT-seq, RNA-seq, 3'-seq
-# individual replicates plotted
+# seqtypes: TT-seq, RNA-seq, 3'-seq
 # auto-panels (track_width_cm=15, full_width_cm=NULL)
 # bin_stats and enhance_signal specified for each seqtype
 # panel font sizes user-defined (panel_font_sizes=6)
 Seq2Plot(samples[1:3], colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
          both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, actual_strand_direction=TRUE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,50),
          feature='TAF1D', locus=NULL, extra_space=c(1.5,1.5),
-         annots=annots, annotation_packing='collapsed2', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
+         annots=list('gencode v21'=gc21), annotation_packing='collapsed2', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
          bin_start=NULL, bin_size='auto', bins_per_cm=250, track_width_cm=15, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3,
          panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=NULL, panel_font_sizes=6, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
-         horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names=NULL,
+         horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names='rep',
          incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
          header=NULL, suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
          include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
-         incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=c(FALSE,TRUE), incl_feature_shadings=c(FALSE,TRUE), feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
+         incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=TRUE, incl_feature_shadings=TRUE, feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
+         dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1.2)
+
+
+#### Example 5:
+# TAF1D
+# seqtypes: TT-seq, RNA-seq, 3'-seq
+# auto-panels (track_width_cm=15, full_width_cm=NULL)
+# bin_stats and enhance_signal specified for each seqtype
+# panel font sizes user-defined (panel_font_sizes=6)
+# all samplename-panels printed horizontally ( list("TT-seq"=c(T,T), "RNA-seq"=c(T,T), "3'-seq"=c(T,T,T,T)) )
+Seq2Plot(samples[1:3], colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
+         both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, actual_strand_direction=TRUE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,50),
+         feature='TAF1D', locus=NULL, extra_space=c(1.5,1.5),
+         annots=list('gencode v21'=gc21), annotation_packing='collapsed2', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
+         bin_start=NULL, bin_size='auto', bins_per_cm=250, track_width_cm=15, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3,
+         panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=list("TT-seq"=c(T,T), "RNA-seq"=c(T,T), "3'-seq"=c(T,T,T,T)), panel_font_sizes=6, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
+         horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names='rep',
+         incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
+         header=NULL, suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
+         include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
+         incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=TRUE, incl_feature_shadings=TRUE, feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
          dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1.2)
 
 
 #### Example 6:
 # TAF1D
-# datasets: TT-seq, RNA-seq, 3'-seq
+# seqtypes: TT-seq, RNA-seq
 # individual replicates plotted
 # auto-panels (track_width_cm=15, full_width_cm=NULL)
-# bin_stats and enhance_signal specified for each seqtype
 # panel font sizes user-defined (panel_font_sizes=6)
-# all samplename-panels printed horizontally ( list("TT-seq"=c(T,T), "RNA-seq"=c(T,T), "3'-seq"=c(T,T,T,T)) )
-Seq2Plot(samples[1:3], colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
-         both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, actual_strand_direction=TRUE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,50),
-         feature='TAF1D', locus=NULL, extra_space=c(1.5,1.5),
-         annots=annots, annotation_packing='collapsed2', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
-         bin_start=NULL, bin_size='auto', bins_per_cm=250, track_width_cm=15, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3,
-         panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=list("TT-seq"=c(T,T), "RNA-seq"=c(T,T), "3'-seq"=c(T,T,T,T)), panel_font_sizes=6, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
-         horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names=NULL,
-         incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
-         header=NULL, suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
-         include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
-         incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=c(FALSE,TRUE), incl_feature_shadings=c(FALSE,TRUE), feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
-         dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1.2)
-
-
-#### Example 7:
-# TAF1D
-# datasets: TT-seq, RNA-seq, 3'-seq
-# individual replicates plotted
-# auto-panels (track_width_cm=15, full_width_cm=NULL)
-# bin_stats and enhance_signal specified for each seqtype
-## panel font sizes user-defined (panel_font_sizes=c(7,6); first (from left) panel size 7, other panels 6)
-# all samplename-panels printed horizontally ( list("TT-seq"=c(T,T), "RNA-seq"=c(T,T), "3'-seq"=c(T,T,T,T)) )
-Seq2Plot(samples[1:3], colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
-         both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, actual_strand_direction=TRUE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,50),
-         feature='TAF1D', locus=NULL, extra_space=c(1.5,1.5),
-         annots=annots, annotation_packing='collapsed2', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
-         bin_start=NULL, bin_size='auto', bins_per_cm=250, track_width_cm=15, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3,
-         panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=list("TT-seq"=c(T,T), "RNA-seq"=c(T,T), "3'-seq"=c(T,T,T,T)), panel_font_sizes=c(7,6), panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
-         horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names=NULL,
-         incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
-         header=NULL, suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
-         include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
-         incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=c(FALSE,TRUE), incl_feature_shadings=c(FALSE,TRUE), feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
-         dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1.2)
-
-
-
-#### Example 8:
-# TAF1D
-# datasets: TT-seq, RNA-seq, 3'-seq
-# means based on individual replicates plotted
-# auto-panels (track_width_cm=15, full_width_cm=NULL)
-parameters[["TT-seq"]][['calcMean']] = TRUE
-parameters[["RNA-seq"]][['calcMean']] = TRUE
-parameters[["3'-seq"]][['calcMean']] = TRUE
-Seq2Plot(samples[1:3], colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
-         both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, actual_strand_direction=TRUE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,50),
-         feature='TAF1D', locus=NULL, extra_space=c(1.5,1.5),
-         annots=annots, annotation_packing='collapsed2', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
-         bin_start=NULL, bin_size='auto', bins_per_cm=250, track_width_cm=15, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3,
-         panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=NULL, panel_font_sizes=NULL, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
-         horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names=NULL,
-         incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
-         header=NULL, suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
-         include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
-         incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=c(FALSE,TRUE), incl_feature_shadings=c(FALSE,TRUE), feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
-         dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1.2)
-
-
-#### Example 9:
-# TAF1D
-# datasets: TT-seq, RNA-seq, 3'-seq and ChIP-seq
-# means based on individual replicates plotted
-# auto-panels (track_width_cm=15, full_width_cm=NULL)
-parameters[["TT-seq"]][['calcMean']] = TRUE
-parameters[["RNA-seq"]][['calcMean']] = TRUE
-parameters[["3'-seq"]][['calcMean']] = TRUE
-Seq2Plot(samples, colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
-         both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, actual_strand_direction=TRUE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,50),
-         feature='TAF1D', locus=NULL, extra_space=c(1.5,1.5),
-         annots=annots, annotation_packing='collapsed2', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
-         bin_start=NULL, bin_size='auto', bins_per_cm=250, track_width_cm=15, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3,
-         panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=NULL, panel_font_sizes=NULL, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
-         horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names=NULL,
-         incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
-         header=NULL, suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
-         include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
-         incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=c(FALSE,TRUE), incl_feature_shadings=c(FALSE,TRUE), feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
-         dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1.2)
-
-
-#### Example 10:
-# TAF1D
-# datasets: TT-seq, RNA-seq
-# means based on individual replicates plotted
-# auto-panels (track_width_cm=15, full_width_cm=NULL)
-parameters[["TT-seq"]][['calcMean']] = TRUE
-parameters[["RNA-seq"]][['calcMean']] = TRUE
-parameters[["3'-seq"]][['calcMean']] = TRUE
+parameters[["TT-seq"]][['calcMean']] = FALSE
+parameters[["RNA-seq"]][['calcMean']] = FALSE
 Seq2Plot(samples[1:2], colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
          both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, actual_strand_direction=TRUE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,50),
          feature='TAF1D', locus=NULL, extra_space=c(1.5,1.5),
-         annots=annots, annotation_packing='collapsed2', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
+         annots=list('gencode v21'=gc21), annotation_packing='collapsed2', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
          bin_start=NULL, bin_size='auto', bins_per_cm=250, track_width_cm=15, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3,
-         panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=NULL, panel_font_sizes=NULL, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
-         horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names=NULL,
+         panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=NULL, panel_font_sizes=6, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
+         horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names='rep',
          incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
          header=NULL, suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
          include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
-         incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=c(FALSE,TRUE), incl_feature_shadings=c(FALSE,TRUE), feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
-         dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1.2)
-
-
-#### Example 11:
-# TAF1D (= chr11:93648282-93866057)
-# datasets: TT-seq, RNA-seq, 3'-seq and ChIP-seq
-# means based on individual replicates plotted
-# only unstranded beds
-# auto-panels (track_width_cm=15, full_width_cm=NULL)
-parameters[["TT-seq"]][['calcMean']] = TRUE
-parameters[["RNA-seq"]][['calcMean']] = TRUE
-parameters[["3'-seq"]][['calcMean']] = TRUE
-Seq2Plot(samples, colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
-         both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, actual_strand_direction=TRUE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,50),
-         feature=NULL, locus=c("chr11", "-", 93648282, 93866057), extra_space=c(1.5,1.5),
-         annots=annots[1], annotation_packing='collapsed2', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
-         bin_start=NULL, bin_size='auto', bins_per_cm=250, track_width_cm=15, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3,
-         panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=NULL, panel_font_sizes=NULL, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
-         horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names=NULL,
-         incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
-         header='TAF1D', suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
-         include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
          incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=TRUE, incl_feature_shadings=TRUE, feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
          dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1.2)
-
-
-#### Example 12:
-# TAF1D (= chr11:93648282-93866057)
-# datasets: TT-seq, RNA-seq, 3'-seq and ChIP-seq
-# means based on individual replicates plotted
-# no beds / annotations
-# auto-panels (track_width_cm=15, full_width_cm=NULL)
-parameters[["TT-seq"]][['calcMean']] = TRUE
-parameters[["RNA-seq"]][['calcMean']] = TRUE
-parameters[["3'-seq"]][['calcMean']] = TRUE
-Seq2Plot(samples, colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
-         both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, actual_strand_direction=TRUE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,50),
-         feature=NULL, locus=c("chr11", "-", 93648282, 93866057), extra_space=c(1.5,1.5),
-         annots=NULL, annotation_packing='collapsed2', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
-         bin_start=NULL, bin_size='auto', bins_per_cm=250, track_width_cm=15, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3,
-         panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=NULL, panel_font_sizes=NULL, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
-         horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names=NULL,
-         incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
-         header='TAF1D', suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
-         include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
-         incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=TRUE, incl_feature_shadings=TRUE, feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
-         dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1.2)
-
-
-
