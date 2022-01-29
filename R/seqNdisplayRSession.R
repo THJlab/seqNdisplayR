@@ -266,7 +266,9 @@ session_to_xlsx <- function(session, path, ...) {
 
     #@anno_display_option_names <- names(default_annotation_options())
     anno_display_options <- session[anno_display_option_names]
-    anno_display_options_df <- as.data.frame(lapply(anno_display_options, function(x) x[annos$annotation_name]))
+    #ensure consistent sorting
+    anno_display_options <- lapply(anno_display_options, function(x) sapply(x, deparse_option))
+    anno_display_options_df <- as.data.frame(anno_display_options)
     annos <- dplyr::bind_cols(annos, anno_display_options_df)
   }
 
