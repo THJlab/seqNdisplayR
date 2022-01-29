@@ -10,12 +10,12 @@ get_annotations(annotations)
 \item{annotations}{Data frame}
 }
 \value{
-Named list of path, or named list of GRanges. Names used are entries in the *Name* column.
+Named list of path, or named list of GRanges. Names used are entries in the *annotation_name* column.
 }
 \description{
 Reads Annotations from Excel template
 }
 \details{
-annotations is a data.frame with at least 2 columns *Path* and *Name*, both
+annotations is a data.frame with at least 2 columns *annotation_file* and *annotation_name*, both
   case-sensitive and the space is required.
 }

@@ -4,7 +4,11 @@
 \alias{RecommendedFontSizes}
 \title{Recommended Font Sizes}
 \usage{
-RecommendedFontSizes(est_track_height_cm, plot_vertical_parameters)
+RecommendedFontSizes(
+  est_track_height_cm,
+  est_min_annot_height,
+  plot_vertical_parameters
+)
 }
 \description{
 Recommended Font Sizes
