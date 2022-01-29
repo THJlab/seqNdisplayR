@@ -126,7 +126,7 @@ ui <- fluidPage(
   shinybusy::use_busy_spinner(spin = "fading-circle"),
 
   # HEADER ####
-  titlePanel(h1("seq'N'displayR", align = "center")),
+  titlePanel(h1("seq'N'display'R", align = "center")),
   h3(
     "A Tool for Customizable and Reproducible Plotting of Sequencing Coverage Data", align='center'
   ),
@@ -166,6 +166,9 @@ ui <- fluidPage(
                      actionButton("show_samples", "Show Samples"),
                      shinyBS::bsTooltip(id = "show_samples", title = "Show currently selected samples and their order",
                                         placement = "right", trigger = "hover"),
+                     actionButton("which_samples", "Show whichSamples"),
+                     shinyBS::bsTooltip(id = "which_samples", title = "Show currently whichSamples argument, selected samples for display. Samples listed in Show samples but not in here are still used for batch correction",
+                                        placement = "right", trigger = "hover"),
                      actionButton("clean_console", "Clean Console"),
                      shinyBS::bsTooltip(id = "clean_console", title = "Clean the text output displayed to the right",
                                         placement = "right", trigger = "hover"),
@@ -197,7 +200,7 @@ ui <- fluidPage(
       tabPanel(
         "Select Template and Locus",
         p(
-          "Filling out the boxes in the 'Input' window is the minimum requirement for plotting. Multiple accessory arguments can be adjusted below, but plotting can be performed merely from importing the 'Input/Output' excel file, specifying a locus by name or coordinates and pressing the 'Draw Plot' button (locus name overwrites coordinates)."
+          "Filling out the boxes in the 'Input' window is the minimum requirement for plotting. Multiple accessory arguments can be adjusted below, but plotting can be performed merely from importing the template excel file, specifying a locus by name or coordinates and pressing the 'Draw Plot' button (locus name overwrites coordinates)."
         ),
         fileInput(
           "input_file",
@@ -216,7 +219,7 @@ ui <- fluidPage(
                       'Enter locus coordinates', placeholder = 'e.g. chr1:+:1000:2000')
         ),
         tags$p(em(
-          "The name has to be present in one of the supplied annotations and match case. When entering feature and locus coordinates, only the feature will be considered."
+          "The name has to be present in one of the supplied annotations and match case. When entering name and coordinates simultaneously, only the name will be considered."
         )),
         tags$br(),
         create_input_element('verbosity')
@@ -337,7 +340,6 @@ ui <- fluidPage(
               div(id = "panel_horizontal_checkboxes"),
               tags$br()),
           create_input_element('print_one_line_sample_names'),
-          create_input_element('print_rep_numbers'),
           create_input_element('replicate_names'),
           create_input_element('pan_col'),
           create_input_element('panel_font_easy'),
@@ -446,9 +448,54 @@ server <- function(input, output, session) {
     if ( is.list(x) ) {
       structure(lapply(x, set_all_selected), stselected=T, stopened=TRUE)
     } else {
-      x
+      names(x) <- x
+      lapply(x, function(xi) structure(xi, stselected=T, stopened=TRUE))
     }
   }
+
+  ## from list x creates nested node list for tree where all nodes are deselected
+  set_all_deselected <- function(x) {
+    if ( is.list(x) ) {
+      structure(lapply(x, set_all_deselected), stselected=F, stopened=TRUE)
+    } else {
+      names(x) <- x
+      structure(as.list(x), stselected=T, stopened=TRUE)
+    }
+  }
+
+  ## from list x creates nested node list for tree where all nodes are selected if present in x
+  set_tree_nodes <- function(samples, whichSamples) {
+    if( is.list(samples) ) {
+      print(paste0('list:', names(samples), ' -->', names(whichSamples)))
+      nodes <- lapply(names(samples), function(dataset) {
+        print(paste0(' dataset: ', dataset,
+                     ' in whichSamples: ', (dataset %in% names(whichSamples))))#,
+        if ( is.null(whichSamples[[dataset]]) ){
+          print('  set sel')
+          structure(set_all_selected(samples[[dataset]]),
+                    stselected=T, stopened=T)
+        } else if ( is.na(whichSamples[[dataset]]) ) {
+          print('  set desel')
+          structure(set_all_deselected(samples[[dataset]]),
+                    stselected=F, stopened=T)
+        } else if ( identical(unlist(samples[[dataset]]), unlist(whichSamples[[dataset]])) ){
+          print('  set sel')
+          structure(set_all_selected(samples[[dataset]]),
+                    stselected=T, stopened=T)
+        } else {
+          print('  set custom')
+          structure(set_tree_nodes(samples[[dataset]], whichSamples[[dataset]]),
+                    stopened=T)
+        }
+      })
+      names(nodes) <- names(samples)
+      structure(nodes, stopened=T)
+    } else {
+      names(samples) <- samples
+      lapply(samples, function(sample) structure(sample, stselected=(sample %in% whichSamples), stopened=TRUE))
+    }
+  }
+
 
   ## nested list of selected nodes from shinyTree t
   get_selected_tree <- function(t) {
@@ -492,7 +539,12 @@ server <- function(input, output, session) {
     }
 
     output$tree <- shinyTree::renderTree( {
-      set_all_selected(seqNdisplayR_session$bigwigs[['+']])
+      #set_all_selected(seqNdisplayR_session$samples) #TODO: Fix to select only whichSamples
+      whichSamples <- lapply(seqNdisplayR_session$parameters, function(p) p$whichSamples)
+      names(whichSamples) <- names(seqNdisplayR_session$parameters)
+      set_tree_nodes(seqNdisplayR_session$samples,
+                     whichSamples)
+      #set_all_deselected(seqNdisplayR_session$bigwigs[['+']])
     } )
 
     dataset_names <- names(seqNdisplayR_session$samples)
@@ -958,14 +1010,16 @@ server <- function(input, output, session) {
 
     ## which samples from tree
     which_samples <- get_selected_samples()
-
     for ( sample_name in names(template_session$parameters) ) {
-      if (identical(which_samples[[sample_name]], template_session$samples[[sample_name]])){
-        template_session$parameters[[sample_name]]['whichSamples'] <- list(NULL)
-      } else if( sample_name %in% names(which_samples) ){ #@
-        template_session$parameters[[sample_name]][['whichSamples']] <- which_samples[[sample_name]]
-      } else {
+      if ( !(sample_name %in% names(which_samples)) ) {
+        #exclude all
         template_session$parameters[[sample_name]][['whichSamples']] <- NA
+      } else if (identical(which_samples[[sample_name]], template_session$samples[[sample_name]])){
+        #include all
+        template_session$parameters[[sample_name]]['whichSamples'] <- list(NULL)
+      } else { #@
+        #include specific cases
+        template_session$parameters[[sample_name]][['whichSamples']] <- which_samples[[sample_name]]
       }
     }
 
@@ -999,8 +1053,7 @@ server <- function(input, output, session) {
                          x <- capture.output(plot(session_to_plot, locus=locus, interface='shiny'))
                        }
                      },position = 'top-center',blocking_level='none', prefix='Plotting error', shiny=TRUE)
-                     #output$console <- renderText({paste0(is.null(session_to_plot$annots), '  ', length(session_to_plot$annots))})
-                     #output$console <- renderText({paste(x, collapse  = "\n")})
+                     output$console <- renderText({paste(x, collapse  = "\n")})
                      remove_modal_spinner()
                      }
                    }
@@ -1083,9 +1136,9 @@ server <- function(input, output, session) {
     output$console <- renderText(
       paste(
         lapply(intersect(opt_names,names(cur_session)),
-               function(i) paste0(i, '  -->  ', seqNdisplayR::deparse_option(cur_session[[i]]),  '\t', class(cur_session[[i]]), '\n')
+               function(i) paste0(i, '  -->  ', seqNdisplayR::deparse_option(cur_session[[i]]),  '\t', class(cur_session[[i]]))  # , '\n'
         ),
-        sep ='\n')
+        collapse ='\n')
     )
   })
 
@@ -1105,10 +1158,16 @@ server <- function(input, output, session) {
 
   observeEvent(input$show_samples, {
     output$console  <- renderPrint({
-      get_selected_samples()
+      current_session()$samples
     })
   })
 
+
+  observeEvent(input$which_samples, {
+    output$console  <- renderPrint({
+      get_selected_samples()
+    })
+  })
 
   observeEvent(input$clean_console, {
     output$console = renderText('')
