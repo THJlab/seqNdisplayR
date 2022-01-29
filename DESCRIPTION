@@ -19,8 +19,7 @@ Depends:
     rlist,
     limma,
     readxl,
-    writexl,
-    jsonlite
+    writexl
 Suggests:
     xml2,
     shiny,
