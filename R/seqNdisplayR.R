@@ -58,7 +58,7 @@ default_plot_options <- function(){
        bin_start=NULL,                                            #√ NULL or positive integer value
        bin_size='auto',                                           #√ 'auto'/'automatic' or positive integer value (>=1)
        bins_per_cm=250,                                           #√ positive integer value (>=1)
-       track_width_cm=10,                                         #√ NULL or positive numeric value
+       track_width_cm=12,                                         #√ NULL or positive numeric value
        full_width_cm=NULL,                                        #√ NULL or positive numeric value (*caution)
        full_height_cm=NULL,                                       #√ NULL or positive numeric value (*caution)
        track_height_cm=0.3,                                       #√ NULL or positive numeric value
@@ -190,6 +190,7 @@ seqNdisplay = function(
     if (.verbosity > 0){ cat('ERROR: choose a genomic region for plotting by either assigning locus name or coordinates - aborting') }
     return()
   }
+  bigwig_dirs = lapply(bigwig_dirs, function(X) if (grepl('/$', X)){X}else{paste0(X, '/')})
   if (!is.null(track_width_cm)){ if (!EvaluateNumericValue(track_width_cm, positive_val=TRUE, min_val=3, max_val=25, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'track_width_cm', 'Tracks Width'), .verbosity)){ return() }}
   if (!is.null(full_width_cm)){ if (!EvaluateNumericValue(full_width_cm, positive_val=TRUE, min_val=5, max_val=30, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'full_width_cm', 'Full Plot Width'), .verbosity)){ return() }}
   if (!is.null(full_height_cm)){ if (!EvaluateNumericValue(full_height_cm, positive_val=TRUE, min_val=5, max_val=30, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'full_height_cm', 'Full Plot Height'), .verbosity)){ return() }}
@@ -237,9 +238,21 @@ seqNdisplay = function(
     .incl.feature.brackets = ScrutinizeExpandAndNameParameter(incl_feature_brackets, .annotations, use_names=TRUE, default_value=TRUE, expect_standard='logical', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'incl_feature_brackets', 'Feature Bracket'), verbosity=.verbosity)
     .incl.feature.shadings = ScrutinizeExpandAndNameParameter(incl_feature_shadings, .annotations, use_names=TRUE, default_value=TRUE, expect_standard='logical', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'incl_feature_shadings', 'Highlight Individual Loci By Shaded Boxes'), verbosity=.verbosity)
     .annotation.packing = ScrutinizeExpandAndNameParameter(annotation_packing, .annotations, use_names=TRUE, default_value='collapsed2', expect_standard=NULL, expect=c('expanded', 'squished', 'collapsed', 'collapsed2'), revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'annotation_packing', 'Annotation Packing'), verbosity=.verbosity)
-    .annot.cols = ScrutinizeExpandAndNameParameter(annot_cols, .annotations, use_names=TRUE, default_value='black', expect_standard='color', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'annot_cols', 'Feature Colors'), verbosity=.verbosity)
+    if (!is.null(annot_cols)){
+      if (any(annot_cols=='NULL')){
+        .replacement.col = ifelse('seashell4' %in% unlist(colors), ifelse('thistle3' %in% unlist(colors), 'slategray3', 'thistle3'), 'seashell4')
+        annot_cols[names(which(annot_cols=='NULL'))] = .replacement.col
+        .annot.cols = ScrutinizeExpandAndNameParameter(annot_cols, .annotations, use_names=TRUE, default_value='black', expect_standard='color', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'annot_cols', 'Feature Colors'), verbosity=.verbosity)
+        .null.index = which(.annot.cols==.replacement.col)
+        .annot.cols = as.list(.annot.cols)
+        .annot.cols[.null.index] = list(NULL)
+      }else{
+        .annot.cols = ScrutinizeExpandAndNameParameter(annot_cols, .annotations, use_names=TRUE, default_value='black', expect_standard='color', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'annot_cols', 'Feature Colors'), verbosity=.verbosity)
+        .annot.cols = as.list(.annot.cols)
+      }
+    }
     #### -> check parameters part 2 - abort and return NULL if any of the crucial parameters are NULL
-    if ( any(sapply(list(.annotations,.incl.feature.names,.feature.names.above,.annot.cols,.incl.feature.brackets,.incl.feature.shadings,.annotation.packing,.annot.cols), function(parameter) is.null(parameter))) ){ return() }
+    if ( any(sapply(list(.annotations,.incl.feature.names,.feature.names.above,.annot.cols,.incl.feature.brackets,.incl.feature.shadings,.annotation.packing), function(parameter) is.null(parameter))) ){ return() }
   }
   #### <- load all annotations
   #### -> check parameters part 3 - abort or auto correct
@@ -315,6 +328,11 @@ seqNdisplay = function(
   #### <- organize annotations in region
   #### -> organize panels, font sizes and other parameters
   .tracks.listed = lapply(structure(lapply(names(.plotted.region), function(.strand) structure(lapply(names(datasets), function(.seqtype) LoadAndTransformDataForTrack(.seqtype, .plotted.region[[.strand]], datasets, bigwigs, bigwig_dirs, parameters, get_subsamples=TRUE, print_order=FALSE, .verbosity)), names=names(datasets))), names=names(.plotted.region)), DeleteNULLs)
+  if (length(.tracks.listed[['+']])==0){ #@ this whole thing added
+    .tracks.listed[['+']] = NULL
+  }else if (length(.tracks.listed[['-']])==0){
+    .tracks.listed[['-']] = NULL
+  }
   .plotted.samples = unique(unlist(lapply(names(.tracks.listed), function(n) names(.tracks.listed[[n]]))))
   .panels.list = lapply(.tracks.listed, OrganizedPanelsList)
   .stranded.beds = unlist(lapply(.annotations, function(gr) !all(as.character(GenomicRanges::strand(gr))=="*")))
@@ -354,8 +372,6 @@ seqNdisplay = function(
   .est.track.height.cm.range = c(.estimated.plot.heights[[.strand]][['min.track.height.cm.est']], .estimated.plot.heights[[.strand]][['max.track.height.cm.est']])
   .est.min.annot.height = min(unlist(lapply(names(.plotted.region), function(.strand) unlist(.estimated.plot.heights[[.strand]][['annot.heights.incl.text']]))))
   .rec.font.sizes = RecommendedFontSizes(max(.est.track.height.cm.range), .est.min.annot.height, .plot.vertical.parameters)
-  #cat(paste(names(.rec.font.sizes), collapse=' '), '\n') #@
-  #cat(paste(.rec.font.sizes, collapse=' '), '\n') #@
   if (is.null(header_font_sizes)){
     header_font_sizes = .rec.font.sizes[c('main', 'sub', 'scale')]
   }
@@ -365,12 +381,10 @@ seqNdisplay = function(
   .horizontal.panels.list = HorizontalPanelsList(datasets, horizontal_panels_list, .verbosity, .interface)
   .force.scale.list = ForceScaleList(datasets, force_scale, strands=ifelse(both_strands, '+-', .strand), .verbosity, .interface)
   if (!is.null(.panel.font.size.list)){
-    #cat(max(unlist(lapply(.panel.font.size.list, max, na.rm=TRUE)), na.rm=TRUE), '\n') #@
     .max.font.size = max( .rec.font.sizes['std'], ifelse(is.null(annot_panel_font_size), NA, annot_panel_font_size), ifelse(is.null(feature_names_font_size), NA, feature_names_font_size), ifelse(is.null(scale_font_size), NA, scale_font_size), max(unlist(lapply(.panel.font.size.list, max, na.rm=TRUE)), na.rm=TRUE), na.rm=TRUE)
   }else{
     .max.font.size = max(.rec.font.sizes['std'], ifelse(is.null(annot_panel_font_size), NA, annot_panel_font_size), ifelse(is.null(feature_names_font_size), NA, feature_names_font_size), ifelse(is.null(scale_font_size), NA, scale_font_size), na.rm=TRUE)
   }
-  #cat(paste('.max.font.size:', .max.font.size), '\n') #@
   if (.max.font.size > 0){
     .letter.widths = 1:.max.font.size*std_letter_width
     .letter.heights = 1:.max.font.size*std_letter_height
@@ -397,9 +411,8 @@ seqNdisplay = function(
       .feature.names.font.size = feature_names_font_size
     }
   }
-  #cat(paste('.feature.names.font.size:',.feature.names.font.size), '\n') #@
   .min.wordlength.left.panel = ifelse(!is.null(.annotations), max(nchar(names(.annotations))) + 3, 0)
-  .panel.info = FinalizePanelsDimensions(structure(lapply(names(.plotted.region), function(.strand) OrganizePanelsDimensions(names(.tracks.listed[[.strand]]), .min.wordlength.left.panel, replicate_names, print_one_line_sample_names, incl_first_panel, .plot.height.parameters[[.strand]], .feature.names.font.size, which(!is.na(.letter.heights)), .rec.font.sizes, scale_font_size, .horizontal.panels.list, .panel.font.size.list, .panels.list[[.strand]], .plot.widths.cm, .panel.separators, .strand, both_strands, .strands.intermingled, .stranded.datasets, fixed_panel_width, .verbosity)), names=names(.plotted.region)), both_strands)
+  .panel.info = FinalizePanelsDimensions(structure(lapply(names(.tracks.listed), function(.strand) OrganizePanelsDimensions(names(.tracks.listed[[.strand]]), .min.wordlength.left.panel, replicate_names, print_one_line_sample_names, incl_first_panel, .plot.height.parameters[[.strand]], .feature.names.font.size, which(!is.na(.letter.heights)), .rec.font.sizes, scale_font_size, .horizontal.panels.list, .panel.font.size.list, .panels.list[[.strand]], .plot.widths.cm, .panel.separators, .strand, both_strands, .strands.intermingled, .stranded.datasets, fixed_panel_width, .verbosity)), names=names(.tracks.listed)), both_strands) #@ names(.plotted.region) -> names(.tracks.listed)
   .plot.width.parameters = .panel.info[[1]][['plot.width.parameters']]
   .full.width.cm = .plot.width.parameters[['full.width.cm']]
   if (!EvaluateNumericValue(.full.width.cm, positive_val=TRUE, min_val=5, max_val=50, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'full_width_cm', 'Full Plot Width'), .verbosity)){ return() }
@@ -409,9 +422,12 @@ seqNdisplay = function(
     .feature.names.font.size = min(.feature.names.font.size, min(unlist(lapply(.panel.info[[1]][['panel.font.size.list']], min, na.rm=TRUE)), na.rm=TRUE))
   }
   if (!EvaluateNumericValue(.feature.names.font.size, positive_val=TRUE, min_val=4, max_val=12, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'feature_names_font_size', 'Feature Names Font Size'), .verbosity)){ return() }
-  #cat(paste('.feature.names.font.size:',.feature.names.font.size), '\n') #@
   if (is.null(annot_panel_font_size)){
-    .annot.panel.font.size = max(unlist(lapply(.panel.info[[1]][['panel.font.size.list']], max, na.rm=TRUE)), na.rm=TRUE)
+    if (print_one_line_sample_names){
+      .annot.panel.font.size = max(unlist(lapply(.panel.info[[1]][['panel.font.size.list']], function(x) mean(x[-1], na.rm=T))), na.rm=TRUE) #@
+    }else{
+      .annot.panel.font.size = round(max(unlist(lapply(.panel.info[[1]][['panel.font.size.list']], mean, na.rm=TRUE)), na.rm=TRUE), 0) #@
+    }
   }else{
     .annot.panel.font.size = annot_panel_font_size
   }
@@ -433,10 +449,22 @@ seqNdisplay = function(
   #### -> load tracks
   if (is.null(preloaded_tracks)){
     if (!dummy_plot){
-      if (.verbosity > 0){ cat(paste('loading', paste(paste(.plotted.samples[1:(length(.plotted.samples)-1)], collapse=', '), '&', .plotted.samples[length(.plotted.samples)]), 'tracks from', paste(names(.plotted.region), collapse=' & '), 'strand(s)'), '\n') }
-      .tracks = structure(lapply(names(.plotted.region), function(.strand) LoadTracks(.plotted.region[[.strand]], datasets, bigwigs, bigwig_dirs, parameters, .verbosity)), names=names(.plotted.region))
+      if (.verbosity > 0){
+        if (length(.plotted.samples) > 1){
+          cat(paste('loading', paste(paste(.plotted.samples[1:(length(.plotted.samples)-1)], collapse=', '), '&', .plotted.samples[length(.plotted.samples)]), 'tracks from', paste(names(.tracks.listed), collapse=' & '), 'strand(s)'), '\n')
+        }else{
+          cat(paste('loading', paste(paste(.plotted.samples[1:(length(.plotted.samples)-1)], collapse=', ')), 'tracks from', paste(names(.tracks.listed), collapse=' & '), 'strand(s)'), '\n')
+        }
+      }
+      .tracks = structure(lapply(names(.tracks.listed), function(.strand) LoadTracks(.plotted.region[[.strand]], datasets, bigwigs, bigwig_dirs, parameters, .verbosity)), names=names(.tracks.listed)) #@ names(.plotted.region) -> names(.tracks.listed)
     }else{
-      if (.verbosity > 0){ cat(paste('dummy plotting, so not loading', paste(paste(.plotted.samples[1:(length(.plotted.samples)-1)], collapse=', '), '&', .plotted.samples[length(.plotted.samples)]), 'tracks from', paste(names(.plotted.region), collapse=' & '), 'strand(s)'), '\n') }
+      if (.verbosity > 0){
+        if (length(.plotted.samples) > 1){
+          cat(paste('dummy plotting, so not loading', paste(paste(.plotted.samples[1:(length(.plotted.samples)-1)], collapse=', '), '&', .plotted.samples[length(.plotted.samples)]), 'tracks from', paste(names(.tracks.listed), collapse=' & '), 'strand(s)'), '\n')
+        }else{
+          cat(paste('dummy plotting, so not loading', paste(paste(.plotted.samples[1:(length(.plotted.samples)-1)], collapse=', ')), 'tracks from', paste(names(.tracks.listed), collapse=' & '), 'strand(s)'), '\n')
+        }
+      }
       .tracks = .tracks.listed
     }
     if (output_tracks & !output_parameters){
@@ -604,7 +632,6 @@ PlotWidths = function(panels_max_width_cm, scale_panel_width_cm, margin_width_cm
     }
   }
   if (is.null(.margin.width.cm)){
-    #@cat(paste0("WARNING: 'margin_width_cm' argument is set to '", margin_width_cm, "'; it should be a positive numeric value (recommended between 0 and 0.25 cm); automatically setting to 0.05 cm"), '\n')
     .arg.name = ifelse(interface=='R', '"margin_width_cm"', '"Margins Width"')
     .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', .arg.name,  ' argument is set to ', margin_width_cm, '; it should be a positive numeric value (recommended between 0 and 0.25 cm); automatically setting to 0.05 cm')
     .margin.width.cm = 0.05
@@ -619,7 +646,6 @@ PlotWidths = function(panels_max_width_cm, scale_panel_width_cm, margin_width_cm
       }
     }
     if (is.null(.scale.panel.width.cm)){
-      #@cat(paste0("ERROR: 'scale_panel_width_cm' argument is set to '", scale_panel_width_cm, "'; it should be either a numeric value (recommended between 0.5 and 2 cm) or set to 'auto'"), '\n')
       .arg.name = ifelse(interface=='R', '"scale_panel_width_cm"', '"Tracks Scale Width"')
       .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', .arg.name, ' argument is set to ', scale_panel_width_cm, '; it should be either a numeric value (recommended between 0.5 and 2 cm) or set to "auto"')
     }
@@ -635,7 +661,6 @@ PlotWidths = function(panels_max_width_cm, scale_panel_width_cm, margin_width_cm
     }
   }
   if (is.null(.panels.max.width.cm)){
-    #@cat(paste0("ERROR: 'panels_max_width_cm' argument is set to '", panels_max_width_cm, "'; it should be either a numeric value (recommended between 1.5 and 6 cm) or set to 'auto'"), '\n')
     .arg.name = ifelse(interface=='R', '"panels_max_width_cm"', '"Panels Width"')
     .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', .arg.name, ' argument is set to ', panels_max_width_cm, '; it should be either a numeric value (recommended between 1.5 and 6 cm) or set to "auto"')
   }
@@ -654,9 +679,6 @@ PlotWidths = function(panels_max_width_cm, scale_panel_width_cm, margin_width_cm
         .full.width.cm = .panels.max.width.cm + .scale.panel.width.cm + .track.width.cm + 2 * .margin.width.cm
       }
     }else{
-      #@cat(paste0("ERROR: at least one of the arguments 'full_width_cm' and 'track_width_cm' should be assigned a numeric value (recommended between 5 and 25 cm)"), '\n')
-      #@cat(paste0("\t", "'full_width_cm': ", full_width_cm), '\n')
-      #@cat(paste0("\t", "'track_width_cm': ", track_width_cm), '\n')
       .arg.name1 = ifelse(interface=='R', '"full_width_cm"', '"Full Plot Width"')
       .arg.name2 = ifelse(interface=='R', '"track_width_cm"', '"Tracks Width"')
       .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'at least one of the arguments ', .arg.name1, ' and ', .arg.name2, ' should be assigned a numeric value (recommended between 5 and 25 cm)',
@@ -671,10 +693,6 @@ PlotWidths = function(panels_max_width_cm, scale_panel_width_cm, margin_width_cm
           .track.width.cm = .full.width.cm - .panels.max.width.cm - .scale.panel.width.cm - 2 * .margin.width.cm
         }else{
           if (.full.width.cm != .panels.max.width.cm + .scale.panel.width.cm + .track.width.cm + 2 * .margin.width.cm){
-            #@cat(paste0("ERROR: the provided 'width' arguments do not fit together"), '\n')
-            #@cat(paste0("\t", "the following expression needs to be true:"), '\n')
-            #@cat(paste0("\t", "full_width_cm = panels_max_width_cm + scale_panel_width_cm + track_width_cm + 2 * margin_width_cm"), '\n')
-            #@cat(paste0("\t", "consider setting one of the arguments 'full_width_cm' or 'track_width_cm' to NULL"), '\n')
             .arg.name1 = ifelse(interface=='R', '"full_width_cm"', '"Full Plot Width"')
             .arg.name2 = ifelse(interface=='R', '"track_width_cm"', '"Tracks Width"')
             .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'the provided "width" arguments do not fit together',
@@ -684,9 +702,6 @@ PlotWidths = function(panels_max_width_cm, scale_panel_width_cm, margin_width_cm
           }
         }
         if (sign(.track.width.cm) <= 0){
-          #@cat(paste0("ERROR: the calculated 'track_width_cm' argument is negative"), '\n')
-          #@cat(paste0("\t", "the following expression needs to be true:"), '\n')
-          #@cat(paste0("\t", "full_width_cm = panels_max_width_cm + scale_panel_width_cm + track_width_cm + 2 * margin_width_cm"), '\n')
           .arg.name = ifelse(interface=='R', '"track_width_cm"', '"Tracks Width"')
           .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'the calculated ', .arg.name, ' argument is negative',
                                   '\n', '\t', '.) the following expression needs to be true:',
@@ -695,28 +710,22 @@ PlotWidths = function(panels_max_width_cm, scale_panel_width_cm, margin_width_cm
         }
       }
       if (.panels.max.width.cm==-1){
-        #@cat(paste0("ERROR: 'panels_max_width_cm' argument is set to '", panels_max_width_cm, "', which is only accepted if 'full_width_cm=NULL' in which case it will be calculated based in the 'best' organization of panels"), "\n")
-        #@cat(paste0("\t", "if 'full_width_cm' is correctly set to '", full_width_cm, " cm' change 'panels_max_width_cm' to the max width of panels in centimeters (recommended numeric value between 1.5-6)"), "\n")
         .arg.name1 = ifelse(interface=='R', '"panels_max_width_cm"', '"Panels Width"')
         .arg.name2 = ifelse(interface=='R', '"full_width_cm"', '"Full Plot Width"')
         .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', .arg.name1, ' argument is set to ', panels_max_width_cm, ', which is only accepted if ', .arg.name2, ' is NULL in which case it will be calculated based on the "optimal" organization of panels',
                                 '\n', '\t', '.) if ', .arg.name2,' is correctly set to ', full_width_cm, ' cm, then change ', .arg.name1, ' to the max width of panels in centimeters (recommended numeric value between 1.5-6)')
       }
       if (.scale.panel.width.cm==-1){
-        #@cat(paste0("ERROR: 'scale_panel_width_cm' argument is set to '", scale_panel_width_cm, "', which is only accepted if 'full_width_cm=NULL'"), "\n")
-        #@cat(paste0("\t", "if 'full_width_cm' is correctly set to '", full_width_cm, " cm' change 'scale_panel_width_cm' to the desired width of scale panels in centimeters (recommended numeric value between 0.5-2)"), "\n")
         .arg.name1 = ifelse(interface=='R', '"scale_panel_width_cm"', '"Tracks Scale Width"')
         .arg.name2 = ifelse(interface=='R', '"full_width_cm"', '"Full Plot Width"')
         .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', .arg.name1, ' argument is set to ', scale_panel_width_cm, ', which is only accepted if ', .arg.name2, ' is NULL',
                                 '\n', '\t', '.) if ', .arg.name2,' is correctly set to ', full_width_cm, ' cm, then change ', .arg.name1, ' to the desired width of scale panels in centimeters (recommended numeric value between 0.5-2)')
       }
     }else{
-      #@cat(paste0("ERROR: 'full_width_cm' argument is set to '", full_width_cm, "'; it should be either a positive numeric value (recommended between 5 and 25 cm) or set to NULL"), '\n')
       .arg.name = ifelse(interface=='R', '"full_width_cm"', '"Full Plot Width"')
       .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', .arg.name, ' argument is set to ', full_width_cm, '; it should be either a positive numeric value (recommended between 5 and 25 cm) or set to NULL')
     }
   }else{
-    #@cat(paste0("ERROR: 'full_width_cm' argument is set to '", full_width_cm, "'; it should be either a positive numeric value (recommended between 5 and 25 cm) or set to NULL"), '\n')
     .arg.name = ifelse(interface=='R', '"full_width_cm"', '"Full Plot Width"')
     .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', .arg.name, ' argument is set to ', full_width_cm, '; it should be either a positive numeric value (recommended between 5 and 25 cm) or set to NULL')
   }
@@ -761,7 +770,6 @@ RegionGRanges = function(locus, tracks_width, feature=NULL, annotations=NULL, bi
     if (is.na(.first.annot)){
       .first.annot = which(sapply(names(annotations), function(x) ifelse(length(which(grepl(paste0('^',feature,','), S4Vectors::mcols(annotations[[x]])$name) | grepl(paste0(',',feature, '$'), S4Vectors::mcols(annotations[[x]])$name) | grepl(paste0(',',feature, ','), S4Vectors::mcols(annotations[[x]])$name)))>0, T, F)))[1]
       if (is.na(.first.annot)){
-        #@cat('can\'t find your feature in the annotation - aborting', '\n')
         .arg.name = ifelse(interface=='R', '"feature"', '"locus"')
         .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'can\'t find your ', .arg.name, ' name in the annotation - aborting')
       }else{
@@ -776,7 +784,6 @@ RegionGRanges = function(locus, tracks_width, feature=NULL, annotations=NULL, bi
       .chrom = unique(as.character(GenomeInfoDb::seqnames(.feature.annot)))
       .strand = unique(as.character(BiocGenerics::strand(.feature.annot)))
       if (length(.chrom) > 1 | length(.strand) > 1){
-        #@cat('the feature name is ambiguous - aborting', '\n')
         .arg.name = ifelse(interface=='R', '"feature"', '"locus"')
         .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'the ', .arg.name, ' name is ambiguous - aborting')
       }
@@ -790,7 +797,6 @@ RegionGRanges = function(locus, tracks_width, feature=NULL, annotations=NULL, bi
     .chrom.end = as.integer(locus[4])
     extra_space=c(0,0)
   }else{
-    #@cat('the provided information is incomplete - aborting', '\n')
     .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'the provided information about the locus of interest is incomplete - aborting')
   }
   if (length(.messages[['errors']]) == 0){
@@ -800,7 +806,6 @@ RegionGRanges = function(locus, tracks_width, feature=NULL, annotations=NULL, bi
     }else{
       if (bin_start < .chrom.start | bin_start > .chrom.end){
         .bin.start = ifelse(.strand=='+', .chrom.start, .chrom.end)
-        #@cat(paste0('the set bin_start is outside of the plotted region - setting to ', .bin.start), '\n')
         .arg.name = ifelse(interface=='R', '"bin_start"', '"Bins Center"')
         .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', 'the set ',  .arg.name, ' is outside of the plotted region - setting to ', .bin.start)
       }
@@ -1126,29 +1131,23 @@ ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FA
   }
   .var.name2 = deparse(substitute(name_vector))
   if (missing(.var.name2)){
-    #@cat(paste0('ERROR: ', 'no supplied "', .var.name2, '" argument - aborting'), '\n')
     .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'no supplied "', .var.name2, '" argument - aborting')
   }else if (is.null(.name.vector)){
-    #@cat(paste0('ERROR: ', '"', .var.name2, '" argument is NULL - aborting'), '\n')
     .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', '"', .var.name2, '" argument is NULL - aborting')
   }
   if (missing(.var.name1)){
     .var.name1 = ifelse(is.null(alt_par_name), .var.name1, alt_par_name)
     if (is.null(default_value)){
-      #@cat(paste0('ERROR: ', 'no supplied "', .var.name1, '" argument with no default - aborting'), '\n')
       .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'no supplied "', .var.name1, '" argument with no default - aborting')
     }else{
-      #@cat(paste0('WARNING: ', 'no supplied "', .var.name1, '" argument - automatically setting to ', default_value), '\n')
       .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', 'no supplied "', .var.name1, '" argument - automatically setting to ', default_value)
       parameter = default_value
     }
   }else if (is.null(parameter)){
     .var.name1 = ifelse(is.null(alt_par_name), .var.name1, alt_par_name)
     if (length(default_value) > 1){
-      #@cat(paste0('WARNING: ', '"', .var.name1, '" argument is NULL - automatically setting to ', paste(paste(default_value[2:length(default_value)-1], collapse=', '), '&', default_value[length(default_value)])), '\n')
       .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', '"', .var.name1, '" argument is NULL - automatically setting to ', paste(paste(default_value[2:length(default_value)-1], collapse=', '), '&', default_value[length(default_value)]))
     }else{
-      #@cat(paste0('WARNING: ', '"', .var.name1, '" argument is NULL - automatically setting to ', default_value), '\n')
       .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', '"', .var.name1, '" argument is NULL - automatically setting to ', default_value)
     }
     parameter = default_value
@@ -1160,93 +1159,70 @@ ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FA
       if (expect_standard=='logical'){
         if (!all(is.logical(parameter))){
           if (revert_to_default & !is.null(default_value)){
-            #@cat(paste0('WARNING: ', '"', .var.name1, '" argument should be a logical vector - using default values'), '\n')
-            #@cat(paste('\t', paste(default_value, collapse=',')), '\n')
             .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be a logical vector - using default values',
                                                                                   '\n', '\t', '.) ', paste(default_value, collapse=','))
             parameter = default_value
           }else{
-            #@cat(paste0('ERROR: ', '"', .var.name1, '" argument should be a logical vector - aborting'), '\n')
             .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be a logical vector - aborting')
           }
         }
       }else if (expect_standard=='integer'){
         if (!all(is.integer(parameter))){
           if (revert_to_default & !is.null(default_value)){
-            #@cat(paste0('WARNING: ', '"', .var.name1, '" argument should be a integer vector - using default values'), '\n')
-            #@cat(paste('\t', paste(default_value, collapse=',')), '\n')
             .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be an integer vector - using default values',
                                                                                   '\n', '\t', '.) ', paste(default_value, collapse=','))
             parameter = default_value
           }else{
-            #@cat(paste0('ERROR: ', '"', .var.name1, '" argument should be an integer vector - aborting'), '\n')
             .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be an integer vector - aborting')
           }
         }
       }else if (expect_standard=='numeric'){
         if (!all(is.numeric(parameter))){
           if (revert_to_default & !is.null(default_value)){
-            #@cat(paste0('WARNING: ', '"', .var.name1, '" argument should be a numeric vector - using default values'), '\n')
-            #@cat(paste('\t', paste(default_value, collapse=',')), '\n')
             .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be a numeric vector - using default values',
                                                                                   '\n', '\t', '.) ', paste(default_value, collapse=','))
             parameter = default_value
           }else{
-            #@cat(paste0('ERROR: ', '"', .var.name1, '" argument should be a numeric vector - aborting'), '\n')
             .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be a numeric vector - aborting')
           }
         }
       }else if (expect_standard=='color'){
         if (!all(is.color(parameter))){
           if (revert_to_default & !is.null(default_value)){
-            #@cat(paste0('WARNING: ', '"', .var.name1, '" argument should be a color vector - using default values'), '\n')
-            #@cat(paste('\t', paste(default_value, collapse=',')), '\n')
             .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be a color vector - using default values',
                                                                                   '\n', '\t', '.) ', paste(default_value, collapse=','))
             parameter = default_value
           }else{
-            #@cat(paste0('ERROR: ', '"', .var.name1, '" argument should be a color vector - aborting'), '\n')
             .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be a color vector - aborting')
           }
         }
       }else if (expect_standard=='character'){
         if (!all(is.character(parameter))){
           if (revert_to_default & !is.null(default_value)){
-            #@cat(paste0('WARNING: ', '"', .var.name1, '" argument should be a character vector - using default values'), '\n')
-            #@cat(paste('\t', paste(default_value, collapse=',')), '\n')
             .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be a character vector - using default values',
                                                                                   '\n', '\t', '.) ', paste(default_value, collapse=','))
             parameter = default_value
           }else{
-            #@cat(paste0('ERROR: ', '"', .var.name1, '" argument should be a character vector - aborting'), '\n')
             .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be a character vector - aborting')
           }
         }
       }else{
-        #@cat(paste0('ERROR: ', '"expect_standard" argument set to ', expect_standard, ' should be defined as either "logical", "character", "color", "integer" or "numeric" - aborting'), '\n')
         .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', '"expect_standard" argument set to ', expect_standard, ' should be defined as either "logical", "character", "color", "integer" or "numeric" - aborting')
       }
     }else if (!is.null(expect)){
       if (!identical(setdiff(parameter, expect), numeric(0)) & !identical(setdiff(parameter, expect), character(0))){
         if (!is.null(default_value)){
-          #@cat(paste0('WARNING: ', '"', .var.name1, '" argument contains unexpected values [',  paste(setdiff(parameter, expect), collapse=', '), '] - automatically setting to ', default_value), '\n')
-          #@cat('allowed values are:', '\n')
-          #@cat(paste(paste('\t', expect), collapse='\n'), '\n')
           .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', '"', .var.name1, '" argument contains unexpected values [',  paste(setdiff(parameter, expect), collapse=', '), '] - automatically setting to ', default_value,
                                                                                 '\n', '\t', '.) allowed values are:',
                                                                                 '\n', paste(paste('\t', '\t', expect), collapse='\n'))
           parameter = default_value
         }else{
-          #@cat(paste0('ERROR: ', '"', .var.name1, '" argument contains unexpected values [',  paste(setdiff(parameter, expect), collapse=', '), '] with no default replacement(s) - aborting'), '\n')
-          #@cat('allowed values are:', '\n')
-          #@cat(paste(paste('\t', expect), collapse='\n'), '\n')
           .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', '"', .var.name1, '" argument contains unexpected values [',  paste(setdiff(parameter, expect), collapse=', '), '] with no default replacement(s) - aborting',
                                                                                 '\n', '\t', '.) allowed values are:',
                                                                                 '\n', paste(paste('\t', '\t', expect), collapse='\n'))
         }
       }
     }else{
-      #@cat('ERROR: ', 'either "expect_standard" or "expect" arguments should be defined - aborting', '\n')
       .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'either "expect_standard" or "expect" arguments should be defined - aborting')
     }
   }
@@ -1258,7 +1234,6 @@ ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FA
         if (all(sort(names(parameter)) == sort(.name.vector))){
           .parameter = parameter[.name.vector]
         }else{
-          #@cat(paste0('ERROR: ', 'names of "', .var.name1, '" argument and "', .var.name2, '" are not in correspondance - aborting'), '\n')
           .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'names of "', .var.name1, '" argument and "', .var.name2, '" are not in correspondance - aborting')
         }
       }else{
@@ -1269,11 +1244,9 @@ ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FA
         if (identical(setdiff(.name.vector, names(parameter)), numeric(0))){
           .parameter = parameter[.name.vector]
         }else{
-          #@cat(paste0('ERROR: ', 'names of "', .var.name1, '" argument and "', .var.name2, '" are not in correspondance - aborting'), '\n')
           .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'names of "', .var.name1, '" argument and "', .var.name2, '" are not in correspondance - aborting')
         }
       }else{
-        #@cat(paste0('ERROR: ', 'lengths of "', .var.name1, '" and "', .var.name2, '" arguments are not in correspondance - aborting'), '\n')
         .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'lengths of "', .var.name1, '" and "', .var.name2, '" arguments are not in correspondance - aborting')
       }
     }
@@ -1302,7 +1275,6 @@ EvaluateNumericValue = function(num_val, positive_val, min_val, max_val, turn_er
     }else if (length(num_val) == length(positive_val)){
       .positive.val = positive_val
     }else{
-      #@cat(paste0(ifelse(turn_errors_to_warnings, 'WARNING: ', 'ERROR: '), .var.name1, ' = ', paste(num_val, collapse=','), ';', '  there is a discrepancy between the assigned and expected values - ', ifelse(turn_errors_to_warnings, 'setting to default value', 'aborting')))
       .messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]][[length(.messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]])+1]] = paste0(' - ', .var.name1, ' = ', paste(num_val, collapse=','), ';', '  there is a discrepancy between the assigned and expected values - ', ifelse(turn_errors_to_warnings, 'setting to default value', 'aborting'))
       PrintOutput(.messages, verbosity, no_line_change=turn_errors_to_warnings)
       return(FALSE)
@@ -1312,7 +1284,6 @@ EvaluateNumericValue = function(num_val, positive_val, min_val, max_val, turn_er
     }else if (length(num_val) == length(min_val)){
       .min.val = min_val
     }else{
-      #@cat(paste0(ifelse(turn_errors_to_warnings, 'WARNING: ', 'ERROR: '), .var.name1, ' = ', paste(num_val, collapse=','), ';', '  there is a discrepancy between the assigned and expected values - ', ifelse(turn_errors_to_warnings, 'setting to default value ', 'aborting\n')))
       .messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]][[length(.messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]])+1]] = paste0(' - ', .var.name1, ' = ', paste(num_val, collapse=','), ';', '  there is a discrepancy between the assigned and expected values - ', ifelse(turn_errors_to_warnings, 'setting to default value', 'aborting'))
       PrintOutput(.messages, verbosity, no_line_change=turn_errors_to_warnings)
       return(FALSE)
@@ -1322,14 +1293,12 @@ EvaluateNumericValue = function(num_val, positive_val, min_val, max_val, turn_er
     }else if (length(num_val) == length(max_val)){
       .max.val = max_val
     }else{
-      #@cat(paste0(ifelse(turn_errors_to_warnings, 'WARNING: ', 'ERROR: '), .var.name1, ' = ', paste(num_val, collapse=','), ';', '  there is a discrepancy between the assigned and expected values - ', ifelse(turn_errors_to_warnings, 'setting to default value ', 'aborting\n')))
       .messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]][[length(.messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]])+1]] = paste0(' - ', .var.name1, ' = ', paste(num_val, collapse=','), ';', '  there is a discrepancy between the assigned and expected values - ', ifelse(turn_errors_to_warnings, 'setting to default value', 'aborting'))
       PrintOutput(.messages, verbosity, no_line_change=turn_errors_to_warnings)
       return(FALSE)
     }
     if (identical(as.logical(num_val >= 0), .positive.val)){
       if (any(num_val < .min.val) | any(num_val > .max.val)){
-        #@cat(paste0('WARNING: ', .var.name1, ' = ', paste(num_val, collapse=','), ';'), '\n')
         .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', .var.name1, ' = ', paste(num_val, collapse=','), ':')
         for (i in 1:length(num_val)){
           if ((num_val < .min.val)[i] | (num_val > .max.val)[i]){
@@ -1340,7 +1309,6 @@ EvaluateNumericValue = function(num_val, positive_val, min_val, max_val, turn_er
       PrintOutput(.messages, verbosity)
       return(TRUE)
     }else{
-      #@cat(paste0(ifelse(turn_errors_to_warnings, 'WARNING: ', 'ERROR: '), .var.name1, ' = ', paste(num_val, collapse=','), ' - ', ifelse(turn_errors_to_warnings, 'setting to default value', 'aborting'), ';'), '\n')
       .messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]][[length(.messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]])+1]] = paste0(' - ', .var.name1, ' = ', paste(num_val, collapse=','), ' - ', ifelse(turn_errors_to_warnings, 'setting to default value', 'aborting'), ':'  )
       for (i in 1:length(num_val)){
         if ((num_val >=0)[i] != .positive.val[i]){
@@ -1386,7 +1354,6 @@ PanelFontSizeList = function(samples, panel_font_sizes, panel_font_size_list, ve
       if (length(panel_font_sizes) %in% c(1,2,.max.n.panels)){
         .panel.font.sizes = as.numeric(ScrutinizeExpandAndNameParameter(panel_font_sizes, 1:length(panel_font_sizes), use_names=FALSE, default_value=NULL, expect_standard='numeric', expect=NULL, revert_to_default=FALSE, alt_par_name=ifelse(interface=='R', 'panel_font_sizes', 'Panel Text Font Size(s)'), verbosity=verbosity))
       }else{
-        #@cat(paste0('WARNING: "panel_font_sizes" numeric vector should be of length 1', ifelse(.max.n.panels > 2, ', 2 or ', ' or '), .max.n.panels, '; it has a length of ', length(panel_font_sizes), ' - will be automatically determined instead'), '\n')
         .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(ifelse(interface=='R', '"panel_font_sizes"', '"Panel Text Font Size(s)"'), ' numeric vector should be of length 1', ifelse(.max.n.panels > 2, ', 2 or ', ' or '), .max.n.panels, '; it has a length of ', length(panel_font_sizes), ' - will be automatically determined instead')
       }
     }
@@ -1424,17 +1391,14 @@ PanelFontSizeList = function(samples, panel_font_sizes, panel_font_size_list, ve
         }
         if (.no.numeric){
           .panel.font.size.list = NULL
-          #@cat(paste0('WARNING: "panel_font_size_list" should contain numeric values - will be automatically determined instead'), '\n')
           .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(ifelse(interface=='R', '"panel_font_size_list"', '"Detailed Panel Text Font Sizes"'), ' should contain numeric values - will be automatically determined instead')
         }
         if (.no.fit){
           .panel.font.size.list = NULL
-          #@cat(paste0('WARNING: "panel_font_size_list" does not fit the dataset - will be automatically determined instead'), '\n')
           .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(ifelse(interface=='R', '"panel_font_size_list"', '"Detailed Panel Text Font Sizes"'), ' does not fit the dataset - will be automatically determined instead')
         }
       }
     }else{
-      #@cat(paste0('WARNING: "panel_font_size_list" is not a list - will be automatically determined instead'), '\n')
       .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(ifelse(interface=='R', '"panel_font_size_list"', '"Detailed Panel Text Font Sizes"'), ' is not a list - will be automatically determined instead')
     }
   }
@@ -1472,17 +1436,14 @@ HorizontalPanelsList = function(samples, horizontal_panels_list, verbosity, inte
         }
         if (.no.logical){
           .horizontal.panels.list = NULL
-          #@cat(paste0('WARNING: "horizontal_panels_list" should contain logical values - will be automatically determined instead'), '\n')
           .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(ifelse(interface=='R', '"horizontal_panels_list"', '"Panels Text Orientation"'), ' should contain logical values - will be automatically determined instead')
         }
         if (.no.fit){
           .horizontal.panels.list = NULL
-          #@cat(paste0('WARNING: "horizontal_panels_list" does not fit the dataset - will be automatically determined instead'), '\n')
           .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(ifelse(interface=='R', '"horizontal_panels_list"', '"Panels Text Orientation"'), ' does not fit the dataset - will be automatically determined instead')
         }
       }
     }else{
-      #@cat(paste0('WARNING: "horizontal_panels_list" is not a list - will be automatically determined instead'), '\n')
       .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(ifelse(interface=='R', '"horizontal_panels_list"', '"Panels Text Orientation"'), ' is not a list - will be automatically determined instead')
     }
   }
@@ -1510,12 +1471,10 @@ ForceScaleList = function(samples, force_scale, strands, verbosity, interface){
           .force.scale.list[[strands]] = .force.scale
         }
       }else{
-        #@cat(paste0('WARNING: length or sign of "force_scale" numeric vector does not fit the number of samples - the scale will not be forced'), '\n')
         .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0('length or sign of ', ifelse(interface=='R', '"force_scale"', '"Manual Scaling Max Value(s)"'), ' numeric vector does not fit the number of samples - the scale will not be forced')
       }
     }else if (is.list(force_scale)){
       if (strands == '+-'){ .strands = c('+', '-') }else{ .strands = strands }
-      #@if (identical(sort(names(force_scale)), sort(.strands))){
       .no.fit = FALSE
       .no.numeric = FALSE
       .force.scale.list = list()
@@ -1535,20 +1494,13 @@ ForceScaleList = function(samples, force_scale, strands, verbosity, interface){
       }
       if (.no.numeric){
         .force.scale.list = NULL
-        #@cat(paste0('WARNING: "force_scale" list contains non-numeric values - the scale will not be forced'), '\n')
         .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(ifelse(interface=='R', '"force_scale"', '"Manual Scaling Max Value(s)"'), ' list contains non-numeric values - the scale will not be forced')
       }
       if (.no.fit){
         .force.scale.list = NULL
-        #@cat(paste0('WARNING: "force_scale" list length of numeric vectors do not fit the number of samples - the scale will not be forced'), '\n')
         .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(ifelse(interface=='R', '"force_scale"', '"Manual Scaling Max Value(s)"'), ' list length of numeric vectors do not fit the number of samples - the scale will not be forced')
       }
-      #}else{
-        #@cat(paste0('WARNING: "force_scale" list does not have the correct strand information - the scale will not be forced'), '\n')
-        #.messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(ifelse(interface=='R', '"force_scale"', '"Manual Scaling Max Value(s)"'), ' list does not have the correct strand information - the scale will not be forced')
-      #}
     }else{
-      #@cat(paste0('WARNING: "force_scale" is not a list or a numeric value/vector - the scale will not be forced'), '\n')
       .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(ifelse(interface=='R', '"force_scale"', '"Manual Scaling Max Value(s)"'), ' is not a list or a numeric value/vector - the scale will not be forced')
     }
   }
@@ -1573,12 +1525,35 @@ SortUnlistedSampleNames = function(unlisted_which_sample, unlisted_sample_names,
   for (i in 1:length(.subsamples)){
     unlisted.sample.name = grep(.subsamples[i], unlisted.sample.name, fixed=TRUE, value=T)
   }
+  #@ ->
+  if (length(unlisted.sample.name)>1){
+    .sample.name.matrix = do.call('rbind', lapply(unlisted.sample.name, function(x) strsplit(x, split='.', fixed=T)[[1]]))
+    unlisted.sample.name.index = 1:nrow(.sample.name.matrix)
+    for (j in 1:ncol(.sample.name.matrix)){
+      for (i in 1:length(.subsamples)){
+        if (any(.sample.name.matrix[,j]==.subsamples[i])){
+          unlisted.sample.name.index = intersect(unlisted.sample.name.index, which(.sample.name.matrix[,j]==.subsamples[i]))
+        }
+      }
+    }
+    unlisted.sample.name = unlisted.sample.name[unlisted.sample.name.index]
+  }
+  #@ <-
   if (incl_rep){
     unlisted.sample.name = paste0(unlisted.sample.name, '.rep', .n.rep)
   }
   return(unlisted.sample.name)
 }
 
+
+if (FALSE){
+#@ ->
+.tracks.listed.converted = list()
+.sample.name.matrix = do.call('rbind', lapply(.tracks.listed[['+']][["3'end-seq"]], function(x) strsplit(x, split='.', fixed=T)[[1]]))
+rles = lapply(apply(.sample.name.matrix, 2, Rle), function(x) structure(runLength(x), names=runValue(x)))
+.tracks.listed.converted[['+']][["3'end-seq"]] = apply(.sample.name.matrix[,order(lengths(rles), decreasing=FALSE)], 1, paste, collapse='.')
+#@ <-
+}
 
 #' Unpack Samples
 #'
@@ -1614,8 +1589,6 @@ UnpackSamples = function(seqtype, samples, which_samples, which_reps, bigwig_lis
         .incl.rep=T
         which_reps = NULL
       }else{
-        #@cat(paste0('ERROR: some, but not all sample names are specified by replicate number (i.e. ends with ".rep" followed by integer)'), '\n')
-        #@cat(paste(.unlisted.which.samples, collapse='\n'), '\n')
         .messages[['errors']][[length(.messages[['errors']])+1]] = paste0('some, but not all sample names are specified by replicate number (i.e. ends with ".rep" followed by integer)',
                                                                           '\n', paste(paste('\t', '.)', .unlisted.which.samples), collapse='\n'))
       }
@@ -1639,7 +1612,6 @@ UnpackSamples = function(seqtype, samples, which_samples, which_reps, bigwig_lis
         }
       }
     }
-    #@.error = FALSE
     bw.files = list()
     for (.sample.name in as.character(.unlisted.sample.names)){
       .subsample.names = strsplit(.sample.name, split='.', fixed=T)[[1]]
@@ -1660,13 +1632,9 @@ UnpackSamples = function(seqtype, samples, which_samples, which_reps, bigwig_lis
           if (.n.rep <= length(.reps)){
             .reps = .reps[.n.rep]
           }else{
-            #@cat('ERROR: the supplied replicate number does not exist', '\n')
-            #@cat(.sample.name, '\n')
-            #@cat(paste(.reps, collapse='\n'), '\n')
             .messages[['errors']][[length(.messages[['errors']])+1]] = paste0('the supplied replicate number does not exist',
                                                                               '\n', '\t', '.) ', .sample.name,
                                                                               '\n', paste(paste('\t', '\t', .reps), collapse='\n'))
-            #@.error = TRUE
           }
         }
         if (!is.null(which_reps)){
@@ -1679,13 +1647,9 @@ UnpackSamples = function(seqtype, samples, which_samples, which_reps, bigwig_lis
           bw.files[[.sample.rep.name]] = .bw.file
         }
       }else{
-        #@cat('ERROR: the supplied sample name does not exist', '\n')
-        #@cat(.sample.name, '\n')
-        #@cat(paste(as.character(.unlisted.sample.names), collapse='\n'), '\n')
         .messages[['errors']][[length(.messages[['errors']])+1]] = paste0('the supplied sample name does not exist',
                                                                           '\n', '\t', '.) ', .sample.name,
                                                                           '\n', paste(paste('\t', '\t', as.character(.unlisted.sample.names)), collapse='\n'))
-        #@.error = T
       }
     }
   }
@@ -1704,7 +1668,6 @@ UnpackSamples = function(seqtype, samples, which_samples, which_reps, bigwig_lis
 #' Internal function:
 #'
 LoadAndTransformDataForTrack = function(seqtype, plotted_region, samples, bigwigs, bigwig_dirs, parameters=NULL, get_subsamples=FALSE, print_order=FALSE, verbosity){
-  #@.messages = list('output'=list(), 'errors'=list(), 'warnings'=list())
   .chrom = as.character(GenomeInfoDb::seqnames(plotted_region))
   .strand = as.character(BiocGenerics::strand(plotted_region))
   .chrom.start = IRanges::start(plotted_region)
@@ -1763,7 +1726,6 @@ LoadAndTransformDataForTrack = function(seqtype, plotted_region, samples, bigwig
             cat(paste('\t', '\t', '\t', 'requested sample names:', paste(.unlisted.which.samples, collapse=', '), paste0('(', paste(.sample.rep.names, collapse=', '), ')') , sep='\t'), '\n')
           }
         }
-        #@PrintOutput(.messages, verbosity)
         return(NULL)
       }
       if (get_subsamples | print_order){
@@ -1777,17 +1739,47 @@ LoadAndTransformDataForTrack = function(seqtype, plotted_region, samples, bigwig
           cat(paste(sample.names, collapse='\n'), '\n')
         }
         if (get_subsamples){
-          #@PrintOutput(.messages, verbosity)
           return(sample.names)
         }else{
           cat('and exiting', '\n')
-          #@PrintOutput(.messages, verbosity)
           return()
         }
       }else{
         for (.sample.rep.name in .sample.rep.names){
           .bw.file = .bw.files[[.sample.rep.name]]
-          .bw.list[[.sample.rep.name]] = rtracklayer::import(.bw.file, which=GenomicRanges::GRanges(seqnames=.chrom, ranges=IRanges::IRanges(start=.chrom.start, end=.chrom.end)), as='NumericList')[[1]]
+          if (file.exists(.bw.file) | url.exists(.bw.file)){
+            .data.from.bw = tryCatch( expr = { rtracklayer::import(.bw.file, which=GenomicRanges::GRanges(seqnames=.chrom, ranges=IRanges::IRanges(start=.chrom.start, end=.chrom.end)), as='NumericList')[[1]] },
+                                       error = function(e){ FALSE }, #@ cat(paste('error1', .sample.rep.name), '\n');
+                                       warning = function(w){ FALSE }) #@ cat(paste('warning1', .sample.rep.name), '\n');
+            if (sum(.data.from.bw)==0){
+              if (is.logical(.data.from.bw)){
+                .alt.chrom = strsplit(.chrom, split='chr')[[1]][2]
+                .alt.data.from.bw = tryCatch(  expr = { rtracklayer::import(.bw.file, which=GenomicRanges::GRanges(seqnames=.alt.chrom, ranges=IRanges::IRanges(start=.chrom.start, end=.chrom.end)), as='NumericList')[[1]] },
+                                               error = function(e){ FALSE }, #@ cat(paste('error2', .sample.rep.name), '\n');
+                                               warning = function(w){ FALSE }) #@ cat(paste('warning2', .sample.rep.name), '\n');
+                if (sum(.alt.data.from.bw)==0){
+                  if (is.logical(.alt.data.from.bw)){
+                    .bw.list[[.sample.rep.name]] = rep(0, .chrom.end - .chrom.start + 1)
+                  }else{
+                    .bw.list[[.sample.rep.name]] = .alt.data.from.bw
+                  }
+                }else{
+                  .bw.list[[.sample.rep.name]] = .alt.data.from.bw
+                }
+              }else{
+                .bw.list[[.sample.rep.name]] = .data.from.bw
+              }
+            }else{
+              .bw.list[[.sample.rep.name]] = .data.from.bw
+            }
+          }else{
+            if (verbosity > 1){
+              cat('WARNING(s):', '\n')
+              cat(' - non-existing file', '\n')
+              cat(paste('\t', '.)', .bw.file), '\n')
+            }
+            .bw.list[[.sample.rep.name]] = rep(0, .chrom.end - .chrom.start + 1)
+          }
         }
         .bw.matrix = do.call(cbind, .bw.list)
         rownames(.bw.matrix) = .chrom.start:.chrom.end
@@ -1822,25 +1814,33 @@ LoadAndTransformDataForTrack = function(seqtype, plotted_region, samples, bigwig
             names(.batch) = colnames(.bw.matrix)
           }
           .batch = .batch[colnames(.bw.matrix)]  # order batch numbers according to order of .bw.matrix
-          if (!.log2.transform){ # if signals are not overall log2transformed, they need to be for the batch correction
-            .signs.bw.matrix = sign(.bw.matrix)
-            if (any(.signs.bw.matrix < 0)){
-              .abs.bw.matrix = abs(.bw.matrix) + .pseudo.count
-              if (any(.abs.bw.matrix < 1)){
-                .adj.pseudo.count = 1 - min(abs(.bw.matrix))
-                if (verbosity > 1){
-                  cat(paste0('WARNING(s):'), '\n')
-                  cat(paste0('\t', '.) ', 'automatically adjusting pseudocount from ', .pseudo.count, ' to ', .adj.pseudo.count, ' for ', seqtype, ' to allow batch correction, because the data contain a mix of positive and negative values'), '\n')
+          .batches = unique(.batch)
+          if (length(.batches) > 1){
+            if (!.log2.transform){ # if signals are not overall log2transformed, they need to be for the batch correction
+              .signs.bw.matrix = sign(.bw.matrix)
+              if (any(.signs.bw.matrix < 0)){
+                .abs.bw.matrix = abs(.bw.matrix) + .pseudo.count
+                if (any(.abs.bw.matrix < 1)){
+                  .adj.pseudo.count = 1 - min(abs(.bw.matrix))
+                  if (verbosity > 1){
+                    cat(paste0('WARNING(s):'), '\n')
+                    cat(paste0('\t', '.) ', 'automatically adjusting pseudocount from ', .pseudo.count, ' to ', .adj.pseudo.count, ' for ', seqtype, ' to allow batch correction, because the data contain a mix of positive and negative values'), '\n')
+                  }
+                  .pseudo.count = .adj.pseudo.count
                 }
-                .pseudo.count = .adj.pseudo.count
+                rm(.abs.bw.matrix)
               }
-              rm(.abs.bw.matrix)
+              .bw.matrix = .signs.bw.matrix * log2(abs(.bw.matrix) + .pseudo.count)
             }
-            .bw.matrix = .signs.bw.matrix * log2(abs(.bw.matrix) + .pseudo.count)
-          }
-          .bw.matrix = limma::removeBatchEffect(.bw.matrix, batch=.batch)
-          if (!.log2.transform){ # if signals are not overall log2transformed, they need to be for the batch correction, and then they are re-transformed afterwards
-            .bw.matrix = .signs.bw.matrix * (2^abs(.bw.matrix) - .pseudo.count)
+            .bw.matrix = limma::removeBatchEffect(.bw.matrix, batch=.batch)
+            if (!.log2.transform){ # if signals are not overall log2transformed, they need to be for the batch correction, and then they are re-transformed afterwards
+              .bw.matrix = .signs.bw.matrix * (2^abs(.bw.matrix) - .pseudo.count)
+            }
+          }else{
+            if (verbosity > 1){
+              cat(paste0('WARNING(s):'), '\n')
+              cat(paste0('\t', '.) ', 'batch correction is requested for ', seqtype, ' but no batch information is provided'), '\n')
+            }
           }
         }
         track.list = list()
@@ -1862,15 +1862,12 @@ LoadAndTransformDataForTrack = function(seqtype, plotted_region, samples, bigwig
             track.list[[.sample.rep.name]] = .bw.matrix[, .sample.rep.name]
           }
         }
-        #@PrintOutput(.messages, verbosity)
         return(track.list)
       }
     }else{
-      #@PrintOutput(.messages, verbosity)
       return()
     }
   }else{
-    #@PrintOutput(.messages, verbosity)
     return()
   }
 }
@@ -2070,8 +2067,6 @@ BuildScrutinizePlotSegmentOrder = function(plotting_segment_order, plotted_regio
   for (.strand in names(.plotting.segment.order)){
     .segment.summation[[.strand]] = sapply(c("header", "scale", "empty-spacer", "thickline-spacer", "line-spacer", "annotations", "unstranded-beds",names(datasets)), function(dataset_name) length((which(.plotting.segment.order[[.strand]]==dataset_name))))
     if (any(.segment.summation[[.strand]][c("header", "scale", "annotations", "unstranded-beds",names(datasets))] > 1)){
-      #@cat(paste0('ERROR: there can at maximum be one of the values "', paste(c("header", "scale", "annotations", "unstranded-beds",names(datasets)), collapse='", "'), '" in plotting_segment_order list - aborting'), '\n')
-      #@cat(paste0('"', paste(c("header", "scale", "annotations", "unstranded-beds",names(datasets)), collapse='", "')[which(.segment.summation[[.strand]][c("header", "scale", "annotations", "unstranded-beds",names(datasets))] > 1)], '" represented more than once'), '\n')
       if (verbosity > 0){
         cat('ERRORs:', '\n')
         cat(paste0(' - there can at maximum be one of the values "', paste(c("header", "scale", "annotations", "unstranded-beds",names(datasets)), collapse='", "'), '" in ', ifelse(interface=='R', '"plotting_segment_order"', '"Plotting Segment Order"'), ' list - aborting'), '\n')
@@ -2084,7 +2079,6 @@ BuildScrutinizePlotSegmentOrder = function(plotting_segment_order, plotted_regio
     .segment.summation.total = rowSums(as.data.frame(.segment.summation))
     if (.segment.summation.total[['header']] == 1){
       if (.segment.summation[['-']][['header']] == 1){
-        #@cat('ERROR: the "header" segment is placed in the minus strand plotting segments, it should be placed in the plus strand plotting segments - aborting', '\n')
         if (verbosity > 0){
           cat('ERRORs:', '\n')
           cat(paste0(' - the "header" segment is placed in the minus strand plotting segments, it should be placed in the plus strand plotting segments - aborting'), '\n')
@@ -2094,8 +2088,6 @@ BuildScrutinizePlotSegmentOrder = function(plotting_segment_order, plotted_regio
     }
     if (.segment.summation.total[['annotations']] > 0){
       if (.segment.summation.total[['annotations']] != 2){
-        #@cat('ERROR: if annotations should displayed the "annotations" segments should be present under plotting segments for both strands - aborting', '\n')
-        #@cat(paste('"annotations" segment only present under' ,ifelse(.segment.summation[['+']][['annotations']]==1, 'plus', 'minus'), 'strand'), '\n')
         if (verbosity > 0){
           cat('ERRORs:', '\n')
           cat(paste0(' - if annotations should displayed the "annotations" segments should be present under plotting segments for both strands - aborting'), '\n')
@@ -2218,7 +2210,11 @@ EstimatePlotHeights = function(annot_info, incl_feature_names, annotation_packin
     }else{
       .plotting.segment.order =  .plotting.segment.order
     }
-    .track.vector = unlist(lapply(.plotting.segment.order, function(.segment.type) if(.segment.type %in% names(plot_vertical_parameters)){plot_vertical_parameters[.segment.type]}else{structure(rep(plot_vertical_parameters['seq'], length(tracks_listed[[.segment.type]])), names=paste0(.segment.type, '_', tracks_listed[[.segment.type]]))} ))
+    if (!is.null(tracks_listed)){ #@ if/else added
+      .track.vector = unlist(lapply(.plotting.segment.order, function(.segment.type) if(.segment.type %in% names(plot_vertical_parameters)){plot_vertical_parameters[.segment.type]}else{structure(rep(plot_vertical_parameters['seq'], length(tracks_listed[[.segment.type]])), names=paste0(.segment.type, '_', tracks_listed[[.segment.type]]))} ))
+    }else{
+      .track.vector = NULL
+    }
     .n.tracks = sum(.track.vector)
     .min.tracks.annots = .n.tracks + .min.annot.heights.combined
     .max.tracks.annots = .n.tracks + .max.annot.heights.combined
@@ -2314,7 +2310,6 @@ RecommendedFontSizes = function(est_track_height_cm, est_min_annot_height, plot_
   .signal.axis = round(as.numeric(0.7*.max.font.size.std), 0)
   .annotation.features = round(as.numeric(6*.plot.vertical.parameters.cm['annot_text_segment']/0.24), 0)
   .recommended.font.sizes = structure(c(.max.font.size.std, .main, .sub, .scale, .genomic.axis, .signal.axis, .annotation.features), names=c('std', 'main', 'sub', 'scale', 'genomic_axis', 'signal_axis', 'annotation_features'))
-                                      #@ round(structure(.max.font.size.std * c(1, 0.6*plot_vertical_parameters['header'], 0.4*plot_vertical_parameters['header'], 0.4*plot_vertical_parameters['header'], 0.9*plot_vertical_parameters['scale'], 0.7, 1.1*plot_vertical_parameters['annot_text_segment']), names=c('std', 'main', 'sub', 'scale', 'genomic_axis', 'signal_axis', 'annotation_features')), 0)
   if (.recommended.font.sizes['std'] >= .recommended.font.sizes['main']){
     .recommended.font.sizes['std'] = max(.recommended.font.sizes['main']-1, min_font_size)
     .recommended.font.sizes['signal_axis'] = round(.recommended.font.sizes['std'] * 0.7, 0)
@@ -2624,13 +2619,15 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
   .n.chars.list = list()
   .heigths.cm.list = list()
   if (!is.null(panel_font_size_list)){
-    .font.size.range = min(unlist(panel_font_size_list)):max(unlist(panel_font_size_list))
+    .font.size.range = min(unlist(panel_font_size_list[dataset])):max(unlist(panel_font_size_list[dataset])) #@ added [dataset]
   }else{
     .font.size.range = font_size_range
   }
-  #cat(paste('.font.size.range:', paste(.font.size.range, collapse=' ')), '\n') #@
   for (.dataset in datasets){
     .subsamples = grep(paste0("^", .dataset, "_"), names(.tracks.vector), value=TRUE)
+    if (length(.subsamples)==0){ #@ ->
+      .subsamples = grep(paste0(.dataset, "_"), names(.tracks.vector), fixed=TRUE, value=TRUE)
+    } #@ <-
     .subsamples = as.character(sapply(.subsamples, function(s) paste0(.dataset, '.', strsplit(s, split=paste0(.dataset, "_"), fixed=TRUE)[[1]][2]) ))
     .subsample.matrix = do.call('rbind', sapply(.subsamples, function(.sep) strsplit(.sep, split='.', fixed=T)))
     .n.levels = ncol(.subsample.matrix)
@@ -2744,17 +2741,11 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
     .penalties.list[[.dataset]] = .penalties
     .penalties.0hor.list[[.dataset]] = .penalties.0hor
   }
-  # for (.ds in names(.penalties.list)){ #@
-  #   cat(.penalties.list[[.ds]], '\n') #@
-  # } #@
-
   .eligible.font.sizes = apply(do.call('rbind', lapply(.penalties.list, function(m) apply(m, 2, function(c) any(c==0)))), 2, function(c) all(c))
-  #cat(paste(.eligible.font.sizes, collapse=' '), '\n') #@
-  #cat(paste(names(.eligible.font.sizes), collapse=' '), '\n') #@
   .common.font.size = ifelse(any(.eligible.font.sizes), .font.size.range[max(which(.eligible.font.sizes))], min(.font.size.range))
   .panel.config = list()
   if (!is.null(horizontal_panels_list)){
-    .panel.config = horizontal_panels_list
+    .panel.config = horizontal_panels_list[datasets] #@ horizontal_panels_list
   }else if (any(.eligible.font.sizes)){
     for (.dataset in names(.penalties.list)){
       .config = rep(TRUE, .n.levels.list[[.dataset]])  ## TRUE refers to horizontal or not
@@ -2822,7 +2813,7 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
   }
   ## if one or more 1st panels need to be horizontal
   if (.incl.first.panel){
-    if (any(sapply(.panel.config, function(x) x[1])) & is.null(horizontal_panels_list)){
+    if (any(as.logical(sapply(.panel.config, function(x) x[1]))) & is.null(horizontal_panels_list)){
       .eligible.font.sizes = apply(do.call('rbind', lapply(.penalties.0hor.list, function(m) apply(m, 2, function(c) any(c==0)))), 2, function(c) all(c))
       .panel.config = list()
       if (any(.eligible.font.sizes)){
@@ -2897,7 +2888,6 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
   if (any(.eligible.font.sizes) & .common.font.size < max(.font.size.range)){
     .finetune.penalties.list = list()
     for (.dataset in datasets){
-      #cat(.dataset, '\n') #@
       .config = .panel.config[[.dataset]]
       .n.levels = .n.levels.list[[.dataset]]
       .n.panel.separators = .n.levels - 1 - ifelse(.incl.first.panel,0,1)
@@ -2917,8 +2907,12 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
       .hor.subpanels = .hor.panels[.hor.panels > 1]
       if (any(.hor.subpanels>0)){
         for (.n.level in .hor.subpanels){
-          .conseq.entries = max(.subpanels)/.subpanels[.n.level]
-          .panel.word.widths[,.n.level] = .common.font.size * (nchar(rep(names(panels_list[[.dataset]][[.n.level-1]]), each=.conseq.entries)) + .word.extensions) * std_letter_width
+          if (print_one_line_sample_names){
+            .conseq.entries = max(.subpanels)/.subpanels[.n.level]
+            .panel.word.widths[,.n.level] = .common.font.size * (nchar(rep(names(panels_list[[.dataset]][[.n.level-1]]), each=.conseq.entries)) + .word.extensions) * std_letter_width
+          }else{
+            .panel.word.widths[,.n.level] = .common.font.size * (nchar(rep(names(panels_list[[.dataset]][[.n.level-1]]), panels_list[[.dataset]][[.n.level-1]])) + .word.extensions) * std_letter_width
+          }
         }
       }
       .panel.word.heights[,!.config] = .panel.word.widths[,!.config]
@@ -2948,11 +2942,13 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
         }else{
           .conseq.entries = max(.subpanels)/.subpanels[.n.level]
           if (.config[.n.level]){
-            .panel.word.widths[,.n.level] = (.common.font.size + 1) * (nchar(rep(names(panels_list[[.dataset]][[.n.level-1]]), each=.conseq.entries)) + .word.extensions) * std_letter_width
+            #.panel.word.widths[,.n.level] = (.common.font.size + 1) * (nchar(rep(names(panels_list[[.dataset]][[.n.level-1]]), each=.conseq.entries)) + .word.extensions) * std_letter_width
+            .panel.word.widths[,.n.level] = (.common.font.size + 1) * (nchar(rep(names(panels_list[[.dataset]][[.n.level-1]]), panels_list[[.dataset]][[.n.level-1]])) + .word.extensions) * std_letter_width
             .panel.word.heights[!is.na(.panel.word.heights[,.n.level]),.n.level] = (.common.font.size + 1) * std_letter_height
           }else{
             .panel.word.widths[,.n.level] = .word.vert.space * (.common.font.size + 1) * std_letter_height
-            .panel.word.heights[!is.na(.panel.word.heights[,.n.level]),.n.level] = (.common.font.size + 1) * nchar(rep(names(panels_list[[.dataset]][[.n.level-1]]), each=.conseq.entries))[!is.na(.panel.word.heights[,.n.level])] * std_letter_width
+            #@.panel.word.heights[!is.na(.panel.word.heights[,.n.level]),.n.level] = (.common.font.size + 1) * nchar(rep(names(panels_list[[.dataset]][[.n.level-1]]), each=.conseq.entries))[!is.na(.panel.word.heights[,.n.level])] * std_letter_width
+            .panel.word.heights[!is.na(.panel.word.heights[,.n.level]),.n.level] = (.common.font.size + 1) * nchar(rep(names(panels_list[[.dataset]][[.n.level-1]]), panels_list[[.dataset]][[.n.level-1]]))[!is.na(.panel.word.heights[,.n.level])] * std_letter_width
           }
         }
         if (.panels.max.width.cm==-1){
@@ -3029,7 +3025,7 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
   }else{
     .full.width.cm = as.numeric(plot_widths_cm['full.width.cm'])
   }
-  .panel.too.narrow = as.logical(.panels.max.width.cm < max(sapply(.panel.width.list, sum))) #@
+  .panel.too.narrow = as.logical(.panels.max.width.cm < max(sapply(.panel.width.list, sum)))
   if (.panel.too.narrow){
     if ((both_strands & strand=='+') | !both_strands){
       if (verbosity > 1){
@@ -3039,7 +3035,7 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
     .panel.width.list = lapply(.panel.width.list, function(x) as.numeric(.panels.max.width.cm)*x/sum(x))
     .outer.panel.width = .panel.width.list[[1]][1]
   }
-  .panel.width = ifelse(fixed_panel_width | .panel.too.narrow, .panels.max.width.cm, max(sapply(.panel.width.list, sum)))/.full.width.cm #@
+  .panel.width = ifelse(fixed_panel_width | .panel.too.narrow, .panels.max.width.cm, max(sapply(.panel.width.list, sum)))/.full.width.cm
   .first.panel.width = .outer.panel.width/.full.width.cm
 
   .non.panels.width = 1 - (.panels.max.width.cm + .scale.panel.width.cm)/.full.width.cm # the relative part of the full_width_cm used for x-axis of seq-tracks
@@ -3061,7 +3057,9 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
 #'
 FinalizePanelsDimensions = function(panel_info, both_strands){
   if (both_strands){
-    if (!identical(panel_info[['+']], panel_info[['-']])){
+    if (is.null(panel_info[['-']])){ #@ added this condition
+      .panel.info = panel_info
+    }else if (!identical(panel_info[['+']], panel_info[['-']])){
       .panel.info = list('+'=panel_info[['+']], '-'=panel_info[['+']])
       .unstranded.samples = setdiff(names(panel_info[['+']][['horizontal.panels.list']]), names(panel_info[['-']][['horizontal.panels.list']]))
       for (.unstranded.sample in .unstranded.samples){
@@ -3152,9 +3150,13 @@ BasicPlotParameters = function(plotted_strand, plotted_region, feature_names_fon
       names(.annotations.heights) = paste0(names(.annotations.heights), plotted_strand)
     }
   }
-  .track.vector = unlist(lapply(plotting_segment_order[[plotted_strand]],
-                                function(.segment.type) if(.segment.type %in% names(plot_vertical_parameters))
-                                { plot_vertical_parameters[.segment.type] }else{ if(.segment.type=='annotations'){ .annotations.heights }else if(.segment.type=='unstranded-beds'){ .unstranded.beds.heights }else{ structure(rep(plot_vertical_parameters['seq'], length(tracks_listed[[plotted_strand]][[.segment.type]])), names=paste0(.segment.type, '_', tracks_listed[[plotted_strand]][[.segment.type]])) }} ))
+  if (!is.null(tracks_listed)){ #@ added if/else
+    .track.vector = unlist(lapply(plotting_segment_order[[plotted_strand]],
+                                  function(.segment.type) if(.segment.type %in% names(plot_vertical_parameters))
+                                  { plot_vertical_parameters[.segment.type] }else{ if(.segment.type=='annotations'){ .annotations.heights }else if(.segment.type=='unstranded-beds'){ .unstranded.beds.heights }else{ structure(rep(plot_vertical_parameters['seq'], length(tracks_listed[[plotted_strand]][[.segment.type]])), names=paste0(.segment.type, '_', tracks_listed[[plotted_strand]][[.segment.type]])) }} ))
+  }else{
+    .track.vector = NULL
+  }
   .n.tracks = sum(.track.vector)
   if (is.null(full_height_cm)){
     .track.height.cm = track_height_cm
@@ -3423,7 +3425,6 @@ PlotPanels = function(plotting_segment, plotted_strand, panel_info, panels_list,
   .right.border = round(plot_width_parameters$coords.panels[2], 5)
   .left.border = round(.right.border - panel_info[[plotted_strand]]$panel.width, 5)
   .panel.borders = .left.border + c(0, round(cumsum(.panel.width.list[[plotting_segment]])/full_width_cm, 5))
-  #cat(paste(.panel.borders, collapse=' '), '\n') #@
   if (incl_first_panel & !print_one_line_sample_names){
     .n.panels.iv = 1:.n.panels
   }else{
@@ -3552,7 +3553,7 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, sample_su
   for (.seq.sample in sample_subset){
     .n.segment = which(names(windows_height)==paste(plotting_segment, .seq.sample, sep='_'))-1
     if (verbosity > 0) { cat(paste0('\t', .seq.sample)) }
-    .vertical.slots = grep(paste0("^", plotting_segment), names(windows_height))[grep(paste0('_', .seq.sample), grep(paste0("^", plotting_segment), names(windows_height), value=T), fixed=TRUE)]
+    .vertical.slots = which(names(windows_height)==paste0(plotting_segment, '_', .seq.sample))
     par(fig=c(coords_tracks[1],coords_tracks[2],windows_height[max(.vertical.slots)],windows_height[min(.vertical.slots)-1]), mai=scaling_factor*c(0, 0, 0, 0), new=ifelse(.n.segment==1 & first_plot, F, T))
     .base.seq.sample = unlist(strsplit(.seq.sample, split='.rep', fixed=T))[1]
     .y.val = structure(c(0, 0), names=c('+', '-'))
@@ -3580,7 +3581,7 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, sample_su
       .y.exp[.plotted.strand] = y_par[[.plotted.strand]]['exp']
       .plot.mat = plot_mat[[.plotted.strand]] / .y.val[.plotted.strand]
     }
-    if (any(.plot.mat > 1.5)){ .plot.mat[which(.plot.mat > 1.5)] = 1.5 } #@
+    if (any(.plot.mat > 1.5)){ .plot.mat[which(.plot.mat > 1.5)] = 1.5 }
     plot(0, 0, type='n', xlim=c(plot_start, plot_end), ylim=.y.limits, ann=FALSE, axes=FALSE, bg='transparent', bty='n', xaxs='i', yaxs ='i')
     .adj.colors = structure(unlist(lapply(c('+', '-'), function(.strand) {.adj.rgb = (255 - (ifelse(!.enhance, strands_alpha[.strand], 100)/100)*(255 - as.vector(col2rgb(.base.cols[.base.seq.sample]))))/255; .adj.color = rgb(.adj.rgb[1], .adj.rgb[2], .adj.rgb[3]); return(.adj.color)})), names=c('+', '-'))
     if (.plotted.strand=='+-'){
@@ -3588,7 +3589,7 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, sample_su
       lines(as.integer(rownames(.plot.mat)), ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*.plot.mat[,.seq.sample], type='h', lend=1,
             lwd=ifelse(.enhance, 2, 1)*scaling_factor*bin_width, col=.adj.colors['+'])
       .plot.mat = plot_mat[['-']] / .y.val['-']
-      if (any(.plot.mat > 1.5)){ .plot.mat[which(.plot.mat > 1.5)] = 1.5 } #@
+      if (any(.plot.mat > 1.5)){ .plot.mat[which(.plot.mat > 1.5)] = 1.5 }
       lines(as.integer(rownames(.plot.mat)), -1*.plot.mat[,.seq.sample], type='h', lend=1,
             lwd=ifelse(.enhance, 2, 1)*scaling_factor*bin_width, col=.adj.colors['-'])
     }else{
@@ -3727,9 +3728,9 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
   .n.bins.after = as.integer(abs(plot_end - .bin.start)/bin_size)
   .coords = sapply((-.n.bins.before+1):.n.bins.after, function(.n.bin) mean(.bin.start + ifelse(.strand=='+' | actual_strand_direction, 1, -1)*c((.n.bin-1)*bin_size, .n.bin*bin_size-1)))
   .coords.per.mm = IRanges::width(plotted_region)/(plot_width_parameters$tracks.width.cm*10)
-  .length.arrows = 0.363*.coords.per.mm/arrow_constant #@
+  .length.arrows = 0.363*.coords.per.mm/arrow_constant
   .direction.arrows = ifelse(.strand=='+', -1, +1)*.length.arrows
-  .line.width = 4*scaling_factor*line_width_scaling_factor #@ 4.1 -> 4
+  .line.width = 4*scaling_factor*line_width_scaling_factor
   for (.annotation in names(annot_info[[.strand]])){
     if (stranded){
       .stranded.annotation = paste0(.annotation, .strand)
@@ -3811,8 +3812,8 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                   .n.arrows = ifelse(round(diff(c(.exon.start, .exon.end+1))/(8*.length.arrows)) > 0, 1, 0)
                   if (stranded & .n.arrows > 0){
                     .pos.arrow = mean(c(.exon.start, .exon.end))
-                    segments(x0=.pos.arrow+(.direction.arrows*abs(diff(.y.vals))), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*abs(diff(.y.vals))), y1=.y.center, col='white', lwd=.line.width/2, lend=2) #@ .line.width/4 lend=1 -> lend=2
-                    segments(x0=.pos.arrow+(.direction.arrows*abs(diff(.y.vals))), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*abs(diff(.y.vals))), y1=.y.center, col='white', lwd=.line.width/2, lend=2) #@ .line.width/4 lend=1 -> lend=2
+                    segments(x0=.pos.arrow+(.direction.arrows*abs(diff(.y.vals))), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*abs(diff(.y.vals))), y1=.y.center, col='white', lwd=.line.width/2, lend=2)
+                    segments(x0=.pos.arrow+(.direction.arrows*abs(diff(.y.vals))), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*abs(diff(.y.vals))), y1=.y.center, col='white', lwd=.line.width/2, lend=2)
                   }
                 }
               }
@@ -3836,19 +3837,29 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                     .n.arrows = ifelse(round(diff(c(.intron.start, .intron.end+1))/(4*.length.arrows)) > 1, 1, 0)
                     if (stranded & .n.arrows > 0){
                       .pos.arrow = mean(c(.intron.start, .intron.end))
-                      segments(x0=.pos.arrow+(.direction.arrows*abs(diff(.y.vals))), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*abs(diff(.y.vals))), y1=.y.center, col=.annot.col, lwd=.line.width/2, lend=1) #@ .line.width/4
-                      segments(x0=.pos.arrow+(.direction.arrows*abs(diff(.y.vals))), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*abs(diff(.y.vals))), y1=.y.center, col=.annot.col, lwd=.line.width/2, lend=1) #@ .line.width/4
+                      segments(x0=.pos.arrow+(.direction.arrows*abs(diff(.y.vals))), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*abs(diff(.y.vals))), y1=.y.center, col=.annot.col, lwd=.line.width/2, lend=1)
+                      segments(x0=.pos.arrow+(.direction.arrows*abs(diff(.y.vals))), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*abs(diff(.y.vals))), y1=.y.center, col=.annot.col, lwd=.line.width/2, lend=1)
                     }
                   }
                 }
               }else{
                 if (S4Vectors::mcols(.feat.annotation[.annot.line])$on.from.start){
                   .pos.arrow = IRanges::start(plotted_region)
-                  polygon(x=c(.pos.arrow, .pos.arrow, .pos.arrow-2*(.direction.arrows*abs(diff(.y.vals)))), y=c(rev(.y.vals), .y.center), col ='yellow', border=NA)
+                  if (sign(.direction.arrows)==-1){
+                    triangle_xs = c(.pos.arrow, .pos.arrow, .pos.arrow-2*(.direction.arrows*abs(diff(.y.vals))))
+                  }else{
+                    triangle_xs = c(.pos.arrow+2*(.direction.arrows*abs(diff(.y.vals))), .pos.arrow+2*(.direction.arrows*abs(diff(.y.vals))), .pos.arrow)
+                  }
+                  polygon(x=triangle_xs, y=c(rev(.y.vals), .y.center), col ='yellow', border=NA)
                 }
                 if (S4Vectors::mcols(.feat.annotation[.annot.line])$on.from.end){
                   .pos.arrow = IRanges::end(plotted_region)
-                  polygon(x=c(.pos.arrow+2*(.direction.arrows*abs(diff(.y.vals))), .pos.arrow+2*(.direction.arrows*abs(diff(.y.vals))), .pos.arrow), y=c(rev(.y.vals), .y.center), col ='yellow', border=NA)
+                  if (sign(.direction.arrows)==-1){
+                    triangle_xs = c(.pos.arrow+2*(.direction.arrows*abs(diff(.y.vals))), .pos.arrow+2*(.direction.arrows*abs(diff(.y.vals))), .pos.arrow)
+                  }else{
+                    triangle_xs = c(.pos.arrow, .pos.arrow, .pos.arrow-2*(.direction.arrows*abs(diff(.y.vals))))
+                  }
+                  polygon(x=triangle_xs, y=c(rev(.y.vals), .y.center), col ='yellow', border=NA)
                 }
               }
             }
@@ -4012,6 +4023,9 @@ PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, pl
     }
     .n.track = which(names(tracks[[.strand]])==plotting_segment)
     .vertical.slots = grep(paste0("^", plotting_segment), names(.windows.height))
+    if (length(.vertical.slots)==0){ #@ ->
+      .vertical.slots = grep(paste0(plotting_segment), names(.windows.height), fixed=TRUE)
+    } #@ <-
     .first.plot = first_plot
     if (alternating_background){
       .bgr.colors = c(adjustcolor(bgr_colors[1], alpha.f=bgr_alpha), adjustcolor(bgr_colors[2], alpha.f=bgr_alpha))
@@ -4027,7 +4041,7 @@ PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, pl
     if (plotted_strand=='+-' & plotting_segment %in% names(tracks[['-']])){
       .plot.mat[['-']] = PlotMatrix(plotted_region[['-']], basic_plot_parameters[[plotted_strand]], .plot.start, .plot.end, .plot.width, .bin.size, actual_strand_direction, .sample.subset, dummy_plot, tracks[['-']], plotting_segment, bin_stats)
     }
-    .y.par = structure(lapply(names(.plot.mat), function(.strand) YParameters(.plot.mat[[.strand]], plotting_segment, force_scale_list[[.strand]])), names=names(.plot.mat)) #@ lapply(.plot.mat, YParameters, plotting_segment, force_scale[[.strand]])
+    .y.par = structure(lapply(names(.plot.mat), function(.strand) YParameters(.plot.mat[[.strand]], plotting_segment, force_scale_list[[.strand]])), names=names(.plot.mat))
     .bin.width = basic_plot_parameters[[plotted_strand]]$bin.info[2]
     PlotData(plotting_segment, .plot.mat, colors, strands_alpha, .sample.subset, .windows.height, .coords.tracks, .coords.scale, .first.plot, neg_vals_neg_strand, plotted_strand, .y.par, .plot.start, .plot.end, .bin.width, incl_track_scales, scientific_scale, scale_font_size, full_width_cm, font_colors, .font.family, scaling_factor, letter_widths, enhance_signals, scale_warning=NULL, verbosity)
   }
