@@ -34,8 +34,10 @@ load_excel <- function(xl_fname, load_annotations=FALSE) {
      error('Required sheet "SAMPLES" not found in file\n')
     }
   )
-  samples_df = fill_df(samples_df)
-
+  if (nrow(samples_df) > 1){
+    samples_df = samples_df[!apply(apply(samples_df, 2, is.na), 1, all),,drop=FALSE] #@
+    samples_df = fill_df(samples_df)
+  }
   #@cat('  Dataset-specific options\n')
 
   params_df <- data.frame(dataset = unique(samples_df$dataset))
@@ -186,7 +188,11 @@ get_annotations <- function(annotations) {
 
   annot_plot_options <- lapply(names(default_options), function(opt) {
     if ( opt %in% colnames(annotations) ) {
-      l <- annotations[[opt]]
+      if (is.list(annotations[[opt]])){
+        l <- annotations[[opt]]
+      }else{ #@ ->
+        l <- sapply(annotations[[opt]], function(x) if(x=='TRUE' | x=='FALSE'){as.logical(x)}else{x})
+      } #@ <-
     } else {
       l <- rep(default_options[[opt]], nrow(annotations))
     }
