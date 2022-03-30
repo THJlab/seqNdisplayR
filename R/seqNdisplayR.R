@@ -39,74 +39,73 @@ plot_vertical_parameters = c('header'=2.2,  ## vertical units used for header se
 #'
 #' @export
 default_plot_options <- function(){
-  list(plotting_segment_order=NULL,                               #√
+  list(plotting_segment_order=NULL,                               #(v)
        preloaded_tracks=NULL,                                     ## not in app
        output_tracks=FALSE,                                       ## not in app
        output_parameters=FALSE,                                   ## not in app
        input_parameters=NULL,                                     ## not in app
-       both_strands=TRUE,                                         #√
-       strands_intermingled=TRUE,                                 #√
-       neg_vals_neg_strand=TRUE,                                  #√
-       actual_strand_direction=TRUE,                              #√
-       alternating_background=TRUE,                               #√
-       bgr_colors=c('#C1B49A', '#F1F1F2'),                        #√ two colors (hex or name) - will auto-default with warning message
-       bgr_alpha = 0.2,                                           #√ positive numeric value (0-1)
-       strands_alpha=c(100,50),                                   #√ positive numeric values (0-100)
-       extra_space=c(1.5, 1.5),                                   #√ positive numeric values
-       annot_panel_color='steelblue',                             #√ color (hex or name)
-       annot_panel_font_size=NULL,                                #√ NULL or positive integer value
-       bin_start=NULL,                                            #√ NULL or positive integer value
-       bin_size='auto',                                           #√ 'auto'/'automatic' or positive integer value (>=1)
-       bins_per_cm=250,                                           #√ positive integer value (>=1)
-       track_width_cm=12,                                         #√ NULL or positive numeric value
-       full_width_cm=NULL,                                        #√ NULL or positive numeric value (*caution)
-       full_height_cm=NULL,                                       #√ NULL or positive numeric value (*caution)
-       track_height_cm=0.3,                                       #√ NULL or positive numeric value
-       title_field_height_cm=0.66,                                #√ NULL or positive numeric value
-       genomic_scale_height_cm=0.24,                              #√ NULL or positive numeric value
-       annotation_height_cm=0.24,                                 #√ NULL or positive numeric value
-       spacer_height_cm=0.06,                                     #√ NULL or positive numeric value
-       panels_max_width_cm='auto',                                #√ 'auto'/'automatic' or positive numeric value
-       margin_width_cm=0.05,                                      #√ NULL or positive numeric value - will auto-default with warning message
-       fixed_panel_width=FALSE,                                   #√
-       horizontal_panels_list=NULL,                               #√% needs a function to assess the input
-       panel_font_sizes=NULL,                                     #√% needs a function to assess the input
-       panel_font_size_list=NULL,                                 #√% needs a function to assess the input
-       panel_text_colors=c('darkgreen', 'black'),                 #√ two colors (hex or name) - will auto-default with warning message
-       horizontal_spacers=TRUE,                                   #√
-       panel_separators=c(FALSE, TRUE),                           #√ will auto-default
-       separators_lwds=c(0.5, 1, 0.5),                            #√ three positive numeric values - will auto-default with warning message
-       separators_colors='black',                                 #√ one or three colors (hex or name) - will auto-default with warning message
-       incl_first_panel=TRUE,                                     #√
-       print_one_line_sample_names=FALSE,                         #√
-       replicate_names=NULL, # 'rep'                              #√ NULL or character value
-       incl_track_scales=TRUE,                                    #√
-       scientific_scale=c('allow', 'all', 'none')[1],             #√ one of 'allow', 'all', 'none'
-       force_scale=NULL,                                          #√
-       scale_font_size=NULL,                                      #√ NULL or positive integer value (>4)
-       scale_panel_width_cm='auto',                               #√ 'auto'/'automatic' or positive numeric value
-       scale_font_color='darkred',                                #√ color (hex or name) - will auto-default with warning message
-       header=NULL,                                               #√
-       suppress_header=FALSE,                                     #√
-       header_font_sizes=NULL,                                    #√ NULL or one or three positive integer value (>4)
-       header_font_colors=c('black', 'darkgray', 'black'),        #√ one or three colors (hex or name) - will auto-default with warning message
-       include_genomic_scale=TRUE,                                #√
-       genomic_scale_on_top=TRUE,                                 #√
-       genomic_scale_font_size=NULL,                              #√ NULL or positive integer value (>4)
-       genomic_scale_font_color='black',                          #√ color (hex or name) - will auto-default with warning message
-       feature_names_alternating=TRUE,                            #√
-       feature_names_font_size=NULL,                              #√ NULL or positive integer value (>4)
-       feature_shading_colors=c('steelblue', 'hotpink'),          #√ two colors (hex or name) - will auto-default with warning message
-       feature_shading_alpha=0.05,                                #√ positive numeric value (0-1)
-       center_of_mass=FALSE,                                      #√
-       feature_names_font_color='black',                          #√ color (hex or name) - will auto-default with warning message
-       dummy_plot=FALSE,                                          #√
-       scaling_factor=1,                                          #√ positive numeric value - will auto-default with warning message
+       both_strands=TRUE,                                         #(v)
+       strands_intermingled=TRUE,                                 #(v)
+       neg_vals_neg_strand=TRUE,                                  #(v)
+       actual_strand_direction=TRUE,                              #(v)
+       alternating_background=TRUE,                               #(v)
+       bgr_colors=c('#C1B49A', '#F1F1F2'),                        #(v) two colors (hex or name) - will auto-default with warning message
+       bgr_alpha = 0.2,                                           #(v) positive numeric value (0-1)
+       strands_alpha=c(100,50),                                   #(v) positive numeric values (0-100)
+       extra_space=c(1.5, 1.5),                                   #(v) positive numeric values
+       annot_panel_color='steelblue',                             #(v) color (hex or name)
+       annot_panel_font_size=NULL,                                #(v) NULL or positive integer value
+       bin_start=NULL,                                            #(v) NULL or positive integer value
+       bin_size='auto',                                           #(v) 'auto'/'automatic' or positive integer value (>=1)
+       bins_per_cm=250,                                           #(v) positive integer value (>=1)
+       track_width_cm=12,                                         #(v) NULL or positive numeric value
+       full_width_cm=NULL,                                        #(v) NULL or positive numeric value (*caution)
+       full_height_cm=NULL,                                       #(v) NULL or positive numeric value (*caution)
+       track_height_cm=0.3,                                       #(v) NULL or positive numeric value
+       title_field_height_cm=0.66,                                #(v) NULL or positive numeric value
+       genomic_scale_height_cm=0.24,                              #(v) NULL or positive numeric value
+       annotation_height_cm=0.24,                                 #(v) NULL or positive numeric value
+       spacer_height_cm=0.06,                                     #(v) NULL or positive numeric value
+       panels_max_width_cm='auto',                                #(v) 'auto'/'automatic' or positive numeric value
+       margin_width_cm=0.05,                                      #(v) NULL or positive numeric value - will auto-default with warning message
+       fixed_panel_width=FALSE,                                   #(v)
+       horizontal_panels_list=NULL,                               #(v)% needs a function to assess the input
+       panel_font_sizes=NULL,                                     #(v)% needs a function to assess the input
+       panel_font_size_list=NULL,                                 #(v)% needs a function to assess the input
+       panel_text_colors=c('darkgreen', 'black'),                 #(v) two colors (hex or name) - will auto-default with warning message
+       horizontal_spacers=TRUE,                                   #(v)
+       panel_separators=c(FALSE, TRUE),                           #(v) will auto-default
+       separators_lwds=c(0.5, 1, 0.5),                            #(v) three positive numeric values - will auto-default with warning message
+       separators_colors='black',                                 #(v) one or three colors (hex or name) - will auto-default with warning message
+       incl_first_panel=TRUE,                                     #(v)
+       print_one_line_sample_names=FALSE,                         #(v)
+       replicate_names=NULL, # 'rep'                              #(v) NULL or character value
+       incl_track_scales=TRUE,                                    #(v)
+       scientific_scale=c('allow', 'all', 'none')[1],             #(v) one of 'allow', 'all', 'none'
+       force_scale=NULL,                                          #(v)
+       scale_font_size=NULL,                                      #(v) NULL or positive integer value (>4)
+       scale_panel_width_cm='auto',                               #(v) 'auto'/'automatic' or positive numeric value
+       scale_font_color='darkred',                                #(v) color (hex or name) - will auto-default with warning message
+       header=NULL,                                               #(v)
+       suppress_header=FALSE,                                     #(v)
+       header_font_sizes=NULL,                                    #(v) NULL or one or three positive integer value (>4)
+       header_font_colors=c('black', 'darkgray', 'black'),        #(v) one or three colors (hex or name) - will auto-default with warning message
+       include_genomic_scale=TRUE,                                #(v)
+       genomic_scale_on_top=TRUE,                                 #(v)
+       genomic_scale_font_size=NULL,                              #(v) NULL or positive integer value (>4)
+       genomic_scale_font_color='black',                          #(v) color (hex or name) - will auto-default with warning message
+       feature_names_alternating=TRUE,                            #(v)
+       feature_names_font_size=NULL,                              #(v) NULL or positive integer value (>4)
+       feature_shading_colors=c('steelblue', 'hotpink'),          #(v) two colors (hex or name) - will auto-default with warning message
+       feature_shading_alpha=0.05,                                #(v) positive numeric value (0-1)
+       center_of_mass=FALSE,                                      #(v)
+       feature_names_font_color='black',                          #(v) color (hex or name) - will auto-default with warning message
+       dummy_plot=FALSE,                                          #(v)
+       scaling_factor=1,                                          #(v) positive numeric value - will auto-default with warning message
        verbosity=c('off', 'no warnings', 'normal', 'detailed')[3],#
        interface=c('R', 'shiny')[1]                               # output directed towards R- or shiny-users
        )
 }
-
 
 #' Default Annotation Display Options
 #'
@@ -115,16 +114,14 @@ default_plot_options <- function(){
 #'
 #' @export
 default_annotation_options <- function() {
-  list('incl_feature_names'=TRUE,                                 #√
-       'feature_names_above'=FALSE,                               #√
-       'incl_feature_brackets'=TRUE,                              #√
-       'incl_feature_shadings'=TRUE,                              #√
-       'annotation_packing'='collapsed2',                         #√
-       'annot_cols'='black'                                       #√
+  list('incl_feature_names'=TRUE,                                 #(v)
+       'feature_names_above'=FALSE,                               #(v)
+       'incl_feature_brackets'=TRUE,                              #(v)
+       'incl_feature_shadings'=TRUE,                              #(v)
+       'annotation_packing'='collapsed2',                         #(v)
+       'annot_cols'='black'                                       #(v)
   )
 }
-
-
 
 #' Default Dataset-Specific Options
 #'
@@ -134,23 +131,21 @@ default_annotation_options <- function() {
 #' @export
 default_parameters <- function() {
   list(
-    'whichSamples' = NULL,                                        #
-    'bin_stats' = c('mean','median', 'max')[1],                   #
-    'enhance_signals'=FALSE,                                      #√
-    'log2transform'=FALSE,                                        #√
-    'pseudoCount'=1,                                              #
-    'batchCorrect'=FALSE,                                         #√
-    'batch'=NULL,                                                 #
-    'whichReps'=NULL,                                             #
-    'negative_valued_bw'=FALSE,                                   #√
-    'calcMean'=TRUE,                                              #√
+    'whichSamples' = NULL,
+    'bin_stats' = c('mean','median', 'max')[1],
+    'enhance_signals'=FALSE,
+    'log2transform'=FALSE,
+    'pseudoCount'=1,
+    'batchCorrect'=FALSE,
+    'batch'=NULL,
+    'whichReps'=NULL,
+    'negative_valued_bw'=FALSE,
+    'calcMean'=TRUE,
     'negValsSet0'=FALSE,
-    'force_scale'=NULL#, 'preMean'=FALSE                        #√
+    'force_scale'=NULL,
+    'group_autoscale'=TRUE
   )
 }
-
-
-
 
 #### MAIN Plot FUNCTIONS
 
@@ -175,12 +170,13 @@ seqNdisplay = function(
   bin_start=NULL, bin_size='automatic', bins_per_cm=250, track_width_cm=10, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3, title_field_height_cm=0.66, genomic_scale_height_cm=0.24, annotation_height_cm=0.24, spacer_height_cm=0.06,
   panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=NULL, panel_font_sizes=NULL, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
   horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names='rep',
-  incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
+  group_autoscale=TRUE, incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
   header=NULL, suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
   include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
   incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=TRUE, incl_feature_shadings=TRUE, feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
   dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1, verbosity='normal', interface='R', ...){
 
+  t1 = Sys.time()
   #### -> check parameters part 1 - abort or auto correct
   .verbosity = structure(0:3, names=c('off', 'no warnings', 'normal', 'detailed'))[as.character(ScrutinizeExpandAndNameParameter(verbosity, 1, use_names=FALSE, default_value='normal', expect_standard=NULL, expect=c('off', 'no warnings', 'normal', 'detailed'), revert_to_default=TRUE, alt_par_name=NULL, verbosity=3))]
   .interface = as.character(ScrutinizeExpandAndNameParameter(interface, 1, use_names=FALSE, default_value='R', expect_standard=NULL, expect=c('R', 'shiny'), revert_to_default=TRUE, alt_par_name=NULL, verbosity=.verbosity))
@@ -191,24 +187,33 @@ seqNdisplay = function(
     return()
   }
   bigwig_dirs = lapply(bigwig_dirs, function(X) if (grepl('/$', X)){X}else{paste0(X, '/')})
-  if (!is.null(track_width_cm)){ if (!EvaluateNumericValue(track_width_cm, positive_val=TRUE, min_val=3, max_val=25, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'track_width_cm', 'Tracks Width'), .verbosity)){ return() }}
-  if (!is.null(full_width_cm)){ if (!EvaluateNumericValue(full_width_cm, positive_val=TRUE, min_val=5, max_val=30, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'full_width_cm', 'Full Plot Width'), .verbosity)){ return() }}
-  if (!is.null(full_height_cm)){ if (!EvaluateNumericValue(full_height_cm, positive_val=TRUE, min_val=5, max_val=30, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'full_height_cm', 'Full Plot Height'), .verbosity)){ return() }}
-  if (!is.null(track_height_cm)){ if (!EvaluateNumericValue(track_height_cm, positive_val=TRUE, min_val=0.2, max_val=1, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'track_height_cm', 'Tracks Height'), .verbosity)){ return() }}
-  if (!is.null(genomic_scale_height_cm)){ if (!EvaluateNumericValue(genomic_scale_height_cm, positive_val=TRUE, min_val=0.2, max_val=0.5, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'genomic_scale_height_cm', 'Genomic Scale Height'), .verbosity)){ return() }}
-  if (!is.null(annotation_height_cm)){ if (!EvaluateNumericValue(annotation_height_cm, positive_val=TRUE, min_val=0.2, max_val=0.5, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'annotation_height_cm', 'Annotation Height'), .verbosity)){ return() }}
-  if (!is.null(spacer_height_cm)){ if (!EvaluateNumericValue(spacer_height_cm, positive_val=TRUE, min_val=0.01, max_val=0.2, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'spacer_height_cm', 'Spacer Height'), .verbosity)){ return() }}
-  if (!is.null(panels_max_width_cm)){ if (panels_max_width_cm!='auto' & panels_max_width_cm!='automatic'){if (!EvaluateNumericValue(panels_max_width_cm, positive_val=TRUE, min_val=0, max_val=30, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'panels_max_width_cm', 'Panels Width'), .verbosity)){ return() }}}
-  if (!is.null(scale_panel_width_cm)){ if (scale_panel_width_cm!='auto' & scale_panel_width_cm!='automatic'){if (!EvaluateNumericValue(scale_panel_width_cm, positive_val=TRUE, min_val=0, max_val=1, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'scale_panel_width_cm', 'Tracks Scale Width'), .verbosity)){ return() }}}
-  if (is.null(feature) & !is.null(locus)) {if (!EvaluateNumericValue(extra_space, positive_val=TRUE, min_val=0, max_val=100, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'extra_space', 'Expand Plotted Region'), .verbosity)){ return() }}
-  if (!EvaluateNumericValue(margin_width_cm, positive_val=TRUE, min_val=0, max_val=0.25, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'margin_width_cm', 'Margins Width'), .verbosity)){ margin_width_cm=0.05; if (.verbosity>1){cat(margin_width_cm, '\n')} }
-  if (!is.null(panel_font_sizes)){ if (!EvaluateNumericValue(panel_font_sizes, positive_val=TRUE, min_val=4, max_val=15, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'panel_font_sizes', 'Panel Text Font Size(s)'), .verbosity)){ panel_font_sizes=NULL; if (.verbosity>1){cat('NULL', '\n')} }}
-  if (!is.null(scale_font_size)){ if (!EvaluateNumericValue(scale_font_size, positive_val=TRUE, min_val=4, max_val=8, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'scale_font_size', 'Genomic Scale Font'), .verbosity)){ scale_font_size=NULL; if (.verbosity>1){cat('NULL', '\n')} }}
-  if (!is.null(genomic_scale_font_size)){ if (!EvaluateNumericValue(genomic_scale_font_size, positive_val=TRUE, min_val=4, max_val=8, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'genomic_scale_font_size', 'Genomic Scale Font'), .verbosity)){ genomic_scale_font_size=NULL; if (.verbosity>1){cat('NULL', '\n')} }}
-  if (!is.null(feature_names_font_size)){ if (!EvaluateNumericValue(feature_names_font_size, positive_val=TRUE, min_val=4, max_val=12, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'feature_names_font_size', 'Feature Names Font Size'), .verbosity)){ feature_names_font_size=NULL; if (.verbosity>1){cat('NULL', '\n')} }}
-  if (!EvaluateNumericValue(bgr_alpha, positive_val=TRUE, min_val=0, max_val=0.25, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'bgr_alpha', 'Background  Opacity'), .verbosity)){ bgr_alpha=0.2; if (.verbosity>1){cat(bgr_alpha, '\n')} }
-  if (!EvaluateNumericValue(feature_shading_alpha, positive_val=TRUE, min_val=0, max_val=0.25, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'feature_shading_alpha', 'Shading Opacity'), .verbosity)){ feature_shading_alpha=0.05; if (.verbosity>1){cat(feature_shading_alpha, '\n')} }
-  if (!EvaluateNumericValue(scaling_factor, positive_val=TRUE, min_val=0.5, max_val=10, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'scaling_factor', 'Scaling For On-Screen Display'), .verbosity)){ scaling_factor=1; if (.verbosity>1){cat(scaling_factor, '\n')} }
+  if (!is.null(track_width_cm)){ if (!EvaluateNumericValue(track_width_cm, positive_val=TRUE, min_val=3, max_val=25, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'track_width_cm', 'Tracks Width'), .verbosity)){ return() }}
+  if (!is.null(full_width_cm)){ if (!EvaluateNumericValue(full_width_cm, positive_val=TRUE, min_val=5, max_val=30, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'full_width_cm', 'Full Plot Width'), .verbosity)){ return() }}
+  if (!is.null(full_height_cm)){ if (!EvaluateNumericValue(full_height_cm, positive_val=TRUE, min_val=5, max_val=30, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'full_height_cm', 'Full Plot Height'), .verbosity)){ return() }}
+  if (!is.null(track_height_cm)){ if (!EvaluateNumericValue(track_height_cm, positive_val=TRUE, min_val=0.2, max_val=1, interval_obligatory=TRUE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'track_height_cm', 'Tracks Height'), .verbosity)){ return() }}
+  if (!is.null(full_height_cm) & !is.null(track_height_cm)){
+    if (.verbosity > 1){
+      .warning.message = paste0('WARNING: ', ifelse(interface=='R', '"track_height_cm"', '"Tracks Height"'), ' = ', track_height_cm, ' and ', ifelse(interface=='R', '"full_height_cm"', '"Full Plot Height"'), ' = ', full_height_cm,
+                              '\n', '\t', '.) ', 'one of the arguments should be a positive numeric value and the other should be NULL',
+                              '\n', '\t', '.) ', ifelse(interface=='R', '"track_height_cm"', '"Tracks Height"'), ' set to NULL')
+      cat(.warning.message, '\n')
+    }
+    track_height_cm = NULL
+  }
+  if (!is.null(genomic_scale_height_cm)){ if (!EvaluateNumericValue(genomic_scale_height_cm, positive_val=TRUE, min_val=0.2, max_val=0.5, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'genomic_scale_height_cm', 'Genomic Scale Height'), .verbosity)){ return() }}
+  if (!is.null(annotation_height_cm)){ if (!EvaluateNumericValue(annotation_height_cm, positive_val=TRUE, min_val=0.2, max_val=0.5, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'annotation_height_cm', 'Annotation Height'), .verbosity)){ return() }}
+  if (!is.null(spacer_height_cm)){ if (!EvaluateNumericValue(spacer_height_cm, positive_val=TRUE, min_val=0.01, max_val=0.2, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'spacer_height_cm', 'Spacer Height'), .verbosity)){ return() }}
+  if (!is.null(panels_max_width_cm)){ if (panels_max_width_cm!='auto' & panels_max_width_cm!='automatic'){if (!EvaluateNumericValue(panels_max_width_cm, positive_val=TRUE, min_val=0, max_val=30, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'panels_max_width_cm', 'Panels Width'), .verbosity)){ return() }}}
+  if (!is.null(scale_panel_width_cm)){ if (scale_panel_width_cm!='auto' & scale_panel_width_cm!='automatic'){if (!EvaluateNumericValue(scale_panel_width_cm, positive_val=TRUE, min_val=0, max_val=1, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'scale_panel_width_cm', 'Tracks Scale Width'), .verbosity)){ return() }}}
+  if (is.null(feature) & !is.null(locus)) {if (!EvaluateNumericValue(extra_space, positive_val=TRUE, min_val=0, max_val=100, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'extra_space', 'Expand Plotted Region'), .verbosity)){ return() }}
+  if (!EvaluateNumericValue(margin_width_cm, positive_val=TRUE, min_val=0, max_val=0.25, interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'margin_width_cm', 'Margins Width'), .verbosity)){ margin_width_cm=0.05; if (.verbosity>1){cat(margin_width_cm, '\n')} }
+  if (!is.null(panel_font_sizes)){ if (!EvaluateNumericValue(panel_font_sizes, positive_val=TRUE, min_val=4, max_val=15, interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'panel_font_sizes', 'Panel Text Font Size(s)'), .verbosity)){ panel_font_sizes=NULL; if (.verbosity>1){cat('NULL', '\n')} }}
+  if (!is.null(scale_font_size)){ if (!EvaluateNumericValue(scale_font_size, positive_val=TRUE, min_val=4, max_val=8, interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'scale_font_size', 'Genomic Scale Font'), .verbosity)){ scale_font_size=NULL; if (.verbosity>1){cat('NULL', '\n')} }}
+  #@if (!is.null(genomic_scale_font_size)){ if (!EvaluateNumericValue(genomic_scale_font_size, positive_val=TRUE, min_val=4, max_val=8, interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'genomic_scale_font_size', 'Genomic Scale Font'), .verbosity)){ genomic_scale_font_size=NULL; if (.verbosity>1){cat('NULL', '\n')} }}
+  if (!is.null(feature_names_font_size)){ if (!EvaluateNumericValue(feature_names_font_size, positive_val=TRUE, min_val=4, max_val=12, interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'feature_names_font_size', 'Feature Names Font Size'), .verbosity)){ feature_names_font_size=NULL; if (.verbosity>1){cat('NULL', '\n')} }}
+  if (!EvaluateNumericValue(bgr_alpha, positive_val=TRUE, min_val=0, max_val=0.25, interval_obligatory=TRUE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'bgr_alpha', 'Background  Opacity'), .verbosity)){ bgr_alpha=0.2; if (.verbosity>1){cat(bgr_alpha, '\n')} }
+  if (!EvaluateNumericValue(feature_shading_alpha, positive_val=TRUE, min_val=0, max_val=0.25, interval_obligatory=TRUE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'feature_shading_alpha', 'Shading Opacity'), .verbosity)){ feature_shading_alpha=0.05; if (.verbosity>1){cat(feature_shading_alpha, '\n')} }
+  if (!EvaluateNumericValue(scaling_factor, positive_val=TRUE, min_val=0.5, max_val=10, interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'scaling_factor', 'Scaling For On-Screen Display'), .verbosity)){ scaling_factor=1; if (.verbosity>1){cat(scaling_factor, '\n')} }
   .plot.widths.cm = PlotWidths(panels_max_width_cm, scale_panel_width_cm, margin_width_cm, track_width_cm, full_width_cm, incl_track_scales, .verbosity, .interface)
   if (is.null(.plot.widths.cm)){ return() }
   #### <- check parameters part 1 - abort or auto correct
@@ -256,13 +261,22 @@ seqNdisplay = function(
   }
   #### <- load all annotations
   #### -> check parameters part 3 - abort or auto correct
+  .batch.correction = ScrutinizeExpandAndNameParameter(unlist(lapply(parameters, function(p) p$batchCorrect)), datasets, use_names=TRUE, default_value=FALSE, expect_standard='logical', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'enhance_signals', 'Enhance Signals'), verbosity=.verbosity)
+  .log2.transform = ScrutinizeExpandAndNameParameter(unlist(lapply(parameters, function(p) p$log2transform)), datasets, use_names=TRUE, default_value=FALSE, expect_standard='logical', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'enhance_signals', 'Enhance Signals'), verbosity=.verbosity)
+  .batch.log2 = structure(as.logical(.batch.correction + .log2.transform), names=names(.batch.correction))
+  .pseudocounts = ScrutinizeExpandAndNameParameter(unlist(lapply(parameters, function(p) p$pseudoCount)), datasets, use_names=TRUE, default_value=1, expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'enhance_signals', 'Enhance Signals'), verbosity=.verbosity)
+  for (.i in which(.batch.log2)){
+    if (!EvaluateNumericValue(.pseudocounts[.i], positive_val=TRUE, min_val=0.000001, max_val=1000000, interval_obligatory=TRUE, turn_errors_to_warnings=TRUE, alt_par_name=paste(ifelse(interface=='R', 'pseudoCount', 'Pseudo Count'), names(.pseudocounts[.i])), .verbosity)){
+      parameters[[names(.pseudocounts[.i])]][['pseudoCount']] = 1
+    }
+  }
   bin_stats = sapply(names(datasets), function(dataset) parameters[[dataset]][['bin_stats']])
   .bin.stats = ScrutinizeExpandAndNameParameter(bin_stats, datasets, use_names=TRUE, default_value='mean', expect_standard=NULL, expect=c('mean', 'median', 'max'), revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'bin_stats', 'Binning Statistics'), verbosity=.verbosity)
   enhance_signals = sapply(names(datasets), function(dataset) parameters[[dataset]][['enhance_signals']])
   .enhance.signals = ScrutinizeExpandAndNameParameter(enhance_signals, datasets, use_names=TRUE, default_value=FALSE, expect_standard='logical', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'enhance_signals', 'Enhance Signals'), verbosity=.verbosity)
   .panel.separators = ScrutinizeExpandAndNameParameter(panel_separators, c('horizontal', 'vertical'), use_names=FALSE, default_value=FALSE, expect_standard='logical', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'panel_separators', 'Vertical and Horizontal Line-Separators'), verbosity=.verbosity)
   .separators.lwds = ScrutinizeExpandAndNameParameter(separators_lwds, c('line-spacer', 'thickline-spacer', 'vertical-spacer'), use_names=FALSE, default_value=c(0.5, 1, 0.5), expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'separators_lwds', 'Line-Separator Weight(s)'), verbosity=.verbosity)
-  .eval = EvaluateNumericValue(.separators.lwds, positive_val=TRUE, min_val=0.5, max_val=10, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'separators_lwds', 'Line-Separator Weight(s)'), .verbosity)
+  .separators.lwds = if (EvaluateNumericValue(.separators.lwds, positive_val=TRUE, min_val=0.5, max_val=10, interval_obligatory=TRUE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'separators_lwds', 'Line-Separator Weight(s)'), .verbosity)){.separators.lwds}else{ScrutinizeExpandAndNameParameter('dummy', c('line-spacer', 'thickline-spacer', 'vertical-spacer'), use_names=FALSE, default_value=c(0.5, 1, 0.5), expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'separators_lwds', 'Line-Separator Weight(s)'), verbosity=.verbosity)}
   .separators.colors = ScrutinizeExpandAndNameParameter(separators_colors, c('line-spacer', 'thickline-spacer', 'vertical-spacer'), use_names=FALSE, default_value='black', expect_standard='color', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'separators_colors', 'Line-Separator Color(s)'), verbosity=.verbosity)
   .annot.panel.color = ScrutinizeExpandAndNameParameter(annot_panel_color, 'annotation', use_names=FALSE, default_value='steelblue', expect_standard='color', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'annot_panel_color', 'Annotation Title Color'), verbosity=.verbosity)
   .panel.text.colors = ScrutinizeExpandAndNameParameter(panel_text_colors, c('panel_1st', 'panel'), use_names=FALSE, default_value=c('darkgreen', 'black'), expect_standard='color', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'panel_text_colors', 'Panel Text Colors'), verbosity=.verbosity)
@@ -275,9 +289,12 @@ seqNdisplay = function(
   .font.colors = structure(rep('black', 9), names=c('header', 'subheader', 'genomic_scale', 'genomic_axis', 'panel_1st', 'panel', 'scale', 'annotation', 'features'))
   .font.colors[c('annotation', names(.panel.text.colors), 'scale', names(.header.font.colors), 'genomic_axis', 'features')] = c(.annot.panel.color, .panel.text.colors, .scale.font.color, .header.font.colors, .genomic.scale.font.color, .feature.names.font.color)
   .strands.alpha = ScrutinizeExpandAndNameParameter(strands_alpha, c('+', '-'), use_names=FALSE, default_value=c(100, 100), expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'strands_alpha', 'Forward/Reverse Track Opacities'), verbosity=.verbosity)
-  .eval = EvaluateNumericValue(.strands.alpha, positive_val=TRUE, min_val=25, max_val=100, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'strands_alpha', 'Forward/Reverse Track Opacities'), .verbosity)
-  if (!is.null(bin_start)){if (!EvaluateNumericValue(bin_start, positive_val=TRUE, min_val=1, max_val=1000000000, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'bin_start', 'Bins Center'), .verbosity)){ bin_start=NULL; if (.verbosity>1){cat('NULL', '\n')} }}
+  .strands.alpha = if(EvaluateNumericValue(.strands.alpha, positive_val=TRUE, min_val=25, max_val=100, interval_obligatory=TRUE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'strands_alpha', 'Forward/Reverse Track Opacities'), .verbosity)){.strands.alpha}else{ScrutinizeExpandAndNameParameter('dummy', c('+', '-'), use_names=FALSE, default_value=c(100, 100), expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'strands_alpha', 'Forward/Reverse Track Opacities'), verbosity=0)}
+  .title.field.height.cm = ScrutinizeExpandAndNameParameter(title_field_height_cm, 1, use_names=FALSE, default_value=0.66, expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'title_field_height_cm', 'Title field height'), verbosity=.verbosity)
+  .title.field.height.cm = if(EvaluateNumericValue(.title.field.height.cm, positive_val=TRUE, min_val=0.66, max_val=5, interval_obligatory=TRUE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'title_field_height_cm', 'Title field height'), .verbosity)){.title.field.height.cm}else{ScrutinizeExpandAndNameParameter('dummy', 1, use_names=FALSE, default_value=0.66, expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'title_field_height_cm', 'Title field height'), verbosity=0)}
+  if (!is.null(bin_start)){if (!EvaluateNumericValue(bin_start, positive_val=TRUE, min_val=1, max_val=1000000000, interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'bin_start', 'Bins Center'), .verbosity)){ bin_start=NULL; if (.verbosity>1){cat('NULL', '\n')} }}
   .scientific.scale = as.character(ScrutinizeExpandAndNameParameter(scientific_scale, 1, use_names=FALSE, default_value='allow', expect_standard=NULL, expect=c('allow', 'all', 'none'), revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'scientific_scale', 'Scientific Notation on Data Scale(s)'), verbosity=.verbosity))
+  .group.autoscale = ScrutinizeExpandAndNameParameter(group_autoscale, datasets, use_names=TRUE, default_value=TRUE, expect_standard='logical', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'group_autoscale', 'Group Autoscale'), verbosity=.verbosity)
   # abort and return NULL if any of the crucial parameters are NULL
   if ( any(sapply(list(.bin.stats,.enhance.signals,.panel.separators,.separators.lwds,.separators.colors,
                        .annot.panel.color,.panel.text.colors,.scale.font.color,.header.font.colors,.genomic.scale.font.color,
@@ -352,38 +369,45 @@ seqNdisplay = function(
   .plotting.segment.order = BuildScrutinizePlotSegmentOrder(plotting_segment_order, .plotted.region, datasets, .plotted.samples, header, include_genomic_scale, genomic_scale_on_top, incl_annot=!is.null(annots), horizontal_spacers, .tracks.listed, both_strands, .any.stranded.beds, .any.unstranded.beds, .strands.intermingled, .verbosity, .interface)
   if (is.null(.plotting.segment.order)){ return() }
   .plot.vertical.parameters = plot_vertical_parameters
-  if (!is.null(track_height_cm) & !is.null(title_field_height_cm)){
-    .plot.vertical.parameters['header'] = title_field_height_cm/track_height_cm
+  if (!is.null(track_height_cm)){ #@ ->
+    .plot.vertical.parameters = UpdatePlotVerticalParameters(plot_vertical_parameters, track_height_cm, .title.field.height.cm, genomic_scale_height_cm, annotation_height_cm, spacer_height_cm)
   }
-  if (!is.null(track_height_cm) & !is.null(genomic_scale_height_cm)){
-    .plot.vertical.parameters['scale'] = genomic_scale_height_cm/track_height_cm
-  }
-  if (!is.null(track_height_cm) & !is.null(annotation_height_cm)){
-    .plot.vertical.parameters['annot'] = annotation_height_cm/track_height_cm
-    .plot.vertical.parameters['annot_text_segment'] = .plot.vertical.parameters['annot']
-    .plot.vertical.parameters['annot_squished'] = 0.5*.plot.vertical.parameters['annot']
-  }
-  if (!is.null(track_height_cm) & !is.null(spacer_height_cm)){
-    .plot.vertical.parameters['line-spacer'] = spacer_height_cm/track_height_cm
-    .plot.vertical.parameters['empty-spacer'] = .plot.vertical.parameters['line-spacer']
-    .plot.vertical.parameters['thickline-spacer'] = 2*.plot.vertical.parameters['line-spacer']
-  }
-  .estimated.plot.heights = AdjustEstimatedPlotHeights(structure(lapply(names(.plotted.region), function(.strand) EstimatePlotHeights(.annot.info[[.strand]], .incl.feature.names, .annotation.packing, .incl.feature.brackets, .plotting.segment.order[[.strand]], .tracks.listed[[.strand]], track_height_cm, full_height_cm, .stranded.beds[[.strand]], .plot.vertical.parameters, .verbosity, .interface)), names=names(.plotted.region)), full_height_cm, track_height_cm)
-  .est.track.height.cm.range = c(.estimated.plot.heights[[.strand]][['min.track.height.cm.est']], .estimated.plot.heights[[.strand]][['max.track.height.cm.est']])
+  .estimated.plot.heights = AdjustEstimatedPlotHeights(structure(lapply(names(.plotted.region), function(.strand) EstimatePlotHeights(.annot.info[[.strand]], .incl.feature.names, .annotation.packing, .incl.feature.brackets, .plotting.segment.order[[.strand]], .tracks.listed[[.strand]], track_height_cm, full_height_cm, .stranded.beds[[.strand]], .plot.vertical.parameters, .verbosity, .interface)), names=names(.plotted.region)), .plot.vertical.parameters, full_height_cm, track_height_cm, .title.field.height.cm, genomic_scale_height_cm, annotation_height_cm, spacer_height_cm)
+  .est.track.height.cm.range = as.numeric(c(.estimated.plot.heights[[.strand]][['min.track.height.cm.est']], .estimated.plot.heights[[.strand]][['max.track.height.cm.est']]))
   .est.min.annot.height = min(unlist(lapply(names(.plotted.region), function(.strand) unlist(.estimated.plot.heights[[.strand]][['annot.heights.incl.text']]))))
+  if (!is.null(annotation_height_cm) & is.null(track_height_cm)){
+    .est.min.annot.height = annotation_height_cm*as.numeric(.est.min.annot.height/.plot.vertical.parameters['annot'])/min(.est.track.height.cm.range)
+  }
+  .prev.annot.height = .plot.vertical.parameters['annot']
+  if (is.null(track_height_cm)){ #@ ->
+    .plot.vertical.parameters = UpdatePlotVerticalParameters(.plot.vertical.parameters, mean(.est.track.height.cm.range), .title.field.height.cm, genomic_scale_height_cm, annotation_height_cm, spacer_height_cm)
+  } #@ <-
+  for (s in names(.plotted.region)){
+    .max.combined.track.vector = UpdateTrackVector(.estimated.plot.heights[[s]][['max.combined.track.vector']], .plot.vertical.parameters)
+    .max.combined.track.vector[grep('annot', names(.max.combined.track.vector))] = .plot.vertical.parameters['annot'] * .max.combined.track.vector[grep('annot', names(.max.combined.track.vector))]/.prev.annot.height
+    .min.combined.track.vector = UpdateTrackVector(.estimated.plot.heights[[s]][['min.combined.track.vector']], .plot.vertical.parameters)
+    .min.combined.track.vector[grep('annot', names(.min.combined.track.vector))] = .plot.vertical.parameters['annot'] * .min.combined.track.vector[grep('annot', names(.min.combined.track.vector))]/.prev.annot.height
+    .estimated.plot.heights[[s]][['max.combined.track.vector']] = .max.combined.track.vector
+    .estimated.plot.heights[[s]][['min.combined.track.vector']] = .min.combined.track.vector
+    .estimated.plot.heights[[s]][['track.vector']] = UpdateTrackVector(.estimated.plot.heights[[s]][['track.vector']], .plot.vertical.parameters)
+  }
   .rec.font.sizes = RecommendedFontSizes(max(.est.track.height.cm.range), .est.min.annot.height, .plot.vertical.parameters)
+  if (any(.rec.font.sizes < min_font_size)){
+    .rec.font.sizes[which(.rec.font.sizes < min_font_size)] = min_font_size
+  }
   if (is.null(header_font_sizes)){
     header_font_sizes = .rec.font.sizes[c('main', 'sub', 'scale')]
   }
   .header.font.sizes =  ScrutinizeExpandAndNameParameter(header_font_sizes, c('main', 'sub', 'scale'), use_names=FALSE, default_value=.rec.font.sizes[c('main', 'sub', 'scale')], expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'header_font_sizes', 'Header Fonts'), verbosity=.verbosity)
-  .eval = EvaluateNumericValue(.header.font.sizes, positive_val=TRUE, min_val=4, max_val=c(24, 18, 18), turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'header_font_sizes', 'Header Fonts'), .verbosity)
-  .panel.font.size.list = PanelFontSizeList(datasets, panel_font_sizes, panel_font_size_list, .verbosity, .interface)
-  .horizontal.panels.list = HorizontalPanelsList(datasets, horizontal_panels_list, .verbosity, .interface)
+  .header.font.sizes = if (EvaluateNumericValue(.header.font.sizes, positive_val=TRUE, min_val=4, max_val=c(24, 18, 18), interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'header_font_sizes', 'Header Fonts'), .verbosity)){.header.font.sizes}else{ScrutinizeExpandAndNameParameter('dummy', c('main', 'sub', 'scale'), use_names=FALSE, default_value=.rec.font.sizes[c('main', 'sub', 'scale')], expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'header_font_sizes', 'Header Fonts'), verbosity=.verbosity)}
+  .incl.reps = unlist(lapply(parameters, function(p) !p$calcMean))
+  .panel.font.size.list = PanelFontSizeList(datasets, panel_font_sizes, panel_font_size_list, .incl.reps, replicate_names, .verbosity, .interface) #@ added .incl.reps, replicate_names
+  .horizontal.panels.list = HorizontalPanelsList(datasets, horizontal_panels_list, .incl.reps, replicate_names, .verbosity, .interface) #@ added .incl.reps, replicate_names
   .force.scale.list = ForceScaleList(datasets, force_scale, strands=ifelse(both_strands, '+-', .strand), .verbosity, .interface)
   if (!is.null(.panel.font.size.list)){
-    .max.font.size = max( .rec.font.sizes['std'], ifelse(is.null(annot_panel_font_size), NA, annot_panel_font_size), ifelse(is.null(feature_names_font_size), NA, feature_names_font_size), ifelse(is.null(scale_font_size), NA, scale_font_size), max(unlist(lapply(.panel.font.size.list, max, na.rm=TRUE)), na.rm=TRUE), na.rm=TRUE)
+    .max.font.size = max( .rec.font.sizes[c('std', 'genomic_axis', 'signal_axis', 'annotation_features')], ifelse(is.null(annot_panel_font_size), NA, annot_panel_font_size), ifelse(is.null(feature_names_font_size), NA, feature_names_font_size), ifelse(is.null(scale_font_size), NA, scale_font_size), max(unlist(lapply(.panel.font.size.list, max, na.rm=TRUE)), na.rm=TRUE), na.rm=TRUE) #@ .rec.font.sizes['std'] -> .rec.font.sizes[c('std', 'genomic_axis', 'signal_axis', 'annotation_features')]
   }else{
-    .max.font.size = max(.rec.font.sizes['std'], ifelse(is.null(annot_panel_font_size), NA, annot_panel_font_size), ifelse(is.null(feature_names_font_size), NA, feature_names_font_size), ifelse(is.null(scale_font_size), NA, scale_font_size), na.rm=TRUE)
+    .max.font.size = max( .rec.font.sizes[c('std', 'genomic_axis', 'signal_axis', 'annotation_features')], ifelse(is.null(annot_panel_font_size), NA, annot_panel_font_size), ifelse(is.null(feature_names_font_size), NA, feature_names_font_size), ifelse(is.null(scale_font_size), NA, scale_font_size), na.rm=TRUE) #@ .rec.font.sizes['std'] -> .rec.font.sizes[c('std', 'genomic_axis', 'signal_axis', 'annotation_features')]
   }
   if (.max.font.size > 0){
     .letter.widths = 1:.max.font.size*std_letter_width
@@ -392,7 +416,7 @@ seqNdisplay = function(
       .letter.widths[1:(min_font_size-1)] = NA
       .letter.heights[1:(min_font_size-1)] = NA
     }else{
-      if (.verbosity > 1) { cat(paste0('WARNING(s):\n - the dimensions of the plot are too small (font sizes below ', min_font_size, ')'), '\n') }
+      if (.verbosity > 1) { cat(paste0('WARNING(s):\n - the dimensions of the plot could be too small (font sizes below ', min_font_size, ')'), '\n') }
     }
   }else{
     if (.verbosity > 0) { cat('ERROR(s):\n - the dimensions of the plot are too small for any fonts to be visible - aborting', '\n') }
@@ -400,7 +424,10 @@ seqNdisplay = function(
   }
   .feature.text = structure(lapply(names(.plotted.region), function(.strand) OrganizeAnnotationText(.plotted.region[[.strand]], .annot.info[[.strand]], .annotation.packing, .letter.widths, center_of_mass, .verbosity)), names=names(.plotted.region))
   .feature.text.org = structure(lapply(names(.plotted.region), function(.strand) OrganizeAllAnnotationTextsInPlottedRegion(.feature.text[[.strand]], .plotted.region[[.strand]], .letter.widths)), names=names(.plotted.region))
-  .plot.height.parameters = structure(lapply(names(.plotted.region), function(.strand) PlotHeightParameters(.annot.info[[.strand]], .estimated.plot.heights[[.strand]][['track.vector']], .estimated.plot.heights[[.strand]][['max.annot.lines']], .estimated.plot.heights[[.strand]][['annot.heights']], .letter.heights, .incl.feature.names, .feature.text.org[[.strand]], .annotation.packing, .incl.feature.brackets, track_height_cm, full_height_cm, .stranded.beds[[.strand]], .plot.vertical.parameters)), names=names(.plotted.region))
+  .relative.annotation.height = structure(lapply(names(.plotted.region), function(.strand) RelativeAnnotationHeight(.annot.info[[.strand]], .estimated.plot.heights[[.strand]][['annot.heights']], .letter.heights, .incl.feature.names, .feature.text.org[[.strand]], .annotation.packing, .incl.feature.brackets, .stranded.beds[[.strand]])), names=names(.plotted.region))
+  .total.annotation.lines = lapply(.relative.annotation.height, function(x) x[['annot.heights.combined']])
+  .annot.heights.incl.text = lapply(.relative.annotation.height, function(x) x[['annot.heights.incl.text']])
+  .plot.height.parameters = structure(lapply(names(.plotted.region), function(.strand) PlotHeightParameters(.estimated.plot.heights[[.strand]][['max.combined.track.vector']], .estimated.plot.heights[[.strand]][['track.vector']], .total.annotation.lines[[.strand]], colSums(do.call('rbind', .total.annotation.lines)), .annot.heights.incl.text[[.strand]], .estimated.plot.heights[[.strand]][['max.annot.lines']], .estimated.plot.heights[[.strand]][['annot.heights']], track_height_cm, full_height_cm, .title.field.height.cm, genomic_scale_height_cm, annotation_height_cm, spacer_height_cm, .plot.vertical.parameters)), names=names(.plotted.region))
   if (is.null(feature_names_font_size)){
     .feature.names.font.size = min(.max.font.size, as.integer(.rec.font.sizes['annotation_features']))
   }else{
@@ -415,13 +442,13 @@ seqNdisplay = function(
   .panel.info = FinalizePanelsDimensions(structure(lapply(names(.tracks.listed), function(.strand) OrganizePanelsDimensions(names(.tracks.listed[[.strand]]), .min.wordlength.left.panel, replicate_names, print_one_line_sample_names, incl_first_panel, .plot.height.parameters[[.strand]], .feature.names.font.size, which(!is.na(.letter.heights)), .rec.font.sizes, scale_font_size, .horizontal.panels.list, .panel.font.size.list, .panels.list[[.strand]], .plot.widths.cm, .panel.separators, .strand, both_strands, .strands.intermingled, .stranded.datasets, fixed_panel_width, .verbosity)), names=names(.tracks.listed)), both_strands) #@ names(.plotted.region) -> names(.tracks.listed)
   .plot.width.parameters = .panel.info[[1]][['plot.width.parameters']]
   .full.width.cm = .plot.width.parameters[['full.width.cm']]
-  if (!EvaluateNumericValue(.full.width.cm, positive_val=TRUE, min_val=5, max_val=50, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'full_width_cm', 'Full Plot Width'), .verbosity)){ return() }
+  if (!EvaluateNumericValue(.full.width.cm, positive_val=TRUE, min_val=5, max_val=50, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'full_width_cm', 'Full Plot Width'), .verbosity)){ return() }
   .scale.fontsize = .panel.info[[1]][['scale.fontsize']]
-  if (!EvaluateNumericValue(.scale.fontsize, positive_val=TRUE, min_val=4, max_val=8, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'scale_font_size', 'Data Scale Font Size'), .verbosity)){ return() }
+  if (!EvaluateNumericValue(.scale.fontsize, positive_val=TRUE, min_val=4, max_val=8, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'scale_font_size', 'Data Scale Font Size'), .verbosity)){ return() }
   if (is.null(feature_names_font_size)){
     .feature.names.font.size = min(.feature.names.font.size, min(unlist(lapply(.panel.info[[1]][['panel.font.size.list']], min, na.rm=TRUE)), na.rm=TRUE))
   }
-  if (!EvaluateNumericValue(.feature.names.font.size, positive_val=TRUE, min_val=4, max_val=12, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'feature_names_font_size', 'Feature Names Font Size'), .verbosity)){ return() }
+  if (!EvaluateNumericValue(.feature.names.font.size, positive_val=TRUE, min_val=4, max_val=12, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'feature_names_font_size', 'Feature Names Font Size'), .verbosity)){ return() }
   if (is.null(annot_panel_font_size)){
     if (print_one_line_sample_names){
       .annot.panel.font.size = max(unlist(lapply(.panel.info[[1]][['panel.font.size.list']], function(x) mean(x[-1], na.rm=T))), na.rm=TRUE) #@
@@ -432,19 +459,22 @@ seqNdisplay = function(
     .annot.panel.font.size = annot_panel_font_size
   }
   .annotation.panel.font.size = ScrutinizeExpandAndNameParameter(.annot.panel.font.size, 'annotation', use_names=FALSE, default_value=.rec.font.sizes['std'], expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'annot_panel_font_size', 'Annotation Title Font Size'), verbosity=.verbosity)
-  if (!EvaluateNumericValue(.annotation.panel.font.size, positive_val=TRUE, min_val=4, max_val=12, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'annot_panel_font_size', 'Annotation Title Font Size'), .verbosity)){ return() }
-  if (!is.null(bin_size)){ if (bin_size!='auto' & bin_size!='automatic'){if (!EvaluateNumericValue(bin_size, positive_val=TRUE, min_val=1, max_val=10000000, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'bin_size', 'Bin Size'), .verbosity)){ bin_size=NULL; if (.verbosity>1){cat(NULL, '\n')} }}}
-  if (!EvaluateNumericValue(bins_per_cm, positive_val=TRUE, min_val=50, max_val=1000, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'bins_per_cm', 'Bins per cm'), .verbosity)){ bins_per_cm=250; if (.verbosity>1){cat(bins_per_cm, '\n')} }
-  .bin.size = GetBinSize(bin_size, IRanges::width(.plotted.region[[.strand]]), .plot.width.parameters[['tracks.width.cm']], bins_per_cm, .verbosity)
-  if (!EvaluateNumericValue(.bin.size, positive_val=TRUE, min_val=1, max_val=1000000, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'bin_size', 'Bin Size'), .verbosity)){ return() }
-  .basic.plot.parameters = AlignBasicPlotParameters(structure(lapply(names(.plotted.region), function(.strand) BasicPlotParameters(.strand, .plotted.region, .feature.names.font.size, .plot.height.parameters, .plot.width.parameters, .full.width.cm, full_height_cm, track_height_cm, .plot.vertical.parameters, .bin.size, bins_per_cm, .plotting.segment.order, .tracks.listed, .unstranded.beds)), names=names(.plotted.region)), both_strands, .strands.intermingled)
+  if (!EvaluateNumericValue(.annotation.panel.font.size, positive_val=TRUE, min_val=4, max_val=12, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'annot_panel_font_size', 'Annotation Title Font Size'), .verbosity)){ return() }
+  if (!is.null(bin_size)){ if (bin_size!='auto' & bin_size!='automatic'){if (!EvaluateNumericValue(bin_size, positive_val=TRUE, min_val=1, max_val=10000000, interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'bin_size', 'Bin Size'), .verbosity)){ bin_size='auto'; if (.verbosity>1){cat(NULL, '\n')} }}}
+  if (!EvaluateNumericValue(bins_per_cm, positive_val=TRUE, min_val=50, max_val=1000, interval_obligatory=TRUE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'bins_per_cm', 'Bins per cm'), .verbosity)){ bins_per_cm=250; if (.verbosity>1){cat(bins_per_cm, '\n')} }
+  .bins.per.cm = ScrutinizeExpandAndNameParameter(bins_per_cm, '1', use_names=FALSE, default_value=250, expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'bins_per_cm', 'Bins per cm'), verbosity=.verbosity)
+  .bins.per.cm = as.integer(if(EvaluateNumericValue(.bins.per.cm, positive_val=TRUE, min_val=50, max_val=1000, interval_obligatory=TRUE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'bins_per_cm', 'Bins per cm'), .verbosity)){.bins.per.cm}else{ScrutinizeExpandAndNameParameter('dummy', 1, use_names=FALSE, default_value=250, expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'strands_alpha', 'Forward/Reverse Track Opacities'), verbosity=0)})
+  .bin.size = GetBinSize(bin_size, IRanges::width(.plotted.region[[.strand]]), .plot.width.parameters[['tracks.width.cm']], .bins.per.cm, .verbosity)
+  if (!EvaluateNumericValue(.bin.size, positive_val=TRUE, min_val=1, max_val=1000000, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'bin_size', 'Bin Size'), .verbosity)){ return() }
+  .fixed.plot.vertical.parameters = c('tracks'=!is.null(track_height_cm), 'header'=!is.null(.title.field.height.cm), 'scale'=!is.null(genomic_scale_height_cm), 'spacers'=!is.null(spacer_height_cm), 'annots'=!is.null(annotation_height_cm)) #@
+  .basic.plot.parameters = AlignBasicPlotParameters(structure(lapply(names(.plotted.region), function(.strand) BasicPlotParameters(.strand, .plotted.region, .feature.names.font.size, .plot.height.parameters, .plot.width.parameters, .full.width.cm, full_height_cm, track_height_cm, .plot.vertical.parameters, .bin.size, .bins.per.cm, .plotting.segment.order, .tracks.listed, .unstranded.beds)), names=names(.plotted.region)), both_strands, .strands.intermingled, .fixed.plot.vertical.parameters)
   .final.feature.text.org = lapply(.feature.text.org, FinalOrganizedAnnotationTextsInPlottedRegion, names(annots), .feature.names.font.size)
   if (is.null(genomic_scale_font_size)){
     .genomic.scale.font.size = .rec.font.sizes['genomic_axis']
   }else{
     .genomic.scale.font.size = genomic_scale_font_size
   }
-  if (!EvaluateNumericValue(.genomic.scale.font.size, positive_val=TRUE, min_val=4, max_val=8, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'genomic_scale_font_size', 'Genomic Scale Font'), .verbosity)){ return() }
+  if (!EvaluateNumericValue(.genomic.scale.font.size, positive_val=TRUE, min_val=4, max_val=.rec.font.sizes['genomic_axis'], interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'genomic_scale_font_size', 'Genomic Scale Font'), .verbosity)){ return() }
   #### <- organize panels, font sizes and other parameters
   #### -> load tracks
   if (is.null(preloaded_tracks)){
@@ -492,19 +522,23 @@ seqNdisplay = function(
   }
   #### <- load tracks
   #### -> pdf or on-screen plotting?
-  .height.in = .basic.plot.parameters[[1]][['plot.dim.in']][2]
-  .width.in = .basic.plot.parameters[[1]][['plot.dim.in']][1]
-  if (!EvaluateNumericValue(.height.in, positive_val=TRUE, min_val=2, max_val=10.51182, turn_errors_to_warnings=FALSE, alt_par_name='Calculated Height in Inches', .verbosity)){ return() } ## dimensions of A4 paper with 1.5 cm margins
-  if (!EvaluateNumericValue(.width.in, positive_val=TRUE, min_val=2, max_val=10.51182, turn_errors_to_warnings=FALSE, alt_par_name='Calculated Width in Inches', .verbosity)){ return() } ## dimensions of A4 paper with 1.5 cm margins
+  .height.in = .basic.plot.parameters[[ifelse(.strands.intermingled, 3, 1)]][['plot.dim.in']][2]
+  #@.height.in = .basic.plot.parameters[[1]][['plot.dim.in']][2]
+  .width.in = .basic.plot.parameters[[ifelse(.strands.intermingled, 3, 1)]][['plot.dim.in']][1]
+  #@.width.in = .basic.plot.parameters[[1]][['plot.dim.in']][1]
+  if (!EvaluateNumericValue(.height.in, positive_val=TRUE, min_val=0.5, max_val=10.51182, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name='Calculated Height in Inches', .verbosity)){ return() } ## dimensions of A4 paper with 1.5 cm margins
+  if (!EvaluateNumericValue(.width.in, positive_val=TRUE, min_val=2, max_val=10.51182, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name='Calculated Width in Inches', .verbosity)){ return() } ## dimensions of A4 paper with 1.5 cm margins
   if (pdf){
     .scaling.factor = 1
   }else{
     .scaling.factor = scaling_factor
   }
   if (verbosity > 2){
-    # Plot dimensions (as plotted)
+    # Plot dimensions (w or w/o scaling)
     .detailed.output[['"Plot Dimensions (w scaling)"']] = paste0('\t', '.) ', 'Plot Width: ', round(.scaling.factor*.width.in/cm_to_in, 3), ' cm',
                                                      '\n', '\t', '.) ', 'Plot Height: ', round(.scaling.factor*.height.in/cm_to_in, 3), ' cm')
+    .detailed.output[['"Plot Dimensions (w/o scaling)"']] = paste0('\t', '.) ', 'Plot Width: ', round(.width.in/cm_to_in, 3), ' cm',
+                                                                 '\n', '\t', '.) ', 'Plot Height: ', round(.height.in/cm_to_in, 3), ' cm')
     # Width of panels
     .plot.width.parameters = .panel.info[[1]][['plot.width.parameters']]
     .detailed.output[['"Width of panels (w/o scaling)"']] = paste0('\t', '.) ', 'All panels: ', round(.width.in/cm_to_in, 3), ' cm',
@@ -525,9 +559,14 @@ seqNdisplay = function(
                                                       '\n', '\t', '.) ', 'Annotation: ', round(.plot.height.parameters['annot'], 3), ' cm/line',
                                                       '\n', '\t', '.) ', 'Squished annotation: ', round(.plot.height.parameters['annot_squished'], 3), ' cm/line',
                                                       '\n', '\t', '.) ', 'Annotation text: ', round(.plot.height.parameters['annot_text_segment'], 3), ' cm/line')
-    # Font sizes
+    # Panels text orientation
+    .horizontal.panels.list = .panel.info[[1]][['horizontal.panels.list']]
+    .detailed.output[['"Panel text orientation"']] = paste(unlist(lapply(names(.horizontal.panels.list), function(x) paste0(c(paste0('\t', '.) ', x, ':', '\t'), sapply(.horizontal.panels.list[[x]], function(y) ifelse(y, 'HOR', 'VER'))), collapse=' ') )), collapse='\n')
+    # Panel Font sizes
     .panel.font.size.list = .panel.info[[1]][['panel.font.size.list']]
-    .detailed.output[['"Font Sizes"']] = paste0('\t', '.) ', 'Title: ', .header.font.sizes['main'],
+    .detailed.output[['"Panel font sizes"']] = paste(unlist(lapply(names(.panel.font.size.list), function(x) paste0(c(paste0('\t', '.) ', x, ':', '\t'), .panel.font.size.list[[x]]), collapse=' ') )), collapse='\n')
+    # Other Font sizes
+    .detailed.output[['"Other font sizes"']] = paste0('\t', '.) ', 'Title: ', .header.font.sizes['main'],
                                                      '\n', '\t', '.) ', 'Subtitle: ', .header.font.sizes['sub'],
                                                      '\n', '\t', '.) ', 'Scalebar: ', .header.font.sizes['scale'],
                                                      '\n', '\t', '.) ', 'Genomic scale: ', .genomic.scale.font.size,
@@ -560,33 +599,33 @@ seqNdisplay = function(
   ##### <- pdf or on-screen plotting?
   ##### -> plotting
   .plotting.ready.segment.order = NumberingSpacers(.plotting.segment.order)
-  #cat(paste(.plotting.ready.segment.order, '\n'), '\n')
   if (.strands.intermingled){
     .plotted.strand = '+-'
     .first.plot = TRUE
-    for (.plotting.segment in c(.plotting.ready.segment.order[['+']], 'scale')[c(rep(TRUE, length(.plotting.ready.segment.order[['+']])), (!genomic_scale_on_top & include_genomic_scale))]){
-      PlotSegment(feature, .plotted.region, .plotted.strand, both_strands, .plotting.segment, .basic.plot.parameters, .neg.vals.neg.strand, .plot.width.parameters, .plot.vertical.parameters, .annot.info, .panel.info, .panels.list, .panel.separators, .separators.lwds, .separators.colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, .header.font.sizes, .scaling.factor, .full.width.cm, genomic_scale_on_top, .genomic.scale.font.size, actual_strand_direction, .bin.stats, dummy_plot, .tracks, .strands.alpha, .unstranded.beds, .annotation.packing, .annotation.panel.font.size, .incl.feature.names, .feature.names.font.size, .feature.names.above, .final.feature.text.org, .incl.feature.brackets, .incl.feature.shadings, .feature.shading.colors, feature_shading_alpha, .annot.cols, incl_track_scales, .scientific.scale, .scale.fontsize, .force.scale.list, colors, alternating_background, .bgr.colors, bgr_alpha, .font.colors, .letter.widths, .letter.heights, .enhance.signals, .first.plot, .verbosity)
+    .plotting.segments = c(.plotting.ready.segment.order[['+']], 'scale')[c(rep(TRUE, length(.plotting.ready.segment.order[['+']])), (!genomic_scale_on_top & include_genomic_scale))]
+    for (.plotting.segment in .plotting.segments){
+      PlotSegment(feature, .plotted.region, .plotted.strand, both_strands, .plotting.segment, .basic.plot.parameters, .neg.vals.neg.strand, .plot.width.parameters, .plot.vertical.parameters, .annot.info, .panel.info, .panels.list, .panel.separators, .separators.lwds, .separators.colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, .header.font.sizes, .scaling.factor, .full.width.cm, genomic_scale_on_top, .genomic.scale.font.size, actual_strand_direction, .bin.stats, dummy_plot, .tracks, .strands.alpha, .unstranded.beds, .annotation.packing, .annotation.panel.font.size, .incl.feature.names, .feature.names.font.size, .feature.names.above, .final.feature.text.org, .incl.feature.brackets, .incl.feature.shadings, .feature.shading.colors, feature_shading_alpha, .annot.cols, .group.autoscale, incl_track_scales, .scientific.scale, .scale.fontsize, .force.scale.list, colors, alternating_background, .bgr.colors, bgr_alpha, .font.colors, .letter.widths, .letter.heights, .enhance.signals, .first.plot, .verbosity)
     }
   }else{
     for (.plotted.strand in names(.plotting.ready.segment.order)){
       .first.plot = which(names(.plotting.ready.segment.order)==.plotted.strand)==1
       for (.plotting.segment in .plotting.ready.segment.order[[.plotted.strand]]){
-        #cat(paste(.plotted.strand, .plotting.segment, '\t'), '\n')
-        PlotSegment(feature, .plotted.region, .plotted.strand, both_strands, .plotting.segment, .basic.plot.parameters, .neg.vals.neg.strand, .plot.width.parameters, .plot.vertical.parameters, .annot.info, .panel.info, .panels.list, .panel.separators, .separators.lwds, .separators.colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, .header.font.sizes, .scaling.factor, .full.width.cm, genomic_scale_on_top, .genomic.scale.font.size, actual_strand_direction, .bin.stats, dummy_plot, .tracks, .strands.alpha, .unstranded.beds, .annotation.packing, .annotation.panel.font.size, .incl.feature.names, .feature.names.font.size, .feature.names.above, .final.feature.text.org, .incl.feature.brackets, .incl.feature.shadings, .feature.shading.colors, feature_shading_alpha, .annot.cols, incl_track_scales, .scientific.scale, .scale.fontsize, .force.scale.list, colors, alternating_background, .bgr.colors, bgr_alpha, .font.colors, .letter.widths, .letter.heights, .enhance.signals, .first.plot, .verbosity)
+        PlotSegment(feature, .plotted.region, .plotted.strand, both_strands, .plotting.segment, .basic.plot.parameters, .neg.vals.neg.strand, .plot.width.parameters, .plot.vertical.parameters, .annot.info, .panel.info, .panels.list, .panel.separators, .separators.lwds, .separators.colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, .header.font.sizes, .scaling.factor, .full.width.cm, genomic_scale_on_top, .genomic.scale.font.size, actual_strand_direction, .bin.stats, dummy_plot, .tracks, .strands.alpha, .unstranded.beds, .annotation.packing, .annotation.panel.font.size, .incl.feature.names, .feature.names.font.size, .feature.names.above, .final.feature.text.org, .incl.feature.brackets, .incl.feature.shadings, .feature.shading.colors, feature_shading_alpha, .annot.cols, .group.autoscale, incl_track_scales, .scientific.scale, .scale.fontsize, .force.scale.list, colors, alternating_background, .bgr.colors, bgr_alpha, .font.colors, .letter.widths, .letter.heights, .enhance.signals, .first.plot, .verbosity)
       }
-      #cat(names(.annot.info), '\n')
     }
   }
   ##### -> plotting
   if (pdf){ suppressMessages( dev.off() ) }else{ suppressMessages( dev.set(which=2) ) }
-  if (.verbosity > 0){ cat('plot done', '\n') }
   if (.verbosity > 2){
     cat(paste0('\n', 'Detailed Output:'), '\n')
     for (.det.out in names(.detailed.output)){
       cat(paste0(' - ', .det.out, ':'), '\n')
       cat(paste(.detailed.output[[.det.out]], collapse='\n'), '\n')
     }
+    t2 = Sys.time()
+    cat(paste('total plotting time:', format(difftime(t2, t1))), '\n')
   }
+  if (.verbosity > 0){ cat('plot done', '\n') }
   ##### -> warnings
   # function printing all warnings
   ##### <- warnings
@@ -801,6 +840,10 @@ RegionGRanges = function(locus, tracks_width, feature=NULL, annotations=NULL, bi
   }
   if (length(.messages[['errors']]) == 0){
     .gene.width = .chrom.end - .chrom.start + 1
+    if (.gene.width < 100){
+      .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', 'the supplied region is less than 100 bp wide (',  .gene.width, ') - adjusting to 100 bp (minimum width) based on start coordinate')
+      .chrom.end = .chrom.start + 100
+    }
     if (is.null(bin_start)){
       .bin.start = ifelse(.strand=='+', .chrom.start, .chrom.end)
     }else{
@@ -1157,7 +1200,7 @@ ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FA
   if (length(.messages[['errors']])==0){
     if (!is.null(expect_standard)){
       if (expect_standard=='logical'){
-        if (!all(is.logical(parameter))){
+        if (!all(is.logical(parameter)) | any(is.na(parameter))){ #@  added | any(is.na(parameter))
           if (revert_to_default & !is.null(default_value)){
             .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be a logical vector - using default values',
                                                                                   '\n', '\t', '.) ', paste(default_value, collapse=','))
@@ -1167,7 +1210,7 @@ ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FA
           }
         }
       }else if (expect_standard=='integer'){
-        if (!all(is.integer(parameter))){
+        if (!all(is.integer(parameter)) | any(is.na(parameter))){ #@  added | any(is.na(parameter))
           if (revert_to_default & !is.null(default_value)){
             .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be an integer vector - using default values',
                                                                                   '\n', '\t', '.) ', paste(default_value, collapse=','))
@@ -1177,7 +1220,7 @@ ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FA
           }
         }
       }else if (expect_standard=='numeric'){
-        if (!all(is.numeric(parameter))){
+        if (!all(is.numeric(parameter)) | any(is.na(parameter))){ #@  added | any(is.na(parameter))
           if (revert_to_default & !is.null(default_value)){
             .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be a numeric vector - using default values',
                                                                                   '\n', '\t', '.) ', paste(default_value, collapse=','))
@@ -1187,7 +1230,7 @@ ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FA
           }
         }
       }else if (expect_standard=='color'){
-        if (!all(is.color(parameter))){
+        if (!all(is.color(parameter)) | any(is.na(parameter))){ #@  added | any(is.na(parameter))
           if (revert_to_default & !is.null(default_value)){
             .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be a color vector - using default values',
                                                                                   '\n', '\t', '.) ', paste(default_value, collapse=','))
@@ -1197,7 +1240,7 @@ ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FA
           }
         }
       }else if (expect_standard=='character'){
-        if (!all(is.character(parameter))){
+        if (!all(is.character(parameter)) | any(is.na(parameter))){ #@  added | any(is.na(parameter))
           if (revert_to_default & !is.null(default_value)){
             .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be a character vector - using default values',
                                                                                   '\n', '\t', '.) ', paste(default_value, collapse=','))
@@ -1265,7 +1308,7 @@ ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FA
 #' @details
 #' Internal function: Evaluate whether a vector/value is numeric and falls within recommmended range
 #'
-EvaluateNumericValue = function(num_val, positive_val, min_val, max_val, turn_errors_to_warnings=FALSE, alt_par_name=NULL, verbosity){
+EvaluateNumericValue = function(num_val, positive_val, min_val, max_val, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=NULL, verbosity){
   .messages = list('output'=list(), 'errors'=list(), 'warnings'=list())
   .var.name1 = deparse(substitute(num_val))
   .var.name1 = ifelse(is.null(alt_par_name), .var.name1, alt_par_name)
@@ -1299,12 +1342,18 @@ EvaluateNumericValue = function(num_val, positive_val, min_val, max_val, turn_er
     }
     if (identical(as.logical(num_val >= 0), .positive.val)){
       if (any(num_val < .min.val) | any(num_val > .max.val)){
-        .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', .var.name1, ' = ', paste(num_val, collapse=','), ':')
+        #@.messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', .var.name1, ' = ', paste(num_val, collapse=','), ':')
+        .messages[[ifelse(interval_obligatory, 'errors', ifelse(turn_errors_to_warnings, 'warnings', 'errors'))]][[length(.messages[[ifelse(interval_obligatory, 'errors', ifelse(turn_errors_to_warnings, 'warnings', 'errors'))]])+1]] = paste0(' - ', .var.name1, ' = ', paste(num_val, collapse=','), ':')
         for (i in 1:length(num_val)){
           if ((num_val < .min.val)[i] | (num_val > .max.val)[i]){
-            .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0('\t', '.) ', .var.name1, '[', i, '] = ', num_val[i], ';', ' it should preferably be between ', .min.val[i], ' and ', .max.val[i])
+            .messages[[ifelse(interval_obligatory, 'errors', ifelse(turn_errors_to_warnings, 'warnings', 'errors'))]][[length(.messages[[ifelse(interval_obligatory, 'errors', ifelse(turn_errors_to_warnings, 'warnings', 'errors'))]])+1]] = paste0('\t', '.) ', .var.name1, '[', i, '] = ', num_val[i], ';', ' it should preferably be between ', .min.val[i], ' and ', .max.val[i])
           }
         }
+        if (interval_obligatory){ #@$ ->
+          .messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]][[length(.messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]])+1]] = paste0('\t', '.) ', ifelse(turn_errors_to_warnings, 'setting to default value', 'aborting'))
+          PrintOutput(.messages, verbosity)
+          return(FALSE)
+        } #@$ <-
       }
       PrintOutput(.messages, verbosity)
       return(TRUE)
@@ -1344,7 +1393,7 @@ ListDepth = function(query_list){
 #' @details
 #' Internal function: Constructs a panel_font_size_list (a font size provided to each panel)
 #'
-PanelFontSizeList = function(samples, panel_font_sizes, panel_font_size_list, verbosity, interface){
+PanelFontSizeList = function(samples, panel_font_sizes, panel_font_size_list, incl_reps, replicate_names, verbosity, interface){
   .messages = list('output'=list(), 'errors'=list(), 'warnings'=list())
   if (is.null(panel_font_size_list)){
     .panel.font.size.list=NULL
@@ -1368,6 +1417,9 @@ PanelFontSizeList = function(samples, panel_font_sizes, panel_font_size_list, ve
           .final.panel.font.sizes = ScrutinizeExpandAndNameParameter(.final.panel.font.sizes, paste0('panel', 1:.n.panels), use_names=FALSE, default_value=NULL, expect_standard='numeric', expect=NULL, revert_to_default=FALSE, alt_par_name=ifelse(interface=='R', 'panel_font_sizes', 'Panel Text Font Size(s)'), verbosity=verbosity)
         }
         .panel.font.size.list[[.seqtype]] = as.numeric(.final.panel.font.sizes)
+        if (incl_reps[.seqtype] & !is.null(replicate_names)){ #@ ->
+          .panel.font.size.list[[.seqtype]] = c(.panel.font.size.list[[.seqtype]], rev(.panel.font.size.list[[.seqtype]])[1])
+        } #@ <-
       }
     }
   }else{
@@ -1383,6 +1435,9 @@ PanelFontSizeList = function(samples, panel_font_sizes, panel_font_size_list, ve
           if (is.numeric(.panel.font.sizes) & length(.panel.font.sizes)==.n.panels){
             .final.panel.font.sizes = ScrutinizeExpandAndNameParameter(.panel.font.sizes, paste0('panel', 1:.n.panels), use_names=FALSE, default_value=NULL, expect_standard='numeric', expect=NULL, revert_to_default=FALSE, alt_par_name=ifelse(interface=='R', 'panel_font_size_list', 'Detailed Panel Text Font Sizes'), verbosity=verbosity)
             .panel.font.size.list[[.seqtype]] = as.numeric(.final.panel.font.sizes)
+            if (incl_reps[.seqtype] & !is.null(replicate_names)){ #@ ->
+              .panel.font.size.list[[.seqtype]] = c(.panel.font.size.list[[.seqtype]], rev(.panel.font.size.list[[.seqtype]])[1])
+            } #@ <-
           }else if (!is.numeric(.panel.font.sizes)){
             .no.numeric = TRUE
           }else{
@@ -1412,7 +1467,7 @@ PanelFontSizeList = function(samples, panel_font_sizes, panel_font_size_list, ve
 #' @details
 #' Internal function: Checks/constructs a horizontal_panels_list
 #'
-HorizontalPanelsList = function(samples, horizontal_panels_list, verbosity, interface){
+HorizontalPanelsList = function(samples, horizontal_panels_list, incl_reps, replicate_names, verbosity, interface){
   .messages = list('output'=list(), 'errors'=list(), 'warnings'=list())
   .horizontal.panels.list = NULL
   if (!is.null(horizontal_panels_list)){
@@ -1428,6 +1483,9 @@ HorizontalPanelsList = function(samples, horizontal_panels_list, verbosity, inte
           if (is.logical(.horizontal.panels) & length(.horizontal.panels)==.n.panels){
             .final.horizontal.panels = ScrutinizeExpandAndNameParameter(.horizontal.panels, paste0('panel', 1:.n.panels), use_names=FALSE, default_value=NULL, expect_standard='logical', expect=NULL, revert_to_default=FALSE, alt_par_name=ifelse(interface=='R', 'horizontal_panels_list', 'Panels Text Orientation'), verbosity=verbosity)
             .horizontal.panels.list[[.seqtype]] = as.numeric(.final.horizontal.panels)
+            if (incl_reps[.seqtype] & !is.null(replicate_names)){ #@ ->
+              .horizontal.panels.list[[.seqtype]] = c(.horizontal.panels.list[[.seqtype]], TRUE)
+            } #@ <-
           }else if (!is.logical(.horizontal.panels)){
             .no.logical = TRUE
           }else{
@@ -1783,6 +1841,17 @@ LoadAndTransformDataForTrack = function(seqtype, plotted_region, samples, bigwig
         }
         .bw.matrix = do.call(cbind, .bw.list)
         rownames(.bw.matrix) = .chrom.start:.chrom.end
+        if (FALSE){ #@ -> #@ auto-detection of major sign in bw files
+          cumPos = sum(.bw.matrix[which(.bw.matrix > 0)])
+          cumNeg = sum(.bw.matrix[which(.bw.matrix < 0)])
+          if (verbosity > 1){
+            if (abs(cumNeg) > cumPos){
+              cat('WARNING(s):', '\n')
+              cat(paste0(' - the bigwig files related to ', seqtype, ' ', .strand, '-strand contain ', ifelse(cumPos==0, 'only', 'mainly'), ' negative values'), '\n')
+              cat(paste('\t', '.)', .bw.file), '\n')
+            }
+          }
+        } #@ <-
         if (.neg.valued.bw & .strand=='-'){
           .bw.matrix = -1*.bw.matrix
         }
@@ -1909,6 +1978,10 @@ OrganizedPanelsList = function(tracks_listed){
     panels.list[[.seqtype]] = list()
     .subsamples = tracks_listed[[.seqtype]]
     .subsample.matrix = do.call('rbind', sapply(.subsamples, function(.sep) strsplit(.sep, split='.', fixed=T)))
+    if (ncol(.subsample.matrix) > 1){ #@ ->
+      .rles = lapply(apply(.subsample.matrix, 2, Rle), function(x) structure(runLength(x), names=runValue(x)))
+      .subsample.matrix = .subsample.matrix[,order(lengths(.rles))]
+    } #@ <-
     .n.levels = ncol(.subsample.matrix)
     for (.n.level in 1:.n.levels){
       .nextlayer.rle = S4Vectors::Rle(sapply(1:nrow(.subsample.matrix), function(r) paste(.subsample.matrix[r,1:.n.level], collapse=';')))
@@ -2141,7 +2214,7 @@ EstimatePlotHeights = function(annot_info, incl_feature_names, annotation_packin
     if (is.numeric(track_height_cm)){
       if (sign(track_height_cm) > 0){
         .error.message = NULL
-        if (track_height_cm >= 0.25 & track_height_cm <= 1){
+        if (track_height_cm >= 0.2 & track_height_cm <= 1){
           .warning.message = NULL
         }
       }
@@ -2189,8 +2262,8 @@ EstimatePlotHeights = function(annot_info, incl_feature_names, annotation_packin
           .max.bracket.heights = as.numeric(plot_vertical_parameters['annot'] * .max.bracket.lines)
           .max.annot.heights.incl.text[[.annot]] = as.numeric(.annot.heights[[.annot]] + ifelse(incl_feature_names[.annot], 1, 0) * (plot_vertical_parameters['annot_text_segment'] * .max.bracket.lines + ifelse(incl_feature_brackets[.annot], 1, 0) * .max.bracket.heights))
         }
-        .min.annot.heights.combined = sum(unlist(.min.annot.heights.incl.text[[.annot]]))
-        .max.annot.heights.combined = sum(unlist(.max.annot.heights.incl.text[[.annot]]))
+        .min.annot.heights.combined = sum(unlist(.min.annot.heights.incl.text)) #@ removed [[.annot]]
+        .max.annot.heights.combined = sum(unlist(.max.annot.heights.incl.text)) #@ removed [[.annot]]
       }else{
         .min.annot.heights.combined = 0
         .max.annot.heights.combined = 0
@@ -2221,32 +2294,20 @@ EstimatePlotHeights = function(annot_info, incl_feature_names, annotation_packin
     if (is.null(full_height_cm)){
       .min.track.height.cm = track_height_cm
       .max.track.height.cm = track_height_cm
-      .min.full.height.cm = .min.tracks.annots*track_height_cm
-      .max.full.height.cm = .max.tracks.annots*track_height_cm
+      .min.full.height.cm = as.numeric(.min.tracks.annots*track_height_cm)
+      .max.full.height.cm = as.numeric(.max.tracks.annots*track_height_cm)
     }else{
-      .max.track.height.cm = full_height_cm/.min.tracks.annots
-      .min.track.height.cm = full_height_cm/.max.tracks.annots
+      .max.track.height.cm = as.numeric(full_height_cm/.min.tracks.annots)
+      .min.track.height.cm = as.numeric(full_height_cm/.max.tracks.annots)
       .min.full.height.cm = full_height_cm
       .max.full.height.cm = full_height_cm
     }
     # messages
     PrintOutput(.messages, verbosity)
-    # if (length(.messages[['output']]) > 0){
-    #   cat(paste(unlist(.messages[['output']]), collapse='\n'), '\n')
-    # }
-    # if (length(.messages[['errors']]) > 0){
-    #   cat(paste(unlist(.messages[['errors']]), collapse='\n'), '\n')
-    # }
-    return(list('min.track.height.cm.est'=.min.track.height.cm, 'max.track.height.cm.est'=.max.track.height.cm, 'min.full.height.cm.est'=.min.full.height.cm, 'max.full.height.cm.est'=.max.full.height.cm, 'track.vector'=.track.vector, 'min.tracks.annots'=.min.tracks.annots, 'max.tracks.annots'=.max.tracks.annots, 'max.annot.lines'=.max.annot.lines, 'annot.heights'=.annot.heights, 'annot.heights.incl.text'=.max.annot.heights.incl.text))
+    return(list('min.track.height.cm.est'=.min.track.height.cm, 'max.track.height.cm.est'=.max.track.height.cm, 'min.full.height.cm.est'=.min.full.height.cm, 'max.full.height.cm.est'=.max.full.height.cm, 'track.vector'=.track.vector, 'min.tracks.annots'=.min.tracks.annots, 'max.tracks.annots'=.max.tracks.annots, 'max.annot.lines'=.max.annot.lines, 'annot.heights'=.annot.heights, 'annot.heights.incl.text'=.max.annot.heights.incl.text, 'min.annot.heights.combined'=.min.annot.heights.combined, 'max.annot.heights.combined'=.max.annot.heights.combined))
   }else{
     # messages
     PrintOutput(.messages, verbosity)
-    # if (length(.messages[['output']]) > 0){
-    #   cat(paste(unlist(.messages[['output']]), collapse='\n'), '\n')
-    # }
-    # if (length(.messages[['errors']]) > 0){
-    #   cat(paste(unlist(.messages[['errors']]), collapse='\n'), '\n')
-    # }
     return()
   }
 }
@@ -2257,7 +2318,7 @@ EstimatePlotHeights = function(annot_info, incl_feature_names, annotation_packin
 #' @details
 #' Internal function:
 #'
-AdjustEstimatedPlotHeights = function(estimated_plot_heights, full_height_cm, track_height_cm){
+AdjustEstimatedPlotHeights_obs = function(estimated_plot_heights, full_height_cm, track_height_cm){
   .all.spacers = c()
   .min.combined.track.vector = c()
   .max.combined.track.vector = c()
@@ -2286,6 +2347,63 @@ AdjustEstimatedPlotHeights = function(estimated_plot_heights, full_height_cm, tr
       estimated_plot_heights[[.strand]][['min.full.height.cm.est']] = full_height_cm
       estimated_plot_heights[[.strand]][['max.full.height.cm.est']] = full_height_cm
     }
+  }
+  return(estimated_plot_heights)
+}
+
+AdjustEstimatedPlotHeights = function(estimated_plot_heights, plot_vertical_parameters, full_height_cm, track_height_cm, title_field_height_cm, genomic_scale_height_cm, annotation_height_cm, spacer_height_cm){
+  .all.spacers = c()
+  .min.combined.track.vector = c()
+  .max.combined.track.vector = c()
+  for (.strand in names(estimated_plot_heights)){
+    .spacers = grep('spacer', names(estimated_plot_heights[[.strand]][['track.vector']]), fixed=TRUE)
+    if (length(.spacers) > 0){
+      names(estimated_plot_heights[[.strand]][['track.vector']])[.spacers] = paste(names(estimated_plot_heights[[.strand]][['track.vector']])[.spacers], length(.all.spacers) + 1:length(.spacers), sep='')
+    }
+    .min.combined.track.vector = c(.min.combined.track.vector, estimated_plot_heights[[.strand]][['track.vector']])
+    .min.combined.track.vector[paste0('annot', .strand)] = estimated_plot_heights[[.strand]][['min.annot.heights.combined']]
+    .max.combined.track.vector = c(.max.combined.track.vector, estimated_plot_heights[[.strand]][['track.vector']])
+    .max.combined.track.vector[paste0('annot', .strand)] = estimated_plot_heights[[.strand]][['max.annot.heights.combined']]
+    .all.spacers = c(.all.spacers, .spacers)
+  }
+  .min.tracks.annots = sum(.min.combined.track.vector)
+  .max.tracks.annots = sum(.max.combined.track.vector)
+  for (.strand in names(estimated_plot_heights)){
+    if (is.null(full_height_cm)){
+      estimated_plot_heights[[.strand]][['min.track.height.cm.est']] = track_height_cm
+      estimated_plot_heights[[.strand]][['max.track.height.cm.est']] = track_height_cm
+      estimated_plot_heights[[.strand]][['min.full.height.cm.est']] = as.numeric(.min.tracks.annots*track_height_cm)
+      estimated_plot_heights[[.strand]][['max.full.height.cm.est']] = as.numeric(.max.tracks.annots*track_height_cm)
+    }else{
+      .min.non.track.height.cm  = 0
+      if (!is.null(title_field_height_cm)){
+        .header.cm = title_field_height_cm * sum(grepl('header', names(.min.combined.track.vector)))
+        .min.non.track.height.cm  = .min.non.track.height.cm  + .header.cm
+      }
+      if (!is.null(genomic_scale_height_cm)){
+        .scale.cm = genomic_scale_height_cm * sum(grepl('scale', names(.min.combined.track.vector)))
+        .min.non.track.height.cm  = .min.non.track.height.cm  + .scale.cm
+      }
+      if (!is.null(spacer_height_cm)){
+        .spacer.cm = spacer_height_cm * (sum(grepl('-spacer', names(.min.combined.track.vector))) + sum(grepl('thickline-spacer', names(.min.combined.track.vector))))
+        .min.non.track.height.cm  = .min.non.track.height.cm + .spacer.cm
+      }
+      .max.non.track.height.cm = .min.non.track.height.cm
+      if (!is.null(annotation_height_cm)){
+        .min.combined.annot.cm = annotation_height_cm * sum(.min.combined.track.vector[grep('annot', names(.min.combined.track.vector))]/plot_vertical_parameters['annot'])
+        .max.combined.annot.cm = annotation_height_cm * sum(.max.combined.track.vector[grep('annot', names(.max.combined.track.vector))]/plot_vertical_parameters['annot'])
+        .min.non.track.height.cm = .min.non.track.height.cm + .min.combined.annot.cm
+        .max.non.track.height.cm = .max.non.track.height.cm + .max.combined.annot.cm
+      }
+      .n.tracks = sum(!as.logical(grepl('header', names(.min.combined.track.vector)) + grepl('scale', names(.min.combined.track.vector)) + grepl('-spacer', names(.min.combined.track.vector)) + grepl('annot', names(.min.combined.track.vector))))
+      estimated_plot_heights[[.strand]][['min.track.height.cm.est']] = as.numeric((full_height_cm-.max.non.track.height.cm)/.n.tracks)
+      estimated_plot_heights[[.strand]][['max.track.height.cm.est']] = as.numeric((full_height_cm-.min.non.track.height.cm)/.n.tracks)
+      estimated_plot_heights[[.strand]][['min.full.height.cm.est']] = full_height_cm
+      estimated_plot_heights[[.strand]][['max.full.height.cm.est']] = full_height_cm
+    }
+    estimated_plot_heights[[.strand]][['annot.heights']] = lapply(estimated_plot_heights[[.strand]][['annot.heights']], function(x) x/plot_vertical_parameters[['annot']]) #@
+    estimated_plot_heights[[.strand]][['min.combined.track.vector']] = .min.combined.track.vector
+    estimated_plot_heights[[.strand]][['max.combined.track.vector']] = .max.combined.track.vector
   }
   return(estimated_plot_heights)
 }
@@ -2556,13 +2674,87 @@ OrganizeAllAnnotationTextsInPlottedRegion = function(feature_text, plotted_regio
   }
 }
 
-
-#' Plot Height Parameters
+#' Update Plot Vertical Parameters
 #'
 #' @details
 #' Internal function:
 #'
-PlotHeightParameters = function(annot_info, track_vector, max_annot_lines, annot_heights, letter_widths, incl_feature_names, feature_text_org, annotation_packing, incl_feature_brackets, track_height_cm, full_height_cm, stranded_beds, plot_vertical_parameters){
+UpdatePlotVerticalParameters = function(plot_vertical_parameters, track_height_cm_estimate, title_field_height_cm, genomic_scale_height_cm, annotation_height_cm, spacer_height_cm){
+  if (!is.null(title_field_height_cm)){
+    plot_vertical_parameters['header'] = title_field_height_cm/track_height_cm_estimate
+  }
+  if (!is.null(genomic_scale_height_cm)){
+    plot_vertical_parameters['scale'] = genomic_scale_height_cm/track_height_cm_estimate
+  }
+  if (!is.null(annotation_height_cm)){
+    plot_vertical_parameters['annot'] = annotation_height_cm/track_height_cm_estimate
+    plot_vertical_parameters['annot_text_segment'] = plot_vertical_parameters['annot']
+    plot_vertical_parameters['annot_squished'] = 0.5*plot_vertical_parameters['annot']
+  }
+  if (!is.null(spacer_height_cm)){
+    plot_vertical_parameters['line-spacer'] = spacer_height_cm/track_height_cm_estimate
+    plot_vertical_parameters['empty-spacer'] = plot_vertical_parameters['line-spacer']
+    plot_vertical_parameters['thickline-spacer'] = 2*plot_vertical_parameters['line-spacer']
+  }
+  return(plot_vertical_parameters)
+}
+
+#' Update Plot Vertical Parameters v2
+#'
+#' @details
+#' Internal function:
+#'
+CalculateTrackHeight = function(combined_track_vector, total_annotation_lines, full_height_cm, title_field_height_cm, genomic_scale_height_cm, annotation_height_cm, spacer_height_cm){
+  .non.track.height.cm  = 0
+  if (!is.null(title_field_height_cm)){
+    .header.cm = title_field_height_cm * sum(grepl('header', names(combined_track_vector)))
+    .non.track.height.cm  = .non.track.height.cm  + .header.cm
+  }
+  if (!is.null(genomic_scale_height_cm)){
+    .scale.cm = genomic_scale_height_cm * sum(grepl('scale', names(combined_track_vector)))
+    .non.track.height.cm  = .non.track.height.cm  + .scale.cm
+  }
+  if (!is.null(spacer_height_cm)){
+    .spacer.cm = spacer_height_cm * (sum(grepl('-spacer', names(combined_track_vector))) + sum(grepl('thickline-spacer', names(combined_track_vector))))
+    .non.track.height.cm  = .non.track.height.cm + .spacer.cm
+  }
+  if (!is.null(annotation_height_cm)){
+    .combined.annot.cm = annotation_height_cm * total_annotation_lines
+    .non.track.height.cm  = .non.track.height.cm + .combined.annot.cm
+  }
+  .n.tracks = sum(!as.logical(grepl('header', names(combined_track_vector)) + grepl('scale', names(combined_track_vector)) + grepl('-spacer', names(combined_track_vector)) + grepl('annot', names(combined_track_vector))))
+  .track.height.cm = (full_height_cm-.non.track.height.cm)/.n.tracks
+  return(.track.height.cm)
+}
+
+
+#' Update Track Vector
+#'
+#' @details
+#' Internal function:
+#'
+UpdateTrackVector = function(track_vector, plot_vertical_parameters){
+  track_vector[grep('header', names(track_vector))] = plot_vertical_parameters['header']
+  track_vector[grep('scale', names(track_vector))] = plot_vertical_parameters['scale']
+  track_vector[grep('empty-spacer', names(track_vector))] = plot_vertical_parameters['empty-spacer']
+  track_vector[grep('line-spacer', names(track_vector))] = plot_vertical_parameters['line-spacer']
+  track_vector[grep('thickline-spacer', names(track_vector))] = plot_vertical_parameters['thickline-spacer']
+  if (any(grepl('annot', names(track_vector)))){
+    track_vector[!as.logical(grepl('header', names(track_vector)) + grepl('scale', names(track_vector)) + grepl('-spacer', names(track_vector)) + grepl('annot', names(track_vector)))] = 1
+  }else{
+    track_vector[!as.logical(grepl('header', names(track_vector)) + grepl('scale', names(track_vector)) + grepl('-spacer', names(track_vector)))] = 1
+  }
+  return(track_vector)
+}
+
+
+
+#' Relative Annotation Height
+#'
+#' @details
+#' Internal function:
+#'
+RelativeAnnotationHeight = function(annot_info, annot_heights, letter_heights, incl_feature_names, feature_text_org, annotation_packing, incl_feature_brackets, stranded_beds){
   .annot.heights.incl.text = list()
   if (!is.null(annot_info)){
     if (any(stranded_beds)){
@@ -2570,17 +2762,45 @@ PlotHeightParameters = function(annot_info, track_vector, max_annot_lines, annot
         if (!is.null(feature_text_org[['names.packing.list']][[.annot]])){
           .bracket.lines = lengths(feature_text_org[['names.packing.list']][[.annot]])
         }else{
-          .bracket.lines = rep(1, length(letter_widths))
+          .bracket.lines = rep(1, length(letter_heights))
+        }
+        .annot.heights.incl.text[[.annot]] = annot_heights[[.annot]] + ifelse(incl_feature_names[.annot], 1, 0) * (.bracket.lines + ifelse(incl_feature_brackets[.annot], 1, 0) * .bracket.lines)
+      }
+      .annot.heights.combined = colSums(do.call(rbind, .annot.heights.incl.text))
+    }else{
+      .annot.heights.combined = rep(0, length(letter_heights))
+    }
+  }else{
+    .annot.heights.combined = rep(0, length(letter_heights))
+  }
+  return(list('annot.heights.combined'=.annot.heights.combined, 'annot.heights.incl.text'=.annot.heights.incl.text))
+}
+
+
+#' Plot Height Parameters
+#'
+#' @details
+#' Internal function:
+#'
+PlotHeightParameters_obs = function(annot_info, track_vector, max_annot_lines, annot_heights, letter_heights, incl_feature_names, feature_text_org, annotation_packing, incl_feature_brackets, track_height_cm, full_height_cm, stranded_beds, plot_vertical_parameters){
+  .annot.heights.incl.text = list()
+  if (!is.null(annot_info)){
+    if (any(stranded_beds)){
+      for (.annot in names(annot_info)[stranded_beds]){
+        if (!is.null(feature_text_org[['names.packing.list']][[.annot]])){
+          .bracket.lines = lengths(feature_text_org[['names.packing.list']][[.annot]])
+        }else{
+          .bracket.lines = rep(1, length(letter_heights))
         }
         .bracket.heights = as.numeric(plot_vertical_parameters['annot'] * .bracket.lines)
         .annot.heights.incl.text[[.annot]] = annot_heights[[.annot]] + ifelse(incl_feature_names[.annot], 1, 0) * (plot_vertical_parameters['annot_text_segment'] * .bracket.lines + ifelse(incl_feature_brackets[.annot], 1, 0) * .bracket.heights)
       }
       .annot.heights.combined = colSums(do.call(rbind, .annot.heights.incl.text))
     }else{
-      .annot.heights.combined = rep(0, length(letter_widths))
+      .annot.heights.combined = rep(0, length(letter_heights))
     }
   }else{
-    .annot.heights.combined = rep(0, length(letter_widths))
+    .annot.heights.combined = rep(0, length(letter_heights))
   }
   # setup plotting area - vertical part
   .n.tracks = sum(track_vector)
@@ -2597,6 +2817,44 @@ PlotHeightParameters = function(annot_info, track_vector, max_annot_lines, annot
   return(list('full.height.in'=.full.height.in, 'track.vector'=track_vector, 'n.tracks.annots'=.n.tracks.annots, 'track.height.cm'=.track.height.cm, 'max.annot.lines'=max_annot_lines, 'annot.heights'=annot_heights, 'annot.heights.incl.text'=.annot.heights.incl.text))
 }
 
+
+PlotHeightParameters = function(combined_track_vector, track_vector, annotation_lines, total_annotation_lines, annot_heights_incl_text, max_annot_lines, annot_heights, track_height_cm, full_height_cm, title_field_height_cm, genomic_scale_height_cm, annotation_height_cm, spacer_height_cm, plot_vertical_parameters){
+  if (!is.null(full_height_cm)){
+    .annot.heights.incl.text = annot_heights_incl_text
+    .annot.heights = lapply(annot_heights, function(x) rep(x, length(annotation_lines)))
+    .annot.heights.combined = annotation_lines
+    .track.vector = list()
+    .track.height.cm = as.numeric(sapply(total_annotation_lines, function(.tal) CalculateTrackHeight(combined_track_vector, .tal, full_height_cm, title_field_height_cm, genomic_scale_height_cm, annotation_height_cm, spacer_height_cm)))
+    .full.height.cm = rep(NA, length(annotation_lines))
+    .n.tracks.annots = rep(NA, length(annotation_lines))
+    for (i in 1:length(annotation_lines)){
+      .plot.vertical.parameters = UpdatePlotVerticalParameters(plot_vertical_parameters, .track.height.cm[i], title_field_height_cm, genomic_scale_height_cm, annotation_height_cm, spacer_height_cm)
+      .multiplier = rep(1, length(annotation_lines))
+      .multiplier[i] = .plot.vertical.parameters['annot']
+      .annot.heights.incl.text = lapply(.annot.heights.incl.text, function(x) x * .multiplier)
+      .annot.heights = lapply(.annot.heights, function(x) x * .multiplier)
+      .annot.heights.combined[i] = .annot.heights.combined[i] * .plot.vertical.parameters['annot']
+      .track.vector[[i]] = UpdateTrackVector(track_vector, .plot.vertical.parameters)
+      .n.tracks = sum(.track.vector[[i]])
+      .n.tracks.annots[i] = .n.tracks + .annot.heights.combined[i] ## vector where indices correspond to font size of feature name
+      .full.height.cm[i] = .n.tracks.annots[i]*.track.height.cm[i]
+    }
+  }else{
+    .annot.heights.incl.text = lapply(annot_heights_incl_text, function(x) x * as.numeric(plot_vertical_parameters['annot']))
+    .annot.heights = lapply(annot_heights, function(x) plot_vertical_parameters['annot']*rep(x, length(annotation_lines)))
+    .annot.heights.combined = annotation_lines * as.numeric(plot_vertical_parameters['annot'])
+    .n.tracks = sum(track_vector)
+    .n.tracks.annots = .n.tracks + .annot.heights.combined ## vector where indices correspond to font size of feature name
+    .track.height.cm = rep(track_height_cm, length(.n.tracks.annots))
+    .full.height.cm = .n.tracks.annots*.track.height.cm
+    .track.vector = lapply(1:length(.n.tracks.annots), function(x) track_vector)
+  }
+  # plot height (1x) as function of font.size of annotated feature name
+  .full.height.in = .full.height.cm * cm_to_in				 ## full_height_cm of figure in inches for pdf
+  return(list('full.height.in'=.full.height.in, 'track.vector'=.track.vector, 'n.tracks.annots'=.n.tracks.annots, 'track.height.cm'=.track.height.cm, 'max.annot.lines'=max_annot_lines, 'annot.heights'=.annot.heights, 'annot.heights.incl.text'=.annot.heights.incl.text))
+}
+
+
 #' Organize Panels Dimensions
 #'
 #' @details
@@ -2604,7 +2862,7 @@ PlotHeightParameters = function(annot_info, track_vector, max_annot_lines, annot
 #'
 OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, print_one_line_sample_names, incl_first_panel, plot_height_parameters, feature_names_font_size, font_size_range, recommended_font_sizes, scale_font_size, horizontal_panels_list, panel_font_size_list, panels_list, plot_widths_cm, panel_separators, strand, both_strands, strands_intermingled, stranded_samples, fixed_panel_width=FALSE, verbosity){
   # get vertical and horizontal restrictions
-  .tracks.vector = plot_height_parameters[['track.vector']]
+  .tracks.vector = plot_height_parameters[['track.vector']][[feature_names_font_size]]
   .track.height.cm = plot_height_parameters[['track.height.cm']][feature_names_font_size]
   .panels.max.width.cm = plot_widths_cm['panels.max.width.cm']
   .organised.panels = list()
@@ -2619,15 +2877,15 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
   .n.chars.list = list()
   .heigths.cm.list = list()
   if (!is.null(panel_font_size_list)){
-    .font.size.range = min(unlist(panel_font_size_list[dataset])):max(unlist(panel_font_size_list[dataset])) #@ added [dataset]
+    .font.size.range = min(unlist(panel_font_size_list)):max(unlist(panel_font_size_list))
   }else{
     .font.size.range = font_size_range
   }
   for (.dataset in datasets){
     .subsamples = grep(paste0("^", .dataset, "_"), names(.tracks.vector), value=TRUE)
-    if (length(.subsamples)==0){ #@ ->
+    if (length(.subsamples)==0){
       .subsamples = grep(paste0(.dataset, "_"), names(.tracks.vector), fixed=TRUE, value=TRUE)
-    } #@ <-
+    }
     .subsamples = as.character(sapply(.subsamples, function(s) paste0(.dataset, '.', strsplit(s, split=paste0(.dataset, "_"), fixed=TRUE)[[1]][2]) ))
     .subsample.matrix = do.call('rbind', sapply(.subsamples, function(.sep) strsplit(.sep, split='.', fixed=T)))
     .n.levels = ncol(.subsample.matrix)
@@ -2814,13 +3072,14 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
   ## if one or more 1st panels need to be horizontal
   if (.incl.first.panel){
     if (any(as.logical(sapply(.panel.config, function(x) x[1]))) & is.null(horizontal_panels_list)){
-      .eligible.font.sizes = apply(do.call('rbind', lapply(.penalties.0hor.list, function(m) apply(m, 2, function(c) any(c==0)))), 2, function(c) all(c))
+      #@.eligible.font.sizes = apply(do.call('rbind', lapply(.penalties.0hor.list, function(m) apply(m, 2, function(c) any(c==0)))), 2, function(c) all(c))
+      .eligible.font.sizes = apply(do.call('rbind', lapply(.penalties.list, function(m) apply(m, 2, function(c) any(c==0)))), 2, function(c) all(c))
       .panel.config = list()
       if (any(.eligible.font.sizes)){
         .common.font.size = .font.size.range[max(which(.eligible.font.sizes))]
-        for (.dataset in names(.penalties.list)){
+        for (.dataset in names(.penalties.list)){ #@ .penalties.0hor.list <-> .penalties.list
           .config = rep(TRUE, .n.levels.list[[.dataset]])  ## TRUE refers to horizontal or not
-          .n.ver.panels = max(which(.penalties.list[[.dataset]][,paste0('f', .common.font.size)]==0))-1
+          .n.ver.panels = max(which(.penalties.list[[.dataset]][,paste0('f', .common.font.size)]==0))-1 #@ .penalties.0hor.list <-> .penalties.list
           if (.n.ver.panels > 0){
             .config[1:.n.ver.panels] = FALSE
           }
@@ -2828,10 +3087,10 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
         }
       }else{
         .common.font.size = min(.font.size.range)
-        for (.dataset in names(.penalties.list)){
+        for (.dataset in names(.penalties.list)){ #@ .penalties.0hor.list <-> .penalties.list
           .config = rep(TRUE, .n.levels.list[[.dataset]])  ## TRUE refers to horizontal or not
-          if (any(.penalties.list[[.dataset]][,paste0('f', .common.font.size)]==0)){
-            .n.ver.panels = max(which(.penalties.list[[.dataset]][,paste0('f', .common.font.size)]==0))-1
+          if (any(.penalties.list[[.dataset]][,paste0('f', .common.font.size)]==0)){ #@ .penalties.0hor.list <-> .penalties.list
+            .n.ver.panels = max(which(.penalties.list[[.dataset]][,paste0('f', .common.font.size)]==0))-1 #@ .penalties.0hor.list <-> .penalties.list
             if (.n.ver.panels > 0){
               .config[1:.n.ver.panels] = FALSE
             }
@@ -2873,7 +3132,19 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
               .panel.word.widths[ , .n.ver.panels+1] = .word.vert.space * .common.font.size * std_letter_height
             }
             .penalties = .hor.penalties + .ver.penalties
-            .config[1:(max(which(.penalties==min(abs(.penalties))))-1)] = FALSE
+            if (all(.penalties < 0)){ #@ ->  .config[1:(max(which(.penalties==min(abs(.penalties))))-1)] = FALSE
+              if (.panels.max.width.cm!=-1){
+                .lowest.penalty = which(abs(.penalties)==min(abs(.penalties))) - 1
+                if (.lowest.penalty > 0){
+                  .config[1:.lowest.penalty] = FALSE
+                }
+              }
+            }else{
+              .lowest.penalty = max(which(.penalties >=0)) - 1
+              if (.lowest.penalty > 0){
+                .config[1:.lowest.penalty] = FALSE
+              }
+            } #@ <-
           }
           .panel.config[[.dataset]] = .config
         }
@@ -2888,7 +3159,7 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
   if (any(.eligible.font.sizes) & .common.font.size < max(.font.size.range)){
     .finetune.penalties.list = list()
     for (.dataset in datasets){
-      .config = .panel.config[[.dataset]]
+      .config = as.logical(.panel.config[[.dataset]])
       .n.levels = .n.levels.list[[.dataset]]
       .n.panel.separators = .n.levels - 1 - ifelse(.incl.first.panel,0,1)
       .incl.panels = ifelse(.incl.first.panel, 1, 2):.n.levels
@@ -2903,6 +3174,7 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
       .panel.word.widths[,1] = .common.font.size * (ifelse(!.config[1], nchar(.dataset), max(nchar(datasets))) + .word.extensions) * std_letter_width
       .panel.word.heights = .common.font.size * matrix(1, ncol=.n.levels, nrow=max(.subpanels)) * std_letter_height
       .panel.heights = matrix(rep(.heigths.cm, each=max(.subpanels)), ncol=.n.levels, nrow=max(.subpanels))
+      #cat(paste0(.dataset, ': ', paste(.config, collapse='\t')), '\n') #@
       .hor.panels = which(.config)
       .hor.subpanels = .hor.panels[.hor.panels > 1]
       if (any(.hor.subpanels>0)){
@@ -2911,7 +3183,11 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
             .conseq.entries = max(.subpanels)/.subpanels[.n.level]
             .panel.word.widths[,.n.level] = .common.font.size * (nchar(rep(names(panels_list[[.dataset]][[.n.level-1]]), each=.conseq.entries)) + .word.extensions) * std_letter_width
           }else{
-            .panel.word.widths[,.n.level] = .common.font.size * (nchar(rep(names(panels_list[[.dataset]][[.n.level-1]]), panels_list[[.dataset]][[.n.level-1]])) + .word.extensions) * std_letter_width
+            if (sum(panels_list[[.dataset]][[.n.level-1]])==nrow(.panel.word.widths)){
+              .panel.word.widths[,.n.level] = .common.font.size * (nchar(rep(names(panels_list[[.dataset]][[.n.level-1]]), panels_list[[.dataset]][[.n.level-1]])) + .word.extensions) * std_letter_width
+            }else{
+              .panel.word.widths[,.n.level] = .common.font.size * (nchar(names(panels_list[[.dataset]][[.n.level-1]])) + .word.extensions) * std_letter_width
+            }
           }
         }
       }
@@ -2969,7 +3245,7 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
       }
       .finetune.penalties.list[[.dataset]] = .hor.penalties + .ver.penalties
     }
-    .add.font.sizes = sapply(.finetune.penalties.list, function(v) max(which(v==0))-1)
+    .add.font.sizes = sapply(.finetune.penalties.list, function(v) if (any(v==0)){max(which(v==0))-1}else{0} )
   }else{
     .add.font.sizes = structure(rep(0, length(datasets)), names=datasets)
   }
@@ -2998,7 +3274,7 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
   }else{
     .panel.width.list = lapply(.panel.width.list, function(x) {x[1]=.outer.panel.width; x[-1]=.inner.panels.width*x[-1]/sum(x[-1]); return(x)})
   }
-  .panel.width.list = lapply(.panel.width.list, function(x) {l=length(x); if (l > 1){.n.panel.separators=l-1-ifelse(.incl.first.panel,0,1); if (.n.panel.separators>0){y=rep(NA, l+.n.panel.separators); y[seq(1, length(y), by=2)]=x; y[seq(ifelse(.incl.first.panel, 2, 4), length(y), by=2)]=.panel.separator.cm}else{y=x}; return(y)}else{return(x)}})
+  .panel.width.list = lapply(.panel.width.list, function(x) {l=length(x); if (l > 1){.n.panel.separators=l-1-ifelse(.incl.first.panel,0,1); if (.n.panel.separators>0){y=rep(NA, l+.n.panel.separators); y[setdiff(1:length(y), seq(ifelse(.incl.first.panel, 2, 3), length(y), by=2))]=x; y[seq(ifelse(.incl.first.panel, 2, 3), length(y), by=2)]=.panel.separator.cm}else{y=x}; return(y)}else{return(x)}})  #@ seq(1, length(y), by=2) <- setdiff(1:length(y), seq(ifelse(.incl.first.panel, 2, 3), length(y), by=2)) AND seq(ifelse(.incl.first.panel, 2, 3), length(y), by=2) <- seq(ifelse(.incl.first.panel, 2, 4), length(y), by=2)
   .total.panel.widths.cm = unlist(lapply(.panel.width.list, sum))
   .diff.total.panel.widths.cm = max(.total.panel.widths.cm) - .total.panel.widths.cm
   .panel.width.list = structure(lapply(1:length(.panel.width.list), function(n) {x=.panel.width.list[[n]]; x[length(x)]=x[length(x)]+.diff.total.panel.widths.cm[n]; return(x)}), names=names(.panel.width.list))
@@ -3162,8 +3438,8 @@ BasicPlotParameters = function(plotted_strand, plotted_region, feature_names_fon
     .track.height.cm = track_height_cm
     .full.height.cm = .n.tracks*track_height_cm
   }else{
-    .track.height.cm = full_height_cm/.n.tracks
-    .full.height.cm = full_height_cm
+    .full.height.cm = plot_height_parameters[[plotted_strand]][['full.height.in']][feature_names_font_size]/cm_to_in
+    .track.height.cm = .full.height.cm/.n.tracks
   }
   # height information for plot
   .n.tracks = plot_height_parameters[[plotted_strand]][['n.tracks.annots']][feature_names_font_size]
@@ -3174,7 +3450,9 @@ BasicPlotParameters = function(plotted_strand, plotted_region, feature_names_fon
   .full.width.in = full_width_cm * cm_to_in					 ## full_width_cm of figure in inches for pdf
   .full.height.in = plot_height_parameters[[plotted_strand]][['full.height.in']][feature_names_font_size]				 ## full_height_cm of figure in inches for pdf
   .plot.dim.in = c(.full.width.in, .full.height.in)
-  return(list('track.vector'=.track.vector, 'windows.height'=.windows.height, 'max.annot.lines'=plot_height_parameters[[plotted_strand]][['max.annot.lines']], 'annot.heights'=plot_height_parameters[[plotted_strand]][['annot.heights']], 'plot.dim.in'=.plot.dim.in, 'track.height.cm'=.track.height.cm, 'bin.info'=.bin.info))
+  .annot.heights = lapply(plot_height_parameters[[plotted_strand]][['annot.heights']], function(x) x[feature_names_font_size]) #@
+  #@.annot.heights = lapply(plot_height_parameters[[plotted_strand]][['annot.heights']], function(x) x[feature_names_font_size] * as.numeric(plot_vertical_parameters['annot'])) #@
+  return(list('track.vector'=.track.vector, 'windows.height'=.windows.height, 'max.annot.lines'=plot_height_parameters[[plotted_strand]][['max.annot.lines']], 'annot.heights'=.annot.heights, 'plot.dim.in'=.plot.dim.in, 'track.height.cm'=.track.height.cm, 'bin.info'=.bin.info))
 }
 
 
@@ -3183,7 +3461,7 @@ BasicPlotParameters = function(plotted_strand, plotted_region, feature_names_fon
 #' @details
 #' Internal function:
 #'
-AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands_intermingled){
+AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands_intermingled, fixed_plot_vertical_parameters){
   .basic.plot.parameters = basic_plot_parameters
   if (both_strands){
     .height.in = .basic.plot.parameters[['+']][['plot.dim.in']][2] + .basic.plot.parameters[['-']][['plot.dim.in']][2]
@@ -3206,12 +3484,31 @@ AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands
       .track.vector.minus = structure(sapply(.track.vector.names, function(.name) .basic.plot.parameters[['-']][['track.vector']][.name], USE.NAMES=FALSE), names=.track.vector.names)
       .track.vector.minus[is.na(.track.vector.minus)] = 0
       .track.vector = .track.vector.plus + .track.vector.minus
+      if (!fixed_plot_vertical_parameters[1]){ #@ ->
+        .unadjusted.track.vector.sum = sum(.track.vector)
+        .diff = sum(c(.basic.plot.parameters[['+']][['track.vector']], .basic.plot.parameters[['-']][['track.vector']])) - .unadjusted.track.vector.sum
+        .indices = list()
+        .weights = list()
+        .indices[['header']] = grep('^header$', names(.track.vector))
+        .weights[['header']] = 1
+        .indices[['scale']] = grep('^scale$', names(.track.vector))
+        .weights[['scale']] = 1
+        .indices[['spacers']] = grep('-spacer', names(.track.vector))
+        .weights[['spacers']] = .track.vector[.indices[['spacers']]]/min(.track.vector[.indices[['spacers']]])
+        .indices[['annots']] = sort(unlist(lapply(c(.annot.names, .unstranded.beds.names), function(a) grep(paste0('^', a), names(.track.vector)))))
+        .weights[['annots']] = .track.vector[.indices[['annots']]]/min(.track.vector[.indices[['annots']]])
+        .indices[['tracks']] = setdiff(1:length(.track.vector), unlist(.indices[1:4]))
+        .weights[['tracks']] = .track.vector[.indices[['tracks']]]/min(.track.vector[.indices[['tracks']]])
+        .diff.indices = unlist(.indices[names(fixed_plot_vertical_parameters)[!fixed_plot_vertical_parameters]])
+        .diff.weights = unlist(.weights[names(fixed_plot_vertical_parameters)[!fixed_plot_vertical_parameters]])
+        .track.vector[.diff.indices] = .track.vector[.diff.indices] + .diff*.diff.weights/sum(.diff.weights)
+      } #@ <-
       .windows.height = c('top'=1, 1-cumsum(.track.vector)/sum(.track.vector)); .windows.height[length(.windows.height)] = 0
       .basic.plot.parameters[['+-']] = list('track.vector'=.track.vector, 'windows.height'=.windows.height)
       .annot.names = names(.basic.plot.parameters[['+']][['max.annot.lines']])
       .basic.plot.parameters[['+-']][['max.annot.lines']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['+']][['max.annot.lines']][[.annot.name]] + ifelse(.annot.name %in% .unstranded.beds.names, 0, .basic.plot.parameters[['-']][['max.annot.lines']][[.annot.name]])), names=.annot.names)
       .basic.plot.parameters[['+-']][['annot.heights']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['+']][['annot.heights']][[.annot.name]] + ifelse(.annot.name %in% .unstranded.beds.names, 0, .basic.plot.parameters[['-']][['annot.heights']][[.annot.name]])), names=.annot.names)
-      .basic.plot.parameters[['+-']][['plot.dim.in']] = .height.in
+      .basic.plot.parameters[['+-']][['plot.dim.in']] = c(.basic.plot.parameters[['+']][['plot.dim.in']][1], cm_to_in * sum(.basic.plot.parameters[['+']][['track.height.cm']] * .track.vector)) #@ added
       .basic.plot.parameters[['+-']][['track.height.cm']] = .basic.plot.parameters[['+']][['track.height.cm']]
       .basic.plot.parameters[['+-']][['bin.info']] = .basic.plot.parameters[['+']][['bin.info']]
     }else{
@@ -3303,8 +3600,8 @@ PlotHeader = function(windows_height, n_segment, coords_tracks, full_width_cm,  
 #' @details
 #' Internal function:
 #'
-CoordsOfGenomicScale = function(chrom_coord, font_size, coords_tracks, full_width_cm, plot_width, plot_start, plot_end, letter_widths){
-  .coord.width.cm = nchar(chrom_coord)*letter_widths[font_size]
+CoordsOfGenomicScale = function(chrom_coord, font_size, coords_tracks, full_width_cm, plot_width, plot_start, plot_end){
+  .coord.width.cm = nchar(chrom_coord) * std_letter_width*font_size
   if (is.na(.coord.width.cm)){
     return(NA)
   }else{
@@ -3340,13 +3637,29 @@ CoordsOfGenomicScale = function(chrom_coord, font_size, coords_tracks, full_widt
 #' @details
 #' Internal function:
 #'
-PlotScale = function(windows_height, n_segment, coords_tracks, full_width_cm, genomic_scale_on_top, plot_width, plot_start, plot_end, first_plot, font_color, font_family, genomic_scale_font_size, scaling_factor, letter_widths){
+PlotScale = function(windows_height, n_segment, coords_tracks, full_width_cm, genomic_scale_on_top, plot_width, plot_start, plot_end, first_plot, font_color, font_family, genomic_scale_font_size, scaling_factor){
   par(fig=c(coords_tracks[1],coords_tracks[2],windows_height[n_segment+1],windows_height[n_segment]), mai=scaling_factor*c(0, 0, 0, 0), new=ifelse(n_segment==1 & first_plot, F, T))
   plot(0, 0, type='n', xlim=c(plot_start, plot_end), ylim=c(-1,1), ann=FALSE, axes=FALSE, bg='transparent', bty='n', xaxs='i', yaxs ='i')
   abline(h=ifelse(genomic_scale_on_top, -1, 1)*0.8, col=font_color['genomic_axis'], lwd=scaling_factor*line_width_scaling_factor*0.5, lend=1)
   .tickmarks = as.integer(axTicks(side=1))
-  .scale.plot.coords = as.integer(unlist(lapply(.tickmarks, function(.tickmark) CoordsOfGenomicScale(.tickmark, genomic_scale_font_size, coords_tracks, full_width_cm, plot_width, as.integer(plot_start), as.integer(plot_end), letter_widths)['chrom.coord'])))
-  .scale.plot.adjs = as.numeric(unlist(lapply(.tickmarks, function(.tickmark) CoordsOfGenomicScale(.tickmark, genomic_scale_font_size, coords_tracks, full_width_cm, plot_width, plot_start, plot_end, letter_widths)['adj'])))
+  .full.width.coord.letters.cm = sum(nchar(format(.tickmarks, nsmall=0))) * (std_letter_width*genomic_scale_font_size) #@
+  .tracks.width.cm = diff(coords_tracks)*full_width_cm #@
+  if (.full.width.coord.letters.cm > .tracks.width.cm){ #@ ->
+    if (length(.tickmarks) %% 2 == 1){
+      .remaining.indices = seq(1, length(.tickmarks), 2)
+    }else{
+      .dist.plot.start = min(.tickmarks - plot_start)
+      .dist.plot.end = min(plot_end - .tickmarks)
+      if (.dist.plot.start < .dist.plot.end){
+        .remaining.indices = seq(2, length(.tickmarks), 2)
+      }else{
+        .remaining.indices = seq(1, length(.tickmarks), 2)
+      }
+    }
+    .tickmarks = .tickmarks[.remaining.indices]
+  } #@ <-
+  .scale.plot.coords = as.integer(unlist(lapply(.tickmarks, function(.tickmark) CoordsOfGenomicScale(.tickmark, genomic_scale_font_size, coords_tracks, full_width_cm, plot_width, as.integer(plot_start), as.integer(plot_end))['chrom.coord'])))
+  .scale.plot.adjs = as.numeric(unlist(lapply(.tickmarks, function(.tickmark) CoordsOfGenomicScale(.tickmark, genomic_scale_font_size, coords_tracks, full_width_cm, plot_width, plot_start, plot_end)['adj'])))
   segments(x0=axTicks(side=1), y0=ifelse(genomic_scale_on_top, -1, 1)*0.8, y1=ifelse(genomic_scale_on_top, -1, 1)*0.4, col=font_color['genomic_axis'], lwd=scaling_factor*line_width_scaling_factor*0.5, lend=1)
   .center.adj = .scale.plot.adjs==0.5
   .left.adj = .scale.plot.adjs==0
@@ -3394,8 +3707,8 @@ PlotPanels = function(plotting_segment, plotted_strand, panel_info, panels_list,
   .panels = ifelse(incl_first_panel & !print_one_line_sample_names, 1, 2):.n.panels
   .separators = c()
   if (.n.panel.separators>0){
-    .separators = seq(ifelse(incl_first_panel | print_one_line_sample_names, 2, 4), .n.panels, by=2)
-    .panels = setdiff(1:.n.panels, .separators)
+    .separators = seq(ifelse(incl_first_panel | print_one_line_sample_names, 2, 3), .n.panels, by=2) #@ 3 <- 4
+    .panels = setdiff(.panels, .separators)
   }
   .subsample.matrix = do.call('cbind', lapply(panels_list[[plotted_strand]][[plotting_segment]], function(v) rep(names(v), v)))
   if (incl_first_panel){
@@ -3432,11 +3745,12 @@ PlotPanels = function(plotting_segment, plotted_strand, panel_info, panels_list,
   }
   for (.n.panel in .n.panels.iv){
     if (.n.panel %in% .panels){
-      if (.n.panel == 2){
-        .panel = 2
-      }else{
-        .panel = which(.panels==.n.panel)
-      }
+      .panel = which(.panels==.n.panel) + ifelse(incl_first_panel, 0, 1) #@
+      #@ if (.n.panel == 2){
+      #@   .panel = 2
+      #@ }else{
+      #@   .panel = which(.panels==.n.panel)
+      #@ }
     }
     if (print_one_line_sample_names){
       .sub.panels = structure(rep(1, length(.one.line.sample.names)), names=.one.line.sample.names)
@@ -3541,7 +3855,7 @@ PlotMatrix = function(plotted_region, basic_plot_parameters, plot_start, plot_en
 #' @details
 #' Internal function:
 #'
-PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, sample_subset, windows_height, coords_tracks, coords_scale, first_plot, neg_vals_neg_strand, plotted_strand, y_par, plot_start, plot_end, bin_width, incl_track_scales, scientific_scale, scale_font_size, full_width_cm, font_colors, font_family, scaling_factor, letter_widths, enhance_signals, scale_warning=NULL, verbosity){
+PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, sample_subset, windows_height, coords_tracks, coords_scale, first_plot, neg_vals_neg_strand, plotted_strand, y_par, plot_start, plot_end, bin_width, group_autoscale, incl_track_scales, scientific_scale, scale_font_size, full_width_cm, font_colors, font_family, scaling_factor, letter_widths, enhance_signals, scale_warning=NULL, verbosity){
   if (verbosity > 0) { cat(paste('plotting',  plotting_segment, 'data for samples'), '\n') }
   .base.cols = unlist(colors[[plotting_segment]])
   .enhance = enhance_signals[plotting_segment]
@@ -3560,25 +3874,25 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, sample_su
     .y.exp = structure(c(0, 0), names=c('+', '-'))
     .n.decimals = structure(c(NA, NA), names=c('+', '-'))
     if (.plotted.strand=='+-' & length(plot_mat)==2){
-      .y.max = y_par[['+']]['max']
-      .y.min = -y_par[['-']]['max']
+      .y.max = as.numeric(ifelse(group_autoscale[plotting_segment], y_par[['+']][['max']], y_par[['+']][['max']][.seq.sample]))
+      .y.min = -as.numeric(ifelse(group_autoscale[plotting_segment], y_par[['-']][['max']], y_par[['-']][['max']][.seq.sample])) #@ -y_par[['-']]['max']
       .y.limits = structure(c(-1.5, 1.5), names=c('min', 'max')) # structure(c(.y.min, .y.max), names=c('min', 'max'))
-      .y.val['+'] = y_par[['+']]['val']
-      .y.val['-'] = y_par[['-']]['val']
-      .n.decimals['+'] = y_par[['+']]['dec']
-      .n.decimals['-'] = y_par[['-']]['dec']
-      .scientific =  ifelse(scientific_scale=='all', TRUE, ifelse(scientific_scale=='none', FALSE, (y_par[['+']]['sci'] | y_par[['-']]['sci'])))
-      .y.exp['+'] = y_par[['+']]['exp']
-      .y.exp['-'] = y_par[['-']]['exp']
+      .y.val['+'] = as.numeric(ifelse(group_autoscale[plotting_segment], y_par[['+']][['val']], y_par[['+']][['val']][.seq.sample])) #@ y_par[['+']]['val']
+      .y.val['-'] = as.numeric(ifelse(group_autoscale[plotting_segment], y_par[['-']][['val']], y_par[['-']][['val']][.seq.sample])) #@ y_par[['-']]['val']
+      .n.decimals['+'] = as.integer(ifelse(group_autoscale[plotting_segment], y_par[['+']][['dec']], y_par[['+']][['dec']][.seq.sample])) #@ y_par[['+']]['dec']
+      .n.decimals['-'] = as.integer(ifelse(group_autoscale[plotting_segment], y_par[['-']][['dec']], y_par[['-']][['dec']][.seq.sample])) #@ y_par[['-']]['dec']
+      .scientific =  as.logical(ifelse(scientific_scale=='all', TRUE, ifelse(scientific_scale=='none', FALSE, (ifelse(group_autoscale[plotting_segment], y_par[['+']][['sci']], y_par[['+']][['sci']][.seq.sample]) | ifelse(group_autoscale[plotting_segment], y_par[['-']][['sci']], y_par[['-']][['sci']][.seq.sample]))))) #@ (y_par[['+']]['sci'] | y_par[['-']]['sci'])
+      .y.exp['+'] = as.integer(ifelse(group_autoscale[plotting_segment], y_par[['+']][['exp']], y_par[['+']][['exp']][.seq.sample])) #@ y_par[['+']]['exp']
+      .y.exp['-'] = as.integer(ifelse(group_autoscale[plotting_segment], y_par[['-']][['exp']], y_par[['-']][['exp']][.seq.sample])) #@ y_par[['-']]['exp']
       .plot.mat = plot_mat[['+']] / .y.val['+']
     }else{
-      .y.max = y_par[[.plotted.strand]]['max']
+      .y.max = as.numeric(ifelse(group_autoscale[plotting_segment], y_par[[.plotted.strand]][['max']], y_par[[.plotted.strand]][['max']][.seq.sample])) #@ y_par[[.plotted.strand]]['max']
       .y.min = 0
-      .y.limits = structure(sort(ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*c(0, 1.5)), names=c('min', 'max')) # structure(sort(ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*c(0, .y.max)), names=c('min', 'max'))
-      .y.val[.plotted.strand] = y_par[[.plotted.strand]]['val']
-      .n.decimals[.plotted.strand] = y_par[[.plotted.strand]]['dec']
-      .scientific = ifelse(scientific_scale=='all', TRUE, ifelse(scientific_scale=='none', FALSE, y_par[[.plotted.strand]]['sci']))
-      .y.exp[.plotted.strand] = y_par[[.plotted.strand]]['exp']
+      .y.limits = structure(sort(ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*c(0, 1.5)), names=c('min', 'max'))
+      .y.val[.plotted.strand] = as.numeric(ifelse(group_autoscale[plotting_segment], y_par[[.plotted.strand]][['val']], y_par[[.plotted.strand]][['val']][.seq.sample])) #@ y_par[[.plotted.strand]]['val']
+      .n.decimals[.plotted.strand] = as.integer(ifelse(group_autoscale[plotting_segment], y_par[[.plotted.strand]][['dec']], y_par[[.plotted.strand]][['dec']][.seq.sample])) #@ y_par[[.plotted.strand]]['dec']
+      .scientific = as.logical(ifelse(scientific_scale=='all', TRUE, ifelse(scientific_scale=='none', FALSE, ifelse(group_autoscale[plotting_segment], y_par[[.plotted.strand]][['sci']], y_par[[.plotted.strand]][['sci']][.seq.sample])))) #@ y_par[[.plotted.strand]]['sci']
+      .y.exp[.plotted.strand] = as.integer(ifelse(group_autoscale[plotting_segment], y_par[[.plotted.strand]][['exp']], y_par[[.plotted.strand]][['exp']][.seq.sample])) #@ y_par[[.plotted.strand]]['exp']
       .plot.mat = plot_mat[[.plotted.strand]] / .y.val[.plotted.strand]
     }
     if (any(.plot.mat > 1.5)){ .plot.mat[which(.plot.mat > 1.5)] = 1.5 }
@@ -3654,7 +3968,36 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, sample_su
 #' @details
 #' Internal function:
 #'
-YParameters = function(plot_mat, plotting_segment, force_scale){
+YParameters = function(plot_mat, plotting_segment, force_scale_list, group_autoscale){
+  if (is.null(force_scale_list[[plotting_segment]]) | is.na(force_scale_list[[plotting_segment]])){
+    if (as.logical(group_autoscale[plotting_segment])){
+      .y.val = structure(max(plot_mat, na.rm=T), names='max')
+    }else{
+      .y.val = apply(plot_mat, 2, max, na.rm=T) #@ new part
+    }
+  }else{
+    .y.val = structure(as.numeric(ifelse(is.na(force_scale_list[plotting_segment]), max(plot_mat, na.rm=T), force_scale_list[plotting_segment])), names='forced')
+  }
+  .scientific = structure(rep(FALSE, length(.y.val)), names=names(.y.val))
+  .n.decimals = structure(rep(0, length(.y.val)), names=names(.y.val))
+  if (any(.y.val==0)){
+    .y.val[which(.y.val==0)] = 1
+  }
+  .exponent = as.integer(log10(.y.val)) + ifelse(.y.val < 1, -1, 0)
+  .y.val = 10^.exponent*round(.y.val/10^.exponent, 1)
+  if (any(.y.val < 1)){
+    .n.decimals[which(.y.val < 1)] = abs(.exponent[which(.y.val < 1)])
+  }
+  if (any(abs(.exponent) > 2)){
+    .scientific[which(abs(.exponent) > 2)] = TRUE
+  }
+  .y.val = round(.y.val, .n.decimals)
+  .final.exponent = as.integer(log10(.y.val)) + ifelse(.y.val < 1, -1, 0)
+  .y.max = 1.5*.y.val
+  return(list('max'=.y.max, 'val'=.y.val, 'dec'=.n.decimals, 'sci'=.scientific, 'exp'=.final.exponent))
+}
+
+YParameters_obs = function(plot_mat, plotting_segment, force_scale, group_autoscale){
   if (is.null(force_scale)){
     .y.val = max(plot_mat, na.rm=T)
   }else{
@@ -3666,7 +4009,6 @@ YParameters = function(plot_mat, plotting_segment, force_scale){
     .y.val = 1
   }
   .exponent = as.integer(log10(.y.val)) + ifelse(.y.val < 1, -1, 0)
-  #.y.val = 10^.exponent*round(.y.val/10^.exponent, ifelse(abs(.exponent) > 2, 1, 0))
   .y.val = 10^.exponent*round(.y.val/10^.exponent, 1)
   if (abs(.exponent) > 2){
     .scientific = TRUE
@@ -3679,6 +4021,8 @@ YParameters = function(plot_mat, plotting_segment, force_scale){
   .y.max = 1.5*.y.val
   return(c('max'=.y.max, 'val'=.y.val, 'dec'=.n.decimals, 'sci'=.scientific, 'exp'=.final.exponent))
 }
+
+
 
 #' Segment Top
 #'
@@ -3951,7 +4295,7 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
 #' @details
 #' Internal function:
 #'
-PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, plotting_segment, basic_plot_parameters, neg_vals_neg_strand, plot_width_parameters, plot_vertical_parameters, annot_info, panel_info, panels_list, panel_separators, separators_lwds, separators_colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, header_font_sizes, scaling_factor, full_width_cm, genomic_scale_on_top, genomic_scale_font_size, actual_strand_direction, bin_stats, dummy_plot, tracks, strands_alpha, unstranded_beds, annotation_packing, annotation_panel_font_size, incl_feature_names, feature_font_size, feature_names_above, final_feature_text_org, incl_feature_brackets, incl_feature_shadings, feature_shading_colors, feature_shading_alpha, annot_cols, incl_track_scales, scientific_scale, scale_font_size, force_scale_list, colors, alternating_background, bgr_colors, bgr_alpha, font_colors, letter_widths, letter_heights, enhance_signals, first_plot, verbosity){
+PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, plotting_segment, basic_plot_parameters, neg_vals_neg_strand, plot_width_parameters, plot_vertical_parameters, annot_info, panel_info, panels_list, panel_separators, separators_lwds, separators_colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, header_font_sizes, scaling_factor, full_width_cm, genomic_scale_on_top, genomic_scale_font_size, actual_strand_direction, bin_stats, dummy_plot, tracks, strands_alpha, unstranded_beds, annotation_packing, annotation_panel_font_size, incl_feature_names, feature_font_size, feature_names_above, final_feature_text_org, incl_feature_brackets, incl_feature_shadings, feature_shading_colors, feature_shading_alpha, annot_cols, group_autoscale, incl_track_scales, scientific_scale, scale_font_size, force_scale_list, colors, alternating_background, bgr_colors, bgr_alpha, font_colors, letter_widths, letter_heights, enhance_signals, first_plot, verbosity){
   .strand = ifelse(plotted_strand == '+' | plotted_strand == '+-', '+', '-')
   .plotted.region = plotted_region[[.strand]]
   .chrom = as.character(GenomeInfoDb::seqnames(.plotted.region))
@@ -3976,7 +4320,7 @@ PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, pl
   }else if (plotting_segment=='header'){
     PlotHeader(.windows.height, .segment.top, .coords.tracks, full_width_cm, .plot.width, header, header_font_sizes, .chrom, both_strands, .strand, .plot.start, .plot.end, font_colors, .font.family, first_plot, scaling_factor)
   }else if (plotting_segment=='scale'){
-    PlotScale(.windows.height, .segment.top, .coords.tracks, full_width_cm, genomic_scale_on_top, .plot.width, .plot.start, .plot.end, first_plot, font_colors, .font.family, genomic_scale_font_size, scaling_factor, letter_widths)
+    PlotScale(.windows.height, .segment.top, .coords.tracks, full_width_cm, genomic_scale_on_top, .plot.width, .plot.start, .plot.end, first_plot, font_colors, .font.family, genomic_scale_font_size, scaling_factor)
   }else if (plotting_segment=='annotations'){
     if (length(unstranded_beds) > 0){
       .unstranded.annot.info = lapply(annot_info, function(l) l[unstranded_beds] )
@@ -4041,8 +4385,8 @@ PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, pl
     if (plotted_strand=='+-' & plotting_segment %in% names(tracks[['-']])){
       .plot.mat[['-']] = PlotMatrix(plotted_region[['-']], basic_plot_parameters[[plotted_strand]], .plot.start, .plot.end, .plot.width, .bin.size, actual_strand_direction, .sample.subset, dummy_plot, tracks[['-']], plotting_segment, bin_stats)
     }
-    .y.par = structure(lapply(names(.plot.mat), function(.strand) YParameters(.plot.mat[[.strand]], plotting_segment, force_scale_list[[.strand]])), names=names(.plot.mat))
+    .y.par = structure(lapply(names(.plot.mat), function(.strand) YParameters(.plot.mat[[.strand]], plotting_segment, force_scale_list[[.strand]], group_autoscale)), names=names(.plot.mat))
     .bin.width = basic_plot_parameters[[plotted_strand]]$bin.info[2]
-    PlotData(plotting_segment, .plot.mat, colors, strands_alpha, .sample.subset, .windows.height, .coords.tracks, .coords.scale, .first.plot, neg_vals_neg_strand, plotted_strand, .y.par, .plot.start, .plot.end, .bin.width, incl_track_scales, scientific_scale, scale_font_size, full_width_cm, font_colors, .font.family, scaling_factor, letter_widths, enhance_signals, scale_warning=NULL, verbosity)
+    PlotData(plotting_segment, .plot.mat, colors, strands_alpha, .sample.subset, .windows.height, .coords.tracks, .coords.scale, .first.plot, neg_vals_neg_strand, plotted_strand, .y.par, .plot.start, .plot.end, .bin.width, group_autoscale, incl_track_scales, scientific_scale, scale_font_size, full_width_cm, font_colors, .font.family, scaling_factor, letter_widths, enhance_signals, scale_warning=NULL, verbosity)
   }
 }

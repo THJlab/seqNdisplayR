@@ -459,7 +459,7 @@ server <- function(input, output, session) {
       structure(lapply(x, set_all_deselected), stselected=F, stopened=TRUE)
     } else {
       names(x) <- x
-      structure(as.list(x), stselected=F, stopened=TRUE)
+      structure(as.list(x), stselected=T, stopened=TRUE)
     }
   }
 
