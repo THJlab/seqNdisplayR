@@ -8,6 +8,8 @@ PanelFontSizeList(
   samples,
   panel_font_sizes,
   panel_font_size_list,
+  incl_reps,
+  replicate_names,
   verbosity,
   interface
 )

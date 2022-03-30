@@ -17,8 +17,7 @@ PlotScale(
   font_color,
   font_family,
   genomic_scale_font_size,
-  scaling_factor,
-  letter_widths
+  scaling_factor
 )
 }
 \description{

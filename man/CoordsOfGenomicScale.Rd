@@ -11,8 +11,7 @@ CoordsOfGenomicScale(
   full_width_cm,
   plot_width,
   plot_start,
-  plot_end,
-  letter_widths
+  plot_end
 )
 }
 \description{

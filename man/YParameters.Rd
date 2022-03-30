@@ -4,7 +4,7 @@
 \alias{YParameters}
 \title{Y Parameters}
 \usage{
-YParameters(plot_mat, plotting_segment, force_scale)
+YParameters(plot_mat, plotting_segment, force_scale_list, group_autoscale)
 }
 \description{
 Y Parameters

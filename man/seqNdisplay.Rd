@@ -56,6 +56,7 @@ seqNdisplay(
   incl_first_panel = TRUE,
   print_one_line_sample_names = FALSE,
   replicate_names = "rep",
+  group_autoscale = TRUE,
   incl_track_scales = TRUE,
   scientific_scale = c("allow", "all", "none")[1],
   force_scale = NULL,

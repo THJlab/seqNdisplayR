@@ -4,7 +4,14 @@
 \alias{HorizontalPanelsList}
 \title{Horizontal Panels List}
 \usage{
-HorizontalPanelsList(samples, horizontal_panels_list, verbosity, interface)
+HorizontalPanelsList(
+  samples,
+  horizontal_panels_list,
+  incl_reps,
+  replicate_names,
+  verbosity,
+  interface
+)
 }
 \description{
 Horizontal Panels List

@@ -7,7 +7,8 @@
 AlignBasicPlotParameters(
   basic_plot_parameters,
   both_strands,
-  strands_intermingled
+  strands_intermingled,
+  fixed_plot_vertical_parameters
 )
 }
 \description{

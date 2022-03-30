@@ -46,6 +46,7 @@ PlotSegment(
   feature_shading_colors,
   feature_shading_alpha,
   annot_cols,
+  group_autoscale,
   incl_track_scales,
   scientific_scale,
   scale_font_size,

@@ -9,6 +9,7 @@ EvaluateNumericValue(
   positive_val,
   min_val,
   max_val,
+  interval_obligatory = FALSE,
   turn_errors_to_warnings = FALSE,
   alt_par_name = NULL,
   verbosity

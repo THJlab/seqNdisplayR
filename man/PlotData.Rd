@@ -20,6 +20,7 @@ PlotData(
   plot_start,
   plot_end,
   bin_width,
+  group_autoscale,
   incl_track_scales,
   scientific_scale,
   scale_font_size,
