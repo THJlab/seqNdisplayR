@@ -206,17 +206,17 @@ ui <- fluidPage(
           "input_file",
           "Load excel file (or IGV session xml file)",
           multiple = FALSE,
-          accept = c(".xls", ".xlsx", ".xlsm", '.xml')
+          accept = c(".xls", ".xlsx", ".xlsm", '.xml'),
+          width = "560px" #@
         ),
         verbatimTextOutput("File_import_msg"),
         tags$br(),
         splitLayout(
-          cellWidths = c('180px', '50px', '180px'),
-          textInput("gene", label = 'Enter locus name', placeholder = 'e.g. GAPDH'),
-          #@
-          p("  or  "),
+          cellWidths = c('240px', '80px', '240px'),
+          textInput("gene", label = 'Enter locus name', placeholder = 'e.g. LMO4'),
+          p("  or  ", align='center'),  #@ p("  or  ", align='center')
           textInput("coordinates", label =
-                      'Enter locus coordinates', placeholder = 'e.g. chr1:+:1000:2000')
+                      'Enter locus coordinates', placeholder = 'e.g. chr1:+:87325400:87351991')
         ),
         tags$p(em(
           "The name has to be present in one of the supplied annotations and match case. When entering name and coordinates simultaneously, only the name will be considered."
@@ -395,6 +395,7 @@ ui <- fluidPage(
         column(
           10,
           offset = 0,
+          create_input_element('group_autoscale'),
           create_input_element('manual_scales'),
           create_input_element('scale_scientific_format'),
           create_input_element('scale_col'),
@@ -459,31 +460,30 @@ server <- function(input, output, session) {
       structure(lapply(x, set_all_deselected), stselected=F, stopened=TRUE)
     } else {
       names(x) <- x
-      structure(as.list(x), stselected=T, stopened=TRUE)
+      structure(as.list(x), stselected=F, stopened=TRUE)
     }
   }
 
   ## from list x creates nested node list for tree where all nodes are selected if present in x
   set_tree_nodes <- function(samples, whichSamples) {
     if( is.list(samples) ) {
-      print(paste0('list:', names(samples), ' -->', names(whichSamples)))
+      #@print(paste0('list:', names(samples), ' -->', names(whichSamples)))
       nodes <- lapply(names(samples), function(dataset) {
-        print(paste0(' dataset: ', dataset,
-                     ' in whichSamples: ', (dataset %in% names(whichSamples))))#,
+        #@ print(paste0(' dataset: ', dataset, ' in whichSamples: ', (dataset %in% names(whichSamples))))#,
         if ( is.null(whichSamples[[dataset]]) ){
-          print('  set sel')
+          #@print('  set sel')
           structure(set_all_selected(samples[[dataset]]),
                     stselected=T, stopened=T)
         } else if ( is.na(whichSamples[[dataset]]) ) {
-          print('  set desel')
+          #@print('  set desel')
           structure(set_all_deselected(samples[[dataset]]),
                     stselected=F, stopened=T)
         } else if ( identical(unlist(samples[[dataset]]), unlist(whichSamples[[dataset]])) ){
-          print('  set sel')
+          #@print('  set sel')
           structure(set_all_selected(samples[[dataset]]),
                     stselected=T, stopened=T)
         } else {
-          print('  set custom')
+          #@print('  set custom')
           structure(set_tree_nodes(samples[[dataset]], whichSamples[[dataset]]),
                     stopened=T)
         }
@@ -643,7 +643,7 @@ server <- function(input, output, session) {
       dataset_group_depth = ListDepth(seqNdisplayR_session$samples[[name]]) + 1
       levels=c('dataset')
       if( dataset_group_depth > 0 ) {
-        levels=c(levels, paste0('subgroup_', 1:dataset_group_depth))
+        levels=c(levels, paste0('subgroup_', dataset_group_depth:1))
       }
 
       insertUI(
@@ -699,7 +699,7 @@ server <- function(input, output, session) {
         anchor_elem <- opt_line$shiny_varname
 
         ##insert one text input per annotation name
-        for ( name in names(opts) ) {
+        for ( name in rev(names(opts)) ) {  #@ rev(names(opts)) <- names(opts)
           if ( opt_line$option_class == 'text' ) {
             insertUI(
                 selector = paste0('#', anchor_elem),
@@ -834,7 +834,29 @@ server <- function(input, output, session) {
     coord <- input$coordinates
 
     if ( coord != '' ) {
-      strsplit(coord, ':')[[1]]
+      coord = gsub(' ', '', coord)
+      if (grepl(':+:', coord, fixed=TRUE)){
+        strand = '+'
+        strandless_coord = sub(':+:', ':', coord, fixed=TRUE)
+      }else if (grepl(':-:', coord, fixed=TRUE)){
+        strand = '-'
+        strandless_coord = sub(':-:', ':', coord, fixed=TRUE)
+      }else{
+        strand = '+'
+        strandless_coord = coord
+      }
+      if (grepl(',', strandless_coord, fixed=TRUE)){
+        commaless_coord = gsub(',', '', strandless_coord) # paste(strsplit(strandless_coord, ',')[[1]], collapse='')
+      }else{
+        commaless_coord = strandless_coord
+      }
+      if (grepl('-', commaless_coord, fixed=TRUE)){
+        dashNcommaless_coord = gsub('-', ':', commaless_coord) # paste(strsplit(commaless_coord, '-')[[1]], collapse=':')
+      }else{
+        dashNcommaless_coord = commaless_coord
+      }
+      configured_coord = strsplit(dashNcommaless_coord, ':')[[1]]
+      c(configured_coord[1], strand, configured_coord[2:3])
     } else {
       coord
     }
@@ -865,7 +887,7 @@ server <- function(input, output, session) {
 
     ## special case for plotting_segment_order if bottom specified
     if (!is.null(l$plotting_segment_order_bottom)){
-     l$plotting_segment_order = list('+'=l$plotting_segment_order, '-'=l$plotting_segment_order_bottom)
+      l$plotting_segment_order = list('+'=l$plotting_segment_order, '-'=l$plotting_segment_order_bottom)
     }
 
     ## special case for horizontal_panels_list if panel_horizontal is enabled
@@ -882,7 +904,7 @@ server <- function(input, output, session) {
         dataset_group_depth = ListDepth(current_session()$samples[[dataset_name]]) + 1
         available_levels=c('dataset')
         if( dataset_group_depth > 0 ) {
-          available_levels=c(available_levels, paste0('subgroup_', 1:dataset_group_depth))
+          available_levels=c(available_levels, paste0('subgroup_', dataset_group_depth:1))
         }
 
         ## get check levels in this dataset
