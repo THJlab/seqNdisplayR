@@ -116,6 +116,14 @@ plot.seqNdisplayRSession <- function(session, ...){
   only_default <- setdiff(names(default_args), names(session))
   session <- c(session, default_args[only_default])
 
+  # handle replicate_names (prefix)
+  if (!is.null(session$replicate_names)){
+    if (session$replicate_names=='NA'){
+      session$replicate_names = ''
+    }
+  }
+
+
   # handle force_scale which is part of parameters but needs to passed differently to plot function
   if ( !('force_scale' %in% names(external_args)) ) {
       force_scales <- lapply(session$parameters, function(para) {
@@ -141,9 +149,23 @@ plot.seqNdisplayRSession <- function(session, ...){
         '-' = sapply(force_scales, function(x) x[2])
       )
   }
-
   session$parameters <- lapply(session$parameters, function(x) x[!(names(x)=='force_scale')])
 
+  # handle group_autoscale which is part of parameters but needs to passed differently to plot function
+  if ( !('group_autoscale' %in% names(external_args)) ) {
+    group_autoscale <- unlist(lapply(session$parameters, function(para) {
+      ga <- parse_option(para$group_autoscale)
+      if (is.null(ga)) {
+        NA
+      }else{
+        ga
+      }
+    }))
+    names(group_autoscale) <- names(session$parameters)
+
+    session$group_autoscale <- group_autoscale
+  }
+  session$parameters <- lapply(session$parameters, function(x) x[!(names(x)=='group_autoscale')])
 
   # samples renamed to dataset for function call
 
