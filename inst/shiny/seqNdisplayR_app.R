@@ -8,13 +8,15 @@ library(dplyr)
 library(shinybusy)
 
 
+
 share <- list(title = "{seqNdisplayR} package",
               description = "A Tool for Customizable and Reproducible Plotting of Sequencing Coverage Data")
 
 options(shinyTree.setState = TRUE)
 options(shinyTree.refresh  = TRUE)
 
-options_table <- readxl::read_excel(system.file('extdata', 'variable_defaults_and_help.xlsx', package='seqNdisplayR'), sheet='Shiny_Args')
+#options_table <- readxl::read_excel(system.file('extdata', 'variable_defaults_and_help.xlsx', package='seqNdisplayR'), sheet='Shiny_Args')
+options_table <- readxl::read_excel('../extdata/variable_defaults_and_help_v2.xlsx', sheet='Shiny_Args')
 
 create_input_element <- function(option) {
   option_par <- options_table[options_table$shiny_varname == option,]
@@ -59,6 +61,10 @@ create_input_element <- function(option) {
         ),
         tags$br())
       } else if ( option_par$option_class == 'numeric' ) {
+        min_val = as.numeric(sub(';.*', '', option_par$option_options))
+        max_val = as.numeric(sub('.*;', '', option_par$option_options))
+        if(is.na(min_val)){min_val=0}
+        if(is.na(max_val)){max_val=1}
         fluidRow(tags$head(
           tags$style(paste0("#title {padding-left: 15px}",
                             " #inline label{ display: table-cell; text-align: left; vertical-align: left; padding-left: 20px; padding-right: 5px; font-weight: normal}",
@@ -69,9 +75,12 @@ create_input_element <- function(option) {
                                                   placement ='left')),
         tags$div(id = 'inline',
                  tags$div(id=option_par$shiny_varname,
-                          numericInput(paste0(option_par$shiny_varname, 'xvalue'),
+                          sliderInput(paste0(option_par$shiny_varname, 'xvalue'),
                             label='all samples',
-                            value = option_par$option_default))
+                            value = option_par$option_default,
+                            min=min_val,
+                            max=max_val,  #as.numeric(sub('.*,', '', option_par$option_option))
+                            width='500px'))
         ),
         tags$br())
       }
@@ -101,14 +110,56 @@ create_input_element <- function(option) {
           title=option_par$shiny_tooltip,
           placement ='left')
     } else if ( option_par$option_class == 'numeric' ) {
+      set_val = as.numeric(option_par$option_default)
+      min_val = as.numeric(sub(';.*', '', option_par$option_options))
+      max_val = as.numeric(sub('.*;', '', option_par$option_options))
+      if(is.na(min_val)){min_val=0}
+      if(is.na(max_val)){max_val=set_val*2}
       spsComps::bsTooltip(
-        numericInput(option_par$shiny_varname,
+        sliderInput(option_par$shiny_varname,
                      label =  option_par$shiny_label,
-                     value = as.numeric(option_par$option_default),
+                     value = set_val,
+                     min=min_val,
+                     max=max_val,
                      width = '500px'),
         title=option_par$shiny_tooltip,
         placement ='left')
+    } else if ( option_par$option_class == 'optional_numeric' ) {
+      div_id = paste0(option_par$shiny_varname,"_div")
+      min_val = as.numeric(sub(';.*', '', option_par$option_options))
+      max_val = as.numeric(sub('.*;', '', option_par$option_options))
+      if(is.na(min_val)){min_val=0}
+      if(is.na(max_val)){max_val=1}
+
+      fluidRow(tags$head(
+        tags$style(paste0("#title {padding-left: 15px}"))),
+      tags$div(id = "title",
+               h5(option_par$shiny_label)),
+      tags$head(
+        tags$style(type="text/css", paste0("#checkbox {padding-left: 15px}"))
+      ),
+      tags$div(id = "checkbox",
+               spsComps::bsTooltip(
+        checkboxInput(option_par$shiny_varname,
+                      'Choose a value manually',
+                      value = option_par$option_default == 'TRUE'),
+        title=option_par$shiny_tooltip,
+        placement ='left')),
+      tags$head(
+        tags$style(type="text/css", paste0("#", div_id, " {padding-left: 15px}"))
+      ),
+      tags$div(id = div_id,
+          sliderInput(paste0(option_par$shiny_varname,'_slider'),
+                      label='',
+                      value = min_val + (max_val-min_val)/2,
+                      min = min_val, #as.numeric(sub(',.*', '', option_par$option_option))
+                      max = max_val,  #as.numeric(sub('.*,', '', option_par$option_option))
+                      width = '500px')),
+          tags$br())
+
+
     }
+
   }
 }
 
@@ -339,6 +390,7 @@ ui <- fluidPage(
               h5("Display panel text horizontally:", style= 'font-weight: bold'),
               div(id = "panel_horizontal_checkboxes"),
               tags$br()),
+
           create_input_element('print_one_line_sample_names'),
           create_input_element('replicate_names'),
           create_input_element('pan_col'),
@@ -516,9 +568,15 @@ server <- function(input, output, session) {
     }
   }
 
+  #TO DO: repeat this for all optional panels ((cannot be part of create_input))
   observe({
     toggle(id = "panel_horizontal_div", condition = input$panel_horizontal)
   })
+
+  observe({
+    toggle(id = "annot_font_div", condition = input$annot_font)
+  })
+  #END OF TO DO
 
 
   # set all values in ui elements to the ones from a seqNdisplayR session
@@ -527,13 +585,23 @@ server <- function(input, output, session) {
     for ( i in 1:nrow(global_options) ) {
       opt_line <- global_options[i,]
       opt <- global_options$option_name[i]
+
+      #TO DO: check if optional_numeric works as intended when loading of new Excel template!
       if ( opt %in% names(seqNdisplayR_session) ) {
         if ( opt_line$option_class == 'bool' ) {
           updateCheckboxInput(session, opt_line$shiny_varname, value = seqNdisplayR_session[[opt]])
         } else if ( opt_line$option_class == 'text' ) {
           updateTextInput(session, opt_line$shiny_varname, value = seqNdisplayR::deparse_option(seqNdisplayR_session[[opt]]))
         } else if ( opt_line$option_class == 'numeric' ) {
-          updateNumericInput(session, opt_line$shiny_varname, value = seqNdisplayR_session[[opt]])
+          updateSliderInput(session, opt_line$shiny_varname, value = seqNdisplayR_session[[opt]])
+        } else if ( opt_line$option_class == 'optional_numeric' ) {
+          if( !is.null(seqNdisplayR_session[[opt]]) ){
+            updateCheckboxInput(session, opt_line$shiny_varname, value = FALSE)
+            updateSliderInput(session, paste0(option_par$shiny_varname,'_slider'), value = seqNdisplayR_session[[opt]])
+          } else {
+            updateCheckboxInput(session, opt_line$shiny_varname, value = TRUE)
+          }
+
         }
       }
     }
@@ -870,6 +938,7 @@ server <- function(input, output, session) {
   get_shiny_global_options <- reactive({
     opts <- options_table$option_name[options_table$option_group == 'global']
 
+    #TO DO: check if optional_numeric still works
     l <- lapply(opts, function(opt) {
       opt_line <- options_table[options_table$option_name == opt,]
       shiny_varname <- opt_line$shiny_varname
@@ -877,6 +946,8 @@ server <- function(input, output, session) {
         value <- input[[shiny_varname]]
         if ( opt_line$option_class == 'text' ) {
           value <- seqNdisplayR::parse_option(value)
+        } else if ( opt_line$option_class == 'optional_numeric' ) {
+          value <- input[[paste0(shiny_varname, '_slider')]]
         }
         value
       } else {
