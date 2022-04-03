@@ -15,12 +15,66 @@ share <- list(title = "{seqNdisplayR} package",
 options(shinyTree.setState = TRUE)
 options(shinyTree.refresh  = TRUE)
 
-#options_table <- readxl::read_excel(system.file('extdata', 'variable_defaults_and_help.xlsx', package='seqNdisplayR'), sheet='Shiny_Args')
-options_table <- readxl::read_excel('../extdata/variable_defaults_and_help_v2.xlsx', sheet='Shiny_Args')
+options_table <- readxl::read_excel(system.file('extdata', 'variable_defaults_and_help.xlsx', package='seqNdisplayR'), sheet='Shiny_Args')
+#options_table <- readxl::read_excel('../extdata/variable_defaults_and_help.xlsx', sheet='Shiny_Args')
+
+## functions for split input values
+
+split_sliders = function(n, varname, suboptions, vals, optima, step){
+  if (n%%2==1){
+    sliderInput(paste0(varname, '_subvar', 1+(n-1)/2),
+                label=suboptions[1+(n-1)/2],
+                value=vals[1+(n-1)/2],
+                min=optima[1],
+                max=optima[2],
+                step=step)
+
+  }else{
+    p("")
+  }
+}
+
+split_numeric_input = function(n, varname, suboptions, vals, optima, step){
+  if (n%%2==1){
+    numericInput(paste0(varname, '_subvar', 1+(n-1)/2),
+                label=suboptions[1+(n-1)/2],
+                value=vals[1+(n-1)/2],
+                min=optima[1],
+                max=optima[2],
+                step=step)
+
+  }else{
+    p("")
+  }
+}
+
+split_text_input = function(n, varname, suboptions, vals){
+  if (n%%2==1){
+    textInput(paste0(varname, '_subvar', 1+(n-1)/2),
+              label=suboptions[1+(n-1)/2],
+              placeholder=suboptions[1+(n-1)/2],
+              value=vals[1+(n-1)/2])
+  }else{
+    p("")
+  }
+}
+
+
+split_bool_input = function(n, varname, suboptions, vals){
+  if (n%%2==1){
+    checkboxInput(paste0(varname, '_subvar', 1+(n-1)/2),
+              label=suboptions[1+(n-1)/2],
+              value=vals[1+(n-1)/2])
+  }else{
+    p("")
+  }
+}
+
+
 
 create_input_element <- function(option) {
   option_par <- options_table[options_table$shiny_varname == option,]
-  if ( option_par$option_group == 'dataset_option' | option_par$option_group == 'annotation_option') {
+  if ( option_par$option_group == 'dataset_option' | option_par$option_group == 'annotation_option'){
       if ( option_par$option_class == 'bool' ) {
         spsComps::bsTooltip(
           checkboxGroupInput(option_par$shiny_varname,
@@ -35,11 +89,11 @@ create_input_element <- function(option) {
             tags$head(
               tags$style(type="text/css", "#title {padding-left: 15px} #radios .shiny-input-radiogroup{padding-left: 25px}")
           ),
-          tags$div(id = "title",spsComps::bsTooltip(h5(option_par$shiny_label, style= 'font-weight: bold'),
+          tags$div(id = "title",spsComps::bsTooltip(p(option_par$shiny_label, style= 'font-weight: bold'),
                                                     title=option_par$shiny_tooltip,
                                                     placement ='left')),
           tags$div(id = "radios",radioButtons(option_par$shiny_varname,
-                       label = 'all',
+                       label = 'all samples',
                        choices = opt_choices,
                        selected = option_par$option_default,
                        inline = TRUE)),
@@ -49,7 +103,7 @@ create_input_element <- function(option) {
           tags$style(type="text/css", "#title {padding-left: 15px} #inline label{ display: table-cell; text-align: left; vertical-align: left; padding-left: 25px; font-weight: normal}
                 #inline .form-group { display: table-row; line-height: 5px}")
         ),
-        tags$div(id = "title",spsComps::bsTooltip(h5(option_par$shiny_label, style= 'font-weight: bold'),
+        tags$div(id = "title",spsComps::bsTooltip(p(option_par$shiny_label, style= 'font-weight: bold'),
                                                   title=option_par$shiny_tooltip,
                                                   placement ='left')),
         tags$div(id = "inline",
@@ -60,28 +114,30 @@ create_input_element <- function(option) {
                              value = option_par$option_default))
         ),
         tags$br())
-      } else if ( option_par$option_class == 'numeric' ) {
-        min_val = as.numeric(sub(';.*', '', option_par$option_options))
-        max_val = as.numeric(sub('.*;', '', option_par$option_options))
+      } else if ( option_par$option_class == 'numeric' ) { ##@@
+        div_id=paste0(option_par$shiny_varname, '_outer')
+        vals = as.numeric(strsplit(option_par$option_options, ';', fixed=TRUE)[[1]])
+        min_val = vals[1]
+        max_val = vals[2]
         if(is.na(min_val)){min_val=0}
-        if(is.na(max_val)){max_val=1}
-        fluidRow(tags$head(
-          tags$style(paste0("#title {padding-left: 15px}",
-                            " #inline label{ display: table-cell; text-align: left; vertical-align: left; padding-left: 20px; padding-right: 5px; font-weight: normal}",
-                            " #",option_par$shiny_varname, "xvalue.form-control.shiny-bound-input { display: table-cell; text-align: left; vertical-align: left; margin-left: 30px; width: 100px; padding-left: 5px; font-weight: normal}"))
-        ),
-        tags$div(id = "title",spsComps::bsTooltip(h5(option_par$shiny_label, style= 'font-weight: bold'),
+        start_val = ifelse(length(vals)==3, vals[3], mean(c(min_val, max_val)))
+        if(is.na(max_val)){max_val=start_val*2}
+        fluidRow(
+        tags$head(tags$style("#title {padding-left: 15px}")),
+        tags$div(id = "title",spsComps::bsTooltip(p(option_par$shiny_label, style= 'font-weight: bold'),
                                                   title=option_par$shiny_tooltip,
                                                   placement ='left')),
-        tags$div(id = 'inline',
-                 tags$div(id=option_par$shiny_varname,
-                          sliderInput(paste0(option_par$shiny_varname, 'xvalue'),
-                            label='all samples',
-                            value = option_par$option_default,
-                            min=min_val,
-                            max=max_val,  #as.numeric(sub('.*,', '', option_par$option_option))
-                            width='500px'))
+        tags$head(
+          tags$style(type="text/css", paste0("#", div_id, " {padding-left: 20px}; #", option_par$shiny_varname, " {padding-left: 20px}"))
         ),
+        tags$div(id = div_id,
+                 tags$div(id=option_par$shiny_varname,
+                          sliderInput(paste0(option_par$shiny_varname,'xvalue'),
+                             label='all samples',
+                             value = start_val,
+                             min = min_val,
+                             max = max_val,
+                             width = '500px'))),
         tags$br())
       }
   } else {
@@ -110,15 +166,16 @@ create_input_element <- function(option) {
           title=option_par$shiny_tooltip,
           placement ='left')
     } else if ( option_par$option_class == 'numeric' ) {
-      set_val = as.numeric(option_par$option_default)
-      min_val = as.numeric(sub(';.*', '', option_par$option_options))
-      max_val = as.numeric(sub('.*;', '', option_par$option_options))
+      vals = as.numeric(strsplit(option_par$option_options, ';', fixed=TRUE)[[1]])
+      min_val = vals[1]
+      max_val = vals[2]
       if(is.na(min_val)){min_val=0}
-      if(is.na(max_val)){max_val=set_val*2}
+      start_val = ifelse(length(vals)==3, vals[3], mean(c(min_val, max_val)))
+      if(is.na(max_val)){max_val=start_val*2}
       spsComps::bsTooltip(
         sliderInput(option_par$shiny_varname,
                      label =  option_par$shiny_label,
-                     value = set_val,
+                     value = start_val,
                      min=min_val,
                      max=max_val,
                      width = '500px'),
@@ -126,23 +183,29 @@ create_input_element <- function(option) {
         placement ='left')
     } else if ( option_par$option_class == 'optional_numeric' ) {
       div_id = paste0(option_par$shiny_varname,"_div")
-      min_val = as.numeric(sub(';.*', '', option_par$option_options))
-      max_val = as.numeric(sub('.*;', '', option_par$option_options))
+      if (suppressWarnings(is.na(as.numeric(option_par$option_default)))){
+        automatic = TRUE
+      }else{
+        automatic = !as.logical(as.numeric(option_par$option_default))
+      }
+      vals = as.numeric(strsplit(option_par$option_options, ';', fixed=TRUE)[[1]])
+      min_val = vals[1]
+      max_val = vals[2]
       if(is.na(min_val)){min_val=0}
       if(is.na(max_val)){max_val=1}
-
+      start_val = ifelse(length(vals)==3, vals[3], mean(c(min_val, max_val)))
       fluidRow(tags$head(
         tags$style(paste0("#title {padding-left: 15px}"))),
       tags$div(id = "title",
-               h5(option_par$shiny_label)),
+               p(strong(option_par$shiny_label))), #@ h5()
       tags$head(
         tags$style(type="text/css", paste0("#checkbox {padding-left: 15px}"))
       ),
       tags$div(id = "checkbox",
                spsComps::bsTooltip(
         checkboxInput(option_par$shiny_varname,
-                      'Choose a value manually',
-                      value = option_par$option_default == 'TRUE'),
+                      'Choose value manually',
+                      value = !automatic),
         title=option_par$shiny_tooltip,
         placement ='left')),
       tags$head(
@@ -151,20 +214,80 @@ create_input_element <- function(option) {
       tags$div(id = div_id,
           sliderInput(paste0(option_par$shiny_varname,'_slider'),
                       label='',
-                      value = min_val + (max_val-min_val)/2,
-                      min = min_val, #as.numeric(sub(',.*', '', option_par$option_option))
-                      max = max_val,  #as.numeric(sub('.*,', '', option_par$option_option))
+                      value = start_val,
+                      min = min_val,
+                      max = max_val,
                       width = '500px')),
           tags$br())
-
-
+    }else if (option_par$option_class=='split_numeric'){
+      suboptions = strsplit(option_par$option_options, ';', fixed=TRUE)[[1]]
+      valsNoptimaNstep = strsplit(option_par$option_default, ';', fixed=TRUE)[[1]]
+      vals = as.numeric(strsplit(valsNoptimaNstep[1], ',', fixed=TRUE)[[1]])
+      optima = as.numeric(strsplit(valsNoptimaNstep[2], ',', fixed=TRUE)[[1]])
+      step = as.numeric(valsNoptimaNstep[3])
+      if (length(vals)==1){
+        vals = rep(vals, length(suboptions))
+      }
+      cellwidths = rep(0, 2*length(suboptions)-1)
+      cellspacers = seq(2, length(cellwidths), 2)
+      boxes = seq(1, length(cellwidths), 2)
+      width_unit = 1/(length(cellspacers)+4*length(boxes))
+      cellwidths[cellspacers] = paste0(100*width_unit, '%')
+      cellwidths[boxes] = paste0(400*width_unit, '%')
+      if (option_par$shiny_varname!='feat_extend'){
+        spsComps::bsTooltip(
+          do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_sliders, option_par$shiny_varname, suboptions, vals, optima, step),
+                                             list(cellWidths=as.list(cellwidths)),
+                                             list(width=list('500px')))),
+          title=option_par$shiny_tooltip,
+          placement ='left')
+      }else{
+        spsComps::bsTooltip(
+          do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_numeric_input, option_par$shiny_varname, suboptions, vals, optima, step),
+                                             list(cellWidths=as.list(cellwidths)),
+                                             list(width=list('500px')))),
+          title=option_par$shiny_tooltip,
+          placement ='left')
+      }
+    }else if (option_par$option_class=='split_text'){
+      #@cat(option, '\n')
+      suboptions = strsplit(option_par$option_options, ';', fixed=TRUE)[[1]]
+      #@cat(suboptions, '\n')
+      vals = strsplit(option_par$option_default, ',', fixed=TRUE)[[1]]
+      if (any(vals=='FALSE') | any(vals=='TRUE')){
+        vals = as.logical(vals)
+      }
+      #@cat(vals, '\n')
+      #@cat('\n')
+      if (length(vals)==1){
+        vals = rep(vals, length(suboptions))
+      }
+      cellwidths = rep(0, 2*length(suboptions)-1)
+      cellspacers = seq(2, length(cellwidths), 2)
+      boxes = seq(1, length(cellwidths), 2)
+      width_unit = 1/(length(cellspacers)+4*length(boxes))
+      cellwidths[cellspacers] = paste0(100*width_unit, '%')
+      cellwidths[boxes] = paste0(400*width_unit, '%')
+      if (!is.logical(vals)){
+        spsComps::bsTooltip(
+          do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_text_input, option_par$shiny_varname, suboptions, vals),
+                                             list(cellWidths=as.list(cellwidths)),
+                                             list(width=list('500px')))),
+          title=option_par$shiny_tooltip,
+          placement ='left')
+      }else{
+        spsComps::bsTooltip(
+          do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_bool_input, option_par$shiny_varname, suboptions, vals),
+                                             list(cellWidths=as.list(cellwidths)),
+                                             list(width=list('500px')))),
+          title=option_par$shiny_tooltip,
+          placement ='left')
+      }
     }
-
   }
 }
 
 
-## TO DO: export identical function from seqNdisplayR.R?
 ListDepth = function(query_list){
   ifelse(is.list(query_list), 1L + max(sapply(query_list, ListDepth)), 0L)
 }
@@ -208,18 +331,18 @@ ui <- fluidPage(
                      shinyBS::bsTooltip(id = "save_settings", title = "Save current settings in an Excel template for reuse.",
                                         placement = "right", trigger = "hover"),
                      ## TODO: remove debugging buttons
-                     actionButton("show_settings", "Show Settings"),
-                     shinyBS::bsTooltip(id = "show_settings", title = "Show settings of active session in console.",
-                                        placement = "right", trigger = "hover"),
-                     actionButton("show_parameters", "Show Parameters"),
-                     shinyBS::bsTooltip(id = "show_parameters", title = "Show dataset-specific options (parameters) of active session in console.",
-                                        placement = "right", trigger = "hover"),
-                     actionButton("show_samples", "Show Samples"),
-                     shinyBS::bsTooltip(id = "show_samples", title = "Show currently selected samples and their order",
-                                        placement = "right", trigger = "hover"),
-                     actionButton("which_samples", "Show whichSamples"),
-                     shinyBS::bsTooltip(id = "which_samples", title = "Show currently whichSamples argument, selected samples for display. Samples listed in Show samples but not in here are still used for batch correction",
-                                        placement = "right", trigger = "hover"),
+                     # actionButton("show_settings", "Show Settings"),
+                     # shinyBS::bsTooltip(id = "show_settings", title = "Show settings of active session in console.",
+                     #                    placement = "right", trigger = "hover"),
+                     # actionButton("show_parameters", "Show Parameters"),
+                     # shinyBS::bsTooltip(id = "show_parameters", title = "Show dataset-specific options (parameters) of active session in console.",
+                     #                    placement = "right", trigger = "hover"),
+                     # actionButton("show_samples", "Show Samples"),
+                     # shinyBS::bsTooltip(id = "show_samples", title = "Show currently selected samples and their order",
+                     #                    placement = "right", trigger = "hover"),
+                     # actionButton("which_samples", "Show whichSamples"),
+                     # shinyBS::bsTooltip(id = "which_samples", title = "Show currently whichSamples argument, selected samples for display. Samples listed in Show samples but not in here are still used for batch correction",
+                     #                    placement = "right", trigger = "hover"),
                      actionButton("clean_console", "Clean Console"),
                      shinyBS::bsTooltip(id = "clean_console", title = "Clean the text output displayed to the right",
                                         placement = "right", trigger = "hover"),
@@ -258,16 +381,16 @@ ui <- fluidPage(
           "Load excel file (or IGV session xml file)",
           multiple = FALSE,
           accept = c(".xls", ".xlsx", ".xlsm", '.xml'),
-          width = "560px" #@
+          width = 540
         ),
         verbatimTextOutput("File_import_msg"),
         tags$br(),
         splitLayout(
-          cellWidths = c('240px', '80px', '240px'),
-          textInput("gene", label = 'Enter locus name', placeholder = 'e.g. LMO4'),
-          p("  or  ", align='center'),  #@ p("  or  ", align='center')
-          textInput("coordinates", label =
-                      'Enter locus coordinates', placeholder = 'e.g. chr1:+:87325400:87351991')
+          cellWidths = c('40%', '10%', '40%'), #@c(252,56, 252), #@ c('40%', '10%', '40%')
+          textInput("gene", label ='Enter locus name', placeholder='e.g. LMO4'),
+          p("or", align='center'),
+          textInput("coordinates", label='Enter locus coordinates', placeholder='e.g. chr1:+:87325400:87351991'),
+          width=560
         ),
         tags$p(em(
           "The name has to be present in one of the supplied annotations and match case. When entering name and coordinates simultaneously, only the name will be considered."
@@ -387,7 +510,7 @@ ui <- fluidPage(
             tags$style(type="text/css", "#panel_horizontal_div {padding-left: 15px}")
           ),
           div(id = "panel_horizontal_div",
-              h5("Display panel text horizontally:", style= 'font-weight: bold'),
+              p("Display panel text horizontally:", style= 'font-weight: bold'),
               div(id = "panel_horizontal_checkboxes"),
               tags$br()),
 
@@ -395,7 +518,17 @@ ui <- fluidPage(
           create_input_element('replicate_names'),
           create_input_element('pan_col'),
           create_input_element('panel_font_easy'),
-          create_input_element('panel_font'),
+          #@ ->
+          tags$head(
+            tags$style(type="text/css", "#panel_font_easy_div {padding-left: 15px}")
+          ),
+          div(id = "panel_font_easy_div",
+              p("Panel Text Font Size(s):", style= 'font-weight: bold'),
+              div(id = "panel_font_easy_boxes"),
+              tags$br()),
+          #@ <-
+
+          create_input_element('panel_font'),       #@ [*] Detailed Panel Text Font Sizes
           tags$br(),
           h4('Spacing, Background and Separators'),
           create_input_element('incl_first_panel'),
@@ -574,8 +707,66 @@ server <- function(input, output, session) {
   })
 
   observe({
+    toggle(id = "panel_font_easy_div", condition = input$panel_font_easy)
+  })
+
+  observe({
+    toggle(id = "tracks_height_div", condition = input$tracks_height)
+  })
+
+  observe({
+    toggle(id = "title_field_height_cm_div", condition = input$title_field_height_cm)
+  })
+
+  observe({
+    toggle(id = "genomic_scale_height_cm_div", condition = input$genomic_scale_height_cm)
+  })
+
+  observe({
+    toggle(id = "annotation_height_cm_div", condition = input$annotation_height_cm)
+  })
+
+  observe({
+    toggle(id = "spacer_height_div", condition = input$spacer_height)
+  })
+
+  observe({
+    toggle(id = "tracks_width_in_cm_div", condition = input$tracks_width_in_cm)
+  })
+
+  observe({
+    toggle(id = "tracks_name_width_div", condition = input$tracks_name_width)
+  })
+
+  observe({
+    toggle(id = "scale_per_space_div", condition = input$scale_per_space)
+  })
+
+  observe({
+    toggle(id = "plot_height_div", condition = input$plot_height)
+  })
+
+  observe({
+    toggle(id = "plot_width_div", condition = input$plot_width)
+  })
+
+  observe({
+    toggle(id = "annotation_character_size_div", condition = input$annotation_character_size)
+  })
+
+  observe({
     toggle(id = "annot_font_div", condition = input$annot_font)
   })
+
+  observe({
+    toggle(id = "header_font_div", condition = input$header_font)
+  })
+
+  observe({
+    toggle(id = "gen_scal_font_div", condition = input$gen_scal_font)
+  })
+
+
   #END OF TO DO
 
 
@@ -594,15 +785,44 @@ server <- function(input, output, session) {
           updateTextInput(session, opt_line$shiny_varname, value = seqNdisplayR::deparse_option(seqNdisplayR_session[[opt]]))
         } else if ( opt_line$option_class == 'numeric' ) {
           updateSliderInput(session, opt_line$shiny_varname, value = seqNdisplayR_session[[opt]])
-        } else if ( opt_line$option_class == 'optional_numeric' ) {
-          if( !is.null(seqNdisplayR_session[[opt]]) ){
-            updateCheckboxInput(session, opt_line$shiny_varname, value = FALSE)
-            updateSliderInput(session, paste0(option_par$shiny_varname,'_slider'), value = seqNdisplayR_session[[opt]])
-          } else {
+        } else if ( opt_line$option_class == 'optional_numeric' ) { #@$ ->
+          if (is.null(seqNdisplayR_session[[opt]])){
+            automatic = TRUE
+          }else if (suppressWarnings(is.na(as.numeric(seqNdisplayR_session[[opt]])))){ #@$ ->
+            automatic = TRUE
+          }else{
+            automatic = !as.logical(as.numeric(seqNdisplayR_session[[opt]]))
+          } #@$ <-
+          if( !automatic ){
             updateCheckboxInput(session, opt_line$shiny_varname, value = TRUE)
+            updateSliderInput(session, paste0(opt_line$shiny_varname,'_slider'), value = seqNdisplayR_session[[opt]])
+          } else {
+            updateCheckboxInput(session, opt_line$shiny_varname, value = FALSE)
           }
-
+        }else if ( opt_line$option_class == 'split_numeric' ) {
+          suboptions = strsplit(opt_line$option_options, ';', fixed=TRUE)[[1]]
+          for (n in seq_along(suboptions)){
+            if (opt_line$shiny_varname!='feat_extend'){
+              updateSliderInput(session, paste0(opt_line$shiny_varname, '_subvar', n), value = seqNdisplayR_session[[opt]][n])
+            }else{
+              updateNumericInput(session, paste0(opt_line$shiny_varname, '_subvar', n), value = seqNdisplayR_session[[opt]][n])
+            }
+          }
+        }else if ( opt_line$option_class == 'split_text' ){
+          suboptions = strsplit(opt_line$option_options, ';', fixed=TRUE)[[1]]
+          vals = seqNdisplayR_session[[opt]]
+          if (length(vals)==1){
+            vals = rep(vals, length(suboptions))
+          }
+          for (n in seq_along(suboptions)){
+            if (opt_line$shiny_varname!='panel_separator'){
+              updateTextInput(session, paste0(opt_line$shiny_varname, '_subvar', n), value = vals[n])
+            }else{
+              updateCheckboxInput(session, paste0(opt_line$shiny_varname, '_subvar', n), value = vals[n])
+            }
+          }
         }
+        #@$ <-
       }
     }
 
@@ -646,7 +866,6 @@ server <- function(input, output, session) {
         if ( length(shiny_elems) != 0 ) {
 
           for ( elem in shiny_elems[1:length(shiny_elems)] ) {
-            #shinyCatch({message(paste0('deleting UI element: ', elem, '\n'))},shiny=F)
             removeUI(selector = paste0('#', elem))
             if(grepl('xvalue', elem)){
               removeUI(selector = paste0('#', sub('xvalue', '', elem)))
@@ -658,7 +877,6 @@ server <- function(input, output, session) {
 
         ##insert one text input per sample name
         for ( name in rev(names(para)) ) {
-          #shinyCatch({message(paste0('   adding: ', name, '\n'))},shiny=F)
           if ( opt_line$option_class == 'text' ) {
             insertUI(
               selector = paste0('#', anchor_elem),
@@ -669,13 +887,21 @@ server <- function(input, output, session) {
                              value = deparse_option(para[[name]])
               ))
             )
-          } else if ( opt_line$option_class == 'numeric' ) {
+          } else if ( opt_line$option_class == 'numeric' ) { ##@@
+            vals = as.numeric(strsplit(opt_line$option_options, ';', fixed=TRUE)[[1]])
+            min_val = vals[1]
+            max_val = vals[2]
+            if(is.na(min_val)){min_val=0}
+            start_val = ifelse(length(vals)==3, vals[3], mean(c(min_val, max_val)))
+            if(is.na(max_val)){max_val=start_val*2}
             insertUI(
               selector = paste0('#', anchor_elem),
               where = "afterEnd",
               ui = tags$div(id=paste0(opt_line$shiny_varname, '_', name),
-                            numericInput(paste0(opt_line$shiny_varname, 'xvalue_', name),
+                            sliderInput(paste0(opt_line$shiny_varname, 'xvalue_', name),  #@ numericInput(paste0(opt_line$shiny_varname, 'xvalue_', name)
                              label = name,
+                             min=min_val, #@
+                             max=max_val, #@
                              value = deparse_option(para[[name]]))
               )
             )
@@ -694,7 +920,6 @@ server <- function(input, output, session) {
 
         #hide the anchor
         shinyjs::hide(id = anchor_elem)
-        #shinyCatch({message(paste0('hiding anchor UI element: ', anchor_elem, '\n'))},shiny=F)
       }
     }
 
@@ -726,6 +951,32 @@ server <- function(input, output, session) {
       )
     }
 
+    ##@ ->
+    #### panels fonts easy special case of expandable option upon enable
+
+    #remove previous exisiting checkboxGroups
+    #removeUI(selector = paste0('#', 'panel_font_easy'))
+
+    dataset_group_depth = max(sapply(rev(dataset_names), function(name) ListDepth(seqNdisplayR_session$samples[[name]]) + 1))
+    levels=c('dataset', paste0('subgroup_', dataset_group_depth:1))
+    cellwidths = rep(0, 2*length(levels)-1)
+    cellspacers = seq(2, length(cellwidths), 2)
+    boxes = seq(1, length(cellwidths), 2)
+    width_unit = 1/(length(cellspacers)+4*length(boxes))
+    cellwidths[cellspacers] = paste0(100*width_unit, '%')
+    cellwidths[boxes] = paste0(400*width_unit, '%')
+    vals = rep(7, length(levels)) #@
+    optima = c(4,20) #@
+    step = 1 #@
+
+    insertUI(
+      selector = '#panel_font_easy_boxes',
+      where = "afterEnd",
+      ui = do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_sliders, 'panel_font_easy', levels, vals, optima, step),
+                                              list(cellWidths=as.list(cellwidths)),
+                                              list(width=list('500px'))))
+    )
+    ##@ <-
 
     #### annotation options specific to each annotation (all booleans for now)
     anno_options <- options_table[options_table$option_group == 'annotation_option',]
@@ -938,16 +1189,33 @@ server <- function(input, output, session) {
   get_shiny_global_options <- reactive({
     opts <- options_table$option_name[options_table$option_group == 'global']
 
-    #TO DO: check if optional_numeric still works
     l <- lapply(opts, function(opt) {
       opt_line <- options_table[options_table$option_name == opt,]
       shiny_varname <- opt_line$shiny_varname
-      if ( shiny_varname %in% names(input) ) {
-        value <- input[[shiny_varname]]
+      if ( any(grepl(paste0('^', shiny_varname), names(input))) ) {  #@ shiny_varname %in% names(input)
+        if (shiny_varname %in% names(input)){
+          value <- input[[shiny_varname]]
+        }else{
+          var_names = grep(paste0('^', shiny_varname), names(input), value=TRUE)
+          var_numbers = as.numeric(sapply(var_names, function(var_name) strsplit(var_name, split=paste0(shiny_varname, '_subvar'))[[1]][2]))
+          re_order = order(var_numbers)
+          var_names = var_names[re_order]
+          value <- lapply(var_names, function(var) input[[var]])
+        }
         if ( opt_line$option_class == 'text' ) {
           value <- seqNdisplayR::parse_option(value)
         } else if ( opt_line$option_class == 'optional_numeric' ) {
-          value <- input[[paste0(shiny_varname, '_slider')]]
+          if (value){
+            value <- input[[paste0(shiny_varname, '_slider')]]
+          }else{
+            if (opt=="panels_max_width_cm" | opt=="scale_panel_width_cm"){
+              value <- 'auto'
+            }else{
+              value <- NULL
+            }
+          }
+        }else if (opt_line$option_class=='split_numeric' | opt_line$option_class=='split_text') {
+          value = unlist(value)
         }
         value
       } else {
@@ -959,6 +1227,19 @@ server <- function(input, output, session) {
     ## special case for plotting_segment_order if bottom specified
     if (!is.null(l$plotting_segment_order_bottom)){
       l$plotting_segment_order = list('+'=l$plotting_segment_order, '-'=l$plotting_segment_order_bottom)
+    }
+
+    ## special case for panel_font_sizes
+    if (!l$panel_font_sizes){
+      l$panel_font_sizes = NULL
+    }else{
+      var_names = grep(paste0('^', 'panel_font_easy_subvar'), names(input), value=TRUE)
+      var_numbers = as.numeric(sapply(var_names, function(var_name) strsplit(var_name, split='panel_font_easy_subvar')[[1]][2]))
+      re_order = order(var_numbers)
+      var_names = var_names[re_order]
+      value <- lapply(var_names, function(var) input[[var]])
+      #@cat(unlist(value), '\n') #@
+      l$panel_font_sizes = unlist(value)
     }
 
     ## special case for horizontal_panels_list if panel_horizontal is enabled
@@ -1006,7 +1287,6 @@ server <- function(input, output, session) {
           names(res) <- datasets
           res
         } else if(opt_line$option_class == 'text_choices') {
-          #text_elems <- names(input)[grepl(paste0(opt_line$shiny_varname,'_'), names(input))]
           res <- sapply(datasets,
                  function(dataset) {
                    parse_option(input[[paste0(opt_line$shiny_varname,'_',dataset)]])
@@ -1014,7 +1294,6 @@ server <- function(input, output, session) {
           names(res) <- datasets
           res
         } else  {
-          #text_elems <- names(input)[grepl(paste0(opt_line$shiny_varname,'xvalue_'), names(input))]
           res <- sapply(datasets,
                         function(dataset) {
                           parse_option(input[[paste0(opt_line$shiny_varname,'xvalue_',dataset)]])
@@ -1280,6 +1559,5 @@ server <- function(input, output, session) {
 
 }
 
-
 # Run the application
-shinyApp(ui = ui, server = server, options = list(width = 1200, height = 2000)) #@ keep an eye on options
+shinyApp(ui = ui, server = server, options = list(width = 1600, height = 2000)) #@ keep an eye on options
