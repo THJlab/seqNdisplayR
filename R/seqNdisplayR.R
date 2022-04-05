@@ -401,7 +401,14 @@ seqNdisplay = function(
   .header.font.sizes =  ScrutinizeExpandAndNameParameter(header_font_sizes, c('main', 'sub', 'scale'), use_names=FALSE, default_value=.rec.font.sizes[c('main', 'sub', 'scale')], expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'header_font_sizes', 'Header Fonts'), verbosity=.verbosity)
   .header.font.sizes = if (EvaluateNumericValue(.header.font.sizes, positive_val=TRUE, min_val=4, max_val=c(24, 18, 18), interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'header_font_sizes', 'Header Fonts'), .verbosity)){.header.font.sizes}else{ScrutinizeExpandAndNameParameter('dummy', c('main', 'sub', 'scale'), use_names=FALSE, default_value=.rec.font.sizes[c('main', 'sub', 'scale')], expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'header_font_sizes', 'Header Fonts'), verbosity=.verbosity)}
   .incl.reps = unlist(lapply(parameters, function(p) !p$calcMean))
+  cat('now we are inside seqNdispaiR 1', '\n') #@
   .panel.font.size.list = PanelFontSizeList(datasets, panel_font_sizes, panel_font_size_list, .incl.reps, replicate_names, .verbosity, .interface) #@ added .incl.reps, replicate_names
+  #@ ->
+  cat('now we are inside seqNdispaiR 2', '\n')
+  for (name in names(.panel.font.size.list)){
+    cat(paste0(name, paste(.panel.font.size.list[[name]], collapse=' ')), '\n')
+  }
+  #@ <-
   .horizontal.panels.list = HorizontalPanelsList(datasets, horizontal_panels_list, .incl.reps, replicate_names, .verbosity, .interface) #@ added .incl.reps, replicate_names
   .force.scale.list = ForceScaleList(datasets, force_scale, strands=ifelse(both_strands, '+-', .strand), .verbosity, .interface)
   if (!is.null(.panel.font.size.list)){
