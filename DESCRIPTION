@@ -20,13 +20,13 @@ Depends:
     limma,
     readxl,
     writexl,
-    RCurl
-Suggests:
-    xml2,
+    RCurl,
     shiny,
-    shinyBS,
     shinyjs,
+    shinyBS,
     spsComps,
     shinyTree,
     shinybusy
+Suggests:
+    xml2
 RoxygenNote: 7.1.2
