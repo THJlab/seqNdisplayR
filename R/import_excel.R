@@ -21,8 +21,7 @@
 load_excel <- function(xl_fname, load_annotations=FALSE) {
 
   cat('Parsing Excel Template File\n')
-  #@cat('  Samples Table\n')
-  samples_df <- NULL
+  samples_df = NULL
   tryCatch(
     {noout <- capture.output(
       samples_df <- readxl::read_excel(xl_fname, sheet = 'SAMPLES')
@@ -30,15 +29,19 @@ load_excel <- function(xl_fname, load_annotations=FALSE) {
     cat('  Samples Table               --> OK\n') #@ cat('    --> OK\n')
     },
     error=function(cond) {
-     cat('  Samples Table               --> ERROR: Required sheet "SAMPLES" not found in file\n')
-     error('Required sheet "SAMPLES" not found in file\n')
+     cat('  Samples Table               --> Required sheet "SAMPLES" not found in file\n')
+     cat('  ERROR: aborting\n')
+     #@error('Required sheet "SAMPLES" not found in file\n')
     }
   )
+  if (is.null(samples_df)){
+    return()
+  }
   if (nrow(samples_df) > 1){
     samples_df = samples_df[!apply(apply(samples_df, 2, is.na), 1, all),,drop=FALSE] #@
     samples_df = fill_df(samples_df)
   }
-  #@cat('  Dataset-specific options\n')
+
 
   params_df <- data.frame(dataset = unique(samples_df$dataset))
   tryCatch(
@@ -639,7 +642,7 @@ get_parameters <- function(samples_df, params_df){
   params <- lapply(dataset_names, function(dataset) {
     para <- params[[dataset]]
     whichSamples <- params_df$whichSamples[params_df$dataset == dataset][[1]]
-    if ( is.null(whichSamples) | whichSamples == 'NULL' ) {
+    if ( is.null(whichSamples) | whichSamples == 'NULL' | whichSamples == '') {
       #include all
       para['whichSamples'] <- list(NULL)
     } else if ( is.na(whichSamples) | whichSamples == 'NA' ) {
