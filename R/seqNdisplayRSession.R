@@ -56,7 +56,7 @@ seqNdisplayRSession <- function(df=NULL, samples=NULL, colors=NULL, bigwig_dirs=
     options <- c(options, default_annotation_options())
   }
 
-  if ( load_annotations ) {
+  if ( load_annotations & !is.null(annotations)) { #@ & !is.null(annotations)
     .annots <- lapply(annotations, function(anno) GenomicRanges::GRanges(rtracklayer::import.bed(anno)))
   } else {
     .annots <- annotations
@@ -122,34 +122,36 @@ plot.seqNdisplayRSession <- function(session, ...){
       session$replicate_names = ''
     }
   }
-
-
-  # handle force_scale which is part of parameters but needs to passed differently to plot function
   if ( !('force_scale' %in% names(external_args)) ) {
-      force_scales <- lapply(session$parameters, function(para) {
-        fc <- parse_option(para$force_scale)
-        if (is.null(fc)) {
-          c(NA,NA)
-        }else if (length(fc) == 1){
-          rep(fc, 2)
-        }else{
-          if ( is.null(fc[[1]]) ) {
-            fc[[1]] <- NA
-          }
-          if ( is.null(fc[[2]]) ) {
-            fc[[2]] <- NA
-          }
-          unlist(fc)
-        }
-      })
-      names(force_scales) <- names(session$parameters)
-
-      session$force_scale <- list(
-        '+' = sapply(force_scales, function(x) x[1]),
-        '-' = sapply(force_scales, function(x) x[2])
-      )
+    session$force_scale = NULL
   }
-  session$parameters <- lapply(session$parameters, function(x) x[!(names(x)=='force_scale')])
+
+  # # handle force_scale which is part of parameters but needs to passed differently to plot function
+  # if ( !('force_scale' %in% names(external_args)) ) {
+  #     force_scales <- lapply(session$parameters, function(para) {
+  #       fc <- parse_option(para$force_scale)
+  #       if (is.null(fc)) {
+  #         suppressWarnings(as.numeric(c(NA,NA)))
+  #       }else if (length(fc) == 1){
+  #         suppressWarnings(as.numeric(fc)) # rep(fc, 2)
+  #       }else{
+  #         if ( is.null(fc[[1]]) ) {
+  #           fc[[1]] <- NA
+  #         }
+  #         if ( is.null(fc[[2]]) ) {
+  #           fc[[2]] <- NA
+  #         }
+  #         suppressWarnings(as.numeric(unlist(fc)))
+  #       }
+  #     })
+  #     names(force_scales) <- names(session$parameters)
+  #
+  #     session$force_scale <- list(
+  #       '+' = unlist(lapply(force_scales, function(x) x[1])),
+  #       '-' = unlist(lapply(force_scales, function(x) if (length(x)==2){x[2]}else{NULL}))
+  #     )
+  # }
+  # session$parameters <- lapply(session$parameters, function(x) x[!(names(x)=='force_scale')])
 
   # handle group_autoscale which is part of parameters but needs to passed differently to plot function
   if ( !('group_autoscale' %in% names(external_args)) ) {
@@ -329,6 +331,7 @@ session_to_xlsx <- function(session, path, ...) {
                           sapply(session_options, deparse_option, USE.NAMES = FALSE)
                         )
                         )
+  options = options[order(names(session_options)),]  #@
 
   #@
   if (!is.null(annos)){
