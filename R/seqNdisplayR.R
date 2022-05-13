@@ -9,6 +9,7 @@
 
 #### Constants and Defaults (package-wide available arguments)
 line_width_scaling_factor = 0.25/0.38 # scaling factor to use for the line width (if multiplied with 1 it will give 0.5-pt line width in the pdf with default dimensions)
+points_per_cm = 28.3465
 arrow_constant = 0.4                  # used for scaling directional arrows in annotation with feature heights
 cm_to_in = 0.393701					          # 1 cm = 0.393701 inches
 std_letter_width = 0.023              # gives the width of the standard letter if multiplied by font size
@@ -25,7 +26,7 @@ plot_vertical_parameters = c('header'=2.2,  ## vertical units used for header se
                              'thickline-spacer'=0.4, ## vertical units used for annotation separator
                              'annot'=0.8,  # per annotation line...if annotation_packing is not squished
                              'annot_squished'=0.4, # per annotation line...if annotation_packing is squished
-                             'annot_text_segment' = 0.8) #
+                             'annot_text_segment'=0.8) #
 
 
 ## markup code:
@@ -46,12 +47,13 @@ default_plot_options <- function(){
        input_parameters=NULL,                                     ## not in app
        both_strands=TRUE,                                         #(v)
        strands_intermingled=TRUE,                                 #(v)
-       neg_vals_neg_strand=TRUE,                                  #(v)
-       actual_strand_direction=TRUE,                              #(v)
+       neg_vals_neg_strand=FALSE,                                  #(v)
+       reverse_strand_direction=FALSE,                              #(v)
        alternating_background=TRUE,                               #(v)
        bgr_colors=c('#C1B49A', '#F1F1F2'),                        #(v) two colors (hex or name) - will auto-default with warning message
        bgr_alpha = 0.2,                                           #(v) positive numeric value (0-1)
-       strands_alpha=c(100,50),                                   #(v) positive numeric values (0-100)
+       strands_alpha=c(100,100),                                  #(v) positive numeric values (0-100)
+       intermingled_color=c('same', 'complementary', 'analogous_right', 'analogous_left')[1],
        extra_space=c(1.5, 1.5),                                   #(v) positive numeric values
        annot_panel_color='steelblue',                             #(v) color (hex or name)
        annot_panel_font_size=NULL,                                #(v) NULL or positive integer value
@@ -164,7 +166,7 @@ default_parameters <- function() {
 #' @export
 seqNdisplay = function(
   datasets, colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
-  both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, actual_strand_direction=TRUE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,100),
+  both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, reverse_strand_direction=FALSE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,100), intermingled_color='same',
   feature=NULL, locus=NULL, extra_space=c(1.5,1.5),
   annots=NULL, annotation_packing='collapsed2', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
   bin_start=NULL, bin_size='automatic', bins_per_cm=250, track_width_cm=10, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3, title_field_height_cm=0.66, genomic_scale_height_cm=0.24, annotation_height_cm=0.24, spacer_height_cm=0.06,
@@ -199,13 +201,19 @@ seqNdisplay = function(
       cat(.warning.message, '\n')
     }
     track_height_cm = NULL
+  }else if (is.null(full_height_cm) & is.null(track_height_cm)){
+    if (.verbosity > 0){
+      .error.message = paste0(' - ', 'both ', ifelse(interface=='R', '"track_height_cm"', '"Tracks Height"'), ' and ', ifelse(interface=='R', '"full_height_cm"', '"Full Plot Height"'), ' are NULL - one of them has to be defined')
+      cat(.error.message, '\n')
+    }
+    return()
   }
   if (!is.null(genomic_scale_height_cm)){ if (!EvaluateNumericValue(genomic_scale_height_cm, positive_val=TRUE, min_val=0.2, max_val=0.5, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'genomic_scale_height_cm', 'Genomic Scale Height'), .verbosity)){ return() }}
   if (!is.null(annotation_height_cm)){ if (!EvaluateNumericValue(annotation_height_cm, positive_val=TRUE, min_val=0.2, max_val=0.5, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'annotation_height_cm', 'Annotation Height'), .verbosity)){ return() }}
   if (!is.null(spacer_height_cm)){ if (!EvaluateNumericValue(spacer_height_cm, positive_val=TRUE, min_val=0.01, max_val=0.2, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'spacer_height_cm', 'Spacer Height'), .verbosity)){ return() }}
   if (!is.null(panels_max_width_cm)){ if (panels_max_width_cm!='auto' & panels_max_width_cm!='automatic'){if (!EvaluateNumericValue(panels_max_width_cm, positive_val=TRUE, min_val=0, max_val=30, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'panels_max_width_cm', 'Panels Width'), .verbosity)){ return() }}}
   if (!is.null(scale_panel_width_cm)){ if (scale_panel_width_cm!='auto' & scale_panel_width_cm!='automatic'){if (!EvaluateNumericValue(scale_panel_width_cm, positive_val=TRUE, min_val=0, max_val=1, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'scale_panel_width_cm', 'Tracks Scale Width'), .verbosity)){ return() }}}
-  if (is.null(feature) & !is.null(locus)) {if (!EvaluateNumericValue(extra_space, positive_val=TRUE, min_val=0, max_val=100, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'extra_space', 'Expand Plotted Region'), .verbosity)){ return() }}
+  if (!is.null(feature)) {if (!EvaluateNumericValue(extra_space, positive_val=TRUE, min_val=0, max_val=100, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'extra_space', 'Expand Plotted Region'), .verbosity)){ return() }}
   if (!EvaluateNumericValue(margin_width_cm, positive_val=TRUE, min_val=0, max_val=0.25, interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'margin_width_cm', 'Margins Width'), .verbosity)){ margin_width_cm=0.05; if (.verbosity>1){cat(margin_width_cm, '\n')} }
   if (!is.null(panel_font_sizes)){ if (!EvaluateNumericValue(panel_font_sizes, positive_val=TRUE, min_val=4, max_val=15, interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'panel_font_sizes', 'Panel Text Font Size(s)'), .verbosity)){ panel_font_sizes=NULL; if (.verbosity>1){cat('NULL', '\n')} }}
   if (!is.null(scale_font_size)){ if (!EvaluateNumericValue(scale_font_size, positive_val=TRUE, min_val=4, max_val=8, interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'scale_font_size', 'Genomic Scale Font'), .verbosity)){ scale_font_size=NULL; if (.verbosity>1){cat('NULL', '\n')} }}
@@ -261,12 +269,12 @@ seqNdisplay = function(
   }
   #### <- load all annotations
   #### -> check parameters part 3 - abort or auto correct
-  .batch.correction = ScrutinizeExpandAndNameParameter(unlist(lapply(parameters, function(p) p$batchCorrect)), datasets, use_names=TRUE, default_value=FALSE, expect_standard='logical', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'enhance_signals', 'Enhance Signals'), verbosity=.verbosity)
-  .log2.transform = ScrutinizeExpandAndNameParameter(unlist(lapply(parameters, function(p) p$log2transform)), datasets, use_names=TRUE, default_value=FALSE, expect_standard='logical', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'enhance_signals', 'Enhance Signals'), verbosity=.verbosity)
+  .batch.correction = ScrutinizeExpandAndNameParameter(unlist(lapply(parameters, function(p) p$batchCorrect)), datasets, use_names=TRUE, default_value=FALSE, expect_standard='logical', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'batchCorrect', 'Batch Correction'), verbosity=.verbosity)
+  .log2.transform = ScrutinizeExpandAndNameParameter(unlist(lapply(parameters, function(p) p$log2transform)), datasets, use_names=TRUE, default_value=FALSE, expect_standard='logical', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'log2transform', 'log2-Transform Data'), verbosity=.verbosity)
   .batch.log2 = structure(as.logical(.batch.correction + .log2.transform), names=names(.batch.correction))
-  .pseudocounts = ScrutinizeExpandAndNameParameter(unlist(lapply(parameters, function(p) p$pseudoCount)), datasets, use_names=TRUE, default_value=1, expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'enhance_signals', 'Enhance Signals'), verbosity=.verbosity)
+  .pseudocounts = ScrutinizeExpandAndNameParameter(unlist(lapply(parameters, function(p) if(!is.null(p$pseudoCount)){p$pseudoCount}else{-1})), datasets, use_names=TRUE, default_value=1, expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'pseudoCount', 'Pseudocount'), verbosity=.verbosity)
   for (.i in which(.batch.log2)){
-    if (!EvaluateNumericValue(.pseudocounts[.i], positive_val=TRUE, min_val=0.000001, max_val=1000000, interval_obligatory=TRUE, turn_errors_to_warnings=TRUE, alt_par_name=paste(ifelse(interface=='R', 'pseudoCount', 'Pseudo Count'), names(.pseudocounts[.i])), .verbosity)){
+    if (!EvaluateNumericValue(.pseudocounts[.i], positive_val=TRUE, min_val=0, max_val=1000000, interval_obligatory=TRUE, turn_errors_to_warnings=TRUE, alt_par_name=paste(ifelse(interface=='R', 'pseudoCount', 'Pseudo Count'), names(.pseudocounts[.i])), .verbosity)){
       parameters[[names(.pseudocounts[.i])]][['pseudoCount']] = 1
     }
   }
@@ -288,6 +296,7 @@ seqNdisplay = function(
   .bgr.colors = as.character(ScrutinizeExpandAndNameParameter(bgr_colors, c('odd', 'even'), use_names=FALSE, default_value=c('#C1B49A', '#F1F1F2'), expect_standard='color', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'bgr_colors', 'Alternating Background Colors'), verbosity=.verbosity))
   .font.colors = structure(rep('black', 9), names=c('header', 'subheader', 'genomic_scale', 'genomic_axis', 'panel_1st', 'panel', 'scale', 'annotation', 'features'))
   .font.colors[c('annotation', names(.panel.text.colors), 'scale', names(.header.font.colors), 'genomic_axis', 'features')] = c(.annot.panel.color, .panel.text.colors, .scale.font.color, .header.font.colors, .genomic.scale.font.color, .feature.names.font.color)
+  .intermingled.color = as.character(ScrutinizeExpandAndNameParameter(intermingled_color, 1, use_names=FALSE, default_value='same', expect_standard=NULL, expect=c('same', 'complementary', 'analogous_right', 'analogous_left'), revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'intermingled_color', 'Color Display of Data from Negative Strand'), verbosity=.verbosity))
   .strands.alpha = ScrutinizeExpandAndNameParameter(strands_alpha, c('+', '-'), use_names=FALSE, default_value=c(100, 100), expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'strands_alpha', 'Forward/Reverse Track Opacities'), verbosity=.verbosity)
   .strands.alpha = if(EvaluateNumericValue(.strands.alpha, positive_val=TRUE, min_val=20, max_val=100, interval_obligatory=TRUE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'strands_alpha', 'Forward/Reverse Track Opacities'), .verbosity)){.strands.alpha}else{ScrutinizeExpandAndNameParameter('dummy', c('+', '-'), use_names=FALSE, default_value=c(100, 100), expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'strands_alpha', 'Forward/Reverse Track Opacities'), verbosity=0)}
   .title.field.height.cm = ScrutinizeExpandAndNameParameter(title_field_height_cm, 1, use_names=FALSE, default_value=0.66, expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'title_field_height_cm', 'Title field height'), verbosity=.verbosity)
@@ -303,6 +312,9 @@ seqNdisplay = function(
   #### -> defining plotting region
   if (is.null(feature)){
     .plotted.region = RegionGRanges(locus, .plot.widths.cm['track.width.cm'], feature=NULL, .annotations, bin_start, extra_space, .verbosity, .interface)
+    if (is.null(header) & !suppress_header){
+      header=''
+    }
   }else{
     .plotted.region = RegionGRanges(locus=NULL, .plot.widths.cm['track.width.cm'], feature, .annotations, bin_start, extra_space, .verbosity, .interface)
     if (is.null(header) & !suppress_header){
@@ -317,7 +329,7 @@ seqNdisplay = function(
   #### -> strands display
   .strand = as.character(S4Vectors::runValue(BiocGenerics::strand(.plotted.region)))
   if (both_strands){
-    actual_strand_direction=TRUE
+    reverse_strand_direction=FALSE
     .strands.intermingled=strands_intermingled
     .neg.vals.neg.strand = ifelse(.strands.intermingled, TRUE, neg_vals_neg_strand)
     .rev.plotted.region = .plotted.region
@@ -401,16 +413,18 @@ seqNdisplay = function(
   .header.font.sizes =  ScrutinizeExpandAndNameParameter(header_font_sizes, c('main', 'sub', 'scale'), use_names=FALSE, default_value=.rec.font.sizes[c('main', 'sub', 'scale')], expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'header_font_sizes', 'Header Fonts'), verbosity=.verbosity)
   .header.font.sizes = if (EvaluateNumericValue(.header.font.sizes, positive_val=TRUE, min_val=4, max_val=c(24, 18, 18), interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'header_font_sizes', 'Header Fonts'), .verbosity)){.header.font.sizes}else{ScrutinizeExpandAndNameParameter('dummy', c('main', 'sub', 'scale'), use_names=FALSE, default_value=.rec.font.sizes[c('main', 'sub', 'scale')], expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'header_font_sizes', 'Header Fonts'), verbosity=.verbosity)}
   .incl.reps = unlist(lapply(parameters, function(p) !p$calcMean))
-  cat('now we are inside seqNdispaiR 1', '\n') #@
   .panel.font.size.list = PanelFontSizeList(datasets, panel_font_sizes, panel_font_size_list, .incl.reps, replicate_names, .verbosity, .interface) #@ added .incl.reps, replicate_names
-  #@ ->
-  cat('now we are inside seqNdispaiR 2', '\n')
-  for (name in names(.panel.font.size.list)){
-    cat(paste0(name, paste(.panel.font.size.list[[name]], collapse=' ')), '\n')
+  if (!print_one_line_sample_names){
+    .horizontal.panels.list = HorizontalPanelsList(datasets, horizontal_panels_list, .incl.reps, replicate_names, .verbosity, .interface) #@ added .incl.reps, replicate_names
+  }else{
+    .horizontal.panels.list = NULL
   }
-  #@ <-
-  .horizontal.panels.list = HorizontalPanelsList(datasets, horizontal_panels_list, .incl.reps, replicate_names, .verbosity, .interface) #@ added .incl.reps, replicate_names
-  .force.scale.list = ForceScaleList(datasets, force_scale, strands=ifelse(both_strands, '+-', .strand), .verbosity, .interface)
+  if (is.null(force_scale)){
+    #@cat(paste('wouw', unlist(force_scale)), '\n') #@cat
+    .force.scale.list = HandleForcedScaleFromParameters(parameters)
+  }else{
+    .force.scale.list = ForceScaleList(lapply(.tracks.listed, names), force_scale, strands=ifelse(both_strands, '+-', .strand), .verbosity, .interface)
+  }
   if (!is.null(.panel.font.size.list)){
     .max.font.size = max( .rec.font.sizes[c('std', 'genomic_axis', 'signal_axis', 'annotation_features')], ifelse(is.null(annot_panel_font_size), NA, annot_panel_font_size), ifelse(is.null(feature_names_font_size), NA, feature_names_font_size), ifelse(is.null(scale_font_size), NA, scale_font_size), max(unlist(lapply(.panel.font.size.list, max, na.rm=TRUE)), na.rm=TRUE), na.rm=TRUE) #@ .rec.font.sizes['std'] -> .rec.font.sizes[c('std', 'genomic_axis', 'signal_axis', 'annotation_features')]
   }else{
@@ -469,8 +483,8 @@ seqNdisplay = function(
   if (!EvaluateNumericValue(.annotation.panel.font.size, positive_val=TRUE, min_val=4, max_val=12, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'annot_panel_font_size', 'Annotation Title Font Size'), .verbosity)){ return() }
   if (!is.null(bin_size)){ if (bin_size!='auto' & bin_size!='automatic'){if (!EvaluateNumericValue(bin_size, positive_val=TRUE, min_val=1, max_val=10000000, interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'bin_size', 'Bin Size'), .verbosity)){ bin_size='auto'; if (.verbosity>1){cat(NULL, '\n')} }}}
   if (!EvaluateNumericValue(bins_per_cm, positive_val=TRUE, min_val=50, max_val=1000, interval_obligatory=TRUE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'bins_per_cm', 'Bins per cm'), .verbosity)){ bins_per_cm=250; if (.verbosity>1){cat(bins_per_cm, '\n')} }
-  .bins.per.cm = ScrutinizeExpandAndNameParameter(bins_per_cm, '1', use_names=FALSE, default_value=250, expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'bins_per_cm', 'Bins per cm'), verbosity=.verbosity)
-  .bins.per.cm = as.integer(if(EvaluateNumericValue(.bins.per.cm, positive_val=TRUE, min_val=50, max_val=1000, interval_obligatory=TRUE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'bins_per_cm', 'Bins per cm'), .verbosity)){.bins.per.cm}else{ScrutinizeExpandAndNameParameter('dummy', 1, use_names=FALSE, default_value=250, expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'strands_alpha', 'Forward/Reverse Track Opacities'), verbosity=0)})
+  #@.bins.per.cm = ScrutinizeExpandAndNameParameter(bins_per_cm, '1', use_names=FALSE, default_value=250, expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'bins_per_cm', 'Bins per cm'), verbosity=.verbosity)
+  .bins.per.cm = as.integer(if(EvaluateNumericValue(bins_per_cm, positive_val=TRUE, min_val=50, max_val=1000, interval_obligatory=TRUE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'bins_per_cm', 'Bins per cm'), .verbosity)){bins_per_cm}else{ScrutinizeExpandAndNameParameter(250, 1, use_names=FALSE, default_value=250, expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'bins_per_cm', 'Bins per cm'), verbosity=0)})
   .bin.size = GetBinSize(bin_size, IRanges::width(.plotted.region[[.strand]]), .plot.width.parameters[['tracks.width.cm']], .bins.per.cm, .verbosity)
   if (!EvaluateNumericValue(.bin.size, positive_val=TRUE, min_val=1, max_val=1000000, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'bin_size', 'Bin Size'), .verbosity)){ return() }
   .fixed.plot.vertical.parameters = c('tracks'=!is.null(track_height_cm), 'header'=!is.null(.title.field.height.cm), 'scale'=!is.null(genomic_scale_height_cm), 'spacers'=!is.null(spacer_height_cm), 'annots'=!is.null(annotation_height_cm)) #@
@@ -493,7 +507,7 @@ seqNdisplay = function(
           cat(paste('loading', paste(paste(.plotted.samples[1:(length(.plotted.samples)-1)], collapse=', ')), 'tracks from', paste(names(.tracks.listed), collapse=' & '), 'strand(s)'), '\n')
         }
       }
-      .tracks = structure(lapply(names(.tracks.listed), function(.strand) LoadTracks(.plotted.region[[.strand]], datasets, bigwigs, bigwig_dirs, parameters, .verbosity)), names=names(.tracks.listed)) #@ names(.plotted.region) -> names(.tracks.listed)
+      .tracks = structure(lapply(names(.tracks.listed), function(.strand) LoadTracks(.plotted.region[[.strand]], datasets, bigwigs, bigwig_dirs, parameters, .verbosity)), names=names(.tracks.listed))
     }else{
       if (.verbosity > 0){
         if (length(.plotted.samples) > 1){
@@ -611,13 +625,13 @@ seqNdisplay = function(
     .first.plot = TRUE
     .plotting.segments = c(.plotting.ready.segment.order[['+']], 'scale')[c(rep(TRUE, length(.plotting.ready.segment.order[['+']])), (!genomic_scale_on_top & include_genomic_scale))]
     for (.plotting.segment in .plotting.segments){
-      PlotSegment(feature, .plotted.region, .plotted.strand, both_strands, .plotting.segment, .basic.plot.parameters, .neg.vals.neg.strand, .plot.width.parameters, .plot.vertical.parameters, .annot.info, .panel.info, .panels.list, .panel.separators, .separators.lwds, .separators.colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, .header.font.sizes, .scaling.factor, .full.width.cm, genomic_scale_on_top, .genomic.scale.font.size, actual_strand_direction, .bin.stats, dummy_plot, .tracks, .strands.alpha, .unstranded.beds, .annotation.packing, .annotation.panel.font.size, .incl.feature.names, .feature.names.font.size, .feature.names.above, .final.feature.text.org, .incl.feature.brackets, .incl.feature.shadings, .feature.shading.colors, feature_shading_alpha, .annot.cols, .group.autoscale, incl_track_scales, .scientific.scale, .scale.fontsize, .force.scale.list, colors, alternating_background, .bgr.colors, bgr_alpha, .font.colors, .letter.widths, .letter.heights, .enhance.signals, .first.plot, .verbosity)
+      PlotSegment(feature, .plotted.region, .plotted.strand, both_strands, .plotting.segment, .basic.plot.parameters, .neg.vals.neg.strand, .plot.width.parameters, .plot.vertical.parameters, .annot.info, .panel.info, .panels.list, .panel.separators, .separators.lwds, .separators.colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, .header.font.sizes, .scaling.factor, .full.width.cm, genomic_scale_on_top, .genomic.scale.font.size, reverse_strand_direction, .bin.stats, dummy_plot, .tracks, .strands.alpha, .intermingled.color, .unstranded.beds, .annotation.packing, .annotation.panel.font.size, .incl.feature.names, .feature.names.font.size, .feature.names.above, .final.feature.text.org, .incl.feature.brackets, .incl.feature.shadings, .feature.shading.colors, feature_shading_alpha, .annot.cols, .group.autoscale, incl_track_scales, .scientific.scale, .scale.fontsize, .force.scale.list, colors, alternating_background, .bgr.colors, bgr_alpha, .font.colors, .letter.widths, .letter.heights, .enhance.signals, .first.plot, .verbosity)
     }
   }else{
     for (.plotted.strand in names(.plotting.ready.segment.order)){
       .first.plot = which(names(.plotting.ready.segment.order)==.plotted.strand)==1
       for (.plotting.segment in .plotting.ready.segment.order[[.plotted.strand]]){
-        PlotSegment(feature, .plotted.region, .plotted.strand, both_strands, .plotting.segment, .basic.plot.parameters, .neg.vals.neg.strand, .plot.width.parameters, .plot.vertical.parameters, .annot.info, .panel.info, .panels.list, .panel.separators, .separators.lwds, .separators.colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, .header.font.sizes, .scaling.factor, .full.width.cm, genomic_scale_on_top, .genomic.scale.font.size, actual_strand_direction, .bin.stats, dummy_plot, .tracks, .strands.alpha, .unstranded.beds, .annotation.packing, .annotation.panel.font.size, .incl.feature.names, .feature.names.font.size, .feature.names.above, .final.feature.text.org, .incl.feature.brackets, .incl.feature.shadings, .feature.shading.colors, feature_shading_alpha, .annot.cols, .group.autoscale, incl_track_scales, .scientific.scale, .scale.fontsize, .force.scale.list, colors, alternating_background, .bgr.colors, bgr_alpha, .font.colors, .letter.widths, .letter.heights, .enhance.signals, .first.plot, .verbosity)
+        PlotSegment(feature, .plotted.region, .plotted.strand, both_strands, .plotting.segment, .basic.plot.parameters, .neg.vals.neg.strand, .plot.width.parameters, .plot.vertical.parameters, .annot.info, .panel.info, .panels.list, .panel.separators, .separators.lwds, .separators.colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, .header.font.sizes, .scaling.factor, .full.width.cm, genomic_scale_on_top, .genomic.scale.font.size, reverse_strand_direction, .bin.stats, dummy_plot, .tracks, .strands.alpha, .intermingled.color, .unstranded.beds, .annotation.packing, .annotation.panel.font.size, .incl.feature.names, .feature.names.font.size, .feature.names.above, .final.feature.text.org, .incl.feature.brackets, .incl.feature.shadings, .feature.shading.colors, feature_shading_alpha, .annot.cols, .group.autoscale, incl_track_scales, .scientific.scale, .scale.fontsize, .force.scale.list, colors, alternating_background, .bgr.colors, bgr_alpha, .font.colors, .letter.widths, .letter.heights, .enhance.signals, .first.plot, .verbosity)
       }
     }
   }
@@ -1350,10 +1364,12 @@ EvaluateNumericValue = function(num_val, positive_val, min_val, max_val, interva
     if (identical(as.logical(num_val >= 0), .positive.val)){
       if (any(num_val < .min.val) | any(num_val > .max.val)){
         #@.messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', .var.name1, ' = ', paste(num_val, collapse=','), ':')
-        .messages[[ifelse(interval_obligatory, 'errors', ifelse(turn_errors_to_warnings, 'warnings', 'errors'))]][[length(.messages[[ifelse(interval_obligatory, 'errors', ifelse(turn_errors_to_warnings, 'warnings', 'errors'))]])+1]] = paste0(' - ', .var.name1, ' = ', paste(num_val, collapse=','), ':')
+        .messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]][[length(.messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]])+1]] = paste0(' - ', .var.name1, ' = ', paste(num_val, collapse=','), ':')
+        #@.messages[[ifelse(interval_obligatory, 'errors', ifelse(turn_errors_to_warnings, 'warnings', 'errors'))]][[length(.messages[[ifelse(interval_obligatory, 'errors', ifelse(turn_errors_to_warnings, 'warnings', 'errors'))]])+1]] = paste0(' - ', .var.name1, ' = ', paste(num_val, collapse=','), ':')
         for (i in 1:length(num_val)){
           if ((num_val < .min.val)[i] | (num_val > .max.val)[i]){
-            .messages[[ifelse(interval_obligatory, 'errors', ifelse(turn_errors_to_warnings, 'warnings', 'errors'))]][[length(.messages[[ifelse(interval_obligatory, 'errors', ifelse(turn_errors_to_warnings, 'warnings', 'errors'))]])+1]] = paste0('\t', '.) ', .var.name1, '[', i, '] = ', num_val[i], ';', ' it should preferably be between ', .min.val[i], ' and ', .max.val[i])
+            .messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]][[length(.messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]])+1]] = paste0('\t', '.) ', .var.name1, '[', i, '] = ', num_val[i], ';', ' it should preferably be between ', .min.val[i], ' and ', .max.val[i])
+            #@.messages[[ifelse(interval_obligatory, 'errors', ifelse(turn_errors_to_warnings, 'warnings', 'errors'))]][[length(.messages[[ifelse(interval_obligatory, 'errors', ifelse(turn_errors_to_warnings, 'warnings', 'errors'))]])+1]] = paste0('\t', '.) ', .var.name1, '[', i, '] = ', num_val[i], ';', ' it should preferably be between ', .min.val[i], ' and ', .max.val[i])
           }
         }
         if (interval_obligatory){ #@$ ->
@@ -1518,6 +1534,66 @@ HorizontalPanelsList = function(samples, horizontal_panels_list, incl_reps, repl
   return(.horizontal.panels.list)
 }
 
+#' Parse Option String
+#'
+#' Parse string into relevant R object class
+#'
+#' @param option_str string representation of the option
+#'
+#' @details String can represent a named list, unnamed list, named vector, unnamed vector or single value. If string contains ";" assumes a list; if string contains "," assumes a vector; individual strings are interprated as "NULL" -> NULL; if "TRUE" or "FALSE" --> TRUE/FALSE; if single number --> as.numeric; if single non-number --> as.character;
+#'
+# parse_option <- function(option_str) {
+#   if( is.null(option_str) ){
+#     NULL
+#   }else if(grepl(';', option_str)){
+#     option_list <- strsplit(option_str,';')[[1]]
+#     option_list_names <- lapply(option_list, function(op) if(grepl(':', op)){sub(':.*', '', op)}else{NULL})
+#     option_list <- lapply(option_list, function(op) parse_option(sub('.*:', '', op)))
+#     names(option_list) <- option_list_names
+#     option_list
+#   }else if(grepl(',', option_str)){
+#     sapply(strsplit(option_str,',')[[1]], parse_option, USE.NAMES = FALSE)
+#   }else if( is.na(option_str) | option_str == '' ){  #same as empty cell in excel sheet
+#     NULL
+#   }else if(option_str == 'TRUE' | option_str == 'T'){
+#     TRUE
+#   }else if(option_str == 'FALSE' | option_str == 'F'){
+#     FALSE
+#   }else if(option_str == 'NULL'){
+#     NULL
+#   }else if( !is.na(suppressWarnings(as.numeric(option_str))) ){
+#     as.numeric(option_str)
+#   }else{
+#     option_str
+#   }
+# }
+
+#' Force Scale List
+#'
+#' @details
+#' Internal function: Checks/constructs a force_scale_list
+#' handle force_scale which is part of parameters but needs to passed differently to plot function
+HandleForcedScaleFromParameters = function(pars){
+  force_scales <- lapply(pars, function(para) {
+    fc = para$force_scale
+    if (is.null(fc)) {
+      suppressWarnings(as.numeric(c(NA,NA)))
+    }else{
+      fc = strsplit(fc, split=',', fixed=TRUE)[[1]]
+      suppressWarnings(as.numeric(fc))
+    }
+  })
+  names(force_scales) <- names(pars)
+
+  force_scale_list <- list(
+    '+' = unlist(lapply(force_scales, function(x) x[1])),
+    '-' = unlist(lapply(force_scales, function(x) if (length(x)==2){x[2]}else{NULL}))
+  )
+  return(force_scale_list)
+}
+
+
+
 #' Force Scale List
 #'
 #' @details
@@ -1546,11 +1622,20 @@ ForceScaleList = function(samples, force_scale, strands, verbosity, interface){
       .no.numeric = FALSE
       .force.scale.list = list()
       for (.strand in .strands){
-        if (length(force_scale[[.strand]])==1 | length(force_scale[[.strand]])==length(samples)){
+        if (length(force_scale[[.strand]])==1 | length(force_scale[[.strand]])==length(samples[[.strand]]) ){
+          #@cat(paste0(.strand, .force.scale.list[[.strand]]), '\n') #@cat
           if (all(is.na(force_scale[[.strand]]))){
             .force.scale.list[[.strand]] = force_scale[[.strand]]
           }else if (is.numeric(force_scale[[.strand]]) & all(force_scale[[.strand]]>0, na.rm=TRUE)){
-            .force.scale = ScrutinizeExpandAndNameParameter(force_scale[[.strand]], samples, use_names=TRUE, default_value=NULL, expect_standard='numeric', expect=NULL, revert_to_default=FALSE, alt_par_name=ifelse(interface=='R', 'force_scale', 'Manual Scaling Max Value(s)'), verbosity=verbosity)
+            .force.scale = force_scale[[.strand]]
+            .nas = is.na(.force.scale)
+            if (any(.nas)){
+              .force.scale[.nas] = -1
+            }
+            .force.scale = ScrutinizeExpandAndNameParameter(.force.scale, samples[[.strand]], use_names=FALSE, default_value=NULL, expect_standard='numeric', expect=NULL, revert_to_default=FALSE, alt_par_name=ifelse(interface=='R', 'force_scale', 'Manual Scaling Max Value(s)'), verbosity=verbosity)
+            if (any(.nas)){
+              .force.scale[names(.nas)[.nas]] = NA
+            }
             .force.scale.list[[.strand]] = .force.scale
           }else{
             .no.numeric = TRUE
@@ -1866,13 +1951,13 @@ LoadAndTransformDataForTrack = function(seqtype, plotted_region, samples, bigwig
         }
         if (.log2.transform){
           .signs.bw.matrix = sign(.bw.matrix)
-          if (any(.signs.bw.matrix < 0)){
+          if (any(.signs.bw.matrix <= 0) | .pseudo.count < 1){ #@ any(.signs.bw.matrix <= 0) <- any(.signs.bw.matrix < 0); added "| .pseudo.count < 1"
             .abs.bw.matrix = abs(.bw.matrix) + .pseudo.count
             if (any(.abs.bw.matrix < 1)){
               .adj.pseudo.count = 1 - min(abs(.bw.matrix))
               if (verbosity > 1){
                 cat(paste0('WARNING(s):'), '\n')
-                cat(paste0('\t', '.) ', 'automatically adjusting pseudocount from ', .pseudo.count, ' to ', .adj.pseudo.count, ' for ', seqtype, ' to allow log2-transformation, because the data contain a mix of positive and negative values'), '\n')
+                cat(paste0('\t', '.) ', 'automatically adjusting pseudocount from ', .pseudo.count, ' to ', .adj.pseudo.count, ' for ', seqtype, ' to allow log2-transformation, because the data contain values equal to or less than zero'), '\n')
               }
               .pseudo.count = .adj.pseudo.count
             }
@@ -1896,13 +1981,13 @@ LoadAndTransformDataForTrack = function(seqtype, plotted_region, samples, bigwig
           if (length(.batches) > 1){
             if (!.log2.transform){ # if signals are not overall log2transformed, they need to be for the batch correction
               .signs.bw.matrix = sign(.bw.matrix)
-              if (any(.signs.bw.matrix < 0)){
+              if (any(.signs.bw.matrix <= 0) | .pseudo.count < 1){ #@ any(.signs.bw.matrix <= 0) <- any(.signs.bw.matrix < 0); added " | .pseudo.count < 1"
                 .abs.bw.matrix = abs(.bw.matrix) + .pseudo.count
                 if (any(.abs.bw.matrix < 1)){
                   .adj.pseudo.count = 1 - min(abs(.bw.matrix))
                   if (verbosity > 1){
                     cat(paste0('WARNING(s):'), '\n')
-                    cat(paste0('\t', '.) ', 'automatically adjusting pseudocount from ', .pseudo.count, ' to ', .adj.pseudo.count, ' for ', seqtype, ' to allow batch correction, because the data contain a mix of positive and negative values'), '\n')
+                    cat(paste0('\t', '.) ', 'automatically adjusting pseudocount from ', .pseudo.count, ' to ', .adj.pseudo.count, ' for ', seqtype, ' to allow batch correction, because the data contain values equal to or less than zero'), '\n')
                   }
                   .pseudo.count = .adj.pseudo.count
                 }
@@ -1925,7 +2010,9 @@ LoadAndTransformDataForTrack = function(seqtype, plotted_region, samples, bigwig
         if (.calc.mean){
           .sample.names = unique(sapply(.sample.rep.names, function(.sample.rep.name) strsplit(.sample.rep.name, split='.rep', fixed=T)[[1]][1] ))
           for (.sample.name in .sample.names){
-            .replicate.names = grep(paste0(.sample.name, '.rep'), colnames(.bw.matrix), fixed=TRUE, value=T)
+            .all.replicate.names = sapply(colnames(.bw.matrix), function(x) strsplit(x, split='.rep', fixed=TRUE)[[1]][1])
+            .replicate.names = names(.all.replicate.names[which(.all.replicate.names==.sample.name)])
+            #@grep(paste0('^', .sample.name, '\\.rep'), colnames(.bw.matrix), fixed=FALSE, value=T)
             .mean.track = rowMeans(.bw.matrix[, .replicate.names, drop=FALSE])
             if (.neg.vals.set.0){
               .mean.track[which(.mean.track<0)] = 0
@@ -2033,17 +2120,116 @@ PlottingSegmentOrder = function(plotting_segment_order, sample_names, header, in
 #' @details
 #' Internal function:
 #'
-FinalizePlottingSegmentOrder = function(plotting_segment_order, tracks_listed, both_strands, include_genomic_scale, genomic_scale_on_top, any_stranded_beds, any_unstranded_beds, strands_intermingled){
+#'
+FinalizePlottingSegmentOrder = function(plotting_segment_order, tracks_listed, both_strands, include_genomic_scale, genomic_scale_on_top, any_stranded_beds, any_unstranded_beds, strands_intermingled, verbosity, interface){
+  if (both_strands){
+    .unstranded.seqtypes = setdiff(names(tracks_listed[['+']]), names(tracks_listed[['-']]))
+    if (is.list(plotting_segment_order)){
+      .plotting.segment.order.plus = plotting_segment_order[['+']]
+      .plotting.segment.order.minus = plotting_segment_order[['-']]
+      if (any(.plotting.segment.order.minus %in% c('unstranded-beds', .unstranded.seqtypes))){
+        if (verbosity > 1){
+          if (any(.plotting.segment.order.minus %in% c('unstranded-beds')) & any(.plotting.segment.order.minus %in% c(.unstranded.seqtypes))){
+            cat('WARNINGs:', '\n')
+          }else{
+            cat('WARNING:', '\n')
+          }
+          if (any(.plotting.segment.order.minus %in% c('unstranded-beds'))){
+            cat(paste0(' - there are "unstranded" annotations in ', ifelse(interface=='R', '"plotting_segment_order[[\'-\']]"', '"Reverse Strand Plotting Segment Order"'), ' - these will be ignored'), '\n')
+            cat(paste('\t', '.) "unstranded" annotations should be placed in', ifelse(interface=='R', '"plotting_segment_order[[\'+\']]"', '"(Forward) Plotting Segment Order"')), '\n')
+          }
+          if (any(.plotting.segment.order.minus %in% c(.unstranded.seqtypes))){
+            cat(paste0(' - there are "unstranded" sequencing data tracks(s) in ', ifelse(interface=='R', '"plotting_segment_order[[\'-\']]"', '"Reverse Strand Plotting Segment Order"'), ' - these will be ignored'), '\n')
+            cat(paste('\t', '.) "unstranded" sequencing data tracks(s) should be placed in', ifelse(interface=='R', '"plotting_segment_order[[\'+\']]"', '"(Forward) Plotting Segment Order"')), '\n')
+            cat(paste('\t', '\t', .unstranded.seqtypes, '\n'))
+          }
+        }
+        .plotting.segment.order.minus = .plotting.segment.order.minus[!.plotting.segment.order.minus %in% c('unstranded-beds', .unstranded.seqtypes)]
+      }
+    }else{
+      .plotting.segment.order.plus = plotting_segment_order
+      .plotting.segment.order.minus = .plotting.segment.order.plus[!.plotting.segment.order.plus %in% c('header', 'scale', 'unstranded-beds', .unstranded.seqtypes)]
+    }
+    if (include_genomic_scale & !genomic_scale_on_top){
+      .plotting.segment.order.plus = .plotting.segment.order.plus[.plotting.segment.order.plus != 'scale']
+      .plotting.segment.order.minus = c(.plotting.segment.order.minus, 'scale')
+    }
+    if (any_unstranded_beds & !("unstranded-beds" %in% .plotting.segment.order.plus)){ #@ added & !("unstranded-beds" %in% .plotting.segment.order.plus)
+      .annot.index = which(.plotting.segment.order.plus == "annotations")
+      if (!strands_intermingled){
+        if (any_stranded_beds){
+          .plotting.segment.order.plus = c(.plotting.segment.order.plus, "thickline-spacer", "unstranded-beds")
+        }else{
+          .plotting.segment.order.plus[.annot.index] = "unstranded-beds"
+        }
+      }else{
+        if (any_stranded_beds){
+          .plotting.segment.order.plus = c(plotting_segment_order[1:(.annot.index-1)], "unstranded-beds", "empty-spacer", plotting_segment_order[.annot.index:length(plotting_segment_order)])
+        }else{
+          .plotting.segment.order.plus[.annot.index] = "unstranded-beds"
+        }
+      }
+    }
+    if (!is.list(plotting_segment_order)){
+      if ('annotations' %in% .plotting.segment.order.minus){
+        if (any_stranded_beds){
+          .plotting.segment.order.minus = c('thickline-spacer', 'annotations', 'empty-spacer', .plotting.segment.order.minus[!.plotting.segment.order.minus %in% c('annotations', 'empty-spacer')])
+        }else{
+          .plotting.segment.order.minus = c('empty-spacer', .plotting.segment.order.minus[!.plotting.segment.order.minus %in% c('annotations', 'empty-spacer')])
+        }
+      }else{
+        .plotting.segment.order.minus = c('thickline-spacer', .plotting.segment.order.minus)
+      }
+    }
+    .plotting.segment.order = list('+'=.plotting.segment.order.plus, '-'=.plotting.segment.order.minus)
+  }else{
+    if ("annotations" %in% plotting_segment_order){
+      .annot.index = which(plotting_segment_order == "annotations")
+      if (any_unstranded_beds & !("unstranded-beds" %in% plotting_segment_order)){ #@ added & !("unstranded-beds" %in% plotting_segment_order)
+        if (any_stranded_beds){
+          .plotting.segment.order = c(plotting_segment_order[1:(.annot.index-1)], "unstranded-beds", "empty-spacer", plotting_segment_order[.annot.index:length(plotting_segment_order)])
+        }else{
+          .plotting.segment.order[.annot.index] = "unstranded-beds"
+        }
+      }else{
+        .plotting.segment.order = plotting_segment_order
+      }
+    }
+    .plotting.segment.order = structure(list(.plotting.segment.order), names=names(tracks_listed))
+  }
+  for (.strand in names(.plotting.segment.order)){
+    if (.strand == '+'){
+      .spacers = grep('-spacer', .plotting.segment.order[[.strand]], fixed=TRUE)
+      if (length(.spacers) > 0){
+        if (.spacers[1]==1){
+          #@.plotting.segment.order[[.strand]] = .plotting.segment.order[[.strand]][-1]
+          .plotting.segment.order[[.strand]] = .plotting.segment.order[[.strand]][setdiff(1:length(.plotting.segment.order[[.strand]]), .spacers)[1]:length(.plotting.segment.order[[.strand]])]
+        }
+      }
+    }else if (.strand == '-'){
+      .spacers = grep('-spacer', .plotting.segment.order[[.strand]], fixed=TRUE)
+      if (length(.spacers) > 0){
+        if (rev(.spacers)[1]==length(.plotting.segment.order[[.strand]])){
+          #@.plotting.segment.order[[.strand]] = .plotting.segment.order[[.strand]][-length(.plotting.segment.order[[.strand]])]
+          .plotting.segment.order[[.strand]] = .plotting.segment.order[[.strand]][1:rev(setdiff(1:length(.plotting.segment.order[[.strand]]), .spacers))[1]]
+        }
+      }
+    }
+  }
+  return(.plotting.segment.order)
+}
+
+FinalizePlottingSegmentOrder_obs = function(plotting_segment_order, tracks_listed, both_strands, include_genomic_scale, genomic_scale_on_top, any_stranded_beds, any_unstranded_beds, strands_intermingled){
   if (!is.list(plotting_segment_order)){
     if (both_strands){
       .unstranded.seqtypes = setdiff(names(tracks_listed[['+']]), names(tracks_listed[['-']]))
       .plotting.segment.order.plus = plotting_segment_order
-      .plotting.segment.order.minus = .plotting.segment.order.plus[!.plotting.segment.order.plus %in% c('header', 'scale', .unstranded.seqtypes)]
+      .plotting.segment.order.minus = .plotting.segment.order.plus[!.plotting.segment.order.plus %in% c('header', 'scale', 'unstranded-beds', .unstranded.seqtypes)]
       if (include_genomic_scale & !genomic_scale_on_top){
         .plotting.segment.order.plus = .plotting.segment.order.plus[.plotting.segment.order.plus != 'scale']
         .plotting.segment.order.minus = c(.plotting.segment.order.minus, 'scale')
       }
-      if (any_unstranded_beds){
+      if (any_unstranded_beds & !("unstranded-beds" %in% .plotting.segment.order.plus)){ #@ added & !("unstranded-beds" %in% .plotting.segment.order.plus)
         .annot.index = which(.plotting.segment.order.plus == "annotations")
         if (!strands_intermingled){
           if (any_stranded_beds){
@@ -2072,7 +2258,7 @@ FinalizePlottingSegmentOrder = function(plotting_segment_order, tracks_listed, b
     }else{
       if ("annotations" %in% plotting_segment_order){
         .annot.index = which(plotting_segment_order == "annotations")
-        if (any_unstranded_beds){
+        if (any_unstranded_beds & !("unstranded-beds" %in% plotting_segment_order)){ #@ added & !("unstranded-beds" %in% plotting_segment_order)
           if (any_stranded_beds){
             .plotting.segment.order = c(plotting_segment_order[1:(.annot.index-1)], "unstranded-beds", "empty-spacer", plotting_segment_order[.annot.index:length(plotting_segment_order)])
           }else{
@@ -2092,14 +2278,16 @@ FinalizePlottingSegmentOrder = function(plotting_segment_order, tracks_listed, b
       .spacers = grep('-spacer', .plotting.segment.order[[.strand]], fixed=TRUE)
       if (length(.spacers) > 0){
         if (.spacers[1]==1){
-          .plotting.segment.order[[.strand]] = .plotting.segment.order[[.strand]][-1]
+          #@.plotting.segment.order[[.strand]] = .plotting.segment.order[[.strand]][-1]
+          .plotting.segment.order[[.strand]] = .plotting.segment.order[[.strand]][setdiff(1:length(.plotting.segment.order[[.strand]]), .spacers)[1]:length(.plotting.segment.order[[.strand]])]
         }
       }
     }else if (.strand == '-'){
       .spacers = grep('-spacer', .plotting.segment.order[[.strand]], fixed=TRUE)
       if (length(.spacers) > 0){
         if (rev(.spacers)[1]==length(.plotting.segment.order[[.strand]])){
-          .plotting.segment.order[[.strand]] = .plotting.segment.order[[.strand]][-length(.plotting.segment.order[[.strand]])]
+          #@.plotting.segment.order[[.strand]] = .plotting.segment.order[[.strand]][-length(.plotting.segment.order[[.strand]])]
+          .plotting.segment.order[[.strand]] = .plotting.segment.order[[.strand]][1:rev(setdiff(1:length(.plotting.segment.order[[.strand]]), .spacers))[1]]
         }
       }
     }
@@ -2116,14 +2304,16 @@ FinalizePlottingSegmentOrder = function(plotting_segment_order, tracks_listed, b
 BuildScrutinizePlotSegmentOrder = function(plotting_segment_order, plotted_region, datasets, plotted_samples, header, include_genomic_scale, genomic_scale_on_top, incl_annot, horizontal_spacers, tracks_listed, both_strands, any_stranded_beds, any_unstranded_beds, strands_intermingled, verbosity, interface){
   .plotting.segment.order = NULL
   if (!is.null(plotting_segment_order)){
-    if (is.list(plotting_segment_order)){
+    if (is.list(plotting_segment_order) & both_strands & !strands_intermingled){ #@ added & both_strands & strands_intermingled
       if (identical(names(plotting_segment_order), names(plotted_region))){
         plotting_segment_order_temp = list()
         for (.plot.strand in names(plotting_segment_order)){
           if (.plot.strand == '+'){
-            plotting_segment_order_temp_vector = ScrutinizeExpandAndNameParameter(plotting_segment_order[['+']], plotting_segment_order[['+']], use_names=FALSE, default_value=NULL, expect_standard=NULL, expect=c("header", "scale", "empty-spacer", "thickline-spacer", "line-spacer", "annotations", "unstranded-beds", names(datasets)), revert_to_default=FALSE, alt_par_name=ifelse(interface=='R', 'plotting_segment_order[['+']]', 'Plotting Segment Order'), verbosity=verbosity)
+            .plotting.segment.order.plus = plotting_segment_order[['+']]
+            plotting_segment_order_temp_vector = ScrutinizeExpandAndNameParameter(.plotting.segment.order.plus, .plotting.segment.order.plus, use_names=FALSE, default_value=NULL, expect_standard=NULL, expect=c("header", "scale", "empty-spacer", "thickline-spacer", "line-spacer", "annotations", "unstranded-beds", names(datasets)), revert_to_default=FALSE, alt_par_name=ifelse(interface=='R', "plotting_segment_order[['+']]", 'Plotting Segment Order'), verbosity=verbosity)
           }else if (.plot.strand == '-'){
-            plotting_segment_order_temp_vector = ScrutinizeExpandAndNameParameter(plotting_segment_order[['-']], plotting_segment_order[['-']], use_names=FALSE, default_value=NULL, expect_standard=NULL, expect=c("header", "scale", "empty-spacer", "thickline-spacer", "line-spacer", "annotations", "unstranded-beds", names(datasets)), revert_to_default=FALSE, alt_par_name=ifelse(interface=='R', 'plotting_segment_order[['-']]', '(Reverse Strand) Plotting Segment Order'), verbosity=verbosity)
+            .plotting.segment.order.minus = plotting_segment_order[['-']]
+            plotting_segment_order_temp_vector = ScrutinizeExpandAndNameParameter(.plotting.segment.order.minus, .plotting.segment.order.minus, use_names=FALSE, default_value=NULL, expect_standard=NULL, expect=c("header", "scale", "empty-spacer", "thickline-spacer", "line-spacer", "annotations", "unstranded-beds", names(datasets)), revert_to_default=FALSE, alt_par_name=ifelse(interface=='R', "plotting_segment_order[['-']]", '(Reverse Strand) Plotting Segment Order'), verbosity=verbosity)
           }
           plotting_segment_order_temp[[.plot.strand]] = as.character(plotting_segment_order_temp_vector)
         }
@@ -2138,13 +2328,16 @@ BuildScrutinizePlotSegmentOrder = function(plotting_segment_order, plotted_regio
         return()
       }
     }else{
+      if (is.list(plotting_segment_order)){ #@ ->
+        plotting_segment_order = plotting_segment_order[['+']]
+      } #@ <-
       plotting_segment_order_temp_vector = as.character(ScrutinizeExpandAndNameParameter(plotting_segment_order, plotting_segment_order, use_names=FALSE, default_value=NULL, expect_standard=NULL, expect=c("header", "scale", "empty-spacer", "thickline-spacer", "line-spacer", "annotations", "unstranded-beds", names(datasets)), revert_to_default=FALSE, alt_par_name=ifelse(interface=='R', 'plotting_segment_order', 'Plotting Segment Order'), verbosity=verbosity))
       if (length(plotting_segment_order_temp_vector)==0){ return() }
       .plotting.segment.order = plotting_segment_order_temp_vector
     }
   }
   .plotting.segment.order = PlottingSegmentOrder(.plotting.segment.order, plotted_samples, header, include_genomic_scale, genomic_scale_on_top, incl_annot, horizontal_spacers)
-  .plotting.segment.order = FinalizePlottingSegmentOrder(.plotting.segment.order, tracks_listed, both_strands, include_genomic_scale, genomic_scale_on_top, any_stranded_beds, any_unstranded_beds, strands_intermingled)
+  .plotting.segment.order = FinalizePlottingSegmentOrder(.plotting.segment.order, tracks_listed, both_strands, include_genomic_scale, genomic_scale_on_top, any_stranded_beds, any_unstranded_beds, strands_intermingled, verbosity, interface)
   .segment.summation = list()
   for (.strand in names(.plotting.segment.order)){
     .segment.summation[[.strand]] = sapply(c("header", "scale", "empty-spacer", "thickline-spacer", "line-spacer", "annotations", "unstranded-beds",names(datasets)), function(dataset_name) length((which(.plotting.segment.order[[.strand]]==dataset_name))))
@@ -2172,7 +2365,7 @@ BuildScrutinizePlotSegmentOrder = function(plotting_segment_order, plotted_regio
       if (.segment.summation.total[['annotations']] != 2){
         if (verbosity > 0){
           cat('ERRORs:', '\n')
-          cat(paste0(' - if annotations should displayed the "annotations" segments should be present under plotting segments for both strands - aborting'), '\n')
+          cat(paste0(' - if annotations are to be displayed the "annotations" segments should be present under plotting segments for both strands - aborting'), '\n')
           cat(paste('\t', '.)', '"annotations" segment only present under' ,ifelse(.segment.summation[['+']][['annotations']]==1, 'plus', 'minus'), 'strand'), '\n')
         }
         return()
@@ -2280,6 +2473,7 @@ EstimatePlotHeights = function(annot_info, incl_feature_names, annotation_packin
     }else{
       .min.annot.heights.combined = 0
       .max.annot.heights.combined = 0
+      .max.annot.heights.incl.text = 0
     }
     # setup plotting area - vertical part
     if ("annotations" %in% plotting_segment_order){
@@ -3369,6 +3563,7 @@ FinalizePanelsDimensions = function(panel_info, both_strands){
 #'
 GetBinSize = function(bin_size, plot_width, tracks_width_cm, bins_per_cm, verbosity){
   .messages = list('output'=list(), 'errors'=list())
+  .autodetermine = FALSE
   if (!is.null(bin_size)){
     if (bin_size=='auto' | bin_size == 'automatic'){
       .bases.per.cm = plot_width/tracks_width_cm
@@ -3416,12 +3611,13 @@ BasicPlotParameters = function(plotted_strand, plotted_region, feature_names_fon
   .plot.width = IRanges::width(plotted_region[[plotted_strand]])
   .tracks.width.cm = plot_width_parameters[['tracks.width.cm']]
   .bases.per.cm = .plot.width/.tracks.width.cm
-  .bin.start = S4Vectors::mcols(plotted_region[[plotted_strand]])$bin.start
-  if (.bases.per.cm >= bins_per_cm){
-    .bin.width = line_width_scaling_factor*0.4
-  }else{
-    .bin.width = line_width_scaling_factor*0.4*bins_per_cm/.bases.per.cm  # to ensure same density of colors
+  .bins.per.cm = .bases.per.cm/bin_size
+  .points.per.bin = points_per_cm/.bins.per.cm
+  .bin.width = 2*line_width_scaling_factor*.points.per.bin #@ 2*line_width_scaling_factor ~ 1pt in pdf
+  if (.bases.per.cm < bins_per_cm){
+    .bin.width = .bin.width * bins_per_cm/.bases.per.cm  # to ensure same density of colors
   }
+  .bin.start = S4Vectors::mcols(plotted_region[[plotted_strand]])$bin.start
   .bin.info = c(bin_size, .bin.width)
   if (length(plot_height_parameters[[plotted_strand]][['annot.heights.incl.text']]) > 0){
     .annotations.heights = sapply(names(plot_height_parameters[[plotted_strand]][['annot.heights.incl.text']]), function(.annot.name) plot_height_parameters[[plotted_strand]][['annot.heights.incl.text']][[.annot.name]][feature_names_font_size])
@@ -3754,7 +3950,7 @@ PlotPanels = function(plotting_segment, plotted_strand, panel_info, panels_list,
   }
   for (.n.panel in .n.panels.iv){
     if (.n.panel %in% .panels){
-      .panel = which(.panels==.n.panel) + ifelse(incl_first_panel, 0, 1) #@
+      .panel = which(.panels==.n.panel) + ifelse(incl_first_panel & !print_one_line_sample_names, 0, 1) #@
       #@ if (.n.panel == 2){
       #@   .panel = 2
       #@ }else{
@@ -3791,6 +3987,9 @@ PlotPanels = function(plotting_segment, plotted_strand, panel_info, panels_list,
         .trackname.cex = .font.size.first.panel*scaling_factor/12
         .horizontal.panels.list = panel_info[[plotted_strand]]$horizontal.panels.list
         .horizontal = .horizontal.panels.list[[plotting_segment]][.panel]
+        if (print_one_line_sample_names){ #@ ->
+          .horizontal = TRUE
+        } #@ <-
         if (.horizontal){
           text(x=ifelse(.n.panel != .n.panels, 0.8, -0.5*std_letter_width), y=0, labels=names(.sub.panels)[.sub.panel], adj=c(1, 0.5), srt=0, cex=.trackname.cex, family=font_family, font=ifelse(.panel==1,4,1), col=font_color[ifelse(.panel==1,'panel_1st','panel')])
         }else{
@@ -3811,14 +4010,14 @@ PlotPanels = function(plotting_segment, plotted_strand, panel_info, panels_list,
 #' @details
 #' Internal function:
 #'
-PlotMatrix = function(plotted_region, basic_plot_parameters, plot_start, plot_end, plot_width, bin_size, actual_strand_direction, sample_subset, dummy_plot, tracks, plotting_segment, bin_stats){
+PlotMatrix = function(plotted_region, basic_plot_parameters, plot_start, plot_end, plot_width, bin_size, reverse_strand_direction, sample_subset, dummy_plot, tracks, plotting_segment, bin_stats){
   .strand = unique(as.character(BiocGenerics::strand(plotted_region)))
   .bin.start = S4Vectors::mcols(plotted_region)$bin.start
   .bin.width = basic_plot_parameters$bin.info[2]
   .n.bins.total = as.integer(IRanges::width(plotted_region)/bin_size)
   .n.bins.before = as.integer(abs(.bin.start - plot_start)/bin_size)
   .n.bins.after = as.integer(abs(plot_end - .bin.start)/bin_size)
-  .coords = as.numeric(sapply((-.n.bins.before+1):(.n.bins.after), function(.n.bin) mean(.bin.start + ifelse(.strand=='+' | actual_strand_direction, 1, -1)*c((.n.bin-1)*bin_size, .n.bin*bin_size-1))))
+  .coords = as.numeric(sapply((-.n.bins.before+1):(.n.bins.after), function(.n.bin) mean(.bin.start + ifelse(.strand=='+' | !reverse_strand_direction, 1, -1)*c((.n.bin-1)*bin_size, .n.bin*bin_size-1))))
   if (bin_size!=1){
     .plot.mat = matrix(0, nrow=length(.coords), ncol=length(sample_subset), dimnames=list(as.character(.coords), sample_subset))
   }else{
@@ -3829,13 +4028,13 @@ PlotMatrix = function(plotted_region, basic_plot_parameters, plot_start, plot_en
     for (.seq.sample in sample_subset){
       .score = .seq.data[[.seq.sample]]
       if (bin_size==1){
-        if (.strand=='+' | actual_strand_direction){
+        if (.strand=='+' | !reverse_strand_direction){
           .plot.mat[,.seq.sample] = .score
         }else{
           .plot.mat[,.seq.sample] = rev(.score)
         }
       }else{
-        if (.strand=='+' | actual_strand_direction){
+        if (.strand=='+' | !reverse_strand_direction){
           if (bin_stats[plotting_segment]=='mean'){
             .plot.mat[,.seq.sample] = sapply((-.n.bins.before+1):.n.bins.after, function(.n.bin) mean(.score[abs(.bin.start - plot_start) + ((.n.bin-1)*bin_size+1):(.n.bin*bin_size)]))
           }else if (bin_stats[plotting_segment]=='median'){
@@ -3864,7 +4063,7 @@ PlotMatrix = function(plotted_region, basic_plot_parameters, plot_start, plot_en
 #' @details
 #' Internal function:
 #'
-PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, sample_subset, windows_height, coords_tracks, coords_scale, first_plot, neg_vals_neg_strand, plotted_strand, y_par, plot_start, plot_end, bin_width, group_autoscale, incl_track_scales, scientific_scale, scale_font_size, full_width_cm, font_colors, font_family, scaling_factor, letter_widths, enhance_signals, scale_warning=NULL, verbosity){
+PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, intermingled_color, sample_subset, windows_height, coords_tracks, coords_scale, first_plot, neg_vals_neg_strand, plotted_strand, y_par, plot_start, plot_end, bin_width, group_autoscale, incl_track_scales, scientific_scale, scale_font_size, full_width_cm, font_colors, font_family, scaling_factor, letter_widths, enhance_signals, scale_warning=NULL, verbosity){
   if (verbosity > 0) { cat(paste('plotting',  plotting_segment, 'data for samples'), '\n') }
   .base.cols = unlist(colors[[plotting_segment]])
   .enhance = enhance_signals[plotting_segment]
@@ -3883,25 +4082,25 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, sample_su
     .y.exp = structure(c(0, 0), names=c('+', '-'))
     .n.decimals = structure(c(NA, NA), names=c('+', '-'))
     if (.plotted.strand=='+-' & length(plot_mat)==2){
-      .y.max = as.numeric(ifelse(group_autoscale[plotting_segment], y_par[['+']][['max']], y_par[['+']][['max']][.seq.sample]))
-      .y.min = -as.numeric(ifelse(group_autoscale[plotting_segment], y_par[['-']][['max']], y_par[['-']][['max']][.seq.sample])) #@ -y_par[['-']]['max']
+      .y.max = as.numeric(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['+']][['max']])), y_par[['+']][['max']], y_par[['+']][['max']][.seq.sample]))
+      .y.min = -as.numeric(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['-']][['max']])), y_par[['-']][['max']], y_par[['-']][['max']][.seq.sample])) #@ -y_par[['-']]['max']
       .y.limits = structure(c(-1.5, 1.5), names=c('min', 'max')) # structure(c(.y.min, .y.max), names=c('min', 'max'))
-      .y.val['+'] = as.numeric(ifelse(group_autoscale[plotting_segment], y_par[['+']][['val']], y_par[['+']][['val']][.seq.sample])) #@ y_par[['+']]['val']
-      .y.val['-'] = as.numeric(ifelse(group_autoscale[plotting_segment], y_par[['-']][['val']], y_par[['-']][['val']][.seq.sample])) #@ y_par[['-']]['val']
-      .n.decimals['+'] = as.integer(ifelse(group_autoscale[plotting_segment], y_par[['+']][['dec']], y_par[['+']][['dec']][.seq.sample])) #@ y_par[['+']]['dec']
-      .n.decimals['-'] = as.integer(ifelse(group_autoscale[plotting_segment], y_par[['-']][['dec']], y_par[['-']][['dec']][.seq.sample])) #@ y_par[['-']]['dec']
-      .scientific =  as.logical(ifelse(scientific_scale=='all', TRUE, ifelse(scientific_scale=='none', FALSE, (ifelse(group_autoscale[plotting_segment], y_par[['+']][['sci']], y_par[['+']][['sci']][.seq.sample]) | ifelse(group_autoscale[plotting_segment], y_par[['-']][['sci']], y_par[['-']][['sci']][.seq.sample]))))) #@ (y_par[['+']]['sci'] | y_par[['-']]['sci'])
-      .y.exp['+'] = as.integer(ifelse(group_autoscale[plotting_segment], y_par[['+']][['exp']], y_par[['+']][['exp']][.seq.sample])) #@ y_par[['+']]['exp']
-      .y.exp['-'] = as.integer(ifelse(group_autoscale[plotting_segment], y_par[['-']][['exp']], y_par[['-']][['exp']][.seq.sample])) #@ y_par[['-']]['exp']
+      .y.val['+'] = as.numeric(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['+']][['val']])), y_par[['+']][['val']], y_par[['+']][['val']][.seq.sample])) #@ y_par[['+']]['val']
+      .y.val['-'] = as.numeric(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['-']][['val']])), y_par[['-']][['val']], y_par[['-']][['val']][.seq.sample])) #@ y_par[['-']]['val']
+      .n.decimals['+'] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['+']][['dec']])), y_par[['+']][['dec']], y_par[['+']][['dec']][.seq.sample])) #@ y_par[['+']]['dec']
+      .n.decimals['-'] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['-']][['dec']])), y_par[['-']][['dec']], y_par[['-']][['dec']][.seq.sample])) #@ y_par[['-']]['dec']
+      .scientific =  as.logical(ifelse(scientific_scale=='all', TRUE, ifelse(scientific_scale=='none', FALSE, (ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['+']][['sci']])), y_par[['+']][['sci']], y_par[['+']][['sci']][.seq.sample]) | ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['-']][['sci']])), y_par[['-']][['sci']], y_par[['-']][['sci']][.seq.sample]))))) #@ (y_par[['+']]['sci'] | y_par[['-']]['sci'])
+      .y.exp['+'] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['+']][['exp']])), y_par[['+']][['exp']], y_par[['+']][['exp']][.seq.sample])) #@ y_par[['+']]['exp']
+      .y.exp['-'] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['-']][['exp']])), y_par[['-']][['exp']], y_par[['-']][['exp']][.seq.sample])) #@ y_par[['-']]['exp']
       .plot.mat = plot_mat[['+']] / .y.val['+']
     }else{
-      .y.max = as.numeric(ifelse(group_autoscale[plotting_segment], y_par[[.plotted.strand]][['max']], y_par[[.plotted.strand]][['max']][.seq.sample])) #@ y_par[[.plotted.strand]]['max']
+      .y.max = as.numeric(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[[.plotted.strand]][['max']])), y_par[[.plotted.strand]][['max']], y_par[[.plotted.strand]][['max']][.seq.sample])) #@ y_par[[.plotted.strand]]['max']
       .y.min = 0
       .y.limits = structure(sort(ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*c(0, 1.5)), names=c('min', 'max'))
-      .y.val[.plotted.strand] = as.numeric(ifelse(group_autoscale[plotting_segment], y_par[[.plotted.strand]][['val']], y_par[[.plotted.strand]][['val']][.seq.sample])) #@ y_par[[.plotted.strand]]['val']
-      .n.decimals[.plotted.strand] = as.integer(ifelse(group_autoscale[plotting_segment], y_par[[.plotted.strand]][['dec']], y_par[[.plotted.strand]][['dec']][.seq.sample])) #@ y_par[[.plotted.strand]]['dec']
-      .scientific = as.logical(ifelse(scientific_scale=='all', TRUE, ifelse(scientific_scale=='none', FALSE, ifelse(group_autoscale[plotting_segment], y_par[[.plotted.strand]][['sci']], y_par[[.plotted.strand]][['sci']][.seq.sample])))) #@ y_par[[.plotted.strand]]['sci']
-      .y.exp[.plotted.strand] = as.integer(ifelse(group_autoscale[plotting_segment], y_par[[.plotted.strand]][['exp']], y_par[[.plotted.strand]][['exp']][.seq.sample])) #@ y_par[[.plotted.strand]]['exp']
+      .y.val[.plotted.strand] = as.numeric(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[[.plotted.strand]][['val']])), y_par[[.plotted.strand]][['val']], y_par[[.plotted.strand]][['val']][.seq.sample])) #@ y_par[[.plotted.strand]]['val']
+      .n.decimals[.plotted.strand] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[[.plotted.strand]][['dec']])), y_par[[.plotted.strand]][['dec']], y_par[[.plotted.strand]][['dec']][.seq.sample])) #@ y_par[[.plotted.strand]]['dec']
+      .scientific = as.logical(ifelse(scientific_scale=='all', TRUE, ifelse(scientific_scale=='none', FALSE, ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[[.plotted.strand]][['sci']])), y_par[[.plotted.strand]][['sci']], y_par[[.plotted.strand]][['sci']][.seq.sample])))) #@ y_par[[.plotted.strand]]['sci']
+      .y.exp[.plotted.strand] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[[.plotted.strand]][['exp']])), y_par[[.plotted.strand]][['exp']], y_par[[.plotted.strand]][['exp']][.seq.sample])) #@ y_par[[.plotted.strand]]['exp']
       .plot.mat = plot_mat[[.plotted.strand]] / .y.val[.plotted.strand]
     }
     if (any(.plot.mat > 1.5)){ .plot.mat[which(.plot.mat > 1.5)] = 1.5 }
@@ -3913,6 +4112,15 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, sample_su
             lwd=ifelse(.enhance, 2, 1)*scaling_factor*bin_width, col=.adj.colors['+'])
       .plot.mat = plot_mat[['-']] / .y.val['-']
       if (any(.plot.mat > 1.5)){ .plot.mat[which(.plot.mat > 1.5)] = 1.5 }
+      if (intermingled_color!='same'){
+        if (intermingled_color=='complementary'){
+          .adj.colors['-'] = sapply(.adj.colors['-'], function(c) complementary(c, plot=FALSE)[2])
+        }else if (intermingled_color=='analogous_right'){
+          .adj.colors['-'] = sapply(.adj.colors['-'], function(c) analogous(c, plot=FALSE)[2])
+        }else if (intermingled_color=='analogous_left'){
+          .adj.colors['-'] = sapply(.adj.colors['-'], function(c) analogous(c, plot=FALSE)[3])
+        }
+      }
       lines(as.integer(rownames(.plot.mat)), -1*.plot.mat[,.seq.sample], type='h', lend=1,
             lwd=ifelse(.enhance, 2, 1)*scaling_factor*bin_width, col=.adj.colors['-'])
     }else{
@@ -3978,14 +4186,22 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, sample_su
 #' Internal function:
 #'
 YParameters = function(plot_mat, plotting_segment, force_scale_list, group_autoscale){
-  if (is.null(force_scale_list[[plotting_segment]]) | is.na(force_scale_list[[plotting_segment]])){
+  if (!is.null(force_scale_list)){
+    if (is.null(force_scale_list[[plotting_segment]]) | is.na(force_scale_list[[plotting_segment]])){
+      if (as.logical(group_autoscale[plotting_segment])){
+        .y.val = structure(max(plot_mat, na.rm=T), names='max')
+      }else{
+        .y.val = apply(plot_mat, 2, max, na.rm=T) #@ new part
+      }
+    }else{
+      .y.val = structure(as.numeric(ifelse(is.na(force_scale_list[plotting_segment]), max(plot_mat, na.rm=T), force_scale_list[plotting_segment])), names='forced')
+    }
+  }else{
     if (as.logical(group_autoscale[plotting_segment])){
       .y.val = structure(max(plot_mat, na.rm=T), names='max')
     }else{
       .y.val = apply(plot_mat, 2, max, na.rm=T) #@ new part
     }
-  }else{
-    .y.val = structure(as.numeric(ifelse(is.na(force_scale_list[plotting_segment]), max(plot_mat, na.rm=T), force_scale_list[plotting_segment])), names='forced')
   }
   .scientific = structure(rep(FALSE, length(.y.val)), names=names(.y.val))
   .n.decimals = structure(rep(0, length(.y.val)), names=names(.y.val))
@@ -4073,17 +4289,18 @@ SegmentTop = function(plotting_segment, plotted_strand, windows_height, annot_in
 #' @details
 #' Internal function:
 #'
-PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, plotted_region, plotted_strand, substrand, basic_plot_parameters, plot_start, plot_end, plot_width, bin_size, actual_strand_direction, incl_feature_names, feature_names_above, incl_feature_brackets, incl_feature_shadings, feature_shading_colors, feature_shading_alpha, plot_width_parameters, plot_vertical_parameters, final_feature_text_org, windows_height, feature_font_size, annotation_panel_font_size, annot_panel_dist=0.4, coords_tracks, font_colors, font_family, first_plot, scaling_factor, verbosity){
+PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, plotted_region, plotted_strand, substrand, basic_plot_parameters, plot_start, plot_end, plot_width, bin_size, reverse_strand_direction, incl_feature_names, feature_names_above, incl_feature_brackets, incl_feature_shadings, feature_shading_colors, feature_shading_alpha, plot_width_parameters, plot_vertical_parameters, final_feature_text_org, windows_height, feature_font_size, annotation_panel_font_size, annot_panel_dist=0.4, coords_tracks, font_colors, font_family, first_plot, scaling_factor, verbosity){
   .strand = substrand # ifelse(plotted_strand == '+' | plotted_strand == '+-', '+', '-')
   .bin.start = S4Vectors::mcols(plotted_region)$bin.start
   .bin.width = basic_plot_parameters[[plotted_strand]]$bin.info[2]
   .n.bins.before = as.integer(abs(.bin.start - plot_start)/bin_size)
   .n.bins.after = as.integer(abs(plot_end - .bin.start)/bin_size)
-  .coords = sapply((-.n.bins.before+1):.n.bins.after, function(.n.bin) mean(.bin.start + ifelse(.strand=='+' | actual_strand_direction, 1, -1)*c((.n.bin-1)*bin_size, .n.bin*bin_size-1)))
+  .coords = sapply((-.n.bins.before+1):.n.bins.after, function(.n.bin) mean(.bin.start + ifelse(.strand=='+' | !reverse_strand_direction, 1, -1)*c((.n.bin-1)*bin_size, .n.bin*bin_size-1)))
   .coords.per.mm = IRanges::width(plotted_region)/(plot_width_parameters$tracks.width.cm*10)
   .length.arrows = 0.363*.coords.per.mm/arrow_constant
   .direction.arrows = ifelse(.strand=='+', -1, +1)*.length.arrows
   .line.width = 4*scaling_factor*line_width_scaling_factor
+  .y.scaling = as.numeric(plot_vertical_parameters['annot']/0.8) #@ as.numeric(plot_vertical_parameters['annot'] * basic_plot_parameters[[plotted_strand]][['track.height.cm']])/(0.8*0.3)
   for (.annotation in names(annot_info[[.strand]])){
     if (stranded){
       .stranded.annotation = paste0(.annotation, .strand)
@@ -4122,6 +4339,8 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
             for (.annot.line in .packing[[.feat.name]][[.pack.line]]){
               .overall.annot.range = IRanges::ranges(.feat.annotation)[.annot.line]
               .y.vals = sort(ifelse(feature_names_above[[.strand]][.annotation], -1, 1)*c(.annot.steps*((-.pack.line+0.5)-0.25), .annot.steps*((-.pack.line+0.5)+0.25)))
+              #@cat(.y.vals, '\n') #@cat
+              .arrow.scaling = abs(diff(.y.vals))/.y.scaling  #@ replace abs(diff(.y.vals)) with .arrow.scaling
               .y.center = mean(.y.vals)
               if (is.null(annot_cols[[.annotation]])){
                 if ('itemRgb' %in% colnames(S4Vectors::mcols(.feat.annotation))){
@@ -4165,8 +4384,8 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                   .n.arrows = ifelse(round(diff(c(.exon.start, .exon.end+1))/(8*.length.arrows)) > 0, 1, 0)
                   if (stranded & .n.arrows > 0){
                     .pos.arrow = mean(c(.exon.start, .exon.end))
-                    segments(x0=.pos.arrow+(.direction.arrows*abs(diff(.y.vals))), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*abs(diff(.y.vals))), y1=.y.center, col='white', lwd=.line.width/2, lend=2)
-                    segments(x0=.pos.arrow+(.direction.arrows*abs(diff(.y.vals))), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*abs(diff(.y.vals))), y1=.y.center, col='white', lwd=.line.width/2, lend=2)
+                    segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=2)
+                    segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=2)
                   }
                 }
               }
@@ -4190,8 +4409,8 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                     .n.arrows = ifelse(round(diff(c(.intron.start, .intron.end+1))/(4*.length.arrows)) > 1, 1, 0)
                     if (stranded & .n.arrows > 0){
                       .pos.arrow = mean(c(.intron.start, .intron.end))
-                      segments(x0=.pos.arrow+(.direction.arrows*abs(diff(.y.vals))), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*abs(diff(.y.vals))), y1=.y.center, col=.annot.col, lwd=.line.width/2, lend=1)
-                      segments(x0=.pos.arrow+(.direction.arrows*abs(diff(.y.vals))), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*abs(diff(.y.vals))), y1=.y.center, col=.annot.col, lwd=.line.width/2, lend=1)
+                      segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/2, lend=1)
+                      segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/2, lend=1)
                     }
                   }
                 }
@@ -4199,18 +4418,18 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                 if (S4Vectors::mcols(.feat.annotation[.annot.line])$on.from.start){
                   .pos.arrow = IRanges::start(plotted_region)
                   if (sign(.direction.arrows)==-1){
-                    triangle_xs = c(.pos.arrow, .pos.arrow, .pos.arrow-2*(.direction.arrows*abs(diff(.y.vals))))
+                    triangle_xs = c(.pos.arrow, .pos.arrow, .pos.arrow-2*(.direction.arrows*.arrow.scaling))
                   }else{
-                    triangle_xs = c(.pos.arrow+2*(.direction.arrows*abs(diff(.y.vals))), .pos.arrow+2*(.direction.arrows*abs(diff(.y.vals))), .pos.arrow)
+                    triangle_xs = c(.pos.arrow+2*(.direction.arrows*.arrow.scaling), .pos.arrow+2*(.direction.arrows*.arrow.scaling), .pos.arrow)
                   }
                   polygon(x=triangle_xs, y=c(rev(.y.vals), .y.center), col ='yellow', border=NA)
                 }
                 if (S4Vectors::mcols(.feat.annotation[.annot.line])$on.from.end){
                   .pos.arrow = IRanges::end(plotted_region)
                   if (sign(.direction.arrows)==-1){
-                    triangle_xs = c(.pos.arrow+2*(.direction.arrows*abs(diff(.y.vals))), .pos.arrow+2*(.direction.arrows*abs(diff(.y.vals))), .pos.arrow)
+                    triangle_xs = c(.pos.arrow+2*(.direction.arrows*.arrow.scaling), .pos.arrow+2*(.direction.arrows*.arrow.scaling), .pos.arrow)
                   }else{
-                    triangle_xs = c(.pos.arrow, .pos.arrow, .pos.arrow-2*(.direction.arrows*abs(diff(.y.vals))))
+                    triangle_xs = c(.pos.arrow, .pos.arrow, .pos.arrow-2*(.direction.arrows*.arrow.scaling))
                   }
                   polygon(x=triangle_xs, y=c(rev(.y.vals), .y.center), col ='yellow', border=NA)
                 }
@@ -4252,19 +4471,19 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
               segments(x0=.feat.start, x1=.feat.end, y0=.y.center, lwd=.line.width/4, col='gray30', lend=1)
               # arrow left-pointing start-of-annotation
               if (!S4Vectors::mcols(.feature.gr)$on.from.start){
-                segments(x0=.feat.start, y0=.y.center, x1=.feat.start-ifelse(.strand=='-', -1, 1)*2*(.direction.arrows*abs(diff(.y.vals))), y1=.y.vals[2], col='gray30', lwd=.line.width/4, lend=1)
-                segments(x0=.feat.start, y0=.y.center, x1=.feat.start-ifelse(.strand=='-', -1, 1)*2*(.direction.arrows*abs(diff(.y.vals))), y1=.y.vals[1], col='gray30', lwd=.line.width/4, lend=1)
+                segments(x0=.feat.start, y0=.y.center, x1=.feat.start-ifelse(.strand=='-', -1, 1)*2*(.direction.arrows*.arrow.scaling), y1=.y.vals[2], col='gray30', lwd=.line.width/4, lend=1)
+                segments(x0=.feat.start, y0=.y.center, x1=.feat.start-ifelse(.strand=='-', -1, 1)*2*(.direction.arrows*.arrow.scaling), y1=.y.vals[1], col='gray30', lwd=.line.width/4, lend=1)
               }
               # arrow right-pointing start-of-annotation
               if (!S4Vectors::mcols(.feature.gr)$on.from.end){
-                segments(x0=.feat.end, y0=.y.center, x1=.feat.end+ifelse(.strand=='-', -1, 1)*2*(.direction.arrows*abs(diff(.y.vals))), y1=.y.vals[2], col='gray30', lwd=.line.width/4, lend=1)
-                segments(x0=.feat.end, y0=.y.center, x1=.feat.end+ifelse(.strand=='-', -1, 1)*2*(.direction.arrows*abs(diff(.y.vals))), y1=.y.vals[1], col='gray30', lwd=.line.width/4, lend=1)
+                segments(x0=.feat.end, y0=.y.center, x1=.feat.end+ifelse(.strand=='-', -1, 1)*2*(.direction.arrows*.arrow.scaling), y1=.y.vals[2], col='gray30', lwd=.line.width/4, lend=1)
+                segments(x0=.feat.end, y0=.y.center, x1=.feat.end+ifelse(.strand=='-', -1, 1)*2*(.direction.arrows*.arrow.scaling), y1=.y.vals[1], col='gray30', lwd=.line.width/4, lend=1)
               }
               .n.line = .n.line + 1
             }
             .y.vals = sort(ifelse(feature_names_above[[.strand]][.annotation], -1, 1)*c(-.y0.text-.annot.text.steps*(.n.line-0.5-0.25), -.y0.text-.annot.text.steps*(.n.line-0.5+0.25)))
             .y.center = mean(.y.vals)
-            text(x=S4Vectors::mcols(.feat.text.gr[.feature.name])$coord, y=.y.center, labels=.feature.name, adj=abs(ifelse(((actual_strand_direction & .strand=='-') | .strand=='+') , 0, 1) - S4Vectors::mcols(.feat.text.gr[.feature.name])$adj), col=font_colors['features'], cex=scaling_factor*feature_font_size/12, family=font_family)
+            text(x=S4Vectors::mcols(.feat.text.gr[.feature.name])$coord, y=.y.center, labels=.feature.name, adj=abs(ifelse(((!reverse_strand_direction & .strand=='-') | .strand=='+') , 0, 1) - S4Vectors::mcols(.feat.text.gr[.feature.name])$adj), col=font_colors['features'], cex=scaling_factor*feature_font_size/12, family=font_family)
           }
         }
       }
@@ -4304,13 +4523,13 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
 #' @details
 #' Internal function:
 #'
-PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, plotting_segment, basic_plot_parameters, neg_vals_neg_strand, plot_width_parameters, plot_vertical_parameters, annot_info, panel_info, panels_list, panel_separators, separators_lwds, separators_colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, header_font_sizes, scaling_factor, full_width_cm, genomic_scale_on_top, genomic_scale_font_size, actual_strand_direction, bin_stats, dummy_plot, tracks, strands_alpha, unstranded_beds, annotation_packing, annotation_panel_font_size, incl_feature_names, feature_font_size, feature_names_above, final_feature_text_org, incl_feature_brackets, incl_feature_shadings, feature_shading_colors, feature_shading_alpha, annot_cols, group_autoscale, incl_track_scales, scientific_scale, scale_font_size, force_scale_list, colors, alternating_background, bgr_colors, bgr_alpha, font_colors, letter_widths, letter_heights, enhance_signals, first_plot, verbosity){
+PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, plotting_segment, basic_plot_parameters, neg_vals_neg_strand, plot_width_parameters, plot_vertical_parameters, annot_info, panel_info, panels_list, panel_separators, separators_lwds, separators_colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, header_font_sizes, scaling_factor, full_width_cm, genomic_scale_on_top, genomic_scale_font_size, reverse_strand_direction, bin_stats, dummy_plot, tracks, strands_alpha, intermingled_color,  unstranded_beds, annotation_packing, annotation_panel_font_size, incl_feature_names, feature_font_size, feature_names_above, final_feature_text_org, incl_feature_brackets, incl_feature_shadings, feature_shading_colors, feature_shading_alpha, annot_cols, group_autoscale, incl_track_scales, scientific_scale, scale_font_size, force_scale_list, colors, alternating_background, bgr_colors, bgr_alpha, font_colors, letter_widths, letter_heights, enhance_signals, first_plot, verbosity){
   .strand = ifelse(plotted_strand == '+' | plotted_strand == '+-', '+', '-')
   .plotted.region = plotted_region[[.strand]]
   .chrom = as.character(GenomeInfoDb::seqnames(.plotted.region))
   .plot.width = IRanges::width(.plotted.region)
-  .plot.start = ifelse(.strand=='+' | actual_strand_direction, IRanges::start(.plotted.region), IRanges::end(.plotted.region))
-  .plot.end = ifelse(.strand=='+' | actual_strand_direction, IRanges::end(.plotted.region), IRanges::start(.plotted.region))
+  .plot.start = ifelse(.strand=='+' | !reverse_strand_direction, IRanges::start(.plotted.region), IRanges::end(.plotted.region))
+  .plot.end = ifelse(.strand=='+' | !reverse_strand_direction, IRanges::end(.plotted.region), IRanges::start(.plotted.region))
   .font.family = 'sans'
 
   .windows.height=basic_plot_parameters[[plotted_strand]]$windows.height
@@ -4345,17 +4564,17 @@ PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, pl
       .stranded.annot.info = annot_info
     }
     .stranded = TRUE
-    PlotAnnotation(.stranded.annot.info, .stranded, annot_cols, annotation_packing, .plotted.region, plotted_strand, .strand, basic_plot_parameters, .plot.start, .plot.end, .plot.width, .bin.size, actual_strand_direction, incl_feature_names, feature_names_above, incl_feature_brackets, incl_feature_shadings, feature_shading_colors, feature_shading_alpha, plot_width_parameters, plot_vertical_parameters, final_feature_text_org, .windows.height, feature_font_size, annotation_panel_font_size, annot_panel_dist, .coords.tracks, font_colors, .font.family, first_plot, scaling_factor, verbosity)
+    PlotAnnotation(.stranded.annot.info, .stranded, annot_cols, annotation_packing, .plotted.region, plotted_strand, .strand, basic_plot_parameters, .plot.start, .plot.end, .plot.width, .bin.size, reverse_strand_direction, incl_feature_names, feature_names_above, incl_feature_brackets, incl_feature_shadings, feature_shading_colors, feature_shading_alpha, plot_width_parameters, plot_vertical_parameters, final_feature_text_org, .windows.height, feature_font_size, annotation_panel_font_size, annot_panel_dist, .coords.tracks, font_colors, .font.family, first_plot, scaling_factor, verbosity)
     if (plotted_strand=='+-'){
       .annots.indices = unlist(lapply(names(.stranded.annot.info[[.strand]]), grep, names(basic_plot_parameters[['+-']][['windows.height']]), fixed=TRUE))
       .space.index = setdiff(seq(min(.annots.indices), max(.annots.indices), 1), .annots.indices)
       if (length(.space.index) > 0){
-        spacer_segment = names(basic_plot_parameters[['+-']][['windows.height']])[.space.index]
+        spacer_segment = names(basic_plot_parameters[['+-']][['windows.height']])[rev(.space.index)[1]] #@ rev(.space.index)[1] <- .space.index
         if (grepl('spacer', spacer_segment, fixed=TRUE)){
           PlotSpacer(.windows.height, spacer_segment, .coords.tracks[2], plotted_strand, neg_vals_neg_strand, panel_separators, separators_lwds, separators_colors, scaling_factor)
         }
       }
-      PlotAnnotation(.stranded.annot.info, .stranded, annot_cols, annotation_packing, .plotted.region, plotted_strand, '-', basic_plot_parameters, .plot.start, .plot.end, .plot.width, .bin.size, actual_strand_direction, incl_feature_names, feature_names_above, incl_feature_brackets, incl_feature_shadings, feature_shading_colors, feature_shading_alpha, plot_width_parameters, plot_vertical_parameters, final_feature_text_org, .windows.height, feature_font_size, annotation_panel_font_size, annot_panel_dist, .coords.tracks, font_colors, .font.family, first_plot, scaling_factor, verbosity)
+      PlotAnnotation(.stranded.annot.info, .stranded, annot_cols, annotation_packing, .plotted.region, plotted_strand, '-', basic_plot_parameters, .plot.start, .plot.end, .plot.width, .bin.size, reverse_strand_direction, incl_feature_names, feature_names_above, incl_feature_brackets, incl_feature_shadings, feature_shading_colors, feature_shading_alpha, plot_width_parameters, plot_vertical_parameters, final_feature_text_org, .windows.height, feature_font_size, annotation_panel_font_size, annot_panel_dist, .coords.tracks, font_colors, .font.family, first_plot, scaling_factor, verbosity)
     }
   }else if (plotting_segment=="unstranded-beds"){
     if (length(unstranded_beds) > 0){
@@ -4367,7 +4586,7 @@ PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, pl
       .stranded.annot.info = annot_info
     }
     .stranded = FALSE
-    PlotAnnotation(.unstranded.annot.info, .stranded, annot_cols, annotation_packing, .plotted.region, plotted_strand, .strand, basic_plot_parameters, .plot.start, .plot.end, .plot.width, .bin.size, actual_strand_direction, incl_feature_names, feature_names_above, incl_feature_brackets, incl_feature_shadings, feature_shading_colors, feature_shading_alpha, plot_width_parameters, plot_vertical_parameters, final_feature_text_org, .windows.height, feature_font_size, annotation_panel_font_size, annot_panel_dist, .coords.tracks, font_colors, .font.family, first_plot, scaling_factor, verbosity)
+    PlotAnnotation(.unstranded.annot.info, .stranded, annot_cols, annotation_packing, .plotted.region, plotted_strand, .strand, basic_plot_parameters, .plot.start, .plot.end, .plot.width, .bin.size, reverse_strand_direction, incl_feature_names, feature_names_above, incl_feature_brackets, incl_feature_shadings, feature_shading_colors, feature_shading_alpha, plot_width_parameters, plot_vertical_parameters, final_feature_text_org, .windows.height, feature_font_size, annotation_panel_font_size, annot_panel_dist, .coords.tracks, font_colors, .font.family, first_plot, scaling_factor, verbosity)
   }else{
     if (!dummy_plot){
       .sample.subset = names(tracks[[.strand]][[plotting_segment]])
@@ -4390,12 +4609,12 @@ PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, pl
     PlotPanels(plotting_segment, .strand, panel_info, panels_list, panel_separators, separators_lwds, separators_colors, incl_first_panel, print_one_line_sample_names, replicate_names, plot_width_parameters, .windows.height, .vertical.slots, .segment.top, full_width_cm, font_colors, .font.family, colors, .first.plot, letter_heights, scaling_factor)
     .first.plot = FALSE
     .plot.mat = list()
-    .plot.mat[[.strand]] = PlotMatrix(.plotted.region, basic_plot_parameters[[plotted_strand]], .plot.start, .plot.end, .plot.width, .bin.size, actual_strand_direction, .sample.subset, dummy_plot, tracks[[.strand]], plotting_segment, bin_stats)
+    .plot.mat[[.strand]] = PlotMatrix(.plotted.region, basic_plot_parameters[[plotted_strand]], .plot.start, .plot.end, .plot.width, .bin.size, reverse_strand_direction, .sample.subset, dummy_plot, tracks[[.strand]], plotting_segment, bin_stats)
     if (plotted_strand=='+-' & plotting_segment %in% names(tracks[['-']])){
-      .plot.mat[['-']] = PlotMatrix(plotted_region[['-']], basic_plot_parameters[[plotted_strand]], .plot.start, .plot.end, .plot.width, .bin.size, actual_strand_direction, .sample.subset, dummy_plot, tracks[['-']], plotting_segment, bin_stats)
+      .plot.mat[['-']] = PlotMatrix(plotted_region[['-']], basic_plot_parameters[[plotted_strand]], .plot.start, .plot.end, .plot.width, .bin.size, reverse_strand_direction, .sample.subset, dummy_plot, tracks[['-']], plotting_segment, bin_stats)
     }
     .y.par = structure(lapply(names(.plot.mat), function(.strand) YParameters(.plot.mat[[.strand]], plotting_segment, force_scale_list[[.strand]], group_autoscale)), names=names(.plot.mat))
     .bin.width = basic_plot_parameters[[plotted_strand]]$bin.info[2]
-    PlotData(plotting_segment, .plot.mat, colors, strands_alpha, .sample.subset, .windows.height, .coords.tracks, .coords.scale, .first.plot, neg_vals_neg_strand, plotted_strand, .y.par, .plot.start, .plot.end, .bin.width, group_autoscale, incl_track_scales, scientific_scale, scale_font_size, full_width_cm, font_colors, .font.family, scaling_factor, letter_widths, enhance_signals, scale_warning=NULL, verbosity)
+    PlotData(plotting_segment, .plot.mat, colors, strands_alpha, intermingled_color, .sample.subset, .windows.height, .coords.tracks, .coords.scale, .first.plot, neg_vals_neg_strand, plotted_strand, .y.par, .plot.start, .plot.end, .bin.width, group_autoscale, incl_track_scales, scientific_scale, scale_font_size, full_width_cm, font_colors, .font.family, scaling_factor, letter_widths, enhance_signals, scale_warning=NULL, verbosity)
   }
 }
