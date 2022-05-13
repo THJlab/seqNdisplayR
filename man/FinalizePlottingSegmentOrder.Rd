@@ -12,7 +12,9 @@ FinalizePlottingSegmentOrder(
   genomic_scale_on_top,
   any_stranded_beds,
   any_unstranded_beds,
-  strands_intermingled
+  strands_intermingled,
+  verbosity,
+  interface
 )
 }
 \description{

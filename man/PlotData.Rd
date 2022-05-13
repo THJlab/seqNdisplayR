@@ -9,6 +9,7 @@ PlotData(
   plot_mat,
   colors,
   strands_alpha,
+  intermingled_color,
   sample_subset,
   windows_height,
   coords_tracks,

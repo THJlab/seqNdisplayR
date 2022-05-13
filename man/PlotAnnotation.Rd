@@ -17,7 +17,7 @@ PlotAnnotation(
   plot_end,
   plot_width,
   bin_size,
-  actual_strand_direction,
+  reverse_strand_direction,
   incl_feature_names,
   feature_names_above,
   incl_feature_brackets,

@@ -11,7 +11,7 @@ PlotMatrix(
   plot_end,
   plot_width,
   bin_size,
-  actual_strand_direction,
+  reverse_strand_direction,
   sample_subset,
   dummy_plot,
   tracks,
