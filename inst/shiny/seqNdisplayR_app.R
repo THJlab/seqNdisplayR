@@ -736,18 +736,15 @@ ui <- fluidPage(
             tags$style(type="text/css", "#panel_font_easy_div {padding-left: 15px}")
           ),
           div(id = "panel_font_easy_div",
-              div(id = 'panel_font_easy_boxes',
-                  div(id = 'panel_font_easy_boxes_anchor')
-              )
+              div(id = 'panel_font_easy_boxes')
               ),
           create_input_element('panel_font'),
           tags$head(
             tags$style(type="text/css", "#panel_font_div {padding-left: 15px}")
           ),
           div(id = "panel_font_div",
-              div(id = "panel_font_boxes",
-                  div(id = 'panel_font_boxes_headers_anchor'),
-                  div(id = 'panel_font_boxes_anchor'))
+              div(id = "panel_font_boxes_headers"),
+              div(id = "panel_font_boxes")
               ),
           tags$br(),
           h4('Spacing, Background and Separators'),
@@ -819,8 +816,7 @@ ui <- fluidPage(
             tags$style(type="text/css", "#manual_scales_div {padding-left: 15px}")
           ),
           div(id = "manual_scales_div",
-              div(id = "manual_scales_boxes",
-                  div(id = "manual_scales_boxes_anchor")
+              div(id = "manual_scales_boxes"
               )
           ),  ##@@0a <-
           create_input_element('scale_scientific_format'),
@@ -861,13 +857,16 @@ ui <- fluidPage(
 )
 
 
+
 # SERVER ####
 server <- function(input, output, session) {
 
-  current_session <- reactiveVal(NULL)
-  current_session_fname <- reactiveVal('')
-  current_session_idx <- reactiveVal(0)
-  textLog <- reactiveVal("")
+  current_session <- reactiveVal(NULL) # a seqNRdisplaySession Object for current session
+  current_session_fname <- reactiveVal('') # filename to prevent reloading
+  current_session_idx <- reactiveVal(0) # index to be able to address dynamic UI elements 
+  textLog <- reactiveVal("") # reactive text log
+
+
 
   # reactive track selection tree display ####
   ## from list x creates nested node list for tree where all nodes are selected
@@ -916,7 +915,6 @@ server <- function(input, output, session) {
     }
   }
 
-
   ## nested list of selected nodes from shinyTree t
   get_selected_tree <- function(t) {
     sel_t <- t
@@ -936,6 +934,19 @@ server <- function(input, output, session) {
     }
   }
 
+  ## get samples selected in the tree
+  get_selected_samples <- function(){
+    tree <- input[['tree']]
+    #ups the tree cannot be selected without first being shown
+    # a decision made in shinyTree package we use for the tree
+    if ( is.null(tree) ) {
+      current_session()$samples
+    } else {
+      get_selected_tree(tree)
+    }
+  }
+
+  # responsive elements show/hide behavior ####
   observe({
     toggle(id = "header_name_div", condition = input$header_name)
   })
@@ -1033,12 +1044,14 @@ server <- function(input, output, session) {
   })
 
 
+
+  # update session UI to loaded template ####
   # set all values in ui elements to the ones from a seqNdisplayR session (imported excel)
   update_ui_to_session = function(seqNdisplayR_session) {
     prev_session_idx <- current_session_idx() - 1
     dataset_names = names(seqNdisplayR_session$samples)
 
-    #global options
+    # global options ####
     global_options = options_table[options_table$option_group == 'global',]
     for ( i in 1:nrow(global_options) ) {
       opt_line = global_options[i,]
@@ -1140,6 +1153,8 @@ server <- function(input, output, session) {
       }
     }
 
+
+    # tree ####
     output$tree <- shinyTree::renderTree( {
       whichSamples <- lapply(seqNdisplayR_session$parameters, function(p) p$whichSamples)
       names(whichSamples) <- names(seqNdisplayR_session$parameters)
@@ -1148,7 +1163,7 @@ server <- function(input, output, session) {
     } )
 
 
-    #dataset-specific options
+    # dataset-specific options ####
     dataset_options = options_table[options_table$option_group == 'dataset_option',]
     for ( i in 1:nrow(dataset_options) ) {
       opt_line = dataset_options[i,]
@@ -1264,9 +1279,8 @@ server <- function(input, output, session) {
     }
 
 
-    #### panels horizontal special case of expandable option upon enable
-
-    #remove previous existing checkboxGroups
+    # panels horizontal special case of expandable option upon enable ####
+    ## remove previous existing checkboxGroups
     shiny_elems = grep(paste0('panel_horizontal_XvalueX', prev_session_idx, '_'), names(input), value=TRUE)
     if (length(shiny_elems) > 0){
       for ( elem in shiny_elems ) {
@@ -1300,17 +1314,23 @@ server <- function(input, output, session) {
       )
     }
 
-    ##@ ->
-    #### panels fonts easy special case of expandable option upon enable
-    shiny_elems = grep(paste0('panel_font_easy_boxes_XvalueX', prev_session_idx), names(input), value=TRUE)
-    if (length(shiny_elems) > 0){
-      for ( elem in shiny_elems ) {
-        cat(elem, '\n') #@cat
-        removeUI(selector = paste0('#', elem))
-        shinyjs::runjs(paste0("Shiny.onInputChange(", elem, ", null)"))
-      }
-      #@removeUI(selector = '#panel_font_easy_boxes')
-    }
+    
+    # panels fonts easy special case of expandable option upon enable ####
+    ##@ ->this version of removeUI is defunct?? can be removed??
+    # shiny_elems = grep(paste0('panel_font_easy_boxes_XvalueX', prev_session_idx), names(input), value=TRUE)
+    # if (length(shiny_elems) > 0){
+    #   for ( elem in shiny_elems ) {
+    #     cat(elem, '\n') #@cat
+    #     removeUI(selector = paste0('#', elem))
+    #     shinyjs::runjs(paste0("Shiny.onInputChange(", elem, ", null)"))
+    #   }
+    #   #@removeUI(selector = '#panel_font_easy_boxes')
+    # }##@ <-
+    ##@ -> replace with this:
+    if( current_session_idx() > 1){
+      removeUI(selector = paste0("#panel_font_easy_boxes_container", current_session_idx()-1))
+      shinyjs::runjs(paste0("Shiny.onInputChange(#panel_font_easy_boxes_container", current_session_idx()-1, ", null)"))
+    }##@ <-
 
     dataset_group_depths = sapply(rev(dataset_names), function(name) ListDepth(seqNdisplayR_session$samples[[name]]) + 1)
     dataset_group_depth = max(dataset_group_depths)
@@ -1331,15 +1351,10 @@ server <- function(input, output, session) {
     step = 1
     dataset_id = paste0('panel_font_easy_boxes_XvalueX', current_session_idx()) #@ tags$div(id = dataset_id,
   
-    ##@ <- Latest fix for panel_font_easy:
-    if( current_session_idx() > 1){
-      removeUI(selector = paste0("#panel_font_easy_boxes_elements", current_session_idx()-1))
-      shinyjs::runjs(paste0("Shiny.onInputChange(#panel_font_easy_boxes_elements", current_session_idx()-1, ", null)"))
-    }
-
-    insertUI(selector = '#panel_font_easy_boxes_anchor',  #ups: not sure we need the anchor element
+    ##@ <- Latest fix for panel_font_easy UI element insertion:
+    insertUI(selector = '#panel_font_easy_boxes',
              where = "afterEnd",
-             ui = tags$div(id=paste0('panel_font_easy_boxes_elements',current_session_idx()),
+             ui = tags$div(id=paste0('panel_font_easy_boxes_container',current_session_idx()),
                       do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_sliders, dataset_id, levels, vals, optima, step),  #@ 'panel_font_easy'
                                                      list(cellWidths=as.list(cellwidths)),
                                                      list(width=list('500px')))))
@@ -1348,6 +1363,7 @@ server <- function(input, output, session) {
 
     ##@ ->
     #### panel font size list special case of expandable option upon enable
+    
     optimaNvals = as.numeric(strsplit(as.character(global_options[which(global_options$option_name=='panel_font_size_list'),'option_options']), split=';')[[1]])
     optima = optimaNvals[1:2]
     max_levels = max(dataset_group_depth) + 1
@@ -1357,6 +1373,36 @@ server <- function(input, output, session) {
     width_unit = 1/(length(cellspacers)+4*length(boxes))
     cellwidths[cellspacers] = paste0(100*width_unit, '%')
     cellwidths[boxes] = paste0(400*width_unit, '%')
+    
+    ## the headers for each column
+    ### remove from previous session
+    if( current_session_idx() > 1){
+      removeUI(selector = paste0("#panel_font_boxes_header_container", current_session_idx()-1))
+      shinyjs::runjs(paste0("Shiny.onInputChange(#panel_font_boxes_header_container", current_session_idx()-1, ", null)"))
+    }
+    
+    ### add new
+    dataset_group_depth = max(dataset_group_depths)
+    levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
+    slider_cells = which(seq_along(cellwidths) %% 2==1)
+    insertUI(
+      selector = '#panel_font_boxes_headers',
+      where = "afterEnd",
+      ui = tags$div(id=paste0('panel_font_boxes_header_container',current_session_idx()),
+                    do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_headers, slider_cells, levels),
+                                                       list(cellWidths=as.list(cellwidths)),
+                                                       list(width=list('500px')))))
+    )
+    
+    ## the individual rows of sliders
+    ### remove from previous session
+    if( current_session_idx() > 1){
+      removeUI(selector = paste0("#panel_font_boxes_container", current_session_idx()-1))
+      shinyjs::runjs(paste0("Shiny.onInputChange(#panel_font_boxes_container", current_session_idx()-1, ", null)"))
+    }
+    
+    ### build the new ones
+    elems_to_add <- list()
     for ( name in rev(dataset_names) ) {
       dataset_group_depth = dataset_group_depths[[name]]
       levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
@@ -1376,52 +1422,43 @@ server <- function(input, output, session) {
         slider_cells = slider_cells[c(1, rev(rev(1:max_levels)[seq_along(length(levels)-1)]))]
       }
       step = 1 #@
-      if( current_session_idx() > 1){
-        for(i in 1:10){
-          #since we don't remember how many boxes there are, no easy way to check but definitely no more than 10 levels
-          removeUI(selector = paste0("#panel_font_boxes_elements", current_session_idx()-1))
-          shinyjs::runjs(paste0("Shiny.onInputChange(#panel_font_boxes_elements", current_session_idx()-1, ", null)"))
-        }
-      }
-
-      insertUI(selector = '#panel_font_boxes_anchor',  #ups: not sure we need the anchor element
-               where = "afterEnd",
-               ui = tags$div(id=paste0('panel_font_boxes_elements',current_session_idx()),
-                             do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_sliders_panels, paste0('panel_font_', name), slider_cells, name, vals, optima, step),
-                                                                list(cellWidths=as.list(cellwidths)),
-                                                                list(width=list('500px')))))
-      )
-
-      # insertUI(
-      #   selector = '#panel_font_boxes',
-      #   where = "afterEnd",
-      #   ui = do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_sliders_panels, paste0('panel_font_', name), slider_cells, name, vals, optima, step),
-      #                                           list(cellWidths=as.list(cellwidths)),
-      #                                           list(width=list('500px'))))
+      # if( current_session_idx() > 1){
+      #   for(i in 1:10){ ##because we are inside a for loop, but earlier session may have more elements in the for loop !! & divs are not in names(input)
+      #     #since we don't remember how many boxes there are, no easy way to check but definitely no more than 10 levels
+      #     removeUI(selector = paste0("#panel_font_boxes_container", current_session_idx()-1))
+      #     shinyjs::runjs(paste0("Shiny.onInputChange(#panel_font_boxes_container", current_session_idx()-1, ", null)"))
+      #   }
+      # }
+      # 
+      # insertUI(selector = '#panel_font_boxes',
+      #          where = "afterEnd",
+      #          ui = tags$div(id=paste0('panel_font_boxes_container',current_session_idx()),
+      #                        do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_sliders_panels, paste0('panel_font_', name), slider_cells, name, vals, optima, step),
+      #                                                           list(cellWidths=as.list(cellwidths)),
+      #                                                           list(width=list('500px')))))
       # )
-    }
-    if( current_session_idx() > 1){
-      removeUI(selector = paste0("#panel_font_boxes_header_elements", current_session_idx()-1))
-      shinyjs::runjs(paste0("Shiny.onInputChange(#panel_font_boxes_header_elements", current_session_idx()-1, ", null)"))
-    }
-    
-    dataset_group_depth = max(dataset_group_depths)
-    levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
-    slider_cells = which(seq_along(cellwidths) %% 2==1)
-    insertUI(
-      selector = '#panel_font_boxes_headers_anchor',
-      where = "afterEnd",
-      ui = tags$div(id=paste0('panel_font_boxes_header_elements',current_session_idx()),
-                    do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_headers, slider_cells, levels),
-                                              list(cellWidths=as.list(cellwidths)),
-                                              list(width=list('500px')))))
-    )
+      # 
+      elems_to_add <- c(elems_to_add, do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_sliders_panels, paste0('panel_font_', name), slider_cells, name, vals, optima, step),
+                                                                         list(cellWidths=as.list(cellwidths)),
+                                                                         list(width=list('500px')))))
 
-    
+    }
+    ### add the new ones
+    insertUI(selector = '#panel_font_boxes',
+             where = "afterEnd",
+             ui = tags$div(id=paste0('panel_font_boxes_container',current_session_idx()),
+                           elems_to_add)
+    )
     ##@ <-
 
     ##@ -> ##@@4 ->
-    #### force scale special case of expandable option upon enable
+    ## force scale special case of expandable option upon enable
+    ### remove the old container
+    if(current_session_idx() > 1){
+      removeUI(selector = paste0('#manual_scales_boxes_container', current_session_idx()-1))
+      shinyjs::runjs(paste0("Shiny.onInputChange(#manual_scales_boxes_container", current_session_idx()-1, " null)"))
+    }
+    ### collect general layout options
     optimaNvals = as.numeric(strsplit(as.character(dataset_options[which(dataset_options$option_name=='force_scale'),'option_options']), split=';')[[1]])
     optima = optimaNvals[1:2]
     start_val = ifelse(length(optimaNvals)==3, vals[3], mean(optimaNvals))
@@ -1434,6 +1471,8 @@ server <- function(input, output, session) {
     cellwidths[boxes] = paste0(400*width_unit, '%')
     step = 1
 
+    ### build the new ones
+    elems_to_add <- list()
     for ( name in rev(dataset_names) ) {
       levels = names(seqNdisplayR_session[['bigwigs']])[sapply(names(seqNdisplayR_session[['bigwigs']]), function(.strand) (name %in% names(seqNdisplayR_session[['bigwigs']][[.strand]])))]
       if (is.null(seqNdisplayR_session[['force_scale']])){
@@ -1448,21 +1487,25 @@ server <- function(input, output, session) {
       if (length(vals) < max_levels){
         input_cells = input_cells[1] #@ [c(1, rev(rev(1:max_levels)[seq_along(length(levels)-1)]))]
       }
-      if(current_session_idx() > 1){
-        for(i in 1:10){
-          removeUI(selector = paste0('#manual_scales_boxes_elements', current_session_idx()-1))
-          shinyjs::runjs(paste0("Shiny.onInputChange(#manual_scales_boxes_elements", current_session_idx()-1, " null)"))
-        }
-              }
-      insertUI(
-        selector = '#manual_scales_boxes_anchor',
-        where = "afterEnd",
-        ui = tags$div(id=paste0('manual_scales_boxes_elements', current_session_idx()),
-                      do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_numeric_input2, paste0(dataset_options[which(dataset_options$option_name=='force_scale'),'shiny_varname'], '_', current_session_idx(), '_', name), input_cells, paste(name, paste0('(', levels, ')'), sep = ' '), vals, optima, step),  #@ added " '_', current_session_idx(), "
-                                                list(cellWidths=as.list(cellwidths)),
-                                                list(width=list('500px')))))
-      )
+      # insertUI(
+      #   selector = '#manual_scales_boxes',
+      #   where = "afterEnd",
+      #   ui = tags$div(id=paste0('manual_scales_boxes_container', current_session_idx()),
+      #                 do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_numeric_input2, paste0(dataset_options[which(dataset_options$option_name=='force_scale'),'shiny_varname'], '_', current_session_idx(), '_', name), input_cells, paste(name, paste0('(', levels, ')'), sep = ' '), vals, optima, step),  #@ added " '_', current_session_idx(), "
+      #                                           list(cellWidths=as.list(cellwidths)),
+      #                                           list(width=list('500px')))))
+      # )
+      elems_to_add <- c(elems_to_add, do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_numeric_input2, paste0(dataset_options[which(dataset_options$option_name=='force_scale'),'shiny_varname'], '_', current_session_idx(), '_', name), input_cells, paste(name, paste0('(', levels, ')'), sep = ' '), vals, optima, step),  #@ added " '_', current_session_idx(), "
+                                                                         list(cellWidths=as.list(cellwidths)),
+                                                                         list(width=list('500px')))))
     }
+    ### add the new ones
+    insertUI(
+      selector = '#manual_scales_boxes',
+      where = "afterEnd",
+      ui = tags$div(id=paste0('manual_scales_boxes_container', current_session_idx()),
+                    elems_to_add)
+    )
     ##@ <- ##@@4 <-
 
     #### annotation options specific to each annotation
@@ -1566,19 +1609,6 @@ server <- function(input, output, session) {
 
 
 
-  get_selected_samples <- function(){
-    tree <- input[['tree']]
-    #ups the tree cannot be selected without first being shown
-    # a decision made in shinyTree package we use for the tree
-    if ( is.null(tree) ) {
-      current_session()$samples
-    } else {
-      get_selected_tree(tree)
-    }
-  }#)
-
-
-
   # reactive excel or igv template load ####
   load_template <- reactive({
     filename <- input$input_file$name
@@ -1634,7 +1664,8 @@ server <- function(input, output, session) {
   )
 
 
-  #status message for import
+
+  # status message for import ####
   # Note: this also ensures that the session is loaded automatically!
   output$File_import_msg <- renderText(
     if( !is.null(load_template()) ) {
@@ -1651,7 +1682,7 @@ server <- function(input, output, session) {
 
 
 
-  # feature and locus retrieval
+  # feature and locus retrieval ####
   get_feature <- reactive(input$gene)
 
   get_locus <- reactive({
@@ -1802,6 +1833,8 @@ server <- function(input, output, session) {
 
   })
 
+
+
   # get dataset options from shiny ####
   get_shiny_dataset_options <- reactive({
     opts <- options_table$option_name[options_table$option_group == 'dataset_option']
@@ -1866,6 +1899,7 @@ server <- function(input, output, session) {
   })
 
 
+
   # get annotation options from shiny ####
   get_shiny_annotation_options <- reactive({
     opts <- options_table$option_name[options_table$option_group == 'annotation_option']
@@ -1925,6 +1959,7 @@ server <- function(input, output, session) {
 
 
 
+  # build session from shiny elements ####
   seqNdisplayR_session <- reactive({
     template_session <- load_template()
     if (length(template_session$annots) == 0) {
@@ -1976,8 +2011,7 @@ server <- function(input, output, session) {
 
 
 
-
-  #create plot when hitting plot button
+  # create plot when hitting plot button ####
   observeEvent(input$plot,
                {
                  if (is.null(input$input_file)) {
@@ -2005,7 +2039,8 @@ server <- function(input, output, session) {
                  })
 
 
-  ## save to pdf --> when hitting save button
+
+  # save to pdf --> when hitting save button ####
   output$save_pdf <- downloadHandler(
     filename = function() {
       feature <- get_feature()
@@ -2050,7 +2085,7 @@ server <- function(input, output, session) {
 
 
 
-  ## save settings to excel file --> when hitting save button
+  # save settings to excel file --> when hitting save button ####
   output$save_settings <- downloadHandler(
     filename = function() {
       paste0("seqNdisplayRsession", Sys.Date(), ".xlsx")
@@ -2066,6 +2101,8 @@ server <- function(input, output, session) {
   )
 
 
+
+  # Various information buttons for debugging ####
   # TO DO: remove debugging buttons
   observeEvent(input$show_settings, {
     shiny_session_global_options <- get_shiny_global_options()
@@ -2107,13 +2144,15 @@ server <- function(input, output, session) {
     })
   })
 
-
   observeEvent(input$which_samples, {
     output$console  <- renderPrint({
       get_selected_samples()
     })
   })
 
+
+
+  # Convenience buttons for shiny control #### 
   observeEvent(input$clean_console, {
     output$console = renderText('')
   })
