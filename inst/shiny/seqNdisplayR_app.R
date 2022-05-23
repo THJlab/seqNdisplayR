@@ -1397,13 +1397,14 @@ server <- function(input, output, session) {
     ## the individual rows of sliders
     ### remove from previous session
     if( current_session_idx() > 1){
-      removeUI(selector = paste0("#panel_font_boxes_container", current_session_idx()-1))
-      shinyjs::runjs(paste0("Shiny.onInputChange(#panel_font_boxes_container", current_session_idx()-1, ", null)"))
+      for(i in 1:10){ #ups: rough since we at the moment don't keep track how many levels of divs there are to remove
+        removeUI(selector = paste0("#panel_font_boxes_container", current_session_idx()-1))
+        shinyjs::runjs(paste0("Shiny.onInputChange(#panel_font_boxes_container", current_session_idx()-1, ", null)"))
+      }
     }
     
     ### build the new ones
-    elems_to_add <- list()
-    for ( name in rev(dataset_names) ) {
+    for ( name in dataset_names ) { #@ rev(dataset_names)
       dataset_group_depth = dataset_group_depths[[name]]
       levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
       if (is.null(seqNdisplayR_session$panel_font_size_list) & is.null(seqNdisplayR_session$panel_font_sizes)){
@@ -1422,41 +1423,26 @@ server <- function(input, output, session) {
         slider_cells = slider_cells[c(1, rev(rev(1:max_levels)[seq_along(length(levels)-1)]))]
       }
       step = 1 #@
-      # if( current_session_idx() > 1){
-      #   for(i in 1:10){ ##because we are inside a for loop, but earlier session may have more elements in the for loop !! & divs are not in names(input)
-      #     #since we don't remember how many boxes there are, no easy way to check but definitely no more than 10 levels
-      #     removeUI(selector = paste0("#panel_font_boxes_container", current_session_idx()-1))
-      #     shinyjs::runjs(paste0("Shiny.onInputChange(#panel_font_boxes_container", current_session_idx()-1, ", null)"))
-      #   }
-      # }
-      # 
-      # insertUI(selector = '#panel_font_boxes',
-      #          where = "afterEnd",
-      #          ui = tags$div(id=paste0('panel_font_boxes_container',current_session_idx()),
-      #                        do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_sliders_panels, paste0('panel_font_', name), slider_cells, name, vals, optima, step),
-      #                                                           list(cellWidths=as.list(cellwidths)),
-      #                                                           list(width=list('500px')))))
-      # )
-      # 
-      elems_to_add <- c(elems_to_add, do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_sliders_panels, paste0('panel_font_', name), slider_cells, name, vals, optima, step),
-                                                                         list(cellWidths=as.list(cellwidths)),
-                                                                         list(width=list('500px')))))
 
+      insertUI(selector = '#panel_font_boxes',
+               where = "afterEnd",
+               ui = tags$div(id=paste0('panel_font_boxes_container',current_session_idx()),
+                             do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_sliders_panels, paste0('panel_font_', name), slider_cells, name, vals, optima, step),
+                                                                list(cellWidths=as.list(cellwidths)),
+                                                                list(width=list('500px')))))
+      )
     }
-    ### add the new ones
-    insertUI(selector = '#panel_font_boxes',
-             where = "afterEnd",
-             ui = tags$div(id=paste0('panel_font_boxes_container',current_session_idx()),
-                           elems_to_add)
-    )
-    ##@ <-
 
+    ##@ <-
     ##@ -> ##@@4 ->
     ## force scale special case of expandable option upon enable
     ### remove the old container
     if(current_session_idx() > 1){
-      removeUI(selector = paste0('#manual_scales_boxes_container', current_session_idx()-1))
-      shinyjs::runjs(paste0("Shiny.onInputChange(#manual_scales_boxes_container", current_session_idx()-1, " null)"))
+      for(i in 1:10){
+        removeUI(selector = paste0('#manual_scales_boxes_container', current_session_idx()-1))
+        shinyjs::runjs(paste0("Shiny.onInputChange(#manual_scales_boxes_container", current_session_idx()-1, " null)"))
+        
+      }
     }
     ### collect general layout options
     optimaNvals = as.numeric(strsplit(as.character(dataset_options[which(dataset_options$option_name=='force_scale'),'option_options']), split=';')[[1]])
@@ -1472,8 +1458,7 @@ server <- function(input, output, session) {
     step = 1
 
     ### build the new ones
-    elems_to_add <- list()
-    for ( name in rev(dataset_names) ) {
+    for ( name in dataset_names ) { #@rev(dataset_names)
       levels = names(seqNdisplayR_session[['bigwigs']])[sapply(names(seqNdisplayR_session[['bigwigs']]), function(.strand) (name %in% names(seqNdisplayR_session[['bigwigs']][[.strand]])))]
       if (is.null(seqNdisplayR_session[['force_scale']])){
         vals = rep(-1, length(levels))
@@ -1487,25 +1472,15 @@ server <- function(input, output, session) {
       if (length(vals) < max_levels){
         input_cells = input_cells[1] #@ [c(1, rev(rev(1:max_levels)[seq_along(length(levels)-1)]))]
       }
-      # insertUI(
-      #   selector = '#manual_scales_boxes',
-      #   where = "afterEnd",
-      #   ui = tags$div(id=paste0('manual_scales_boxes_container', current_session_idx()),
-      #                 do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_numeric_input2, paste0(dataset_options[which(dataset_options$option_name=='force_scale'),'shiny_varname'], '_', current_session_idx(), '_', name), input_cells, paste(name, paste0('(', levels, ')'), sep = ' '), vals, optima, step),  #@ added " '_', current_session_idx(), "
-      #                                           list(cellWidths=as.list(cellwidths)),
-      #                                           list(width=list('500px')))))
-      # )
-      elems_to_add <- c(elems_to_add, do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_numeric_input2, paste0(dataset_options[which(dataset_options$option_name=='force_scale'),'shiny_varname'], '_', current_session_idx(), '_', name), input_cells, paste(name, paste0('(', levels, ')'), sep = ' '), vals, optima, step),  #@ added " '_', current_session_idx(), "
-                                                                         list(cellWidths=as.list(cellwidths)),
-                                                                         list(width=list('500px')))))
+      insertUI(
+        selector = '#manual_scales_boxes',
+        where = "afterEnd",
+        ui = tags$div(id=paste0('manual_scales_boxes_container', current_session_idx()),
+                      do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_numeric_input2, paste0(dataset_options[which(dataset_options$option_name=='force_scale'),'shiny_varname'], '_', current_session_idx(), '_', name), input_cells, paste(name, paste0('(', levels, ')'), sep = ' '), vals, optima, step),  #@ added " '_', current_session_idx(), "
+                                                list(cellWidths=as.list(cellwidths)),
+                                                list(width=list('500px')))))
+      )
     }
-    ### add the new ones
-    insertUI(
-      selector = '#manual_scales_boxes',
-      where = "afterEnd",
-      ui = tags$div(id=paste0('manual_scales_boxes_container', current_session_idx()),
-                    elems_to_add)
-    )
     ##@ <- ##@@4 <-
 
     #### annotation options specific to each annotation
@@ -1804,13 +1779,16 @@ server <- function(input, output, session) {
             if (value){
               value = list()
               shiny_chkbxgrps <- names(input)[grepl(paste0('panel_horizontal_XvalueX', current_session_idx(), '_'), names(input))]
+              cat('horizontal_panels_list', '\n') #@cat
               for (elem in shiny_chkbxgrps) {
                 dataset_name = sub(paste0('panel_horizontal_XvalueX', current_session_idx(), '_'), '', elem)
                 dataset_group_depth = ListDepth(current_session()$samples[[dataset_name]]) + 1
                 available_levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
                 checked_levels = input[[elem]]
                 value[[dataset_name]] = (available_levels %in% checked_levels)
+                cat(paste0(dataset_name, ':', value[[dataset_name]]), '\n') #@cat
               }
+              cat('\n') #@cat
             }else{
               value = NULL #@ list(NULL)
             }
@@ -1887,7 +1865,7 @@ server <- function(input, output, session) {
 
     names(l) <- opts
     #@ ->
-    cat('dataset', '\n')
+    cat('dataset options', '\n')
     for (lname in names(l)){
       cat(lname, '\n')
       v = l[[lname]]
