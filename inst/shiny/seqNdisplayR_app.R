@@ -1,15 +1,12 @@
-
-##??@MS: is it necessary to load these libraries here?
-
-library(shiny)
-library(shinyBS)
-library(shinyjs)
-library(spsComps)
-library(seqNdisplayR)
-library(shinyTree)
-library(dplyr)
-library(shinybusy)
-library(colourpicker)
+# library(shiny)
+# library(shinyBS)
+# library(shinyjs)
+# library(spsComps)
+# library(seqNdisplayR)
+# library(shinyTree)
+# library(dplyr)
+# library(shinybusy)
+# library(colourpicker)
 
 
 share <- list(title = "{seqNdisplayR} package",
@@ -18,8 +15,8 @@ share <- list(title = "{seqNdisplayR} package",
 options(shinyTree.setState = TRUE)
 options(shinyTree.refresh  = TRUE)
 
-options_table <- readxl::read_excel(system.file('extdata', 'variable_defaults_and_help.xlsx', package='seqNdisplayR'), sheet='Shiny_Args')
-#options_table <- readxl::read_excel('../extdata/variable_defaults_and_help.xlsx', sheet='Shiny_Args')
+options_table <- readxl::read_excel(system.file('shiny', 'variable_defaults_and_help.xlsx', package='seqNdisplayR'), sheet='Shiny_Args')
+
 
 ##### functions for split input values
 split_sliders = function(n, varname, suboptions, vals, optima, step){
@@ -191,9 +188,9 @@ create_input_element <- function(option) {
           ),
           tags$div(id = div_id,
                    tags$div(id=option_par$shiny_varname,
-                            colourpicker::colourInput(option_par$shiny_varname, #@ paste0(option_par$shiny_varname,'XvalueX')
+                            colourpicker::colourInput(inputId=paste0('xyz_', option_par$shiny_varname), #@ option_par$shiny_varname
                                                       label='all samples',
-                                                      value = option_par$option_default,
+                                                      value = ifelse(option_par$option_default=='NULL', 'white', option_par$option_default), #@ option_par$option_default
                                                       allowTransparent = TRUE,
                                                       returnName = TRUE,
                                                       closeOnClick = TRUE))),
@@ -218,7 +215,7 @@ create_input_element <- function(option) {
             ),
             tags$div(id = div_id,
                      tags$div(id=option_par$shiny_varname,
-                              sliderInput(option_par$shiny_varname, #@ paste0(option_par$shiny_varname,'XvalueX')
+                              sliderInput(option_par$shiny_varname,
                                  label='all samples',
                                  value = start_val,
                                  min = min_val,
@@ -237,7 +234,7 @@ create_input_element <- function(option) {
             ),
             tags$div(id = div_id,
                      tags$div(id=option_par$shiny_varname,
-                              numericInput(option_par$shiny_varname, #@ paste0(option_par$shiny_varname,'XvalueX')
+                              numericInput(option_par$shiny_varname, 
                                           label='all samples',
                                           value = start_val,
                                           min = min_val,
@@ -501,7 +498,7 @@ ui <- fluidPage(
   #shinyjs::extendShinyjs(text = "shinyjs.refresh = function() { location.reload(); }"),
   shinybusy::use_busy_spinner(spin = "fading-circle"),
   tags$style(HTML(".shiny-split-layout>div {overflow: visible}")),  #@ this line allows the color widgets to be displayed "in front"
-
+  #tags$style(HTML(".shiny-input-container>div {background-color: white}")),  #@ this line allows
   # HEADER ####
   titlePanel( h1("seq'N'display'R", align = "left") ),
   h3( "A Tool for Customizable and Reproducible Plotting of Sequencing Coverage Data", align='left' ),
@@ -562,6 +559,8 @@ ui <- fluidPage(
       tags$p("3. select to draw the plot, save as pdf or save current settings to excel on the left"),
       tags$p(em("A convenient website to easily design pleasing color palettes, with colorblind friendly options can be found "), a("here", href="https://coolors.co/"), em('or'), a("here", href="https://medialab.github.io/iwanthue/")),
       tags$p(strong("Optional arguments marked with [*] should be used with caution - only recommended for experienced users! Consult the vignette for more details.")),
+      tags$p(),
+      tags$p("Example", strong(em("Sample Sheets")), "are in", ExamplesSampleSheetsFolder()),
       verbatimTextOutput("console"))
   ),
   tags$br(),
@@ -1405,7 +1404,7 @@ server <- function(input, output, session) {
     }
     
     ### build the new ones
-    for ( name in dataset_names ) { #@ rev(dataset_names)
+    for ( name in rev(dataset_names) ) { #@ rev(dataset_names)
       dataset_group_depth = dataset_group_depths[[name]]
       levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
       if (is.null(seqNdisplayR_session$panel_font_size_list) & is.null(seqNdisplayR_session$panel_font_sizes)){
@@ -1442,7 +1441,6 @@ server <- function(input, output, session) {
       for(i in 1:10){
         removeUI(selector = paste0('#manual_scales_boxes_container', current_session_idx()-1))
         shinyjs::runjs(paste0("Shiny.onInputChange(#manual_scales_boxes_container", current_session_idx()-1, " null)"))
-        
       }
     }
     ### collect general layout options
@@ -1459,7 +1457,7 @@ server <- function(input, output, session) {
     step = 1
 
     ### build the new ones
-    for ( name in dataset_names ) { #@rev(dataset_names)
+    for ( name in rev(dataset_names) ) { #@rev(dataset_names)
       levels = names(seqNdisplayR_session[['bigwigs']])[sapply(names(seqNdisplayR_session[['bigwigs']]), function(.strand) (name %in% names(seqNdisplayR_session[['bigwigs']][[.strand]])))]
       if (is.null(seqNdisplayR_session[['force_scale']])){
         vals = rep(-1, length(levels))
@@ -1513,13 +1511,18 @@ server <- function(input, output, session) {
 
         shiny_elems <- grep(paste0(anchor_elem, '_XvalueX', prev_session_idx, '_'), names(input), value=TRUE)
 
+        # if (anchor_elem == "which_annot_colors"){
+        #   cat(shiny_elems, '\n')
+        # }
+        # 
         if ( length(shiny_elems) != 0 ) {
           for ( elem in shiny_elems ) {
+              if (grepl("^xyz_", elem)){
+                elem = sub("^xyz_", "", elem)
+              }
               removeUI(selector = paste0('#', elem))
           }
         }
-
-
 
         ##insert one text input per annotation name
         for ( name in rev(names(opts)) ) {
@@ -1537,22 +1540,20 @@ server <- function(input, output, session) {
                 )
               )
           } else if ( opt_line$option_class == 'color' ) {
-            cat(deparse_option(opts[[name]]), '\n')
+            #cat(deparse_option(opts[[name]]), '\n') #@cat
             val = ifelse(deparse_option(opts[[name]])=='NULL', 'white', deparse_option(opts[[name]]))
-            cat(val, '\n')
-            
+            #@cat(val, '\n')
             insertUI(
               selector = paste0('#', anchor_elem), ##TODO: check style of anchor
               where = "afterEnd",
               ui = tags$div(id=annot_id,
                             colourpicker::colourInput(
-                              inputId = annot_id,
+                              inputId = paste0('xyz_',annot_id), 
                               label = name,
                               value = val,
                               allowTransparent = TRUE,
                               returnName = TRUE,
-                              closeOnClick = TRUE)
-              )
+                              closeOnClick = TRUE))
             )
           } else if ( opt_line$option_class == 'numeric' ) {
             insertUI(
@@ -1578,7 +1579,9 @@ server <- function(input, output, session) {
           }
         }
         #remove the anchor
+        #if ( opt_line$option_class != 'color' ){ #@
         shinyjs::hide(id = anchor_elem)
+        #}  #@
       }
     }
 
@@ -1781,16 +1784,16 @@ server <- function(input, output, session) {
             if (value){
               value = list()
               shiny_chkbxgrps <- names(input)[grepl(paste0('panel_horizontal_XvalueX', current_session_idx(), '_'), names(input))]
-              cat('horizontal_panels_list', '\n') #@cat
+              #cat('horizontal_panels_list', '\n') #@cat
               for (elem in shiny_chkbxgrps) {
                 dataset_name = sub(paste0('panel_horizontal_XvalueX', current_session_idx(), '_'), '', elem)
                 dataset_group_depth = ListDepth(current_session()$samples[[dataset_name]]) + 1
                 available_levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
                 checked_levels = input[[elem]]
                 value[[dataset_name]] = (available_levels %in% checked_levels)
-                cat(paste0(dataset_name, ':', value[[dataset_name]]), '\n') #@cat
+                #cat(paste0(dataset_name, ':', value[[dataset_name]]), '\n') #@cat
               }
-              cat('\n') #@cat
+              #cat('\n') #@cat
             }else{
               value = NULL #@ list(NULL)
             }
@@ -1867,13 +1870,13 @@ server <- function(input, output, session) {
 
     names(l) <- opts
     #@ ->
-    cat('dataset options', '\n')
-    for (lname in names(l)){
-      cat(lname, '\n')
-      v = l[[lname]]
-      cat(paste0(names(v), ':', v), '\n')
-    }
-    cat('\n')
+    # cat('dataset options', '\n')
+    # for (lname in names(l)){
+    #   cat(lname, '\n')
+    #   v = l[[lname]]
+    #   cat(paste0(names(v), ':', v), '\n')
+    # }
+    # cat('\n')
     #@ <-
     l
   })
@@ -1908,12 +1911,13 @@ server <- function(input, output, session) {
         #alt_names = as.character(sapply(anno_names, function(name) gsub('\\s+', 'YvalueY', name))) #@ colourInput does not take whitespace names apparantly
         res <- sapply(anno_names_NSC,
                       function(anno) {
-                        parse_option(input[[paste0(opt_line$shiny_varname, '_XvalueX', current_session_idx(), '_',anno)]])
+                        parse_option(input[[paste0('xyz_', opt_line$shiny_varname, '_XvalueX', current_session_idx(), '_',anno)]])
                       })
         names(res) <- anno_names
         if (any(res=='white')){
           res[res=='white'] = 'NULL'
         }
+        #@cat(unlist(res), '\n') #@cat
         res
       }else{
           res <- sapply(anno_names_NSC,
@@ -1927,12 +1931,12 @@ server <- function(input, output, session) {
 
     names(l) <- opts
     #@ ->
-    cat('annos', '\n')
-    for (lname in names(l)){
-      cat(lname, '\n')
-      v = l[[lname]]
-      cat(paste0(names(v), ':', v), '\n')
-    }
+    # cat('annos', '\n')
+    # for (lname in names(l)){
+    #   cat(lname, '\n')
+    #   v = l[[lname]]
+    #   cat(paste0(names(v), ':', v), '\n')
+    # }
     #@ <-
     l
   })
