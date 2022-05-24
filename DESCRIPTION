@@ -20,8 +20,7 @@ biocViews:
     Sequencing,
 	Annotation, 
 	GenomeAnnotation, 
-	Coverage,
-	Plot
+	Coverage
 Depends:
     R (>= 4.0),
     rtracklayer,
