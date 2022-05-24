@@ -550,6 +550,7 @@ ui <- fluidPage(
 
                      actionButton("reset", "Reset Session"),
                      actionButton("reload_app", "Reload Page"),
+                     actionButton("debug", "Custom Debug Info"),
                      shinyBS::bsTooltip(id = "reset", title = "Reset all options to values from the currently loaded template",
                                         placement = "right", trigger = "hover")
 
@@ -1539,8 +1540,9 @@ server <- function(input, output, session) {
             cat(deparse_option(opts[[name]]), '\n')
             val = ifelse(deparse_option(opts[[name]])=='NULL', 'white', deparse_option(opts[[name]]))
             cat(val, '\n')
+            
             insertUI(
-              selector = paste0('#', anchor_elem),
+              selector = paste0('#', anchor_elem), ##TODO: check style of anchor
               where = "afterEnd",
               ui = tags$div(id=annot_id,
                             colourpicker::colourInput(
@@ -2143,6 +2145,10 @@ server <- function(input, output, session) {
 
   observeEvent(input$reload_app, {
     refresh()
+  })
+  
+  observeEvent(input$debug, {
+    output$console  <- renderPrint(current_session()$annot_panel_color)
   })
   
 }
