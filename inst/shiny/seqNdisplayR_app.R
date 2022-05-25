@@ -558,8 +558,7 @@ ui <- fluidPage(
       tags$p("3. select to draw the plot, save as pdf or save current settings to excel on the left"),
       tags$p(em("A convenient website to easily design pleasing color palettes, with colorblind friendly options can be found "), a("here", href="https://coolors.co/"), em('or'), a("here", href="https://medialab.github.io/iwanthue/")),
       tags$p(strong("Optional arguments marked with [*] should be used with caution - only recommended for experienced users! Consult the vignette for more details.")),
-      tags$p(),
-      #tags$style(HTML(".shiny-input-container>div {background-color: white}")),
+      tags$br(),
       tags$head(
         tags$style(type="text/css", "#examples_sample_sheets_folder {background-color: #BD583735}")),
       tags$div(id="examples_sample_sheets_folder", tags$p("Example", strong(em("Sample Sheets")), "are in", ExamplesSampleSheetsFolder())),
