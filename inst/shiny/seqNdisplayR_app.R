@@ -498,7 +498,6 @@ ui <- fluidPage(
   #shinyjs::extendShinyjs(text = "shinyjs.refresh = function() { location.reload(); }"),
   shinybusy::use_busy_spinner(spin = "fading-circle"),
   tags$style(HTML(".shiny-split-layout>div {overflow: visible}")),  #@ this line allows the color widgets to be displayed "in front"
-  #tags$style(HTML(".shiny-input-container>div {background-color: white}")),  #@ this line allows
   # HEADER ####
   titlePanel( h1("seq'N'display'R", align = "left") ),
   h3( "A Tool for Customizable and Reproducible Plotting of Sequencing Coverage Data", align='left' ),
@@ -560,7 +559,11 @@ ui <- fluidPage(
       tags$p(em("A convenient website to easily design pleasing color palettes, with colorblind friendly options can be found "), a("here", href="https://coolors.co/"), em('or'), a("here", href="https://medialab.github.io/iwanthue/")),
       tags$p(strong("Optional arguments marked with [*] should be used with caution - only recommended for experienced users! Consult the vignette for more details.")),
       tags$p(),
-      tags$p("Example", strong(em("Sample Sheets")), "are in", ExamplesSampleSheetsFolder()),
+      #tags$style(HTML(".shiny-input-container>div {background-color: white}")),
+      tags$head(
+        tags$style(type="text/css", "#examples_sample_sheets_folder {background-color: #BD583735}")),
+      tags$div(id="examples_sample_sheets_folder", tags$p("Example", strong(em("Sample Sheets")), "are in", ExamplesSampleSheetsFolder())),
+      #tags$p("Example", strong(em("Sample Sheets")), "are in", ExamplesSampleSheetsFolder()),
       verbatimTextOutput("console"))
   ),
   tags$br(),
