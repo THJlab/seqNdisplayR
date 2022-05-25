@@ -500,3 +500,78 @@ session_to_df <-
   }
 
 
+
+#' run_seqNdisplayR_app
+#'
+#' run the shiny app
+#'
+#' @details 
+#'
+#' @return 
+#'
+#' @examples
+#'
+#' @export
+run_seqNdisplayR_app = function(){
+  libpath = .libPaths()
+  app = paste0(libpath, '/seqNdisplayR/shiny/seqNdisplayR_app.R')
+  shiny::runApp(app)
+}
+
+
+#' examples sample sheets folder
+#'
+#' @details 
+#'
+#' @return 
+#'
+#' @examples
+#'
+#' @export
+ExamplesSampleSheetsFolder = function(){
+  libpath = .libPaths()
+  samples_sheets_folders = paste0(libpath, '/seqNdisplayR/extdata/')
+  samples_sheets_folders
+}
+
+#' List examples sample sheets
+#'
+#' @details 
+#'
+#' @return 
+#'
+#' @examples
+#'
+#' @export
+ListExamplesSampleSheets = function(){
+  libpath = .libPaths()
+  samples_sheets_folders = paste0(libpath, '/seqNdisplayR/extdata/')
+  list.files(samples_sheets_folders)
+}
+
+#' path to sample sheets
+#'
+#' @details 
+#'
+#' @return 
+#'
+#' @examples
+#'
+#' @export
+PathToSampleSheets = function(sample_sheet=NULL){
+  libpath = .libPaths()
+  samples_sheets_folders = paste0(libpath, '/seqNdisplayR/extdata/')
+  sample_sheet_files = list.files(samples_sheets_folders)
+  if (is.null(sample_sheet)){
+    sample_sheet_files
+  }else if (sample_sheet %in% sample_sheet_files){
+    paste0(samples_sheets_folders, sample_sheet)
+  }else{
+    cat('the provided file name is not in the package data folder', '\n')
+    cat('choose between the following:', '\n')
+    sample_sheet_files
+  }
+}
+
+
+
