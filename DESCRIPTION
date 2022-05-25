@@ -10,7 +10,7 @@ Authors@R: c(
     person("Maria", "Gockert", email = "gockert@mbg.au.dk", role = "aut"),
     person("Torben", "Heick Jensen", email = "thj@mbg.au.dk", role = "aut"))
 Description: Produce pretty and reproducible genome coverage plots using highly customizable layout.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 biocViews: 
