@@ -1,14 +1,3 @@
-# library(shiny)
-# library(shinyBS)
-# library(shinyjs)
-# library(spsComps)
-# library(seqNdisplayR)
-# library(shinyTree)
-# library(dplyr)
-# library(shinybusy)
-# library(colourpicker)
-
-
 share <- list(title = "{seqNdisplayR} package",
               description = "A Tool for Customizable and Reproducible Plotting of Sequencing Coverage Data")
 
@@ -1843,10 +1832,18 @@ server <- function(input, output, session) {
           names(res) <- datasets
           res
         } else if(opt_line$option_class == 'special_argument') {
+          #@cat(opt, '\n') #@cat
+          #@cat(shiny_varname, '\n') #@cat
           if (input[[shiny_varname]]){
+            #@cat('TRUE', '\n') #@cat
             res = list()
-            shiny_grps = grep(paste0(shiny_varname, '_XvalueX',current_session_idx(), '_'), names(input), value=TRUE)
-            shiny_grps2 = as.data.frame(do.call('rbind', strsplit(sub(paste0(shiny_varname, '_XvalueX',current_session_idx(), '_'), '', shiny_grps), split='_subvar')))
+            shiny_grps = grep(paste0(shiny_varname, '_',current_session_idx(), '_'), names(input), value=TRUE)
+            #@shiny_grps = grep(paste0(shiny_varname, '_XvalueX',current_session_idx(), '_'), names(input), value=TRUE)
+            #@cat(shiny_grps, '\n') #@cat
+            #@shiny_grps1 = grep(paste0(shiny_varname), names(input), value=TRUE) #@'manual_scales_boxes_container'
+            #@cat(shiny_grps1, '\n') #@cat
+            #@shiny_grps2 = as.data.frame(do.call('rbind', strsplit(sub(paste0(shiny_varname, '_XvalueX',current_session_idx(), '_'), '', shiny_grps), split='_subvar')))
+            shiny_grps2 = as.data.frame(do.call('rbind', strsplit(sub(paste0(shiny_varname, '_',current_session_idx(), '_'), '', shiny_grps), split='_subvar')))
             shiny_grps2[,2] = as.integer(shiny_grps2[,2])
             for ( dataset_name in unique(shiny_grps2[,1]) ) {
               sub_shiny_grps = which(shiny_grps2[,1]==dataset_name)
@@ -1857,6 +1854,7 @@ server <- function(input, output, session) {
             }
             res = unlist(res)
           }else{
+            #@cat('FALSE', '\n') #@cat
             res = unlist(sapply(datasets, function(dataset) paste(c(NA, NA), collapse=',')))
           }
           res
