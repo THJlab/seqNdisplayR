@@ -1774,17 +1774,28 @@ server <- function(input, output, session) {
           }else if (opt=='horizontal_panels_list'){
             if (value){
               value = list()
-              shiny_chkbxgrps <- names(input)[grepl(paste0('panel_horizontal_XvalueX', current_session_idx(), '_'), names(input))]
-              #cat('horizontal_panels_list', '\n') #@cat
-              for (elem in shiny_chkbxgrps) {
-                dataset_name = sub(paste0('panel_horizontal_XvalueX', current_session_idx(), '_'), '', elem)
+              shiny_chkbxgrps = names(input)[grepl(paste0('panel_horizontal_XvalueX', current_session_idx(), '_'), names(input))]
+              cat('horizontal_panels_list', '\n') #@cat
+              cat(shiny_chkbxgrps, '\n') #@cat
+              for (dataset_name in names(current_session()$samples)) {
                 dataset_group_depth = ListDepth(current_session()$samples[[dataset_name]]) + 1
                 available_levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
+                alt_name = gsub('\\s+', 'YvalueY', dataset_name) #@
+                alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name) #@
+                elem = paste0('panel_horizontal_XvalueX', current_session_idx(), '_', alt_name)
                 checked_levels = input[[elem]]
                 value[[dataset_name]] = (available_levels %in% checked_levels)
-                #cat(paste0(dataset_name, ':', value[[dataset_name]]), '\n') #@cat
+                cat(paste0(dataset_name, ':', value[[dataset_name]]), '\n') #@cat
               }
-              #cat('\n') #@cat
+              # for (elem in shiny_chkbxgrps) {
+              #   dataset_name = sub(paste0('panel_horizontal_XvalueX', current_session_idx(), '_'), '', elem)
+              #   dataset_group_depth = ListDepth(current_session()$samples[[dataset_name]]) + 1
+              #   available_levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
+              #   checked_levels = input[[elem]]
+              #   value[[dataset_name]] = (available_levels %in% checked_levels)
+              #   cat(paste0(dataset_name, ':', value[[dataset_name]]), '\n') #@cat
+              # }
+              cat('\n') #@cat
             }else{
               value = NULL #@ list(NULL)
             }
@@ -1957,9 +1968,10 @@ server <- function(input, output, session) {
     
     shiny_session_dataset_options <- get_shiny_dataset_options()
     for ( sample_name in names(template_session$parameters) ) {
-      #cat(sample_name, '\n') #@cat
+      cat(sample_name, '\n') #@cat
       alt_name = gsub('\\s+', 'YvalueY', sample_name) #@
       alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name) #@
+      cat(alt_name, '\n') #@cat
       for ( op in names(shiny_session_dataset_options) ) {
         opt = shiny_session_dataset_options[[op]]
         if ( sample_name %in% names(opt) ) {
@@ -1971,12 +1983,13 @@ server <- function(input, output, session) {
         }
       }
       for (op in c('horizontal_panels_list', 'panel_font_size_list')){
-        #cat(paste('\t', op), '\n') #@cat
+        cat(paste('\t', op), '\n') #@cat
+        
         if ( alt_name %in% names(template_session[[op]]) ) {
           template_session[[op]][[sample_name]] = template_session[[op]][[alt_name]]
           template_session[[op]][[alt_name]] = NULL
         }
-        #cat(paste('\t', '\t', as.character(template_session[[op]][[sample_name]])), '\n') #@cat
+        cat(paste('\t', '\t', as.character(template_session[[op]][[sample_name]])), '\n') #@cat
       }
     }
     #cat('\n') #@cat
@@ -2172,3 +2185,4 @@ server <- function(input, output, session) {
 
 # Run the application
 shinyApp(ui = ui, server = server, options = list(width = 1600, height = 2000)) #@ keep an eye on options
+
