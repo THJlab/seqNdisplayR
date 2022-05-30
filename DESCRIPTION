@@ -20,10 +20,10 @@ biocViews:
 	GenomeAnnotation, 
 	Coverage
 Depends:
-    R (>= 4.0),
+    R, # (>= 4.0)
     rtracklayer,
     RCurl,
-    dplyr (>= 0.7),
+    dplyr, # (>= 0.7)
     GenomicRanges,
     IRanges,
     rlist,
@@ -32,6 +32,7 @@ Depends:
     readxl,
     writexl,
     shiny,
+    fastmap,
     shinyBS,
     shinyjs,
     spsComps,
