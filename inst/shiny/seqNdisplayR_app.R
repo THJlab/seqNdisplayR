@@ -24,7 +24,7 @@ split_sliders = function(n, varname, suboptions, vals, optima, step){
 
 split_sliders_panels = function(n, varname, slider_cells, dataset_name, vals, optima, step){
   if (n %in% slider_cells){
-    #@cat(paste0('ssp: ', varname, '_subvar', which(input_cells==n)), '\n') #@
+    #cat(paste0('ssp: ', varname, '_subvar', which(input_cells==n)), '\n') #@cat
     sliderInput(paste0(varname, '_subvar', which(slider_cells==n)),
                 label=ifelse(n==1, dataset_name, ''), #@ suboptions[which(slider_cells==n)]
                 value=vals[which(slider_cells==n)],
@@ -59,7 +59,7 @@ split_numeric_input = function(n, varname, suboptions, vals, optima, step){
 
 split_numeric_input2 = function(n, varname, input_cells, suboptions, vals, optima, step){
   if (n %in% input_cells){
-    #@cat(paste0('sni2: ', varname, '_subvar', which(input_cells==n)), '\n') #@
+    #cat(paste0('sni2: ', varname, '_subvar', which(input_cells==n)), '\n') #@cat
     numericInput(paste0(varname, '_subvar', which(input_cells==n)),
                  label=suboptions[which(input_cells==n)],
                  value=vals[which(input_cells==n)],
@@ -535,7 +535,7 @@ ui <- fluidPage(
 
                      actionButton("reset", "Reset Session"),
                      actionButton("reload_app", "Reload Page"),
-                     actionButton("debug", "Custom Debug Info"),
+                     #actionButton("debug", "Custom Debug Info"),
                      shinyBS::bsTooltip(id = "reset", title = "Reset all options to values from the currently loaded template",
                                         placement = "right", trigger = "hover")
 
@@ -1275,7 +1275,7 @@ server <- function(input, output, session) {
     shiny_elems = grep(paste0('panel_horizontal_XvalueX', prev_session_idx, '_'), names(input), value=TRUE)
     if (length(shiny_elems) > 0){
       for ( elem in shiny_elems ) {
-        #@cat(elem, '\n') #@cat
+        #cat(elem, '\n') #@cat
         removeUI(selector = paste0('#', elem))
       }
     }
@@ -1533,7 +1533,7 @@ server <- function(input, output, session) {
           } else if ( opt_line$option_class == 'color' ) {
             #cat(deparse_option(opts[[name]]), '\n') #@cat
             val = ifelse(deparse_option(opts[[name]])=='NULL', 'white', deparse_option(opts[[name]]))
-            #@cat(val, '\n')
+            #cat(val, '\n') #@cat
             insertUI(
               selector = paste0('#', anchor_elem), ##TODO: check style of anchor
               where = "afterEnd",
@@ -1719,7 +1719,7 @@ server <- function(input, output, session) {
               value <- input[[paste0(shiny_varname, '_slider')]]
             }else{
               value <- as.numeric(input[[paste0(shiny_varname, '_box')]])
-              #@cat(paste0(shiny_varname, ': ', value, '(', class(value), ')'), '\n') #@cat
+              #cat(paste0(shiny_varname, ': ', value, '(', class(value), ')'), '\n') #@cat
             }
           }else{
             if (opt=="panels_max_width_cm" | opt=="scale_panel_width_cm" | opt=="bin_size"){
@@ -1798,9 +1798,9 @@ server <- function(input, output, session) {
     names(l) <- opts
 
     ## special case for plotting_segment_order if bottom specified
-    #@cat(l$plotting_segment_order, '\n') #@cat
+    #cat(l$plotting_segment_order, '\n') #@cat
     if (!is.null(l$plotting_segment_order_bottom)){
-      #@cat(l$plotting_segment_order_bottom, '\n') #@cat
+      #cat(l$plotting_segment_order_bottom, '\n') #@cat
       l$plotting_segment_order = list('+'=l$plotting_segment_order, '-'=l$plotting_segment_order_bottom)
     }
     l
@@ -1832,16 +1832,16 @@ server <- function(input, output, session) {
           names(res) <- datasets
           res
         } else if(opt_line$option_class == 'special_argument') {
-          #@cat(opt, '\n') #@cat
-          #@cat(shiny_varname, '\n') #@cat
+          #cat(opt, '\n') #@cat
+          #cat(shiny_varname, '\n') #@cat
           if (input[[shiny_varname]]){
-            #@cat('TRUE', '\n') #@cat
+            #cat('TRUE', '\n') #@cat
             res = list()
             shiny_grps = grep(paste0(shiny_varname, '_',current_session_idx(), '_'), names(input), value=TRUE)
             #@shiny_grps = grep(paste0(shiny_varname, '_XvalueX',current_session_idx(), '_'), names(input), value=TRUE)
-            #@cat(shiny_grps, '\n') #@cat
+            #cat(shiny_grps, '\n') #@cat
             #@shiny_grps1 = grep(paste0(shiny_varname), names(input), value=TRUE) #@'manual_scales_boxes_container'
-            #@cat(shiny_grps1, '\n') #@cat
+            #cat(shiny_grps1, '\n') #@cat
             #@shiny_grps2 = as.data.frame(do.call('rbind', strsplit(sub(paste0(shiny_varname, '_XvalueX',current_session_idx(), '_'), '', shiny_grps), split='_subvar')))
             shiny_grps2 = as.data.frame(do.call('rbind', strsplit(sub(paste0(shiny_varname, '_',current_session_idx(), '_'), '', shiny_grps), split='_subvar')))
             shiny_grps2[,2] = as.integer(shiny_grps2[,2])
@@ -1854,7 +1854,7 @@ server <- function(input, output, session) {
             }
             res = unlist(res)
           }else{
-            #@cat('FALSE', '\n') #@cat
+            #cat('FALSE', '\n') #@cat
             res = unlist(sapply(datasets, function(dataset) paste(c(NA, NA), collapse=',')))
           }
           res
@@ -1917,7 +1917,7 @@ server <- function(input, output, session) {
         if (any(res=='white')){
           res[res=='white'] = 'NULL'
         }
-        #@cat(unlist(res), '\n') #@cat
+        #cat(unlist(res), '\n') #@cat
         res
       }else{
           res <- sapply(anno_names_NSC,
@@ -1952,21 +1952,34 @@ server <- function(input, output, session) {
 
     shiny_session_global_options <- get_shiny_global_options()
 
-    op_names <- names(shiny_session_global_options)
-    template_session[op_names] <- shiny_session_global_options[op_names]
-
+    op_names = names(shiny_session_global_options)
+    template_session[op_names] = shiny_session_global_options[op_names]
+    
     shiny_session_dataset_options <- get_shiny_dataset_options()
     for ( sample_name in names(template_session$parameters) ) {
+      #cat(sample_name, '\n') #@cat
+      alt_name = gsub('\\s+', 'YvalueY', sample_name) #@
+      alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name) #@
       for ( op in names(shiny_session_dataset_options) ) {
-        opt <- shiny_session_dataset_options[[op]]
+        opt = shiny_session_dataset_options[[op]]
         if ( sample_name %in% names(opt) ) {
-          template_session$parameters[[sample_name]][[op]] <- opt[[sample_name]]
+          template_session$parameters[[sample_name]][[op]] = opt[[sample_name]]
+        } else if ( alt_name %in% names(opt) ) {
+          template_session$parameters[[sample_name]][[op]] = opt[[alt_name]]
         } else {
-          template_session$parameters[[sample_name]][[op]] <- FALSE
+          template_session$parameters[[sample_name]][[op]] = FALSE
         }
       }
+      for (op in c('horizontal_panels_list', 'panel_font_size_list')){
+        #cat(paste('\t', op), '\n') #@cat
+        if ( alt_name %in% names(template_session[[op]]) ) {
+          template_session[[op]][[sample_name]] = template_session[[op]][[alt_name]]
+          template_session[[op]][[alt_name]] = NULL
+        }
+        #cat(paste('\t', '\t', as.character(template_session[[op]][[sample_name]])), '\n') #@cat
+      }
     }
-
+    #cat('\n') #@cat
     shiny_session_annotation_options <- get_shiny_annotation_options()
     if( !is.null(shiny_session_annotation_options) ) {
       op_names <- names(shiny_session_annotation_options)
