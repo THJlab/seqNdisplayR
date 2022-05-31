@@ -534,8 +534,13 @@ run_seqNdisplayR_app = function(){
 #'
 #' @export
 ExamplesSampleSheetsFolder = function(){
-  libpath = .libPaths()
-  samples_sheets_folders = paste0(libpath, '/seqNdisplayR/extdata/')
+  libpaths = .libPaths()
+  for (libpath in libpaths){
+    lf = list.files(libpath)
+    if (any(grepl('seqNdisplayR', lf))){
+      samples_sheets_folders = paste0(libpath, '/seqNdisplayR/extdata/')
+    }
+  }
   samples_sheets_folders
 }
 
@@ -549,8 +554,13 @@ ExamplesSampleSheetsFolder = function(){
 #'
 #' @export
 ListExamplesSampleSheets = function(){
-  libpath = .libPaths()
-  samples_sheets_folders = paste0(libpath, '/seqNdisplayR/extdata/')
+  libpaths = .libPaths()
+  for (libpath in libpaths){
+    lf = list.files(libpath)
+    if (any(grepl('seqNdisplayR', lf))){
+      samples_sheets_folders = paste0(libpath, '/seqNdisplayR/extdata/')
+    }
+  }
   list.files(samples_sheets_folders)
 }
 
@@ -564,8 +574,13 @@ ListExamplesSampleSheets = function(){
 #'
 #' @export
 PathToSampleSheets = function(sample_sheet=NULL){
-  libpath = .libPaths()
-  samples_sheets_folders = paste0(libpath, '/seqNdisplayR/extdata/')
+  libpaths = .libPaths()
+  for (libpath in libpaths){
+    lf = list.files(libpath)
+    if (any(grepl('seqNdisplayR', lf))){
+      samples_sheets_folders = paste0(libpath, '/seqNdisplayR/extdata/')
+    }
+  }
   sample_sheet_files = list.files(samples_sheets_folders)
   if (is.null(sample_sheet)){
     sample_sheet_files
