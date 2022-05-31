@@ -513,8 +513,13 @@ session_to_df <-
 #'
 #' @export
 run_seqNdisplayR_app = function(){
-  libpath = .libPaths()
-  app = paste0(libpath, '/seqNdisplayR/shiny/seqNdisplayR_app.R')
+  libpaths = .libPaths()
+  for (libpath in libpaths){
+    lf = list.files(libpath)
+    if (any(grepl('seqNdisplayR', lf))){
+      app = paste0(libpath, '/seqNdisplayR/shiny/seqNdisplayR_app.R')
+    }
+  }
   shiny::runApp(app)
 }
 
