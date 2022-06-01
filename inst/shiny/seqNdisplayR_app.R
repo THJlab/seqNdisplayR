@@ -368,6 +368,10 @@ create_input_element <- function(option) {
         vals = rep(vals, length(suboptions))
       }
       cellwidths = rep(0, 2*length(suboptions)-1)
+      cat(option_par$shiny_varname, '\n') #@cat
+      cat(cellwidths, '\n') #@cat
+      cat(suboptions, '\n') #@cat
+      cat('\n') #@cat
       cellspacers = seq(2, length(cellwidths), 2)
       boxes = seq(1, length(cellwidths), 2)
       width_unit = 1/(length(cellspacers)+4*length(boxes))
@@ -398,6 +402,10 @@ create_input_element <- function(option) {
         vals = rep(vals, length(suboptions))
       }
       cellwidths = rep(0, 2*length(suboptions)-1)
+      cat(option_par$shiny_varname, '\n') #@cat
+      cat(cellwidths, '\n') #@cat
+      cat(suboptions, '\n') #@cat
+      cat('\n') #@cat
       cellspacers = seq(2, length(cellwidths), 2)
       boxes = seq(1, length(cellwidths), 2)
       width_unit = 1/(length(cellspacers)+4*length(boxes))
@@ -425,6 +433,10 @@ create_input_element <- function(option) {
         vals = rep(vals, length(suboptions))
       }
       cellwidths = rep(0, 2*length(suboptions)-1)
+      cat(option_par$shiny_varname, '\n') #@cat
+      cat(cellwidths, '\n') #@cat
+      cat(suboptions, '\n') #@cat
+      cat('\n') #@cat
       cellspacers = seq(2, length(cellwidths), 2)
       boxes = seq(1, length(cellwidths), 2)
       width_unit = 1/(length(cellspacers)+4*length(boxes))
@@ -1327,6 +1339,10 @@ server <- function(input, output, session) {
     dataset_group_depth = max(dataset_group_depths)
     levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
     cellwidths = rep(0, 2*length(levels)-1)
+    cat(option_par$shiny_varname, '\n') #@cat
+    cat(cellwidths, '\n') #@cat
+    cat(levels, '\n') #@cat
+    cat('\n') #@cat
     cellspacers = seq(2, length(cellwidths), 2)
     boxes = seq(1, length(cellwidths), 2)
     width_unit = 1/(length(cellspacers)+4*length(boxes))
