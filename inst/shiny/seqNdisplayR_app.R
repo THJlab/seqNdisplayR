@@ -385,7 +385,7 @@ create_input_element <- function(option) {
       }
       cellwidths = rep(0, 2*length(suboptions)-1)
       nCells = length(cellwidths)
-      cat(paste0(option_par$shiny_varname, ': ', nCells), '\n') #@cat seq(1,nCells)
+      #cat(paste0(option_par$shiny_varname, ': ', nCells), '\n') #@cat seq(1,nCells)
       cellspacers = seq(2, nCells, 2)
       boxes = seq(1, nCells, 2)
       width_unit = 1/(length(cellspacers)+4*length(boxes))
@@ -417,7 +417,7 @@ create_input_element <- function(option) {
       }
       cellwidths = rep(0, 2*length(suboptions)-1)
       nCells = length(cellwidths)
-      cat(paste0(option_par$shiny_varname, ': ', nCells), '\n') #@cat seq(1,nCells)
+      #cat(paste0(option_par$shiny_varname, ': ', nCells), '\n') #@cat seq(1,nCells)
       cellspacers = seq(2, nCells, 2)
       boxes = seq(1, nCells, 2)
       width_unit = 1/(length(cellspacers)+4*length(boxes))
@@ -446,7 +446,7 @@ create_input_element <- function(option) {
       }
       cellwidths = rep(0, 2*length(suboptions)-1)
       nCells = length(cellwidths)
-      cat(paste0(option_par$shiny_varname, ': ', nCells), '\n') #@cat seq(1,nCells)
+      #cat(paste0(option_par$shiny_varname, ': ', nCells), '\n') #@cat seq(1,nCells)
       cellspacers = seq(2, nCells, 2)
       boxes = seq(1, nCells, 2)
       width_unit = 1/(length(cellspacers)+4*length(boxes))
@@ -470,7 +470,7 @@ create_input_element <- function(option) {
         levels=c('Title', 'Subtitle', 'Scalebar')
         cellwidths = rep(0, 2*length(levels)-1)
         nCells = length(cellwidths)
-        cat(paste0(option_par$shiny_varname, ': ', nCells), '\n') #@cat seq(1,nCells)
+        #cat(paste0(option_par$shiny_varname, ': ', nCells), '\n') #@cat seq(1,nCells)
         cellspacers = seq(2, nCells, 2)
         boxes = seq(1, nCells, 2)
         width_unit = 1/(length(cellspacers)+4*length(boxes))
