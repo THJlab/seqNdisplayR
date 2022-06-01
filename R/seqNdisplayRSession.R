@@ -535,7 +535,7 @@ run_seqNdisplayR_app = function(){
 #' @examples
 #'
 #' @export
-open_options_table = function(){
+OpenOptionsTable = function(){
   libpaths = .libPaths()
   for (libpath in libpaths){
     lf = list.files(libpath)

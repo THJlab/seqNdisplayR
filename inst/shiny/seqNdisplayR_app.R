@@ -4,8 +4,20 @@ share <- list(title = "{seqNdisplayR} package",
 options(shinyTree.setState = TRUE)
 options(shinyTree.refresh  = TRUE)
 
-#@ -> find shiny folder
-options_table = open_options_table()
+OpenOptionsTable = function(){
+  libpaths = .libPaths()
+  for (libpath in libpaths){
+    lf = list.files(libpath)
+    if (any(grepl('seqNdisplayR', lf))){
+      options_table = paste0(libpath, '/seqNdisplayR/shiny/variable_defaults_and_help.xlsx')
+    }
+  }
+  readxl::read_excel(options_table, sheet='Shiny_Args')
+}
+
+
+#@ -> find shiny folder and options table
+options_table = OpenOptionsTable()
 #@ <- find shiny folder
 
 #@options_table <- readxl::read_excel(system.file('shiny', 'variable_defaults_and_help.xlsx', package='seqNdisplayR'), sheet='Shiny_Args')
@@ -372,27 +384,23 @@ create_input_element <- function(option) {
         vals = rep(vals, length(suboptions))
       }
       cellwidths = rep(0, 2*length(suboptions)-1)
-      #@nCells = length(cellwidths)
-      cat(option_par$shiny_varname, '\n') #@cat
-      cat(cellwidths, '\n') #@cat
-      cat(suboptions, '\n') #@cat
+      nCells = length(cellwidths)
+      cat(paste0(option_par$shiny_varname, ': ', nCells), '\n') #@cat seq(1,nCells)
       cellspacers = seq(2, length(cellwidths), 2)
       boxes = seq(1, length(cellwidths), 2)
       width_unit = 1/(length(cellspacers)+4*length(boxes))
       cellwidths[cellspacers] = paste0(100*width_unit, '%')
       cellwidths[boxes] = paste0(400*width_unit, '%')
-      cat(cellwidths, '\n') #@cat
-      cat('\n') #@cat
       if (option_par$shiny_varname!='feat_extend'){
         spsComps::bsTooltip(
-          do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_sliders, option_par$shiny_varname, suboptions, vals, optima, step),
+          do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_sliders, option_par$shiny_varname, suboptions, vals, optima, step),
                                              list(cellWidths=as.list(cellwidths)),
                                              list(width=list('500px')))),
           title=option_par$shiny_tooltip,
           placement ='left')
       }else{
         spsComps::bsTooltip(
-          do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_numeric_input, option_par$shiny_varname, suboptions, vals, optima, step),
+          do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_numeric_input, option_par$shiny_varname, suboptions, vals, optima, step),
                                              list(cellWidths=as.list(cellwidths)),
                                              list(width=list('500px')))),
           title=option_par$shiny_tooltip,
@@ -408,10 +416,8 @@ create_input_element <- function(option) {
         vals = rep(vals, length(suboptions))
       }
       cellwidths = rep(0, 2*length(suboptions)-1)
-      cat(option_par$shiny_varname, '\n') #@cat
-      cat(cellwidths, '\n') #@cat
-      cat(suboptions, '\n') #@cat
-      cat('\n') #@cat
+      nCells = length(cellwidths)
+      cat(paste0(option_par$shiny_varname, ': ', nCells), '\n') #@cat seq(1,nCells)
       cellspacers = seq(2, length(cellwidths), 2)
       boxes = seq(1, length(cellwidths), 2)
       width_unit = 1/(length(cellspacers)+4*length(boxes))
@@ -419,14 +425,14 @@ create_input_element <- function(option) {
       cellwidths[boxes] = paste0(400*width_unit, '%')
       if (!is.logical(vals)){
         spsComps::bsTooltip(
-          do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_text_input, option_par$shiny_varname, suboptions, vals),
+          do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_text_input, option_par$shiny_varname, suboptions, vals),
                                              list(cellWidths=as.list(cellwidths)),
                                              list(width=list('500px')))),
           title=option_par$shiny_tooltip,
           placement ='left')
       }else{
         spsComps::bsTooltip(
-          do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_bool_input, option_par$shiny_varname, suboptions, vals),
+          do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_bool_input, option_par$shiny_varname, suboptions, vals),
                                              list(cellWidths=as.list(cellwidths)),
                                              list(width=list('500px')))),
           title=option_par$shiny_tooltip,
@@ -439,10 +445,8 @@ create_input_element <- function(option) {
         vals = rep(vals, length(suboptions))
       }
       cellwidths = rep(0, 2*length(suboptions)-1)
-      cat(option_par$shiny_varname, '\n') #@cat
-      cat(cellwidths, '\n') #@cat
-      cat(suboptions, '\n') #@cat
-      cat('\n') #@cat
+      nCells = length(cellwidths)
+      cat(paste0(option_par$shiny_varname, ': ', nCells), '\n') #@cat seq(1,nCells)
       cellspacers = seq(2, length(cellwidths), 2)
       boxes = seq(1, length(cellwidths), 2)
       width_unit = 1/(length(cellspacers)+4*length(boxes))
@@ -450,7 +454,7 @@ create_input_element <- function(option) {
       cellwidths[boxes] = paste0(400*width_unit, '%')
       transparancy = ifelse(option_par$shiny_varname=='feature_color' | option_par$shiny_varname=='background_colors', FALSE, TRUE)
       spsComps::bsTooltip(
-        do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_color_input, option_par$shiny_varname, suboptions, vals, transparancy),
+        do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_color_input, option_par$shiny_varname, suboptions, vals, transparancy),
                                            list(cellWidths=as.list(cellwidths)),
                                            list(width=list('500px')))
         ),
@@ -465,6 +469,8 @@ create_input_element <- function(option) {
       }else if (option=='header_font'){
         levels=c('Title', 'Subtitle', 'Scalebar')
         cellwidths = rep(0, 2*length(levels)-1)
+        nCells = length(cellwidths)
+        cat(paste0(option_par$shiny_varname, ': ', nCells), '\n') #@cat seq(1,nCells)
         cellspacers = seq(2, length(cellwidths), 2)
         boxes = seq(1, length(cellwidths), 2)
         width_unit = 1/(length(cellspacers)+4*length(boxes))
@@ -483,7 +489,7 @@ create_input_element <- function(option) {
                      placement ='left')),
           tags$head(tags$style(type="text/css", paste0("#header_font_div", " {padding-left: 15px}"))),
           tags$div(id = 'header_font_div',
-                   do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_sliders, 'header_font', levels, vals, optima, step),
+                   do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_sliders, 'header_font', levels, vals, optima, step),
                                                       list(cellWidths=as.list(cellwidths)),
                                                       list(width=list('500px'))))
                    )
@@ -1345,10 +1351,8 @@ server <- function(input, output, session) {
     dataset_group_depth = max(dataset_group_depths)
     levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
     cellwidths = rep(0, 2*length(levels)-1)
-    cat(option_par$shiny_varname, '\n') #@cat
-    cat(cellwidths, '\n') #@cat
-    cat(levels, '\n') #@cat
-    cat('\n') #@cat
+    nCells = length(cellwidths)
+    #cat(paste0(option_par$shiny_varname, ': ', nCells), '\n') #@cat seq(1,nCells)
     cellspacers = seq(2, length(cellwidths), 2)
     boxes = seq(1, length(cellwidths), 2)
     width_unit = 1/(length(cellspacers)+4*length(boxes))
@@ -1368,7 +1372,7 @@ server <- function(input, output, session) {
     insertUI(selector = '#panel_font_easy_boxes',
              where = "afterEnd",
              ui = tags$div(id=paste0('panel_font_easy_boxes_container',current_session_idx()),
-                      do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_sliders, dataset_id, levels, vals, optima, step),  #@ 'panel_font_easy'
+                      do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_sliders, dataset_id, levels, vals, optima, step),  #@ 'panel_font_easy'
                                                      list(cellWidths=as.list(cellwidths)),
                                                      list(width=list('500px')))))
     )
@@ -1381,6 +1385,8 @@ server <- function(input, output, session) {
     optima = optimaNvals[1:2]
     max_levels = max(dataset_group_depth) + 1
     cellwidths = rep(0, 2*max_levels-1)
+    nCells = length(cellwidths)
+    #cat(paste0(option_par$shiny_varname, ': ', nCells), '\n') #@cat seq(1,nCells)
     cellspacers = seq(2, length(cellwidths), 2)
     boxes = seq(1, length(cellwidths), 2)
     width_unit = 1/(length(cellspacers)+4*length(boxes))
@@ -1402,7 +1408,7 @@ server <- function(input, output, session) {
       selector = '#panel_font_boxes_headers',
       where = "afterEnd",
       ui = tags$div(id=paste0('panel_font_boxes_header_container',current_session_idx()),
-                    do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_headers, slider_cells, levels),
+                    do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_headers, slider_cells, levels),
                                                        list(cellWidths=as.list(cellwidths)),
                                                        list(width=list('500px')))))
     )
@@ -1440,7 +1446,7 @@ server <- function(input, output, session) {
       insertUI(selector = '#panel_font_boxes',
                where = "afterEnd",
                ui = tags$div(id=paste0('panel_font_boxes_container',current_session_idx()),
-                             do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_sliders_panels, paste0('panel_font_', name), slider_cells, name, vals, optima, step),
+                             do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_sliders_panels, paste0('panel_font_', name), slider_cells, name, vals, optima, step),
                                                                 list(cellWidths=as.list(cellwidths)),
                                                                 list(width=list('500px')))))
       )
@@ -1462,6 +1468,8 @@ server <- function(input, output, session) {
     start_val = ifelse(length(optimaNvals)==3, vals[3], mean(optimaNvals))
     max_levels = 2
     cellwidths = rep(0, 2*max_levels-1)
+    nCells = length(cellwidths)
+    #cat(paste0(option_par$shiny_varname, ': ', nCells), '\n') #@cat seq(1,nCells)
     cellspacers = seq(2, length(cellwidths), 2)
     boxes = seq(1, length(cellwidths), 2)
     width_unit = 1/(length(cellspacers)+4*length(boxes))
@@ -1488,7 +1496,7 @@ server <- function(input, output, session) {
         selector = '#manual_scales_boxes',
         where = "afterEnd",
         ui = tags$div(id=paste0('manual_scales_boxes_container', current_session_idx()),
-                      do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_numeric_input2, paste0(dataset_options[which(dataset_options$option_name=='force_scale'),'shiny_varname'], '_', current_session_idx(), '_', name), input_cells, paste(name, paste0('(', levels, ')'), sep = ' '), vals, optima, step),  #@ added " '_', current_session_idx(), "
+                      do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_numeric_input2, paste0(dataset_options[which(dataset_options$option_name=='force_scale'),'shiny_varname'], '_', current_session_idx(), '_', name), input_cells, paste(name, paste0('(', levels, ')'), sep = ' '), vals, optima, step),  #@ added " '_', current_session_idx(), "
                                                 list(cellWidths=as.list(cellwidths)),
                                                 list(width=list('500px')))))
       )
