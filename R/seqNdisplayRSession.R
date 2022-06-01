@@ -524,6 +524,29 @@ run_seqNdisplayR_app = function(){
 }
 
 
+#' open_options_table
+#'
+#' open_options_table
+#'
+#' @details 
+#'
+#' @return 
+#'
+#' @examples
+#'
+#' @export
+open_options_table = function(){
+  libpaths = .libPaths()
+  for (libpath in libpaths){
+    lf = list.files(libpath)
+    if (any(grepl('seqNdisplayR', lf))){
+      options_table = paste0(libpath, '/seqNdisplayR/shiny/variable_defaults_and_help.xlsx')
+    }
+  }
+  readxl::read_excel(options_table, sheet='Shiny_Args')
+}
+
+
 #' examples sample sheets folder
 #'
 #' @details 

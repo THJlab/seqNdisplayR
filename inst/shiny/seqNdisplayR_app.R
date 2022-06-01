@@ -4,7 +4,11 @@ share <- list(title = "{seqNdisplayR} package",
 options(shinyTree.setState = TRUE)
 options(shinyTree.refresh  = TRUE)
 
-options_table <- readxl::read_excel(system.file('shiny', 'variable_defaults_and_help.xlsx', package='seqNdisplayR'), sheet='Shiny_Args')
+#@ -> find shiny folder
+options_table = open_options_table()
+#@ <- find shiny folder
+
+#@options_table <- readxl::read_excel(system.file('shiny', 'variable_defaults_and_help.xlsx', package='seqNdisplayR'), sheet='Shiny_Args')
 
 
 ##### functions for split input values
@@ -368,15 +372,17 @@ create_input_element <- function(option) {
         vals = rep(vals, length(suboptions))
       }
       cellwidths = rep(0, 2*length(suboptions)-1)
+      #@nCells = length(cellwidths)
       cat(option_par$shiny_varname, '\n') #@cat
       cat(cellwidths, '\n') #@cat
       cat(suboptions, '\n') #@cat
-      cat('\n') #@cat
       cellspacers = seq(2, length(cellwidths), 2)
       boxes = seq(1, length(cellwidths), 2)
       width_unit = 1/(length(cellspacers)+4*length(boxes))
       cellwidths[cellspacers] = paste0(100*width_unit, '%')
       cellwidths[boxes] = paste0(400*width_unit, '%')
+      cat(cellwidths, '\n') #@cat
+      cat('\n') #@cat
       if (option_par$shiny_varname!='feat_extend'){
         spsComps::bsTooltip(
           do.call(what=splitLayout, args = c(lapply(1:length(cellwidths), split_sliders, option_par$shiny_varname, suboptions, vals, optima, step),
