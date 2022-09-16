@@ -185,7 +185,7 @@ seqNdisplay = function(
   if (verbosity > 2){ .detailed.output = list() }
   #datasets, colors, bigwig_dirs, bigwigs, parameters,
   if (is.null(feature) & is.null(locus)){
-    if (.verbosity > 0){ cat('ERROR: choose a genomic region for plotting by either assigning locus name or coordinates - aborting') }
+    if (.verbosity > 0){ cat('ERROR: choose a genomic region for plotting by either assigning locus name or coordinates - aborting', '\n') }
     return()
   }
   bigwig_dirs = lapply(bigwig_dirs, function(X) if (grepl('/$', X)){X}else{paste0(X, '/')})
@@ -3079,6 +3079,7 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
   .n.levels.list = list()
   .n.chars.list = list()
   .heigths.cm.list = list()
+  .subsample.matrices = list()
   if (!is.null(panel_font_size_list)){
     .font.size.range = min(unlist(panel_font_size_list)):max(unlist(panel_font_size_list))
   }else{
@@ -3101,6 +3102,7 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
         names(panels_list[[.dataset]][[.n.levels-1]]) = .subsample.matrix[,.n.levels]
       }
     }
+    .subsample.matrices[[.dataset]] = .subsample.matrix
     .incl.first.panel = incl_first_panel
     if (print_one_line_sample_names){
       .incl.first.panel = FALSE
@@ -3133,18 +3135,18 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
     }
     .n.chars.list[[.dataset]] = .n.chars
     .heigths.cm.list[[.dataset]] = .heigths.cm
-
+    
     ### given a maximum word length set up matrices with widths and heights of each panel for each possible font size in fully 'horizontal' representation
     .panel.word.widths = list(t(matrix(ncol=.n.levels, nrow=length(.font.size.range), rep(.font.size.range, .n.levels), dimnames=list(paste0('f', .font.size.range), paste0('panel', 1:.n.levels)))) * (.n.chars + .word.extensions) * std_letter_width)
     .panel.word.heights = list(t(matrix(ncol=.n.levels, nrow=length(.font.size.range), rep(.font.size.range, .n.levels), dimnames=list(paste0('f', .font.size.range), paste0('panel', 1:.n.levels)))) * std_letter_height)
     .word.heights = .font.size.range * std_letter_height
-
+    
     # setup matrices to calculate penalties - rows are representative of different horizontal/vertical configurations v0: 0 vertical panels, v1: first panel vertical, v2: two first panels vertical etc.
     # the horizontal penalties will be calculated as sum of estimated space outside dedicated plotting area
     # the vertical penalties will be given as -1 for each panel that has text outside dedicated plotting area
     .hor.penalties = matrix(NA, nrow=.n.levels, ncol=length(.font.size.range), dimnames=list(paste0('ver', 1:.n.levels-1), paste0('f', .font.size.range) ) )
     .ver.penalties = matrix(NA, nrow=.n.levels, ncol=length(.font.size.range), dimnames=list(paste0('ver', 1:.n.levels-1), paste0('f', .font.size.range) ) )
-
+    
     # a separate set of penalties for the case that at least one of the 0th panels should be horizontal
     .hor.penalties.0hor = matrix(NA, nrow=.n.levels, ncol=length(.font.size.range), dimnames=list(paste0('ver', 1:.n.levels-1), paste0('f', .font.size.range) ) )
     .ver.penalties.0hor = matrix(NA, nrow=.n.levels, ncol=length(.font.size.range), dimnames=list(paste0('ver', 1:.n.levels-1), paste0('f', .font.size.range) ) )
@@ -3152,7 +3154,7 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
     if (!.incl.first.panel){
       .outer.panel.widths = rep(0, length(.outer.panel.widths))
     }
-
+    
     .subpanels = .heigths.cm[1]/.heigths.cm
     .n.panel.separators = .n.levels - 1 - ifelse(.incl.first.panel,0,1)
     .incl.panels = ifelse(.incl.first.panel, 1, 2):.n.levels
@@ -3228,12 +3230,12 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
         .n.levels = .n.levels.list[[.dataset]]
         .n.panel.separators = .n.levels - 1 - ifelse(.incl.first.panel,0,1)
         .incl.panels = ifelse(.incl.first.panel, 1, 2):.n.levels
-
+        
         # setup penalties vectors - names are representative of different horizontal/vertical configurations v0: 0 vertical panels, v1: first panel vertical, v2: two first panels vertical etc.
         # the penalties will be calculated as sum of estimated space outside dedicated plotting area
         .hor.penalties = structure(rep(NA, .n.levels), names=paste0('ver', 1:.n.levels-1))
         .ver.penalties = structure(rep(NA, .n.levels), names=paste0('ver', 1:.n.levels-1))
-
+        
         ### set up matrices with widths and heights of each panel for each possible font size in fully 'horizontal' representation
         .heigths.cm = .heigths.cm.list[[.dataset]]
         .subpanels = .heigths.cm[1]/.heigths.cm
@@ -3304,7 +3306,7 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
             # the penalties will be calculated as sum of estimated space outside dedicated plotting area
             .hor.penalties = structure(rep(NA, .n.levels), names=paste0('ver', 1:.n.levels-1))
             .ver.penalties = structure(rep(NA, .n.levels), names=paste0('ver', 1:.n.levels-1))
-
+            
             ### set up matrices with widths and heights of each panel for each possible font size in fully 'horizontal' representation
             .heigths.cm = .heigths.cm.list[[.dataset]]
             .subpanels = .heigths.cm[1]/.heigths.cm
@@ -3372,7 +3374,7 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
       .ver.penalties = structure(rep(NA, .n.levels), names=paste0('+', 1:.n.levels-1))
       ### set up matrices with widths and heights of each panel for each possible font size in fully 'horizontal' representation
       .heigths.cm = .heigths.cm.list[[.dataset]]
-      .subpanels = .heigths.cm[1]/.heigths.cm
+      .subpanels = sapply(1:.n.levels, function(.n.level) length(runValue(Rle(.subsample.matrices[[.dataset]][,.n.level])))) #@ .heigths.cm[1]/.heigths.cm
       .panel.word.widths = matrix(ncol=.n.levels, nrow=max(.subpanels))
       .panel.word.widths[,1] = .common.font.size * (ifelse(!.config[1], nchar(.dataset), max(nchar(datasets))) + .word.extensions) * std_letter_width
       .panel.word.heights = .common.font.size * matrix(1, ncol=.n.levels, nrow=max(.subpanels)) * std_letter_height
@@ -3516,7 +3518,7 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
   }
   .panel.width = ifelse(fixed_panel_width | .panel.too.narrow, .panels.max.width.cm, max(sapply(.panel.width.list, sum)))/.full.width.cm
   .first.panel.width = .outer.panel.width/.full.width.cm
-
+  
   .non.panels.width = 1 - (.panels.max.width.cm + .scale.panel.width.cm)/.full.width.cm # the relative part of the full_width_cm used for x-axis of seq-tracks
   .left.coord.tracks = as.numeric(1 - .non.panels.width + plot_widths_cm['margin.width.cm']/.full.width.cm)
   .right.coord.tracks = as.numeric(1 - plot_widths_cm['margin.width.cm']/.full.width.cm)
