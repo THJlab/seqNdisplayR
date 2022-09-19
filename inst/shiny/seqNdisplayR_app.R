@@ -40,9 +40,8 @@ split_sliders = function(n, varname, suboptions, vals, optima, step){
 
 split_sliders_panels = function(n, varname, slider_cells, dataset_name, vals, optima, step){
   if (n %in% slider_cells){
-    #cat(paste0('ssp: ', varname, '_subvar', which(input_cells==n)), '\n') #@cat
     sliderInput(paste0(varname, '_subvar', which(slider_cells==n)),
-                label=ifelse(n==1, dataset_name, ''), #@ suboptions[which(slider_cells==n)]
+                label=ifelse(n==1, dataset_name, ''),
                 value=vals[which(slider_cells==n)],
                 min=optima[1],
                 max=optima[2],
@@ -1611,48 +1610,47 @@ server <- function(input, output, session) {
 
 
   # reactive excel or igv template load ####
-  load_template <- reactive({
-    filename <- input$input_file$name
+  load_template = reactive({
+    filename = input$input_file$name
     if ( is.null(filename) ) {
       return(NULL)
     }
     if ( !(grepl('.xml$', filename) | grepl('.xls$', filename) | grepl('.xlsx$', filename))  ) {
-      output$console <- renderText({'Please provide valid template file in .xls, .xlsx or igv session .xml file'})
+      output$console = renderText({'Please provide valid template file in .xls, .xlsx or igv session .xml file'})
       return(NULL)
     }
     if ( current_session_fname() != filename ) {
-      fname <- input$input_file$datapath[1]
-
+      fname = input$input_file$datapath[1]
       show_modal_spinner(spin='circle', text='Loading and parsing template')
-      current_session_fname('')
-      current_session(NULL)
-      current_session_idx(current_session_idx() + 1)
-      loaded_session <- NULL
-
+      loaded_session = NULL
+      
       shinyCatch({
         if ( grepl('.xml$', fname)  ) {
           if ( is.null(input$igv_strand_regex) ) {
-            igv_strand_regex <- NULL
+            igv_strand_regex = NULL
           } else {
-            igv_strand_regex <- list('+'=sub(",.*","", input$igv_strand_regex),
+            igv_strand_regex = list('+'=sub(",.*","", input$igv_strand_regex),
                                      '-'=sub(".*,","", input$igv_strand_regex))
           }
-
-          loaded_session <- seqNdisplayR::load_igvsession(fname,
-                                                       group_by = input$igv_groupby,
-                                                       strand_regex = igv_strand_regex)
-        } else {
+          x = capture.output(loaded_session = seqNdisplayR::load_igvsession(fname, group_by=input$igv_groupby, strand_regex=igv_strand_regex))
+          output$console = renderText({paste(x, collapse  = "\n")})  
+        } else if ( grepl('.xls$', filename) | grepl('.xlsx$', filename) ) {
           x <- capture.output(loaded_session <- seqNdisplayR::load_excel(fname, load_annotations = input$load_annotations))
-          output$console <- renderText({paste(x, collapse  = "\n")})
+          output$console = renderText({paste(x, collapse  = "\n")})
+        } else {
+          output$console = renderText({'Please provide valid template file in .xls, .xlsx or igv session .xml file'})
         }
-
-        #fill all option field with values from session
-        update_ui_to_session(loaded_session)
-
-        #set reactive val current_session to the loaded session!
-        current_session_fname(filename)
-        current_session(loaded_session)
-      },position = 'top-center',blocking_level = 'none',shiny=T)
+        if ( !is.null(loaded_session) ){
+          #fill all option field with values from session
+          current_session_idx(current_session_idx() + 1)
+          update_ui_to_session(loaded_session)
+          #set reactive val current_session to the loaded session!
+          current_session_fname(filename)
+          current_session(loaded_session)
+        } else {
+          loaded_session = current_session()
+        }
+      }, position ='top-center', blocking_level ='message', shiny=T)
 
       remove_modal_spinner()
 
@@ -1661,8 +1659,7 @@ server <- function(input, output, session) {
     } else {
       current_session()
     }
-  }
-  )
+  })
 
 
 
@@ -1856,7 +1853,6 @@ server <- function(input, output, session) {
     datasets <- names(current_session()$samples)
     datasets_NSC = sapply(datasets, function(name) gsub('\\s+', 'YvalueY', name))
     datasets_NSC = sapply(datasets_NSC, function(name) gsub("[[:punct:]]", "ZvalueZ", name))
-    #names(datasets_NSC) = datasets
     l <- lapply(opts, function(opt) {
       opt_line <- options_table[options_table$option_name == opt,]
       shiny_varname <- opt_line$shiny_varname
@@ -1866,9 +1862,9 @@ server <- function(input, output, session) {
           names(res) <- datasets
           res
         } else if(opt_line$option_class == 'text_choices') {
-          res <- sapply(datasets_NSC,
+          res = sapply(datasets_NSC,
                  function(dataset) {
-                   parse_option(input[[paste0(opt_line$shiny_varname,'_XvalueX',current_session_idx(), '_', dataset)]])
+                   parse_option(input[[paste0(opt_line$shiny_varname,'_XvalueX',current_session_idx(), '_', dataset)]]) 
                  })
           names(res) <- datasets
           res
@@ -1998,10 +1994,8 @@ server <- function(input, output, session) {
     
     shiny_session_dataset_options <- get_shiny_dataset_options()
     for ( sample_name in names(template_session$parameters) ) {
-      #cat(sample_name, '\n') #@cat
       alt_name = gsub('\\s+', 'YvalueY', sample_name) #@
       alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name) #@
-      #cat(alt_name, '\n') #@cat
       for ( op in names(shiny_session_dataset_options) ) {
         opt = shiny_session_dataset_options[[op]]
         if ( sample_name %in% names(opt) ) {
@@ -2013,16 +2007,12 @@ server <- function(input, output, session) {
         }
       }
       for (op in c('horizontal_panels_list', 'panel_font_size_list')){
-        #cat(paste('\t', op), '\n') #@cat
-        
         if ( alt_name %in% names(template_session[[op]]) ) {
           template_session[[op]][[sample_name]] = template_session[[op]][[alt_name]]
           template_session[[op]][[alt_name]] = NULL
         }
-        #cat(paste('\t', '\t', as.character(template_session[[op]][[sample_name]])), '\n') #@cat
       }
     }
-    #cat('\n') #@cat
     shiny_session_annotation_options <- get_shiny_annotation_options()
     if( !is.null(shiny_session_annotation_options) ) {
       op_names <- names(shiny_session_annotation_options)

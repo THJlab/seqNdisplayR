@@ -26,11 +26,11 @@ load_excel <- function(xl_fname, load_annotations=FALSE) {
     {noout <- capture.output(
       samples_df <- readxl::read_excel(xl_fname, sheet = 'SAMPLES')
     )
-    cat('  Samples Table               --> OK\n') #@ cat('    --> OK\n')
+    cat('  Samples table               --> OK\n') #@ cat('    --> OK\n')
     },
     error=function(cond) {
-     cat('  Samples Table               --> Required sheet "SAMPLES" not found in file\n')
-     cat('  ERROR: aborting\n')
+     cat('  Samples table               --> Required sheet "SAMPLES" not found in file\n')
+     cat('  ERROR: ! \n')
      #@error('Required sheet "SAMPLES" not found in file\n')
     }
   )
@@ -41,7 +41,7 @@ load_excel <- function(xl_fname, load_annotations=FALSE) {
     samples_df = samples_df[!apply(apply(samples_df, 2, is.na), 1, all),,drop=FALSE] #@
     samples_df = fill_df(samples_df)
   }
-
+  datasets = unique(samples_df$dataset) #@ added 2022-09-16
 
   params_df <- data.frame(dataset = unique(samples_df$dataset))
   tryCatch(
@@ -56,8 +56,7 @@ load_excel <- function(xl_fname, load_annotations=FALSE) {
     }
   )
   params = get_parameters(samples_df, params_df)
-
-
+  
   #@cat('  Annotations\n')
   annot_and_options <- list(annot = NULL,
                             annot_plot_options = default_annotation_options())
@@ -91,6 +90,15 @@ load_excel <- function(xl_fname, load_annotations=FALSE) {
     }
   )
 
+  if (length(setdiff(datasets, names(params)))!=0){
+    cat('  - there are datasets in "Samples table" that are not in "Dataset-specific options" - using defaults', '\n')
+  }
+  if (length(setdiff(names(params), datasets))!=0){
+    cat('  - there are datasets in "Dataset-specific options" that are not in "Samples table" - ignoring those', '\n')
+    params = params[datasets]
+  }
+  
+  
   ##add annotation-specific options
   for ( opt in names(annot_and_options$annot_plot_options) ) {
     options[[opt]] <- annot_and_options$annot_plot_options[[opt]]
