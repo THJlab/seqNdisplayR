@@ -2,6 +2,8 @@
 
 library(seqNdisplayR)
 
+install.packages("remotes")
+remotes::install_github("THJlab/seqNdisplayR")
 
 #@ list the files supplied with package here
 

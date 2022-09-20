@@ -1,25 +1,4 @@
 ### seqNdisplayR
-#library(seqNdisplayR)
-#library(RCurl)
-#
-# tags$style(paste0("#title {padding-left: 15px}",
-#                   " #inline label{ display: table-cell; text-align: left; vertical-align: left; padding-left: 20px; padding-right: 5px; font-weight: normal}",
-#                   " #",option_par$shiny_varname, "xvalue.form-control.shiny-bound-input { display: table-cell; text-align: left; vertical-align: left; margin-left: 30px; width: 100px; padding-left: 5px; font-weight: normal}"))
-
-# insertUI(
-#   selector = paste0('#', anchor_elem),
-#   where = "afterEnd",
-#   ui = tags$div(id=paste0(opt_line$shiny_varname, '_', name),
-#                 sliderInput(paste0(opt_line$shiny_varname, 'xvalue_', name),  #@ numericInput(paste0(opt_line$shiny_varname, 'xvalue_', name)
-#                             label = name,
-#                             min=min_val, #@
-#                             max=max_val, #@
-#                             value = deparse_option(para[[name]]))
-#   )
-# )
-
-
-
 
 ## testing various things
 if (FALSE){
@@ -330,6 +309,285 @@ session = load_excel(xl_fname, load_annotations = T)
 session$panel_font_sizes=c(6,6,6,5)
 plot(session, feature='LMO4', verbosity='detailed')
 
+#27 JOR issue: solved
+
+xl_fname = '/Users/au103725/Downloads/Z4_seqNdisplayR_sample_sheet 2.xlsx'
+session = load_excel(xl_fname, load_annotations = T)
+session$track_height_cm
+plot(session, locus=c('chr2', '-', 70085046, 70086773), verbosity='detailed', both_strands=FALSE, neg_vals_neg_strand=FALSE, strands_alpha=100, track_height_cm=1)
+session$parameters[['RNA-seq']][['calcMean']] = FALSE
+session$parameters[['ChIP-seq']][['calcMean']] = FALSE
+session$parameters[['RNA-seq']][['batchCorrect']] = FALSE
+session$parameters[['ChIP-seq']][['batchCorrect']] = FALSE
+
+.tracks.reps = structure(lapply(names(.tracks.listed), function(.strand) LoadTracks(.plotted.region[[.strand]], datasets, bigwigs, bigwig_dirs, parameters, .verbosity)), names=names(.tracks.listed))
+session$parameters[['RNA-seq']][['calcMean']] = TRUE
+session$parameters[['ChIP-seq']][['calcMean']] = TRUE
+parameters=session$parameters
+.tracks.means = structure(lapply(names(.tracks.listed), function(.strand) LoadTracks(.plotted.region[[.strand]], datasets, bigwigs, bigwig_dirs, parameters, .verbosity)), names=names(.tracks.listed))
+
+samps = c('Control', 'ARS2', 'ZC3H4', 'ARS2xZC3H4')
+
+par(mfrow=c(2,2))
+for (samp in samps){
+  rep1_val = .tracks.reps[['-']][['RNA-seq']][[paste0(samp, '.rep1')]][as.character(70085546:70086273)]
+  rep2_val = .tracks.reps[['-']][['RNA-seq']][[paste0(samp, '.rep2')]][as.character(70085546:70086273)]
+
+  mean12_val = (rep1_val + rep2_val)/2
+
+  mean_val = .tracks.means[['-']][['RNA-seq']][[samp]][as.character(70085546:70086273)]
+
+
+  boxplot(rep1_val, rep2_val, mean12_val, mean_val/ifelse(samp=='ZC3H4', 1, 1), main=samp)
+}
+
+#28 intermingled_color introduced
+xl_fname = '/Users/au103725/Downloads/Z4_seqNdisplayR_sample_sheet 2.xlsx'
+session = load_excel(xl_fname, load_annotations = T)
+session$intermingled_color = 'analogous_left'
+plot(session, feature='LMO4', verbosity='detailed', intermingled_color = 'analogous_left')
+
+
+#29 shinyApp issues
+xl_fname = '/Users/au103725/Downloads/seqNdisplayRsession2022-04-03.xlsx'
+seqNdisplayR_session = load_excel(xl_fname, load_annotations = T)
+seqNdisplayR_session$panel_font_sizes
+
+xl_fname = '/Users/au103725/Downloads/seqNdisplayRsession2022-04-03 (1).xlsx'
+seqNdisplayR_session = load_excel(xl_fname, load_annotations = T)
+seqNdisplayR_session$horizontal_panels_list
+seqNdisplayR_session$panel_font_size_list
+plot(session, feature='LMO4', verbosity='detailed')
+
+xl_fname = '/Users/au103725/Dropbox/Lab stuff/Scripts_for_the_people/PAPER/Figures/shiny_app/Figure_S3/sNdR_Fig_S3C.xlsx'
+seqNdisplayR_session = load_excel(xl_fname, load_annotations = T)
+
+shiny_grps = c('panel_font_ChIP-seq_subvar1', 'panel_font_RNA-seq_subvar2', 'panel_font_3-seq_subvar1', 'panel_font_3-seq_subvar4', 'panel_font_RNA-seq_subvar1', 'panel_font_TT-seq_subvar1', 'panel_font_3-seq_subvar3', 'panel_font_ChIP-seq_subvar2', 'panel_font_3-seq_subvar2', 'panel_font_TT-seq_subvar2')
+
+
+#30 solved
+
+shiny_grps = c('manual_scales_3-seq_subvar2', 'manual_scales_RNA-seq_subvar1', 'manual_scales_TT-seq_subvar2', 'manual_scales_ChIP-seq_subvar1', 'manual_scales_3-seq_subvar1', 'manual_scales_RNA-seq_subvar2', 'manual_scales_TT-seq_subvar1' )
+
+input = list()
+shiny_varname='manual_scales'
+for (shiny_grp in shiny_grps){
+  input[[shiny_grp]] = -1
+}
+input[['manual_scales_3-seq_subvar1']] = 200
+input[['manual_scales_TT-seq_subvar1']] = 300
+
+# ready for seqNdisplay function format
+# pre_res = list('+'=list(), '-'=list())
+# shiny_grps = grep(paste0(shiny_varname, '_'), names(input), value=TRUE)
+# shiny_grps2 = as.data.frame(do.call('rbind', strsplit(sub(paste0(shiny_varname, '_'), '', shiny_grps), split='_subvar')))
+# shiny_grps2[,2] = as.integer(shiny_grps2[,2])
+# for ( dataset_name in unique(shiny_grps2[,1]) ) {
+#   sub_shiny_grps = which(shiny_grps2[,1]==dataset_name)
+#   sub_shiny_grps_ordered = sub_shiny_grps[order(shiny_grps2[sub_shiny_grps,2])]
+#   for (i in seq_along(sub_shiny_grps_ordered)){
+#     pre_res[[c('+', '-')[i]]][[dataset_name]] = as.numeric(input[[shiny_grps[sub_shiny_grps_ordered][i]]])
+#   }
+# }
+# res = list()
+# for (.strand in c('+', '-')){
+#   res[[.strand]] = unlist(pre_res[[.strand]])
+#   res[[.strand]][which(res[[.strand]]==-1)] = NA
+#   #@cat(paste0(.strand, ': ', paste(res[[.strand]], collapsed=' ')), '\n')
+# }
+
+# parameters format
+res = list()
+shiny_grps = grep(paste0(shiny_varname, '_'), names(input), value=TRUE)
+shiny_grps2 = as.data.frame(do.call('rbind', strsplit(sub(paste0(shiny_varname, '_'), '', shiny_grps), split='_subvar')))
+shiny_grps2[,2] = as.integer(shiny_grps2[,2])
+for ( dataset_name in unique(shiny_grps2[,1]) ) {
+  sub_shiny_grps = which(shiny_grps2[,1]==dataset_name)
+  sub_shiny_grps_ordered = sub_shiny_grps[order(shiny_grps2[sub_shiny_grps,2])]
+  sub_res = as.numeric(sapply(shiny_grps[sub_shiny_grps_ordered], function(shiny_grp) as.numeric(input[[shiny_grp]])))
+  sub_res[sub_res==-1] = NA
+  res[[dataset_name]] = paste(sub_res, collapse=',')
+}
+res = unlist(res)
+
+res = structure(c('60', 'NA,NA', 'NA,NA', '300,NA'), names= c("ChIP-seq", "TT-seq", "RNA-seq", "3-seq"))
+xl_fname = '/Users/au103725/Dropbox/Lab stuff/Scripts_for_the_people/PAPER/Figures/shiny_app/Figure_1/sNdR_Fig_1.xlsx'
+session = load_excel(xl_fname, load_annotations = T)
+for (dataset_name in names(session$parameters)){
+  session$parameters[[dataset_name]][['force_scale']] = res[[dataset_name]]
+}
+#session$force_scale = NULL
+plot(session, feature='LMO4', verbosity='detailed')
+session_to_xlsx(session, '/Users/au103725/Dropbox/Lab stuff/Scripts_for_the_people/PAPER/Figures/shiny_app/Figure_1/sNdR_Fig_1_updated.xlsx')
+
+
+# 31 solved
+xl_fname = '/Users/au103725/Dropbox/Lab stuff/Scripts_for_the_people/PAPER/Figures/shiny_app/Figure_1/sNdR_Fig_1_updated.xlsx'
+seqNdisplayR_session = load_excel(xl_fname, load_annotations = T)
+
+
+# 32 not solved ## pseudocount = 0
+xl_fname = '/Users/au103725/Library/CloudStorage/OneDrive-AarhusUniversitet/THJ LAB/Projects/seqNdisplayR/seqNdisplayR/inst/extdata/seqNdisplayR_sample_sheet_simple.xlsx'
+session = load_excel(xl_fname, load_annotations = T)
+session$parameters[['3-seq']]
+session$parameters[['TT-seq']]
+session$parameters[['RNA-seq']]
+
+plot(session, feature='LMO4', verbosity='detailed')
+
+
+#33 solved
+xl_fname = '/Users/au103725/Library/CloudStorage/OneDrive-AarhusUniversitet/THJ LAB/Projects/seqNdisplayR/seqNdisplayR/inst/extdata/seqNdisplayR_sample_sheet_simple.xlsx'
+session = load_excel(xl_fname, load_annotations = T)
+plot(session, feature='LMO4', verbosity='detailed', strands_intermingled=TRUE)
+plot(session, feature='LMO4', verbosity='detailed', strands_intermingled=FALSE)
+
+session$plotting_segment_order = parse_option('header,scale,3-seq,line-spacer,TT-seq,line-spacer,RNA-seq,line-spacer,ChIP-seq,empty-spacer,unstranded-beds,empty-spacer,annotations')
+
+plot(session, feature='LMO4', verbosity='detailed', strands_intermingled=TRUE)
+plot(session, feature='LMO4', verbosity='detailed', strands_intermingled=FALSE)
+
+#- "Plotting Segment Order":
+#  .) upper: header,scale,3-seq,line-spacer,TT-seq,line-spacer,RNA-seq,line-spacer,ChIP-seq,empty-spacer,annotations,thickline-spacer,unstranded-beds
+#.) lower: thickline-spacer,annotations,empty-spacer,3-seq,line-spacer,TT-seq,line-spacer,RNA-seq
+
+session$plotting_segment_order = list('+'=parse_option('header,scale,TT-seq,line-spacer,3-seq,line-spacer,RNA-seq,line-spacer,ChIP-seq,empty-spacer,annotations,thickline-spacer,unstranded-beds'),
+                                      '-'=parse_option('thickline-spacer,annotations,empty-spacer,ChIP-seq,line-spacer,RNA-seq,line-spacer,3-seq,line-spacer,TT-seq')
+                                        )
+
+plot(session, feature='LMO4', verbosity='detailed', strands_intermingled=TRUE)
+plot(session, feature='LMO4', verbosity='detailed', strands_intermingled=FALSE)
+
+
+session$plotting_segment_order = list('+'=parse_option('header,scale,TT-seq,line-spacer,3-seq,line-spacer,RNA-seq,line-spacer,ChIP-seq,empty-spacer,annotations,thickline-spacer,unstranded-beds'),
+                                      '-'=parse_option('thickline-spacer,annotations,empty-spacer,RNA-seq,line-spacer,3-seq,line-spacer,TT-seq')
+)
+
+
+plot(session, feature='LMO4', verbosity='detailed', strands_intermingled=TRUE)
+plot(session, feature='LMO4', verbosity='detailed', strands_intermingled=FALSE)
+
+
+#34 solved
+xl_fname = '/Users/au103725/Library/CloudStorage/OneDrive-AarhusUniversitet/THJ LAB/Projects/seqNdisplayR/seqNdisplayR/inst/extdata/seqNdisplayR_sample_sheet_simple.xlsx'
+session = load_excel(xl_fname, load_annotations = T)
+session$track_height_cm=NULL
+session$full_height_cm=10
+
+plot(session, feature='LMO4', verbosity='detailed')
+
+
+#35 solved
+xl_fname = '/Users/au103725/Library/CloudStorage/OneDrive-AarhusUniversitet/THJ LAB/Projects/seqNdisplayR/seqNdisplayR/inst/extdata/seqNdisplayR_sample_sheet_simple.xlsx'
+session = load_excel(xl_fname, load_annotations = T)
+session$print_one_line_sample_names=TRUE
+
+plot(session, feature='LMO4', verbosity='detailed')
+
+
+#36 solved
+xl_fname = '/Users/au103725/Library/CloudStorage/OneDrive-AarhusUniversitet/THJ LAB/Projects/seqNdisplayR/seqNdisplayR/inst/extdata/seqNdisplayR_sample_sheet_simple.xlsx'
+session = load_excel(xl_fname, load_annotations = T)
+session$bin_size=100
+
+plot(session, feature='LMO4', verbosity='detailed')
+
+#37 solved
+xl_fname = '/Users/au103725/Library/CloudStorage/OneDrive-AarhusUniversitet/THJ LAB/Projects/seqNdisplayR/seqNdisplayR/inst/extdata/seqNdisplayR_sample_sheet_simple.xlsx'
+session = load_excel(xl_fname, load_annotations = T)
+session[['parameters']][['RNA-seq']][['pseudoCount']] = NULL
+#pseudocounts = unlist(lapply(session$parameters, function(p) p$pseudoCount))
+plot(session, feature='LMO4', verbosity='detailed')
+
+#38 solved
+xl_fname = '/Users/au103725/Library/CloudStorage/OneDrive-AarhusUniversitet/THJ LAB/Projects/seqNdisplayR/seqNdisplayR/inst/extdata/seqNdisplayR_sample_sheet_simple.xlsx'
+session = load_excel(xl_fname, load_annotations = T)
+session$bins_per_cm = 10
+
+plot(session, feature='LMO4', verbosity='detailed')
+
+#39 solved
+xl_fname = '/Users/au103725/Library/CloudStorage/OneDrive-AarhusUniversitet/THJ LAB/Projects/seqNdisplayR/seqNdisplayR/inst/extdata/empty_excel.xlsx'
+session = load_excel(xl_fname, load_annotations = T)
+
+xl_fname = '/Users/au103725/Library/CloudStorage/OneDrive-AarhusUniversitet/THJ LAB/Projects/seqNdisplayR/seqNdisplayR/inst/extdata/minimal_example_excel_template.xlsx'
+session = load_excel(xl_fname, load_annotations = T)
+
+
+xl_fname = '/Users/au103725/Library/CloudStorage/OneDrive-AarhusUniversitet/THJ LAB/Projects/seqNdisplayR/seqNdisplayR/inst/extdata/seqNdisplayR_sample_sheet_simple.xlsx'
+session = load_excel(xl_fname, load_annotations = F)
+session$annots = NULL
+
+plot(session, feature='LMO4', verbosity='detailed')
+
+plot(session, locus=c('chr1','+',87325400,87351991), verbosity='detailed', track_width_cm=5, scaling_factor=4)
+
+
+#40 NOT solved
+# clear out info from previous session
+
+##(1) NOT OKs
+
+#Panel Text Font Size(s)               REMEMBER OUTPUT
+#[*] Detailed Panel Text Font Sizes    REMEMBER OUTPUT
+#Manual Scaling Max Value(s)           REMEMBER OUTPUT
+#Annotation Packing
+#Feature Colors
+
+##(2) OKs
+#->Binning Statistics                  REMEMBER OUTPUT
+#->Pseudocount                         REMEMBER OUTPUT
+#->Panels Text Orientation             REMEMBER OUTPUT
+
+#Display Mean of Replicates
+#Negative-Valued Minus Strand Bigwigs
+#Enhance Signals
+#log2-Transform Data
+#Set Negative Values to 0
+#[*] Batch Correction
+#Group Autoscale
+#Display Feature Names
+#Feature Names Above Features
+#Feature Bracket
+#Highlight Individual Loci By Shaded Boxes
+
+
+# dataset
+# calcMean
+# RNA-seq:TRUE 3'end-seq:TRUE CSTF64 ChIP:TRUE
+# negative_valued_bw
+# RNA-seq:FALSE 3'end-seq:FALSE CSTF64 ChIP:FALSE
+# bin_stats
+# RNA-seq:NULL 3'end-seq:NULL CSTF64 ChIP:NULL
+# enhance_signals
+# RNA-seq:FALSE 3'end-seq:TRUE CSTF64 ChIP:FALSE
+# log2transform
+# RNA-seq:FALSE 3'end-seq:FALSE CSTF64 ChIP:FALSE
+# pseudoCount
+# RNA-seq:NULL 3'end-seq:NULL CSTF64 ChIP:NULL
+# negValsSet0
+# RNA-seq:TRUE 3'end-seq:TRUE CSTF64 ChIP:TRUE
+# batchCorrect
+# RNA-seq:TRUE 3'end-seq:TRUE CSTF64 ChIP:TRUE
+# group_autoscale
+# RNA-seq:TRUE 3'end-seq:TRUE CSTF64 ChIP:TRUE
+# force_scale
+# RNA-seq:NA,NA 3'end-seq:NA,NA CSTF64 ChIP:NA,NA
+#
+# annos
+# annotation_packing
+# gencode v21:NULL in-house:NULL
+# incl_feature_names
+# gencode v21:TRUE in-house:TRUE
+# feature_names_above
+# gencode v21:FALSE in-house:FALSE
+# incl_feature_brackets
+# gencode v21:FALSE in-house:FALSE
+# annot_cols
+# gencode v21:NULL in-house:NULL
+# incl_feature_shadings
+# gencode v21:FALSE in-house:FALSE
+
 
 ## go to #generic
 
@@ -357,12 +615,14 @@ output_parameters = session$output_parameters #  FALSE
 input_parameters = session$input_parameters # NULL
 both_strands = session$both_strands # TRUE
 strands_intermingled = session$strands_intermingled # TRUE  FALSE
+intermingled_color = session$intermingled_color  #
 neg_vals_neg_strand = session$neg_vals_neg_strand # FALSE  TRUE
 actual_strand_direction = session$actual_strand_direction # TRUE
 alternating_background = session$alternating_background # TRUE
 bgr_colors = session$bgr_colors # c('C1B49A', 'F1F1F2')
 bgr_alpha = session$bgr_alpha # 0.2
 strands_alpha = session$strands_alpha # c(100,100)
+intermingled_color = session$intermingled_color
 feature = 'LMO4' # session$feature # 'LMO4'  "NEAT1"  feat  'TAF1D'  NULL
 locus = session$locus # NULL  c("chr11", "-", 93648282, 93866057)
 extra_space = session$extra_space # c(0.5,0.5)
@@ -436,6 +696,7 @@ plotted_region=.plotted.region[[.strand]]
 annotations=.annotations
 
 ### AnnotatedFeaturesInRegion
+
 
 
 
@@ -660,7 +921,7 @@ font_family	=	 .font.family
 scaling_factor	=	 scaling_factor
 letter_widths	=	 letter_widths
 enhance_signals	=	 enhance_signals
-scale_warning	=	 scale_warning
+scale_warning	=	 FALSE
 verbosity	=	 .verbosity
 
 ### PlotScale
@@ -728,7 +989,7 @@ incl_feature_shadings	=	incl_feature_shadings
 feature_shading_colors	=	feature_shading_colors
 feature_shading_alpha	=	feature_shading_alpha
 plot_width_parameters	=	plot_width_parameters
-plot_vertical_parameters	=	plot_vertical_parameters
+plot_vertical_parameters	=	.plot.vertical.parameters
 final_feature_text_org	=	final_feature_text_org
 windows_height	=	.windows.height
 feature_font_size	=	feature_font_size
@@ -798,5 +1059,65 @@ incl_rep=F
 
 
 
-### LoadTracks
+### LoadTracks & LoadAndTransformDataForTrack
+
+#LoadTracks(.plotted.region[[.strand]], datasets, bigwigs, bigwig_dirs, parameters, .verbosity)
+
+.strand = '+'
+
+plotted_region=.plotted.region[[.strand]]
+samples=datasets
+bigwigs
+bigwig_dirs
+parameters
+verbosity=.verbosity
+
+
+.seqtype = names(samples)[1]
+
+#LoadAndTransformDataForTrack(.seqtype, plotted_region, samples, bigwigs, bigwig_dirs, parameters, get_subsamples=FALSE, print_order=FALSE, verbosity)
+seqtype=.seqtype
+plotted_region
+samples
+#bigwigs
+#bigwig_dirs
+#parameters=NULL
+get_subsamples=FALSE
+print_order=FALSE
+verbosity
+
+#ForceScaleList
+#ForceScaleList(datasets, force_scale, strands=ifelse(both_strands, '+-', .strand), .verbosity, .interface)
+
+samples = lapply(.tracks.listed, names)
+force_scale
+strands=ifelse(both_strands, '+-', .strand)
+verbosity=.verbosity
+interface=.interface
+
+#BuildScrutinizePlotSegmentOrder
+
+#.plotting.segment.order = BuildScrutinizePlotSegmentOrder(plotting_segment_order, .plotted.region, datasets, .plotted.samples, header, include_genomic_scale, genomic_scale_on_top, incl_annot=!is.null(annots), horizontal_spacers, .tracks.listed, both_strands, .any.stranded.beds, .any.unstranded.beds, .strands.intermingled, .verbosity, .interface)
+plotting_segment_order=plotting_segment_order
+plotted_region=.plotted.region
+datasets=datasets
+plotted_samples=.plotted.samples
+header=header
+include_genomic_scale=include_genomic_scale
+genomic_scale_on_top=genomic_scale_on_top
+incl_annot=!is.null(annots)
+horizontal_spacers=horizontal_spacers
+tracks_listed=.tracks.listed
+both_strands=both_strands
+any_stranded_beds=.any.stranded.beds
+any_unstranded_beds=.any.unstranded.beds
+strands_intermingled=.strands.intermingled
+verbosity=.verbosity
+interface=.interface
+
+
+
+
+
+
 

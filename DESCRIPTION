@@ -27,7 +27,6 @@ Depends:
     GenomicRanges,
     IRanges,
     rlist,
-    colortools,
     limma,
     readxl,
     writexl,
