@@ -3831,6 +3831,8 @@ adjust_color_phi = function(c_hsl, phi=180){
   hue = c_hsl[1] + phi
   if (hue >= 360){
     hue = hue - 360
+  }else if (hue < 0){
+    hue = hue + 360
   }
   adjusted_c_hsl = c(hue, c_hsl[2:3])
   return(adjusted_c_hsl)
@@ -3862,7 +3864,7 @@ hsl2hex = function(c_hsl){
   }else if (h >= 300 & h < 360){
     rgb_prime = c(c, 0, x)
   }
-  RGB = c(rgb_prime[1]+m, rgb_prime[2]+m,rgb_prime[3]+m)
+  RGB = c(rgb_prime[1]+m, rgb_prime[2]+m, rgb_prime[3]+m)
   return(rgb(RGB[1], RGB[2], RGB[3]))
 }
 
