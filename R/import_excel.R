@@ -20,7 +20,13 @@
 #' @export
 load_excel <- function(xl_fname, load_annotations=FALSE) {
 
+  if ( !(grepl('.xls$', xl_fname) | grepl('.xlsx$', xl_fname))  ) {
+    cat('The provided file does not have the right format - lacking extension "xls" or "xlsx"', '\n')
+    return()
+  }
+  
   cat('Parsing Excel Template File\n')
+  
   samples_df = NULL
   tryCatch(
     {noout <- capture.output(
