@@ -3800,16 +3800,16 @@ hex2hsl = function(c){
     }else{
       saturation = delta / (2 - c_max - c_min)
     } 
-  }
-  delta_r = (((c_max - r)/6) + (delta/2)) / delta
-  delta_g = (((c_max - g)/6) + (delta/2)) / delta
-  delta_b = (((c_max - b)/6) + (delta/2)) / delta
-  if (r == c_max){
-    hue = delta_b - delta_g
-  }else if (g == c_max){
-    hue = (1/3) + delta_r - delta_b
-  }else if (b == c_max){
-    hue = (2/3) + delta_g - delta_r
+    delta_r = (((c_max - r)/6) + (delta/2)) / delta
+    delta_g = (((c_max - g)/6) + (delta/2)) / delta
+    delta_b = (((c_max - b)/6) + (delta/2)) / delta
+    if (r == c_max){
+      hue = delta_b - delta_g
+    }else if (g == c_max){
+      hue = (1/3) + delta_r - delta_b
+    }else if (b == c_max){
+      hue = (2/3) + delta_g - delta_r
+    }
   }
   if (hue < 0){
     hue = hue + 1

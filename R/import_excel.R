@@ -26,7 +26,7 @@ load_excel <- function(xl_fname, load_annotations=FALSE) {
     {noout <- capture.output(
       samples_df <- readxl::read_excel(xl_fname, sheet = 'SAMPLES')
     )
-    cat('  Samples table               --> OK\n') #@ cat('    --> OK\n')
+    # cat('  Samples table               --> OK\n') #@ cat('    --> OK\n') #@ 2022-09-21
     },
     error=function(cond) {
      cat('  Samples table               --> Required sheet "SAMPLES" not found in file\n')
@@ -37,8 +37,23 @@ load_excel <- function(xl_fname, load_annotations=FALSE) {
   if (is.null(samples_df)){
     return()
   }
+  
   if (nrow(samples_df) > 1){
-    samples_df = samples_df[!apply(apply(samples_df, 2, is.na), 1, all),,drop=FALSE] #@
+    samples_df = samples_df[!apply(apply(samples_df, 2, is.na), 1, all),,drop=FALSE] #@ remove rows with only NA
+    samples_df = samples_df[,!apply(apply(samples_df, 2, is.na), 2, all),drop=FALSE] #@ 2022-09-21 remove columns with only NA
+    missing_columns = setdiff(c('bigwig_directory', 'bigwig_file', 'strand', 'dataset', 'subgroup_1'), colnames(samples_df)) #@ 2022-09-21
+    if (length(missing_columns) > 0){ #@ 2022-09-21 ->
+      cat(paste0('  Samples table               --> Required ', ifelse(length(missing_columns)==1, 'column (', 'columns ('), paste(missing_columns, collapse=', '), ') missing in sheet "SAMPLES"'), '\n')
+      cat('  ERROR: ! \n')
+      return()
+    } #@ 2022-09-21 <-
+    top_row_NAs = is.na(samples_df[1,])
+    if ( any(top_row_NAs) ){
+      cat(paste0('  Samples table               --> Required first row ', ifelse(sum(top_row_NAs)==1, 'value (', 'values ('), paste(colnames(samples_df)[top_row_NAs], collapse=', '), ') missing in sheet "SAMPLES"'), '\n')
+      cat('  ERROR: ! \n')
+      return()
+    }
+    cat('  Samples table               --> OK\n') #@ 2022-09-21
     samples_df = fill_df(samples_df)
   }
   datasets = unique(samples_df$dataset) #@ added 2022-09-16
@@ -103,7 +118,26 @@ load_excel <- function(xl_fname, load_annotations=FALSE) {
   for ( opt in names(annot_and_options$annot_plot_options) ) {
     options[[opt]] <- annot_and_options$annot_plot_options[[opt]]
   }
+  
+  if (!('color' %in% colnames(samples_df))){ #@ 2022-09-21
+    cat('  - color(s) are not defined in "Samples table" - using default ("#346C88")', '\n')
+    samples_df$color = "#346C88"
+  }
 
+  if (!('batch' %in% colnames(samples_df))){ #@ 2022-09-21
+    samples_df$batch = NA
+  }
+  standard_sample_cols = c('color', 'bigwig_directory', 'bigwig_file', 'strand', 'batch', 'dataset', 'subgroup_1')
+  add_columns = setdiff(colnames(samples_df), standard_sample_cols)
+  if (length(add_columns) > 0){
+    if (!(all(grepl('subgroup_', add_columns)))){
+      cat(paste0('  - there ', ifelse(length(add_columns)==1, 'is a column (', 'are columns ('), paste(add_columns, collapse=', '), ') in sheet "SAMPLES", which will be ignored because they do not fit the standard input'), '\n')
+    }
+    appr_add_columns = sort(grep('subgroup_', add_columns, value=TRUE))
+    standard_sample_cols = c(standard_sample_cols, appr_add_columns)
+  }
+  samples_df = samples_df[, standard_sample_cols]
+  
   seqNdisplayRSession(
       df = samples_df,
       parameters = params,
@@ -358,19 +392,16 @@ get_plot_options <- function(options) {
 #' @return Data frame
 #'
 #' @export
-fill_df <- function(df) {
-  filled_df <- df
-  start_col <- which(colnames(filled_df) == 'dataset')
+fill_df = function(df) {
+  filled_df = df
+  allowed_cols = intersect(colnames(filled_df), c('color', 'bigwig_directory', 'dataset', grep('subgroup_', colnames(filled_df), value=TRUE)))
   for ( i in 2:nrow(filled_df) ) {
-      col <- start_col
-      need_fill = ifelse(col <= ncol(filled_df), isempty(filled_df[[col]][i]) & !isempty(filled_df[[col]][i-1]), FALSE)
-      while( col <= ncol(filled_df) & need_fill ){
+    for (col in allowed_cols){
+      if ( isempty(filled_df[[col]][i]) & !isempty(filled_df[[col]][i-1]) ){
         filled_df[[col]][i] <- filled_df[[col]][i-1]
-        col <- col + 1
-        need_fill = ifelse(col <= ncol(filled_df), isempty(filled_df[[col]][i]) & !isempty(filled_df[[col]][i-1]), FALSE)
       }
+    }
   }
-
   filled_df
 }
 
