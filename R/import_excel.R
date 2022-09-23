@@ -399,14 +399,25 @@ get_plot_options <- function(options) {
 #'
 #' @export
 fill_df = function(df) {
-  filled_df = df
-  allowed_cols = intersect(colnames(filled_df), c('color', 'bigwig_directory', 'dataset', grep('subgroup_', colnames(filled_df), value=TRUE)))
-  for ( i in 2:nrow(filled_df) ) {
-    for (col in allowed_cols){
-      if ( isempty(filled_df[[col]][i]) & !isempty(filled_df[[col]][i-1]) ){
-        filled_df[[col]][i] <- filled_df[[col]][i-1]
+  filled_df = data.frame()
+  datasets = df$dataset[!is.na(df$dataset)]
+  dateset_start_rows = structure(which(!is.na(df$dataset)), names=datasets)
+  if (length(datasets) == 1){
+    dateset_end_rows = structure(nrow(df), names=datasets)  
+  }else{
+    dateset_end_rows = structure(c(dateset_start_rows-1, nrow(df))[2:(length(datasets)+1)], names=datasets) 
+  }
+  for (dataset in datasets){
+    sub_df = df[dateset_start_rows[dataset]:dateset_end_rows[dataset], , drop=FALSE]
+    allowed_cols = intersect(colnames(sub_df)[which(!is.na(sub_df[1,]))], c('color', 'bigwig_directory', 'dataset', grep('subgroup_', colnames(df), value=TRUE)))
+    for ( i in 2:nrow(sub_df) ) {
+      for (col in allowed_cols){
+        if ( isempty(sub_df[[col]][i]) & !isempty(sub_df[[col]][i-1]) ){
+          sub_df[[col]][i] = sub_df[[col]][i-1]
+        }
       }
     }
+    filled_df = rbind(filled_df, sub_df)
   }
   filled_df
 }

@@ -4215,7 +4215,7 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, interming
     if (.plotted.strand=='+-'){
       abline(h=0, col='darkgray', lwd=scaling_factor*line_width_scaling_factor*0.25, lend=1)
       lines(as.integer(rownames(.plot.mat)), ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*.plot.mat[,.seq.sample], type='h', lend=1,
-            lwd=ifelse(.enhance, 2, 1)*scaling_factor*bin_width, col=.adj.colors['+'])
+            lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors['+']) #@ ifelse(.enhance, 2, 1) -> ifelse(.enhance, 5, 1)
       .plot.mat = plot_mat[['-']] / .y.val['-']
       if (any(.plot.mat > 1.5)){ .plot.mat[which(.plot.mat > 1.5)] = 1.5 }
       if (intermingled_color!='same'){
@@ -4228,10 +4228,10 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, interming
         }
       }
       lines(as.integer(rownames(.plot.mat)), -1*.plot.mat[,.seq.sample], type='h', lend=1,
-            lwd=ifelse(.enhance, 2, 1)*scaling_factor*bin_width, col=.adj.colors['-'])
+            lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors['-'])  #@ ifelse(.enhance, 2, 1) -> ifelse(.enhance, 5, 1)
     }else{
       lines(as.integer(rownames(.plot.mat)), ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*.plot.mat[,.seq.sample], type='h', lend=1,
-            lwd=ifelse(.enhance, 2, 1)*scaling_factor*bin_width, col=.adj.colors[.plotted.strand])
+            lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors[.plotted.strand])  #@ ifelse(.enhance, 2, 1) -> ifelse(.enhance, 5, 1)
     }
     if (incl_track_scales){
       .coords.per.mm = 2/(diff(coords_scale)*full_width_cm*10)
