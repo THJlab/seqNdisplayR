@@ -625,13 +625,13 @@ seqNdisplay = function(
     .first.plot = TRUE
     .plotting.segments = c(.plotting.ready.segment.order[['+']], 'scale')[c(rep(TRUE, length(.plotting.ready.segment.order[['+']])), (!genomic_scale_on_top & include_genomic_scale))]
     for (.plotting.segment in .plotting.segments){
-      PlotSegment(feature, .plotted.region, .plotted.strand, both_strands, .plotting.segment, .basic.plot.parameters, .neg.vals.neg.strand, .plot.width.parameters, .plot.vertical.parameters, .annot.info, .panel.info, .panels.list, .panel.separators, .separators.lwds, .separators.colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, .header.font.sizes, .scaling.factor, .full.width.cm, genomic_scale_on_top, .genomic.scale.font.size, reverse_strand_direction, .bin.stats, dummy_plot, .tracks, .strands.alpha, .intermingled.color, .unstranded.beds, .annotation.packing, .annotation.panel.font.size, .incl.feature.names, .feature.names.font.size, .feature.names.above, .final.feature.text.org, .incl.feature.brackets, .incl.feature.shadings, .feature.shading.colors, feature_shading_alpha, .annot.cols, .group.autoscale, incl_track_scales, .scientific.scale, .scale.fontsize, .force.scale.list, colors, alternating_background, .bgr.colors, bgr_alpha, .font.colors, .letter.widths, .letter.heights, .enhance.signals, .first.plot, .verbosity)
+      PlotSegment(feature, .plotted.region, .plotted.strand, both_strands, .plotting.segment, .basic.plot.parameters, .neg.vals.neg.strand, .plot.width.parameters, .plot.vertical.parameters, .annot.info, .panel.info, .panels.list, .panel.separators, .separators.lwds, .separators.colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, .header.font.sizes, .scaling.factor, .full.width.cm, genomic_scale_on_top, .genomic.scale.font.size, reverse_strand_direction, .bin.stats, dummy_plot, .tracks, .strands.alpha, .intermingled.color, .unstranded.beds, .annotation.packing, .annotation.panel.font.size, .incl.feature.names, .feature.names.font.size, .feature.names.above, .final.feature.text.org, .incl.feature.brackets, .incl.feature.shadings, .feature.shading.colors, feature_shading_alpha, .annot.cols, .group.autoscale, incl_track_scales, .scientific.scale, .scale.fontsize, .force.scale.list, .log2.transform, colors, alternating_background, .bgr.colors, bgr_alpha, .font.colors, .letter.widths, .letter.heights, .enhance.signals, .first.plot, .verbosity)
     }
   }else{
     for (.plotted.strand in names(.plotting.ready.segment.order)){
       .first.plot = which(names(.plotting.ready.segment.order)==.plotted.strand)==1
       for (.plotting.segment in .plotting.ready.segment.order[[.plotted.strand]]){
-        PlotSegment(feature, .plotted.region, .plotted.strand, both_strands, .plotting.segment, .basic.plot.parameters, .neg.vals.neg.strand, .plot.width.parameters, .plot.vertical.parameters, .annot.info, .panel.info, .panels.list, .panel.separators, .separators.lwds, .separators.colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, .header.font.sizes, .scaling.factor, .full.width.cm, genomic_scale_on_top, .genomic.scale.font.size, reverse_strand_direction, .bin.stats, dummy_plot, .tracks, .strands.alpha, .intermingled.color, .unstranded.beds, .annotation.packing, .annotation.panel.font.size, .incl.feature.names, .feature.names.font.size, .feature.names.above, .final.feature.text.org, .incl.feature.brackets, .incl.feature.shadings, .feature.shading.colors, feature_shading_alpha, .annot.cols, .group.autoscale, incl_track_scales, .scientific.scale, .scale.fontsize, .force.scale.list, colors, alternating_background, .bgr.colors, bgr_alpha, .font.colors, .letter.widths, .letter.heights, .enhance.signals, .first.plot, .verbosity)
+        PlotSegment(feature, .plotted.region, .plotted.strand, both_strands, .plotting.segment, .basic.plot.parameters, .neg.vals.neg.strand, .plot.width.parameters, .plot.vertical.parameters, .annot.info, .panel.info, .panels.list, .panel.separators, .separators.lwds, .separators.colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, .header.font.sizes, .scaling.factor, .full.width.cm, genomic_scale_on_top, .genomic.scale.font.size, reverse_strand_direction, .bin.stats, dummy_plot, .tracks, .strands.alpha, .intermingled.color, .unstranded.beds, .annotation.packing, .annotation.panel.font.size, .incl.feature.names, .feature.names.font.size, .feature.names.above, .final.feature.text.org, .incl.feature.brackets, .incl.feature.shadings, .feature.shading.colors, feature_shading_alpha, .annot.cols, .group.autoscale, incl_track_scales, .scientific.scale, .scale.fontsize, .force.scale.list, .log2.transform, colors, alternating_background, .bgr.colors, bgr_alpha, .font.colors, .letter.widths, .letter.heights, .enhance.signals, .first.plot, .verbosity)
       }
     }
   }
@@ -4169,7 +4169,7 @@ PlotMatrix = function(plotted_region, basic_plot_parameters, plot_start, plot_en
 #' @details
 #' Internal function:
 #'
-PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, intermingled_color, sample_subset, windows_height, coords_tracks, coords_scale, first_plot, neg_vals_neg_strand, plotted_strand, y_par, plot_start, plot_end, bin_width, group_autoscale, incl_track_scales, scientific_scale, scale_font_size, full_width_cm, font_colors, font_family, scaling_factor, letter_widths, enhance_signals, scale_warning=NULL, verbosity){
+PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, intermingled_color, sample_subset, windows_height, coords_tracks, coords_scale, first_plot, neg_vals_neg_strand, plotted_strand, y_par, plot_start, plot_end, bin_width, group_autoscale, incl_track_scales, scientific_scale, scale_font_size, log2transformed, full_width_cm, font_colors, font_family, scaling_factor, letter_widths, enhance_signals, scale_warning=NULL, verbosity){
   if (verbosity > 0) { cat(paste('plotting',  plotting_segment, 'data for samples'), '\n') }
   .base.cols = unlist(colors[[plotting_segment]])
   .enhance = enhance_signals[plotting_segment]
@@ -4275,10 +4275,16 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, interming
       if (.plotted.strand=='+-'){
         text(x=1-1.5*.length.ticks, y=.y1, labels=.y.labels['+'], adj=1, cex=.scale.fontsize*scaling_factor/12, family=font_family, col=font_colors['scale'])
         text(x=1-1.5*.length.ticks, y=.y0, labels=.y.labels['-'], adj=1, cex=.scale.fontsize*scaling_factor/12, family=font_family, col=font_colors['scale'])
+        if (log2transformed[plotting_segment]){
+          text(x=-0.8, y=0, labels=expression('l'[2]), adj=0, cex=.scale.fontsize*scaling_factor/12, family=font_family, col=font_colors['scale'])
+        }
         text(x=1-1.5*.length.ticks, y=0, labels=0, adj=1, cex=.scale.fontsize*scaling_factor/12, family=font_family, col=font_colors['scale'])
       }else{
         .y.label = .y.labels[.y.val!=0]
         text(x=1-1.5*.length.ticks, y=.y1, labels=.y.label, adj=1, cex=.scale.fontsize*scaling_factor/12, family=font_family, col=font_colors['scale'])
+        if (log2transformed[plotting_segment]){
+          text(x=-0.8, y=.y1/2, labels=expression('l'[2]), adj=0, cex=.scale.fontsize*scaling_factor/12, family=font_family, col=font_colors['scale'])
+        }
       }
     }
   }
@@ -4629,7 +4635,7 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
 #' @details
 #' Internal function:
 #'
-PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, plotting_segment, basic_plot_parameters, neg_vals_neg_strand, plot_width_parameters, plot_vertical_parameters, annot_info, panel_info, panels_list, panel_separators, separators_lwds, separators_colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, header_font_sizes, scaling_factor, full_width_cm, genomic_scale_on_top, genomic_scale_font_size, reverse_strand_direction, bin_stats, dummy_plot, tracks, strands_alpha, intermingled_color,  unstranded_beds, annotation_packing, annotation_panel_font_size, incl_feature_names, feature_font_size, feature_names_above, final_feature_text_org, incl_feature_brackets, incl_feature_shadings, feature_shading_colors, feature_shading_alpha, annot_cols, group_autoscale, incl_track_scales, scientific_scale, scale_font_size, force_scale_list, colors, alternating_background, bgr_colors, bgr_alpha, font_colors, letter_widths, letter_heights, enhance_signals, first_plot, verbosity){
+PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, plotting_segment, basic_plot_parameters, neg_vals_neg_strand, plot_width_parameters, plot_vertical_parameters, annot_info, panel_info, panels_list, panel_separators, separators_lwds, separators_colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, header_font_sizes, scaling_factor, full_width_cm, genomic_scale_on_top, genomic_scale_font_size, reverse_strand_direction, bin_stats, dummy_plot, tracks, strands_alpha, intermingled_color,  unstranded_beds, annotation_packing, annotation_panel_font_size, incl_feature_names, feature_font_size, feature_names_above, final_feature_text_org, incl_feature_brackets, incl_feature_shadings, feature_shading_colors, feature_shading_alpha, annot_cols, group_autoscale, incl_track_scales, scientific_scale, scale_font_size, force_scale_list, log2transformed, colors, alternating_background, bgr_colors, bgr_alpha, font_colors, letter_widths, letter_heights, enhance_signals, first_plot, verbosity){
   .strand = ifelse(plotted_strand == '+' | plotted_strand == '+-', '+', '-')
   .plotted.region = plotted_region[[.strand]]
   .chrom = as.character(GenomeInfoDb::seqnames(.plotted.region))
@@ -4721,6 +4727,6 @@ PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, pl
     }
     .y.par = structure(lapply(names(.plot.mat), function(.strand) YParameters(.plot.mat[[.strand]], plotting_segment, force_scale_list[[.strand]], group_autoscale)), names=names(.plot.mat))
     .bin.width = basic_plot_parameters[[plotted_strand]]$bin.info[2]
-    PlotData(plotting_segment, .plot.mat, colors, strands_alpha, intermingled_color, .sample.subset, .windows.height, .coords.tracks, .coords.scale, .first.plot, neg_vals_neg_strand, plotted_strand, .y.par, .plot.start, .plot.end, .bin.width, group_autoscale, incl_track_scales, scientific_scale, scale_font_size, full_width_cm, font_colors, .font.family, scaling_factor, letter_widths, enhance_signals, scale_warning=NULL, verbosity)
+    PlotData(plotting_segment, .plot.mat, colors, strands_alpha, intermingled_color, .sample.subset, .windows.height, .coords.tracks, .coords.scale, .first.plot, neg_vals_neg_strand, plotted_strand, .y.par, .plot.start, .plot.end, .bin.width, group_autoscale, incl_track_scales, scientific_scale, scale_font_size, log2transformed, full_width_cm, font_colors, .font.family, scaling_factor, letter_widths, enhance_signals, scale_warning=NULL, verbosity)
   }
 }
