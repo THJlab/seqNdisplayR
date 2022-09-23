@@ -4213,7 +4213,7 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, interming
     plot(0, 0, type='n', xlim=c(plot_start, plot_end), ylim=.y.limits, ann=FALSE, axes=FALSE, bg='transparent', bty='n', xaxs='i', yaxs ='i')
     .adj.colors = structure(unlist(lapply(c('+', '-'), function(.strand) {.adj.rgb = (255 - (ifelse(!.enhance, strands_alpha[.strand], 100)/100)*(255 - as.vector(col2rgb(.base.cols[.base.seq.sample]))))/255; .adj.color = rgb(.adj.rgb[1], .adj.rgb[2], .adj.rgb[3]); return(.adj.color)})), names=c('+', '-'))
     if (.plotted.strand=='+-'){
-      abline(h=0, col='darkgray', lwd=scaling_factor*line_width_scaling_factor*0.25, lend=1)
+      #abline(h=0, col='darkgray', lwd=scaling_factor*line_width_scaling_factor*0.25, lend=1) #@ 
       lines(as.integer(rownames(.plot.mat)), ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*.plot.mat[,.seq.sample], type='h', lend=1,
             lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors['+']) #@ ifelse(.enhance, 2, 1) -> ifelse(.enhance, 5, 1)
       .plot.mat = plot_mat[['-']] / .y.val['-']
@@ -4229,6 +4229,7 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, interming
       }
       lines(as.integer(rownames(.plot.mat)), -1*.plot.mat[,.seq.sample], type='h', lend=1,
             lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors['-'])  #@ ifelse(.enhance, 2, 1) -> ifelse(.enhance, 5, 1)
+      abline(h=0, col='whitesmoke', lwd=scaling_factor*line_width_scaling_factor*0.5, lend=1) #@ 
     }else{
       lines(as.integer(rownames(.plot.mat)), ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*.plot.mat[,.seq.sample], type='h', lend=1,
             lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors[.plotted.strand])  #@ ifelse(.enhance, 2, 1) -> ifelse(.enhance, 5, 1)
