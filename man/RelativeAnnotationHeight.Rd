@@ -2,7 +2,7 @@
 % Please edit documentation in R/seqNdisplayR.R
 \name{RelativeAnnotationHeight}
 \alias{RelativeAnnotationHeight}
-\title{Relative Annotation Height}
+\title{RelativeAnnotationHeight}
 \usage{
 RelativeAnnotationHeight(
   annot_info,
@@ -15,9 +15,32 @@ RelativeAnnotationHeight(
   stranded_beds
 )
 }
-\description{
-Relative Annotation Height
+\arguments{
+\item{annot_info}{}
+
+\item{annot_heights}{}
+
+\item{letter_heights}{}
+
+\item{incl_feature_names}{}
+
+\item{feature_text_org}{}
+
+\item{annotation_packing}{}
+
+\item{incl_feature_brackets}{}
+
+\item{stranded_beds}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }

@@ -16,9 +16,34 @@ LoadAndTransformDataForTrack(
   verbosity
 )
 }
-\description{
-Load And Transform Data For Track
+\arguments{
+\item{seqtype}{}
+
+\item{plotted_region}{}
+
+\item{samples}{}
+
+\item{bigwigs}{}
+
+\item{bigwig_dirs}{}
+
+\item{parameters}{}
+
+\item{get_subsamples}{}
+
+\item{print_order}{}
+
+\item{verbosity}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }

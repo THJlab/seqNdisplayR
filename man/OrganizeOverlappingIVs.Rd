@@ -2,13 +2,25 @@
 % Please edit documentation in R/seqNdisplayR.R
 \name{OrganizeOverlappingIVs}
 \alias{OrganizeOverlappingIVs}
-\title{Organize Overlapping IVs}
+\title{Organize Overlapping Intervals}
 \usage{
 OrganizeOverlappingIVs(annotation_gr, gap = -1L)
 }
-\description{
-Organize Overlapping IVs
+\arguments{
+\item{annotation_gr}{}
+
+\item{gap}{}
 }
-\details{
-Internal function: Overlapping feature intervals (transcripts/genes/transcription units) are organized in separate lines to allow "non-overlapping" plotting
+\value{
+
+}
+\description{
+Internal function: 
+Overlapping feature intervals (transcripts/genes/transcription units) are organized in separate lines to allow "non-overlapping" plotting
+}
+\examples{
+
+}
+\author{
+SLA
 }

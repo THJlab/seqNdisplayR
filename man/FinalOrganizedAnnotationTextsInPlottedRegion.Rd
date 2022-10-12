@@ -10,9 +10,22 @@ FinalOrganizedAnnotationTextsInPlottedRegion(
   font_size
 )
 }
-\description{
-Final Organized Annotation Texts In Plotted Region
+\arguments{
+\item{organized_annotation_texts}{}
+
+\item{annotation_names}{}
+
+\item{font_size}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }

@@ -13,9 +13,28 @@ LoadTracks(
   verbosity
 )
 }
-\description{
-Load Tracks
+\arguments{
+\item{plotted_region}{}
+
+\item{samples}{}
+
+\item{bigwigs}{}
+
+\item{bigwig_dirs}{}
+
+\item{parameters}{}
+
+\item{verbosity}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }

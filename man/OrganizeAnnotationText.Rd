@@ -13,9 +13,29 @@ OrganizeAnnotationText(
   verbosity
 )
 }
-\description{
-Organize Annotation Text
+\arguments{
+\item{plotted_region}{}
+
+\item{annot_info}{}
+
+\item{annotation_packing}{}
+
+\item{letter_widths}{}
+
+\item{center_of_mass}{}
+
+\item{verbosity}{}
 }
-\details{
-Internal function: Given a set of possible font sizes (e.g. helvetica 4-8 given by letter_widths) where should the feature names within the region be plotted
+\value{
+
+}
+\description{
+Internal function: 
+Given a set of possible font sizes (e.g. helvetica 4-8 given by letter_widths), where should the feature names within the region be plotted
+}
+\examples{
+
+}
+\author{
+SLA
 }

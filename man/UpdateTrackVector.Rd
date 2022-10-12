@@ -6,9 +6,20 @@
 \usage{
 UpdateTrackVector(track_vector, plot_vertical_parameters)
 }
-\description{
-Update Track Vector
+\arguments{
+\item{track_vector}{}
+
+\item{plot_vertical_parameters}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }

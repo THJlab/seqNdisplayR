@@ -13,9 +13,29 @@ HorizontalPanelsList(
   interface
 )
 }
-\description{
-Horizontal Panels List
+\arguments{
+\item{samples}{}
+
+\item{horizontal_panels_list}{}
+
+\item{incl_reps}{}
+
+\item{replicate_names}{}
+
+\item{verbosity}{}
+
+\item{interface}{}
 }
-\details{
-Internal function: Checks/constructs a horizontal_panels_list
+\value{
+
+}
+\description{
+Internal function: 
+Checks/constructs a horizontal_panels_list
+}
+\examples{
+
+}
+\author{
+SLA
 }

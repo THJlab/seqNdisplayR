@@ -16,15 +16,18 @@ LazyData: true
 biocViews: 
     DataRepresentation, 
     Sequencing,
-	Annotation, 
-	GenomeAnnotation, 
-	Coverage
+	  Annotation, 
+	  GenomeAnnotation, 
+	  Coverage
 Depends:
     R (>= 4.0),  
     rtracklayer,
     RCurl,
     dplyr (>= 0.7),
     GenomicRanges,
+    BiocGenerics, 
+    GenomeInfoDb, 
+    S4Vectors,
     IRanges,
     rlist,
     limma,
@@ -37,7 +40,7 @@ Depends:
     spsComps,
     shinyTree,
     shinybusy,
-    colourpicker
+    colourpicker,
 Suggests:
     xml2
 RoxygenNote: 7.1.2

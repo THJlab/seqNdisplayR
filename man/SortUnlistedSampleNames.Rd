@@ -10,9 +10,23 @@ SortUnlistedSampleNames(
   incl_rep = F
 )
 }
+\arguments{
+\item{unlisted_which_sample}{}
+
+\item{unlisted_sample_names}{}
+
+\item{incl_rep}{}
+}
+\value{
+
+}
 \description{
+Internal function: 
 Sort Unlisted Sample Names
 }
-\details{
-Internal function: Sort Unlisted Sample Names
+\examples{
+
+}
+\author{
+SLA
 }

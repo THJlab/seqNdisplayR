@@ -2,14 +2,28 @@
 % Please edit documentation in R/seqNdisplayR.R
 \name{ConnectIVs}
 \alias{ConnectIVs}
-\title{Connect IVs}
+\title{Connect Intervals}
 \usage{
 ConnectIVs(n_IV, nonoverlapping_IVs, remaining_IVs)
 }
-\description{
-Connect IVs
+\arguments{
+\item{n_IV}{}
+
+\item{nonoverlapping_IVs}{}
+
+\item{remaining_IVs}{}
 }
-\details{
-Internal function: Connect non-overlapping intervals, such that the number of "lines" used in the annotation track is minimized
+\value{
+
+}
+\description{
+Internal function: 
+Connect non-overlapping intervals, such that the number of "lines" used in the annotation track is minimized
 - used together with "FindNonoverlappingIVs" IVs to organize the individual feature annotations, such that they take up as little space as possible
+}
+\examples{
+
+}
+\author{
+SLA
 }

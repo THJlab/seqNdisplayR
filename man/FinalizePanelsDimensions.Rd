@@ -6,9 +6,20 @@
 \usage{
 FinalizePanelsDimensions(panel_info, both_strands)
 }
-\description{
-Finalize Panels Dimensions
+\arguments{
+\item{panel_info}{}
+
+\item{both_strands}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }

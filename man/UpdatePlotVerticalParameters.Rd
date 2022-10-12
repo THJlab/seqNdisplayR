@@ -13,9 +13,28 @@ UpdatePlotVerticalParameters(
   spacer_height_cm
 )
 }
-\description{
-Update Plot Vertical Parameters
+\arguments{
+\item{plot_vertical_parameters}{}
+
+\item{track_height_cm_estimate}{}
+
+\item{title_field_height_cm}{}
+
+\item{genomic_scale_height_cm}{}
+
+\item{annotation_height_cm}{}
+
+\item{spacer_height_cm}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }

@@ -6,9 +6,18 @@
 \usage{
 NumberingSpacers(stranded_list)
 }
-\description{
-Numbering Spacers
+\arguments{
+\item{stranded_list}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }

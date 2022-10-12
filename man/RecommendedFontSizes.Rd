@@ -10,9 +10,22 @@ RecommendedFontSizes(
   plot_vertical_parameters
 )
 }
-\description{
-Recommended Font Sizes
+\arguments{
+\item{est_track_height_cm}{}
+
+\item{est_min_annot_height}{}
+
+\item{plot_vertical_parameters}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }

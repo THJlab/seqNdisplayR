@@ -6,9 +6,27 @@
 \usage{
 ForceScaleList(samples, force_scale, strands, verbosity, interface)
 }
-\description{
-Force Scale List
+\arguments{
+\item{samples}{}
+
+\item{force_scale}{}
+
+\item{strands}{}
+
+\item{verbosity}{}
+
+\item{interface}{}
 }
-\details{
-Internal function: Checks/constructs a force_scale_list
+\value{
+
+}
+\description{
+Internal function: 
+Checks/constructs a force_scale_list
+}
+\examples{
+
+}
+\author{
+SLA
 }

@@ -599,6 +599,10 @@ session = load_excel(xl_fname, load_annotations = T)
 
 session = load_excel('inst/extdata/seqNdisplayR_sample_sheet_simple.xlsx', load_annotations = T)
 
+
+xl_fname <- system.file('extdata', 'seqNdisplayR_sample_sheet_elaborate2.xlsx', package='seqNdisplayR')
+session = load_excel(xl_fname, load_annotations = T)
+
 #generic
 datasets=session$samples
 colors=session$colors

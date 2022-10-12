@@ -2,14 +2,29 @@
 % Please edit documentation in R/seqNdisplayR.R
 \name{FindNonoverlappingIVs}
 \alias{FindNonoverlappingIVs}
-\title{Find Nonoverlapping IVs}
+\title{Find Nonoverlapping Intervals}
 \usage{
 FindNonoverlappingIVs(n_IV, n_IVs, overlaps)
 }
-\description{
-Find Nonoverlapping IVs
+\arguments{
+\item{n_IV}{}
+
+\item{n_IVs}{}
+
+\item{overlaps}{}
 }
-\details{
-Internal function: Find nonoverlapping intervals within a GRanges object for each interval (based on the SelfHits object obtained by findOverlaps function applied to the GRanges object beforehand)
+\value{
+
+}
+\description{
+Internal function: 
+Find nonoverlapping intervals within a GRanges object for each interval (based on the SelfHits object obtained by findOverlaps function applied to the GRanges object beforehand)
 - used together with "ConnectIVs" to organize the individual feature annotations, such that they take up as little space as possible
+}
+\examples{
+
+
+}
+\author{
+SLA
 }

@@ -14,9 +14,30 @@ UnpackSamples(
   verbosity
 )
 }
-\description{
-Unpack Samples
+\arguments{
+\item{seqtype}{}
+
+\item{samples}{}
+
+\item{which_samples}{}
+
+\item{which_reps}{}
+
+\item{bigwig_list}{}
+
+\item{bigwig_dirs}{}
+
+\item{verbosity}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }

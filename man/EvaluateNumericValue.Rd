@@ -15,9 +15,33 @@ EvaluateNumericValue(
   verbosity
 )
 }
-\description{
-Evaluate Numeric Value
+\arguments{
+\item{num_val}{}
+
+\item{positive_val}{}
+
+\item{min_val}{}
+
+\item{max_val}{}
+
+\item{interval_obligatory}{}
+
+\item{turn_errors_to_warnings}{}
+
+\item{alt_par_name}{}
+
+\item{verbosity}{}
 }
-\details{
-Internal function: Evaluate whether a vector/value is numeric and falls within recommmended range
+\value{
+
+}
+\description{
+Internal function: 
+Evaluate whether a vector/value is numeric and falls within recommmended range
+}
+\examples{
+
+}
+\author{
+SLA
 }

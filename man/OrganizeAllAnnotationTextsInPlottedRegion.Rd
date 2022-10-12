@@ -10,9 +10,23 @@ OrganizeAllAnnotationTextsInPlottedRegion(
   letter_widths
 )
 }
-\description{
-Organize All Annotation Texts In Plotted Region
+\arguments{
+\item{feature_text}{}
+
+\item{plotted_region}{}
+
+\item{letter_widths}{}
 }
-\details{
-Internal function: Determine the y-axis organization of names of annotated features within plotted region depending on font size
+\value{
+
+}
+\description{
+Internal function: 
+Determine the y-axis organization of names of annotated features within plotted region depending on font size
+}
+\examples{
+
+}
+\author{
+SLA
 }

@@ -15,9 +15,42 @@ PlotWidths(
   interface
 )
 }
-\description{
-Plot Widths
+\arguments{
+\item{panels_max_width_cm}{maximum width (in cm) of the combined panels plotted to the left of the data tracks ('auto'/'automatic' or positive numeric value) - 'auto' is only accepted if full_width_cm=NULL}
+
+\item{scale_panel_width_cm}{width (in cm) of the scale panel plotted to the left of the data tracks and to the right of all other panels ('auto'/'automatic' or positive numeric value) - 'auto' is only accepted if full_width_cm=NULL}
+
+\item{margin_width_cm}{width (in cm) of the margins on each side of the data tracks (NULL or positive numeric value - will auto-default with warning message)}
+
+\item{track_width_cm}{width (in cm) of the data tracks (NULL or positive numeric value)}
+
+\item{full_width_cm}{width (in cm) of the full plotted area (NULL or positive numeric value)}
+
+\item{incl_track_scales}{if TRUE tracks scales will be included (left of the data tracks and to the right of all other panels)}
+
+\item{verbosity}{indicated by an integer 0 to 3 referring to the levels 'off', 'no warnings', 'normal', and 'detailed'}
+
+\item{interface}{'R' or 'shiny'}
 }
-\details{
-Internal function: Make sense of the supplied width arguments
+\value{
+a named vector with values for 'panels.max.width.cm', 'scale.panel.width.cm', 'margin.width.cm', 'track.width.cm' and 'full.width.cm'
+}
+\description{
+Internal function: 
+Make sense of the supplied width arguments
+}
+\note{
+the following expression needs to be true: full_width_cm = panels_max_width_cm + scale_panel_width_cm + track_width_cm + 2 * margin_width_cm
+consider setting one of the arguments "full_width_cm" or "track_width_cm" to NULL
+}
+\examples{
+plot_widths = PlotWidths(panels_max_width_cm='auto', scale_panel_width_cm='auto', margin_width_cm=0.05, track_width_cm=12, full_width_cm=NULL, incl_track_scales=TRUE, verbosity=3, interface='R')
+plot_widths = PlotWidths(panels_max_width_cm='auto', scale_panel_width_cm='auto', margin_width_cm=0.05, track_width_cm=12, full_width_cm=15, incl_track_scales=TRUE, verbosity=3, interface='R')
+plot_widths = PlotWidths(panels_max_width_cm=2, scale_panel_width_cm=0.6, margin_width_cm=0.05, track_width_cm=12, full_width_cm=15, incl_track_scales=TRUE, verbosity=3, interface='R')
+plot_widths = PlotWidths(panels_max_width_cm=2.3, scale_panel_width_cm=0.6, margin_width_cm=0.05, track_width_cm=12, full_width_cm=15, incl_track_scales=TRUE, verbosity=3, interface='R')
+plot_widths = PlotWidths(panels_max_width_cm=2, scale_panel_width_cm=0.6, margin_width_cm=0.05, track_width_cm=NULL, full_width_cm=15, incl_track_scales=TRUE, verbosity=3, interface='R')
+
+}
+\author{
+SLA
 }

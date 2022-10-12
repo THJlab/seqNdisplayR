@@ -6,9 +6,27 @@
 \usage{
 ReadInAnnotations(annots, verbosity)
 }
-\description{
-Read In Annotations
+\arguments{
+\item{annots}{named list of bed file names (incl. full path; can be stored both locally and on http)}
+
+\item{verbosity}{indicated by an integer 0 to 3 referring to the levels 'off', 'no warnings', 'normal', and 'detailed'}
 }
-\details{
-Internal function: Read in annotations as GRanges objects from bed files - stored in list format
+\value{
+named list GRanges objects for each given bed file
+}
+\description{
+Internal function: 
+Read in annotations as GRanges objects from bed files - stored in list format
+}
+\note{
+bed files can be imported from http on both MacOS and Windows (not true for bigwig files on Windows)
+}
+\examples{
+annots_fnames = list('gencode v21'='http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/annotations/gencode.v21.annotation.nohosted.bed',
+                     'in-house'='http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/annotations/HeLa_major_isoform_hg38_gc34.bed')
+annots_listedGR = ReadInAnnotations(annots=annots_fnames, verbosity=3)               
+
+}
+\author{
+SLA
 }

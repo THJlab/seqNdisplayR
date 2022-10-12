@@ -11,9 +11,24 @@ AlignBasicPlotParameters(
   fixed_plot_vertical_parameters
 )
 }
-\description{
-Align Basic Plot Parameters
+\arguments{
+\item{basic_plot_parameters}{}
+
+\item{both_strands}{}
+
+\item{strands_intermingled}{}
+
+\item{fixed_plot_vertical_parameters}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }

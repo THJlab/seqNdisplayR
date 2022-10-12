@@ -14,9 +14,31 @@ CoordsOfFeatName(
   plotted_region
 )
 }
-\description{
-Coords Of Feat Name
+\arguments{
+\item{chrom_coord_feature}{}
+
+\item{feat_width_cm}{}
+
+\item{word_width_cm}{}
+
+\item{word_width_feat_fit}{}
+
+\item{word_width_plot_fit}{}
+
+\item{feature_gr}{}
+
+\item{plotted_region}{}
 }
-\details{
-Internal function: Given a chromosomal coordinate (for the center of the annotated feature name) the parameters necessary for plotting the word such that it fits inside the plotted region are calculated
+\value{
+
+}
+\description{
+Internal function: 
+Given a chromosomal coordinate (for the center of the annotated feature name) the parameters necessary for plotting the word such that it fits inside the plotted region are calculated
+}
+\examples{
+
+}
+\author{
+SLA
 }

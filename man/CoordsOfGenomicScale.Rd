@@ -14,9 +14,30 @@ CoordsOfGenomicScale(
   plot_end
 )
 }
-\description{
-Coords Of Genomic Scale
+\arguments{
+\item{chrom_coord}{}
+
+\item{font_size}{}
+
+\item{coords_tracks}{}
+
+\item{full_width_cm}{}
+
+\item{plot_width}{}
+
+\item{plot_start}{}
+
+\item{plot_end}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }

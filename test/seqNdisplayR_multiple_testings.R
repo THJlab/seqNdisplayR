@@ -11,7 +11,9 @@ xl_fname <- system.file('extdata', 'example_excel_template.xlsx', package='seqNd
 
 xl_fname <- system.file('extdata', 'minimal_example_excel_template2.xlsx', package='seqNdisplayR')
 
-session <- load_excel(xl_fname, load_annotations = T)
+xl_fname = system.file('extdata', 'seqNdisplayR_sample_sheet_elaborate2.xlsx', package='seqNdisplayR')
+
+session <- LoadExcel(xl_fname, load_annotations = T)
 # takes some time, since annotations are loaded...
 
 print(session)
@@ -22,6 +24,10 @@ session$horizontal_panels_list
 ## arguments to be tested in the context of only one plotted region:
 feat = 'LMO4'
 plot(session, feature=feat)
+
+plot(session, feature=feat)
+
+plot(session, feature=feat, pdf=TRUE, pdf_name=paste0("seqNdisplayR_", Sys.Date(), '_', feat), pdf_dir="./")
 
 #session[['parameters']][['TT-seq']][['calcMean']] = FALSE
 #session[['parameters']][['RNA-seq']][['calcMean']] = FALSE
@@ -74,7 +80,7 @@ plot(session, feature=feat, horizontal_panels_list=list('TT-seq'=c(T,T), 'RNA-se
 plot(session, feature=feat, horizontal_panels_list=list('TT-seq'=c('A',5), 'RNA-seq'=c(T,T), '3-seq'=c(T,T,T,T), 'ChIP-seq'=c(T,T)) ) ## deliberate error
 
 xl_fname <- system.file('extdata', 'example_excel_template.xlsx', package='seqNdisplayR')
-session <- load_excel(xl_fname, load_annotations = T)
+session <- LoadExcel(xl_fname, load_annotations = T)
 feat='LMO4'
 
 plot(session, feature=feat, annots=NULL, dummy_plot=TRUE, force_scale=force_scale)

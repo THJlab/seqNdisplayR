@@ -6,9 +6,24 @@
 \usage{
 ListDepth(query_list)
 }
-\description{
-List Depth
+\arguments{
+\item{query_list}{}
 }
-\details{
-Internal function: Max number of nested levels in a nested list of lists
+\value{
+
+}
+\description{
+Internal function: 
+Max number of nested levels in a nested list of lists
+}
+\examples{
+ListDepth(c('a','b','c'))
+l = list('x'=c('a1','b1','c1'), 'y'=c('a2','b2','c2'))
+ListDepth(l)
+l = list('x0'=list('x1'=c('a1','b1','c1'), 'x2'=c('a2','b2','c2')), 'y'=c('a2','b2','c2'))
+ListDepth(l)
+
+}
+\author{
+SLA
 }

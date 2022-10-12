@@ -28,9 +28,62 @@ OrganizePanelsDimensions(
   verbosity
 )
 }
-\description{
-Organize Panels Dimensions
+\arguments{
+\item{datasets}{}
+
+\item{min_word_length}{}
+
+\item{replicate_names}{}
+
+\item{print_one_line_sample_names}{}
+
+\item{incl_first_panel}{}
+
+\item{plot_height_parameters}{}
+
+\item{feature_names_font_size}{}
+
+\item{font_size_range}{}
+
+\item{recommended_font_sizes}{}
+
+\item{scale_font_size}{}
+
+\item{horizontal_panels_list}{}
+
+\item{panel_font_size_list}{}
+
+\item{panels_list}{}
+
+\item{plot_widths_cm}{}
+
+\item{panel_separators}{}
+
+\item{strand}{}
+
+\item{both_strands}{}
+
+\item{strands_intermingled}{}
+
+\item{stranded_samples}{}
+
+\item{fixed_panel_width}{}
+
+\item{verbosity}{}
 }
-\details{
-Internal function: The overall panel dimensions can fixed upfront or it can be left open for the function to determine the dimension - with some initial parameters defined.
+\value{
+
+}
+\description{
+Internal function: 
+The overall panel dimensions can be fixed upfront or it can be left open for the function to determine the dimension - with some initial parameters defined
+}
+\note{
+.penalties.0hor.list obsolete? (#%)
+}
+\examples{
+
+}
+\author{
+SLA
 }

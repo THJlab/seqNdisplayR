@@ -6,10 +6,22 @@
 \usage{
 AnnotatedFeaturesInRegion(plotted_region, annotations)
 }
-\description{
-Annotated Features In Region
+\arguments{
+\item{plotted_region}{}
+
+\item{annotations}{}
 }
-\details{
-Internal function: This function is the first step in organizing the annotated features in the plotted region into various formats
+\value{
+
+}
+\description{
+Internal function: 
+This function is the first step in organizing the annotated features in the plotted region into various formats
 Used together with "OrganizeOverlappingLoci" and "ConvertCollapsedFormat" to create a final organized version of the annotated features
+}
+\examples{
+
+}
+\author{
+SLA
 }

@@ -6,9 +6,24 @@
 \usage{
 YParameters(plot_mat, plotting_segment, force_scale_list, group_autoscale)
 }
-\description{
-Y Parameters
+\arguments{
+\item{plot_mat}{}
+
+\item{plotting_segment}{}
+
+\item{force_scale_list}{}
+
+\item{group_autoscale}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }

@@ -15,9 +15,32 @@ SegmentTop(
   verbosity
 )
 }
-\description{
-Segment Top
+\arguments{
+\item{plotting_segment}{}
+
+\item{plotted_strand}{}
+
+\item{windows_height}{}
+
+\item{annot_info}{}
+
+\item{dummy_plot}{}
+
+\item{tracks}{}
+
+\item{unstranded_beds_names}{}
+
+\item{verbosity}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }

@@ -2,21 +2,24 @@
 % Please edit documentation in R/seqNdisplayR.R
 \name{HandleForcedScaleFromParameters}
 \alias{HandleForcedScaleFromParameters}
-\title{Parse Option String}
+\title{Handle Forced Scale From Parameters}
 \usage{
 HandleForcedScaleFromParameters(pars)
 }
 \arguments{
-\item{option_str}{string representation of the option}
+\item{pars}{}
+}
+\value{
+
 }
 \description{
-Parse string into relevant R object class
+Internal function: 
+Checks/constructs a force_scale_list
+Handle force_scale which is part of "parameters" argument but needs to passed differently to plot function
 }
-\details{
-String can represent a named list, unnamed list, named vector, unnamed vector or single value. If string contains ";" assumes a list; if string contains "," assumes a vector; individual strings are interprated as "NULL" -> NULL; if "TRUE" or "FALSE" --> TRUE/FALSE; if single number --> as.numeric; if single non-number --> as.character;
+\examples{
 
-Force Scale List
-
-Internal function: Checks/constructs a force_scale_list
-handle force_scale which is part of parameters but needs to passed differently to plot function
+}
+\author{
+MS/SLA
 }

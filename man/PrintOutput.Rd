@@ -6,9 +6,32 @@
 \usage{
 PrintOutput(messages, verbosity, no_line_change = FALSE)
 }
-\description{
-Print Output
+\arguments{
+\item{messages}{a list with messages stored under 'output', 'warnings' and 'errors'}
+
+\item{verbosity}{indicated by an integer 0 to 3 referring to the levels 'off', 'no warnings', 'normal', and 'detailed'}
+
+\item{no_line_change}{boolean whether a string of warning messages should be printed on the same line (TRUE) or different lines (FALSE)}
 }
-\details{
-Internal function: print output, warnings and errors based on messages list
+\value{
+print output, warnings and errors based on messages list
+}
+\description{
+Internal function
+}
+\note{
+find example for usage of no_line_change=TRUE
+}
+\examples{
+messages = list('output'=list('This is the output string'), 'errors'=list('This is an error string'), 'warnings'=list('This is a warning string'))
+PrintOutput(messages, verbosity=0)
+PrintOutput(messages, verbosity=1)
+PrintOutput(messages, verbosity=2)
+
+messages2 = list('output'=list('This is the output string and no errors or warnings'), 'errors'=list(), 'warnings'=list())
+PrintOutput(messages2, verbosity=2)
+
+}
+\author{
+SLA
 }

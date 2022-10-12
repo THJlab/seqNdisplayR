@@ -16,9 +16,35 @@ ScrutinizeExpandAndNameParameter(
   verbosity
 )
 }
-\description{
-Scrutinize Expand And Name Parameter
+\arguments{
+\item{parameter}{}
+
+\item{name_vector}{}
+
+\item{use_names}{}
+
+\item{default_value}{}
+
+\item{expect_standard}{}
+
+\item{expect}{}
+
+\item{revert_to_default}{}
+
+\item{alt_par_name}{}
+
+\item{verbosity}{}
 }
-\details{
-Internal function: Helper function that will expand a common "one-dimensional" parameter to fit all the names of a named object
+\value{
+
+}
+\description{
+Internal function: 
+Helper function that will expand a common "one-dimensional" parameter to fit all the names of a named object
+}
+\examples{
+
+}
+\author{
+SLA
 }

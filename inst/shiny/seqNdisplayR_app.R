@@ -4,6 +4,21 @@ share <- list(title = "{seqNdisplayR} package",
 options(shinyTree.setState = TRUE)
 options(shinyTree.refresh  = TRUE)
 
+
+##### functions to be added in app
+
+#' Open Options Table
+#'
+#' @description Open the Options table (Excel sheet with info for app)
+#'
+#' @author SLA
+#'
+#' @return
+#' 
+#' @importFrom readxl read_excel
+#' 
+#' @examples
+#' 
 OpenOptionsTable = function(){
   libpaths = .libPaths()
   for (libpath in libpaths){
@@ -15,12 +30,117 @@ OpenOptionsTable = function(){
   readxl::read_excel(options_table, sheet='Shiny_Args')
 }
 
-
 #@ -> find shiny folder and options table
-options_table = OpenOptionsTable()
+#options_table = OpenOptionsTable()
 #@ <- find shiny folder
 
-#@options_table <- readxl::read_excel(system.file('shiny', 'variable_defaults_and_help.xlsx', package='seqNdisplayR'), sheet='Shiny_Args')
+
+#' Parse Option
+#'
+#' @description Internal function: 
+#' Parse string into relevant R object class
+#'
+#' @author MS
+#'
+#' @param option_str string representation of the option
+#'
+#' @details String can represent a named list, unnamed list, named vector, unnamed vector or single value. If string contains ";" assumes a list; if string contains "," assumes a vector; individual strings are interprated as "NULL" -> NULL; if "TRUE" or "FALSE" --> TRUE/FALSE; if single number --> as.numeric; if single non-number --> as.character;
+#'
+#' @return
+#'
+#' @examples
+#' ParseOption("1.2,3")
+#' ParseOption("RNA-seq:1.2,3;TT-seq:2,4")
+#' @note change throughout from parse_option to ParseOption - done? #% 2022-10-04
+ParseOption = function(option_str) {
+  if( is.null(option_str) ){
+    NULL
+  }else if(grepl(';', option_str)){
+    option_list = strsplit(option_str,';')[[1]]
+    option_list_names = lapply(option_list, function(op) if(grepl(':', op)){sub(':.*', '', op)}else{NULL})
+    option_list = lapply(option_list, function(op) ParseOption(sub('.*:', '', op)))
+    names(option_list) = option_list_names
+    option_list
+  }else if(grepl(',', option_str)){
+    sapply(strsplit(option_str,',')[[1]], ParseOption, USE.NAMES = FALSE)
+  }else if( is.na(option_str) | option_str == '' ){  #same as empty cell in excel sheet
+    NULL
+  }else if(option_str == 'TRUE' | option_str == 'T'){
+    TRUE
+  }else if(option_str == 'FALSE' | option_str == 'F'){
+    FALSE
+  }else if(option_str == 'NULL'){
+    NULL
+  }else if( !is.na(suppressWarnings(as.numeric(option_str))) ){
+    as.numeric(option_str)
+  }else{
+    option_str
+  }
+}
+
+
+#' Deparse Option
+#'
+#' @description Internal function: 
+#' Parse option into string
+#'
+#' @author MS
+#'
+#' @param option named list, vector or single element
+#'
+#' @return String representation of object, compatible with ParseOption
+#'
+#' @examples
+#' DeparseOption(c(1.2,3))
+#' DeparseOption(list('RNA-seq' = c(1.2,3), 'TT-seq' = c(2,4)))
+#' DeparseOption(list('RNA-seq' = c(TRUE,FALSE), 'TT-seq' = c(TRUE,FALSE)))
+#' @note change throughout from deparse_option to DeparseOption - done? #% 2022-10-04
+DeparseOption = function(option) {
+  if( length(option) > 1 ){
+    if ( is.list(option) ) {
+      elems = lapply(option, DeparseOption)
+      paste(paste(names(elems), elems, sep=':'), collapse=';')
+    } else {
+      paste(sapply(option, DeparseOption), collapse=',')
+    }
+  } else if( is.null(option) ) {
+    "NULL"
+  } else if( option == '' ) {
+    "NULL"
+  } else if( is.character(option) ) {
+    option
+  } else if( is.numeric(option) ) {
+    as.character(option)
+  } else if( option == TRUE ){
+    "TRUE"
+  }else if( option == FALSE ){
+    "FALSE"
+  }else  {
+    option
+  }
+}
+
+#' List Depth
+#'
+#' @description Internal function: 
+#' Max number of nested levels in a nested list of lists
+#' 
+#' @author SLA
+#'
+#' @param query_list 
+#'
+#' @return
+#'
+#' @examples
+#' ListDepth(c('a','b','c'))
+#' l = list('x'=c('a1','b1','c1'), 'y'=c('a2','b2','c2'))
+#' ListDepth(l)
+#' l = list('x0'=list('x1'=c('a1','b1','c1'), 'x2'=c('a2','b2','c2')), 'y'=c('a2','b2','c2'))
+#' ListDepth(l)
+#' 
+ListDepth = function(query_list){
+  ifelse(is.list(query_list), 1L + max(sapply(query_list, ListDepth)), 0L)
+}
 
 
 ##### functions for split input values
@@ -136,7 +256,8 @@ split_bool_input = function(n, varname, suboptions, vals){
 
 #### (A) CREATE INPUT ELEMENT (LAYOUT OF APP)
 
-create_input_element <- function(option) {
+create_input_element = function(option) {
+  options_table = OpenOptionsTable()
   option_par <- options_table[options_table$shiny_varname == option,]
   if ( option_par$option_group == 'dataset_option' | option_par$option_group == 'annotation_option' ) {
       if ( option_par$option_class == 'bool' ) {
@@ -499,15 +620,10 @@ create_input_element <- function(option) {
 }
 
 
-ListDepth = function(query_list){
-  ifelse(is.list(query_list), 1L + max(sapply(query_list, ListDepth)), 0L)
-}
-
 
 # UI ####
 ui <- fluidPage(
   useShinyjs(),
-  #shinyjs::extendShinyjs(text = "shinyjs.refresh = function() { location.reload(); }"),
   shinybusy::use_busy_spinner(spin = "fading-circle"),
   tags$style(HTML(".shiny-split-layout>div {overflow: visible}")),  #@ this line allows the color widgets to be displayed "in front"
   # HEADER ####
@@ -567,14 +683,14 @@ ui <- fluidPage(
     mainPanel(
       tags$p("1. choose a template and locus in the Input section"),
       tags$p("2. modify any options in Input or Optional Arguments below"),
-      tags$p("3. select to draw the plot, save as pdf or save current settings to excel on the left"),
+      tags$p("3. select on the left whether to plot on screen, save as pdf or save current settings to excel"),
       tags$p(em("A convenient website to easily design pleasing color palettes, with colorblind friendly options can be found "), a("here", href="https://coolors.co/"), em('or'), a("here", href="https://medialab.github.io/iwanthue/")),
       tags$p(strong("Optional arguments marked with [*] should be used with caution - only recommended for experienced users! Consult the vignette for more details.")),
       tags$br(),
       tags$head(
         tags$style(type="text/css", "#examples_sample_sheets_folder {background-color: #BD583735}")),
-      tags$div(id="examples_sample_sheets_folder", tags$p("Example", strong(em("Sample Sheets")), "are in", ExamplesSampleSheetsFolder())),
-      #tags$p("Example", strong(em("Sample Sheets")), "are in", ExamplesSampleSheetsFolder()),
+      tags$div(id="examples_sample_sheets_folder", tags$p("Example", strong(em("Sample Sheets")), "are in", seqNdisplayR::ExamplesSampleSheetsFolder())),
+      #tags$p("Example", strong(em("Sample Sheets")), "are in", seqNdisplayR::ExamplesSampleSheetsFolder()),
       verbatimTextOutput("console"))
   ),
   tags$br(),
@@ -686,7 +802,6 @@ ui <- fluidPage(
         )
       ),
 
-
       tabPanel(
         "Plot Display Parameters",
         tags$br(),
@@ -780,8 +895,6 @@ ui <- fluidPage(
         )
       ),
 
-
-
       tabPanel(
         "Tracks Binning",
         tags$br(),
@@ -795,7 +908,6 @@ ui <- fluidPage(
           create_input_element('bins_cm')
         )
       ),
-
 
       tabPanel(
         "Header and Genomic Region",
@@ -874,10 +986,10 @@ ui <- fluidPage(
 
 # SERVER ####
 server <- function(input, output, session) {
-
-  current_session <- reactiveVal(NULL) # a seqNRdisplaySession Object for current session
-  current_session_fname <- reactiveVal('') # filename to prevent reloading
-  current_session_idx <- reactiveVal(0) # index to be able to address dynamic UI elements 
+  options_table = OpenOptionsTable()
+  CurrentSession <- reactiveVal(NULL) # a seqNRdisplaySession Object for current session
+  CurrentSessionFname <- reactiveVal('') # filename to prevent reloading
+  CurrentSessionIdx <- reactiveVal(0) # index to be able to address dynamic UI elements 
   textLog <- reactiveVal("") # reactive text log
 
 
@@ -949,12 +1061,12 @@ server <- function(input, output, session) {
   }
 
   ## get samples selected in the tree
-  get_selected_samples <- function(){
+  GetSelectedSamples <- function(){
     tree <- input[['tree']]
     #ups the tree cannot be selected without first being shown
     # a decision made in shinyTree package we use for the tree
     if ( is.null(tree) ) {
-      current_session()$samples
+      CurrentSession()$samples
     } else {
       get_selected_tree(tree)
     }
@@ -1062,7 +1174,7 @@ server <- function(input, output, session) {
   # update session UI to loaded template ####
   # set all values in ui elements to the ones from a seqNdisplayR session (imported excel)
   update_ui_to_session = function(seqNdisplayR_session) {
-    prev_session_idx <- current_session_idx() - 1
+    prev_session_idx <- CurrentSessionIdx() - 1
     dataset_names = names(seqNdisplayR_session$samples)
 
     # global options ####
@@ -1075,12 +1187,12 @@ server <- function(input, output, session) {
         if ( opt_line$option_class == 'bool' ) {
           updateCheckboxInput(session, opt_line$shiny_varname, value = seqNdisplayR_session[[opt]])
         } else if ( opt_line$option_class == 'text' ) {
-          updateTextInput(session, opt_line$shiny_varname, value = seqNdisplayR::deparse_option(seqNdisplayR_session[[opt]]))
+          updateTextInput(session, opt_line$shiny_varname, value = DeparseOption(seqNdisplayR_session[[opt]])) #@ 2022-10-07 seqNdisplayR::DeparseOption
         } else if ( opt_line$option_class == 'text_choices' ) { #@ ->
           options = strsplit(opt_line$option_options, split=',', fixed=TRUE)[[1]]
-          updateRadioButtons(session, opt_line$shiny_varname, selected=seqNdisplayR::deparse_option(seqNdisplayR_session[[opt]])) #@ <-
+          updateRadioButtons(session, opt_line$shiny_varname, selected=DeparseOption(seqNdisplayR_session[[opt]])) #@ 2022-10-07 seqNdisplayR::DeparseOption
         } else if ( opt_line$option_class == 'color' ) {
-          colourpicker::updateColourInput(session, opt_line$shiny_varname, value = seqNdisplayR::deparse_option(seqNdisplayR_session[[opt]]))
+          colourpicker::updateColourInput(session, opt_line$shiny_varname, value = DeparseOption(seqNdisplayR_session[[opt]])) #@ 2022-10-07 seqNdisplayR::DeparseOption
         } else if ( opt_line$option_class == 'numeric' ) {
           updateSliderInput(session, opt_line$shiny_varname, value = seqNdisplayR_session[[opt]])
         } else if ( opt_line$option_class == 'optional_numeric' ) {
@@ -1218,7 +1330,7 @@ server <- function(input, output, session) {
         for ( name in rev(names(para)) ) {
           alt_name = gsub('\\s+', 'YvalueY', name) #@
           alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name)
-          dataset_id = paste0(anchor_elem, '_XvalueX', current_session_idx(), '_', alt_name)
+          dataset_id = paste0(anchor_elem, '_XvalueX', CurrentSessionIdx(), '_', alt_name)
           if ( opt_line$option_class == 'text' ) {
             insertUI(
               selector = paste0('#', anchor_elem),
@@ -1226,7 +1338,7 @@ server <- function(input, output, session) {
               ui = tags$div(id=dataset_id,
                             textInput(inputId = dataset_id,
                                       label = name,
-                                      value = deparse_option(para[[name]])
+                                      value = DeparseOption(para[[name]])
               ))
             )
           } else if ( opt_line$option_class == 'numeric' ) {
@@ -1245,7 +1357,7 @@ server <- function(input, output, session) {
                                           label = name,
                                           min=min_val,
                                           max=max_val,
-                                          value = deparse_option(para[[name]]),
+                                          value = DeparseOption(para[[name]]),
                                           step=0.001)
                 )
               )
@@ -1258,7 +1370,7 @@ server <- function(input, output, session) {
                                           label = name,
                                           min=min_val,
                                           max=max_val,
-                                          value = deparse_option(para[[name]]),
+                                          value = DeparseOption(para[[name]]),
                                           step=0.001)
                 )
               )
@@ -1271,7 +1383,7 @@ server <- function(input, output, session) {
                                    radioButtons(inputId = dataset_id,
                                                 label = name,
                                                 choices = opt_choices,
-                                                selected = deparse_option(para[[name]]),
+                                                selected = DeparseOption(para[[name]]),
                                                 inline = TRUE)))
           }else if ( opt_line$option_class == 'special_argument' ) { ##@@3 -> ONLY manual_scales/force_scale at the moment
             if (!is.null(seqNdisplayR_session[[opt]])){
@@ -1306,7 +1418,7 @@ server <- function(input, output, session) {
     for ( name in rev(dataset_names) ) {
       alt_name = gsub('\\s+', 'YvalueY', name) #@
       alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name)
-      dataset_id = paste0('panel_horizontal_XvalueX', current_session_idx(), '_', alt_name)
+      dataset_id = paste0('panel_horizontal_XvalueX', CurrentSessionIdx(), '_', alt_name)
 
       dataset_group_depth = ListDepth(seqNdisplayR_session$samples[[name]]) + 1
       levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
@@ -1341,9 +1453,9 @@ server <- function(input, output, session) {
     #   #@removeUI(selector = '#panel_font_easy_boxes')
     # }##@ <-
     ##@ -> replace with this:
-    if( current_session_idx() > 1){
-      removeUI(selector = paste0("#panel_font_easy_boxes_container", current_session_idx()-1))
-      shinyjs::runjs(paste0("Shiny.onInputChange(#panel_font_easy_boxes_container", current_session_idx()-1, ", null)"))
+    if( CurrentSessionIdx() > 1){
+      removeUI(selector = paste0("#panel_font_easy_boxes_container", CurrentSessionIdx()-1))
+      shinyjs::runjs(paste0("Shiny.onInputChange(#panel_font_easy_boxes_container", CurrentSessionIdx()-1, ", null)"))
     }##@ <-
 
     dataset_group_depths = sapply(rev(dataset_names), function(name) ListDepth(seqNdisplayR_session$samples[[name]]) + 1)
@@ -1365,12 +1477,12 @@ server <- function(input, output, session) {
       vals = seqNdisplayR_session$panel_font_sizes
     }
     step = 1
-    dataset_id = paste0('panel_font_easy_boxes_XvalueX', current_session_idx()) #@ tags$div(id = dataset_id,
+    dataset_id = paste0('panel_font_easy_boxes_XvalueX', CurrentSessionIdx()) #@ tags$div(id = dataset_id,
   
     ##@ <- Latest fix for panel_font_easy UI element insertion:
     insertUI(selector = '#panel_font_easy_boxes',
              where = "afterEnd",
-             ui = tags$div(id=paste0('panel_font_easy_boxes_container',current_session_idx()),
+             ui = tags$div(id=paste0('panel_font_easy_boxes_container',CurrentSessionIdx()),
                       do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_sliders, dataset_id, levels, vals, optima, step),  #@ 'panel_font_easy'
                                                      list(cellWidths=as.list(cellwidths)),
                                                      list(width=list('500px')))))
@@ -1394,9 +1506,9 @@ server <- function(input, output, session) {
     
     ## the headers for each column
     ### remove from previous session
-    if( current_session_idx() > 1){
-      removeUI(selector = paste0("#panel_font_boxes_header_container", current_session_idx()-1))
-      shinyjs::runjs(paste0("Shiny.onInputChange(#panel_font_boxes_header_container", current_session_idx()-1, ", null)"))
+    if( CurrentSessionIdx() > 1){
+      removeUI(selector = paste0("#panel_font_boxes_header_container", CurrentSessionIdx()-1))
+      shinyjs::runjs(paste0("Shiny.onInputChange(#panel_font_boxes_header_container", CurrentSessionIdx()-1, ", null)"))
     }
     
     ### add new
@@ -1406,7 +1518,7 @@ server <- function(input, output, session) {
     insertUI(
       selector = '#panel_font_boxes_headers',
       where = "afterEnd",
-      ui = tags$div(id=paste0('panel_font_boxes_header_container',current_session_idx()),
+      ui = tags$div(id=paste0('panel_font_boxes_header_container',CurrentSessionIdx()),
                     do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_headers, slider_cells, levels),
                                                        list(cellWidths=as.list(cellwidths)),
                                                        list(width=list('500px')))))
@@ -1414,10 +1526,10 @@ server <- function(input, output, session) {
     
     ## the individual rows of sliders
     ### remove from previous session
-    if( current_session_idx() > 1){
+    if( CurrentSessionIdx() > 1){
       for(i in 1:10){ #ups: rough since we at the moment don't keep track how many levels of divs there are to remove
-        removeUI(selector = paste0("#panel_font_boxes_container", current_session_idx()-1))
-        shinyjs::runjs(paste0("Shiny.onInputChange(#panel_font_boxes_container", current_session_idx()-1, ", null)"))
+        removeUI(selector = paste0("#panel_font_boxes_container", CurrentSessionIdx()-1))
+        shinyjs::runjs(paste0("Shiny.onInputChange(#panel_font_boxes_container", CurrentSessionIdx()-1, ", null)"))
       }
     }
     
@@ -1444,7 +1556,7 @@ server <- function(input, output, session) {
 
       insertUI(selector = '#panel_font_boxes',
                where = "afterEnd",
-               ui = tags$div(id=paste0('panel_font_boxes_container',current_session_idx()),
+               ui = tags$div(id=paste0('panel_font_boxes_container',CurrentSessionIdx()),
                              do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_sliders_panels, paste0('panel_font_', name), slider_cells, name, vals, optima, step),
                                                                 list(cellWidths=as.list(cellwidths)),
                                                                 list(width=list('500px')))))
@@ -1455,10 +1567,10 @@ server <- function(input, output, session) {
     ##@ -> ##@@4 ->
     ## force scale special case of expandable option upon enable
     ### remove the old container
-    if(current_session_idx() > 1){
+    if(CurrentSessionIdx() > 1){
       for(i in 1:10){
-        removeUI(selector = paste0('#manual_scales_boxes_container', current_session_idx()-1))
-        shinyjs::runjs(paste0("Shiny.onInputChange(#manual_scales_boxes_container", current_session_idx()-1, " null)"))
+        removeUI(selector = paste0('#manual_scales_boxes_container', CurrentSessionIdx()-1))
+        shinyjs::runjs(paste0("Shiny.onInputChange(#manual_scales_boxes_container", CurrentSessionIdx()-1, " null)"))
       }
     }
     ### collect general layout options
@@ -1494,8 +1606,8 @@ server <- function(input, output, session) {
       insertUI(
         selector = '#manual_scales_boxes',
         where = "afterEnd",
-        ui = tags$div(id=paste0('manual_scales_boxes_container', current_session_idx()),
-                      do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_numeric_input2, paste0(dataset_options[which(dataset_options$option_name=='force_scale'),'shiny_varname'], '_', current_session_idx(), '_', name), input_cells, paste(name, paste0('(', levels, ')'), sep = ' '), vals, optima, step),  #@ added " '_', current_session_idx(), "
+        ui = tags$div(id=paste0('manual_scales_boxes_container', CurrentSessionIdx()),
+                      do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_numeric_input2, paste0(dataset_options[which(dataset_options$option_name=='force_scale'),'shiny_varname'], '_', CurrentSessionIdx(), '_', name), input_cells, paste(name, paste0('(', levels, ')'), sep = ' '), vals, optima, step),  #@ added " '_', CurrentSessionIdx(), "
                                                 list(cellWidths=as.list(cellwidths)),
                                                 list(width=list('500px')))))
       )
@@ -1526,7 +1638,7 @@ server <- function(input, output, session) {
         ## entries from previous loaded template are removed (except one, ie anchor)
         ## this anchor (or the dummy created before template loading) serve as anchor to add sample-lines below
         ## after this the anchor is removed
-        prev_session_idx = current_session_idx() - 1
+        prev_session_idx = CurrentSessionIdx() - 1
         anchor_elem <- opt_line$shiny_varname
 
         shiny_elems <- grep(paste0(anchor_elem, '_XvalueX', prev_session_idx, '_'), names(input), value=TRUE)
@@ -1548,7 +1660,7 @@ server <- function(input, output, session) {
         for ( name in rev(names(opts)) ) {
           alt_name = gsub('\\s+', 'YvalueY', name) #@ colourInput does not take whitespace names apparantly
           alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name)
-          annot_id = paste0(opt_line$shiny_varname, '_XvalueX', current_session_idx(), '_', alt_name)
+          annot_id = paste0(opt_line$shiny_varname, '_XvalueX', CurrentSessionIdx(), '_', alt_name)
           if ( opt_line$option_class == 'text' ) {
             insertUI(
                 selector = paste0('#', anchor_elem),
@@ -1556,12 +1668,12 @@ server <- function(input, output, session) {
                 ui = tags$div(id=annot_id,
                               textInput(annot_id,
                                         label = name,
-                                        value = deparse_option(opts[[name]]))
+                                        value = DeparseOption(opts[[name]]))
                 )
               )
           } else if ( opt_line$option_class == 'color' ) {
-            #cat(deparse_option(opts[[name]]), '\n') #@cat
-            val = ifelse(deparse_option(opts[[name]])=='NULL', 'white', deparse_option(opts[[name]]))
+            #cat(DeparseOption(opts[[name]]), '\n') #@cat
+            val = ifelse(DeparseOption(opts[[name]])=='NULL', 'white', DeparseOption(opts[[name]]))
             #cat(val, '\n') #@cat
             insertUI(
               selector = paste0('#', anchor_elem), ##TODO: check style of anchor
@@ -1582,7 +1694,7 @@ server <- function(input, output, session) {
               ui = tags$div(id=annot_id,
                             numericInput(inputId = annot_id,
                                          label = name,
-                                         value = deparse_option(opts[[name]]))
+                                         value = DeparseOption(opts[[name]]))
               )
             )
           } else if ( opt_line$option_class == 'text_choices' ) {
@@ -1594,7 +1706,7 @@ server <- function(input, output, session) {
                             radioButtons(inputId = annot_id,
                                          label = name,
                                          choices = opt_choices,
-                                         selected = deparse_option(opts[[name]]),
+                                         selected = DeparseOption(opts[[name]]),
                                          inline=TRUE)))
           }
         }
@@ -1610,7 +1722,7 @@ server <- function(input, output, session) {
 
 
   # reactive excel or igv template load ####
-  load_template = reactive({
+  LoadTemplate = reactive({
     filename = input$input_file$name
     if ( is.null(filename) ) {
       return(NULL)
@@ -1619,7 +1731,7 @@ server <- function(input, output, session) {
       output$console = renderText({'Please provide valid template file in .xls, .xlsx or igv session .xml file'})
       return(NULL)
     }
-    if ( current_session_fname() != filename ) {
+    if ( CurrentSessionFname() != filename ) {
       fname = input$input_file$datapath[1]
       show_modal_spinner(spin='circle', text='Loading and parsing template')
       loaded_session = NULL
@@ -1632,23 +1744,23 @@ server <- function(input, output, session) {
             igv_strand_regex = list('+'=sub(",.*","", input$igv_strand_regex),
                                      '-'=sub(".*,","", input$igv_strand_regex))
           }
-          x = capture.output(loaded_session = seqNdisplayR::load_igvsession(fname, group_by=input$igv_groupby, strand_regex=igv_strand_regex))
+          x = capture.output(loaded_session = seqNdisplayR::LoadIGVSession(fname, group_by=input$igv_groupby, strand_regex=igv_strand_regex))
           output$console = renderText({paste(x, collapse  = "\n")})  
         } else if ( grepl('.xls$', filename) | grepl('.xlsx$', filename) ) {
-          x <- capture.output(loaded_session <- seqNdisplayR::load_excel(fname, load_annotations = input$load_annotations))
+          x <- capture.output(loaded_session <- seqNdisplayR::LoadExcel(fname, load_annotations = input$load_annotations))
           output$console = renderText({paste(x, collapse  = "\n")})
         } else {
           output$console = renderText({'Please provide valid template file in .xls, .xlsx or igv session .xml file'})
         }
         if ( !is.null(loaded_session) ){
           #fill all option field with values from session
-          current_session_idx(current_session_idx() + 1)
+          CurrentSessionIdx(CurrentSessionIdx() + 1)
           update_ui_to_session(loaded_session)
-          #set reactive val current_session to the loaded session!
-          current_session_fname(filename)
-          current_session(loaded_session)
+          #set reactive val CurrentSession to the loaded session!
+          CurrentSessionFname(filename)
+          CurrentSession(loaded_session)
         } else {
-          loaded_session = current_session()
+          loaded_session = CurrentSession()
         }
       }, position ='top-center', blocking_level ='message', shiny=T)
 
@@ -1657,7 +1769,7 @@ server <- function(input, output, session) {
       #remember to return the session
       loaded_session
     } else {
-      current_session()
+      CurrentSession()
     }
   })
 
@@ -1666,13 +1778,13 @@ server <- function(input, output, session) {
   # status message for import ####
   # Note: this also ensures that the session is loaded automatically!
   output$File_import_msg <- renderText(
-    if( !is.null(load_template()) ) {
-      if ( current_session_fname() == '' | is.null(current_session()) ){
+    if( !is.null(LoadTemplate()) ) {
+      if ( CurrentSessionFname() == '' | is.null(CurrentSession()) ){
         'Please load a valid session file.'
       } else {
-        paste0('from ', current_session_fname(), '\n',
+        paste0('from ', CurrentSessionFname(), '\n',
                'loaded session with datasets: ',
-               paste(names(current_session()$samples), collapse = ', '),
+               paste(names(CurrentSession()$samples), collapse = ', '),
                '\n')
       }
     }
@@ -1681,9 +1793,9 @@ server <- function(input, output, session) {
 
 
   # feature and locus retrieval ####
-  get_feature <- reactive(input$gene)
-
-  get_locus <- reactive({
+  GetFeature <- reactive(input$gene)
+  
+  GetLocus <- reactive({
     coord <- input$coordinates
 
     if ( coord != '' ) {
@@ -1716,11 +1828,13 @@ server <- function(input, output, session) {
 
   })
 
-
+  # observe({ GetFeature }) #@ 2022-10-10 
+  
+  # observe({ GetLocus }) #@ 2022-10-10 
 
   # get all setting, options and parameters if changed in shiny ####
   ## called ie before plot or save
-  get_shiny_global_options <- reactive({
+  GetShinyGlobalOptions <- reactive({
     opts <- options_table$option_name[options_table$option_group == 'global']
 
     l <- lapply(opts, function(opt) {
@@ -1739,7 +1853,7 @@ server <- function(input, output, session) {
           value <- lapply(var_names, function(var) input[[var]])
         }
         if ( opt_line$option_class == 'text' | opt_line$option_class == 'color') {
-          value <- seqNdisplayR::parse_option(value)
+          value <- ParseOption(value) #@ 2022-10-07 seqNdisplayR::ParseOption
         }else if( opt_line$option_class == 'optional_numeric' ) {
           if (value){
             if (shiny_varname != 'binning_size' & shiny_varname != 'binning_start'){
@@ -1766,7 +1880,7 @@ server <- function(input, output, session) {
         }else if (opt_line$option_class=='special_argument'){
           if (opt=='panel_font_sizes'){
             if (value){
-              var_names = grep(paste0('^panel_font_easy_boxes_XvalueX', current_session_idx(), '_subvar'), names(input), value=TRUE)
+              var_names = grep(paste0('^panel_font_easy_boxes_XvalueX', CurrentSessionIdx(), '_subvar'), names(input), value=TRUE)
               var_numbers = as.numeric(sapply(var_names, function(var_name) strsplit(var_name, split=paste0(shiny_varname, '_subvar'))[[1]][2]))
               re_order = order(var_numbers)
               var_names = var_names[re_order]
@@ -1801,22 +1915,22 @@ server <- function(input, output, session) {
           }else if (opt=='horizontal_panels_list'){
             if (value){
               value = list()
-              shiny_chkbxgrps = names(input)[grepl(paste0('panel_horizontal_XvalueX', current_session_idx(), '_'), names(input))]
+              shiny_chkbxgrps = names(input)[grepl(paste0('panel_horizontal_XvalueX', CurrentSessionIdx(), '_'), names(input))]
               #cat('horizontal_panels_list', '\n') #@cat
               #cat(shiny_chkbxgrps, '\n') #@cat
-              for (dataset_name in names(current_session()$samples)) {
-                dataset_group_depth = ListDepth(current_session()$samples[[dataset_name]]) + 1
+              for (dataset_name in names(CurrentSession()$samples)) {
+                dataset_group_depth = ListDepth(CurrentSession()$samples[[dataset_name]]) + 1
                 available_levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
                 alt_name = gsub('\\s+', 'YvalueY', dataset_name) #@
                 alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name) #@
-                elem = paste0('panel_horizontal_XvalueX', current_session_idx(), '_', alt_name)
+                elem = paste0('panel_horizontal_XvalueX', CurrentSessionIdx(), '_', alt_name)
                 checked_levels = input[[elem]]
                 value[[dataset_name]] = (available_levels %in% checked_levels)
                 #cat(paste0(dataset_name, ':', value[[dataset_name]]), '\n') #@cat
               }
               # for (elem in shiny_chkbxgrps) {
-              #   dataset_name = sub(paste0('panel_horizontal_XvalueX', current_session_idx(), '_'), '', elem)
-              #   dataset_group_depth = ListDepth(current_session()$samples[[dataset_name]]) + 1
+              #   dataset_name = sub(paste0('panel_horizontal_XvalueX', CurrentSessionIdx(), '_'), '', elem)
+              #   dataset_group_depth = ListDepth(CurrentSession()$samples[[dataset_name]]) + 1
               #   available_levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
               #   checked_levels = input[[elem]]
               #   value[[dataset_name]] = (available_levels %in% checked_levels)
@@ -1850,7 +1964,7 @@ server <- function(input, output, session) {
   # get dataset options from shiny ####
   get_shiny_dataset_options <- reactive({
     opts <- options_table$option_name[options_table$option_group == 'dataset_option']
-    datasets <- names(current_session()$samples)
+    datasets <- names(CurrentSession()$samples)
     datasets_NSC = sapply(datasets, function(name) gsub('\\s+', 'YvalueY', name))
     datasets_NSC = sapply(datasets_NSC, function(name) gsub("[[:punct:]]", "ZvalueZ", name))
     l <- lapply(opts, function(opt) {
@@ -1864,7 +1978,7 @@ server <- function(input, output, session) {
         } else if(opt_line$option_class == 'text_choices') {
           res = sapply(datasets_NSC,
                  function(dataset) {
-                   parse_option(input[[paste0(opt_line$shiny_varname,'_XvalueX',current_session_idx(), '_', dataset)]]) 
+                   ParseOption(input[[paste0(opt_line$shiny_varname,'_XvalueX',CurrentSessionIdx(), '_', dataset)]]) 
                  })
           names(res) <- datasets
           res
@@ -1874,13 +1988,13 @@ server <- function(input, output, session) {
           if (input[[shiny_varname]]){
             #cat('TRUE', '\n') #@cat
             res = list()
-            shiny_grps = grep(paste0(shiny_varname, '_',current_session_idx(), '_'), names(input), value=TRUE)
-            #@shiny_grps = grep(paste0(shiny_varname, '_XvalueX',current_session_idx(), '_'), names(input), value=TRUE)
+            shiny_grps = grep(paste0(shiny_varname, '_',CurrentSessionIdx(), '_'), names(input), value=TRUE)
+            #@shiny_grps = grep(paste0(shiny_varname, '_XvalueX',CurrentSessionIdx(), '_'), names(input), value=TRUE)
             #cat(shiny_grps, '\n') #@cat
             #@shiny_grps1 = grep(paste0(shiny_varname), names(input), value=TRUE) #@'manual_scales_boxes_container'
             #cat(shiny_grps1, '\n') #@cat
-            #@shiny_grps2 = as.data.frame(do.call('rbind', strsplit(sub(paste0(shiny_varname, '_XvalueX',current_session_idx(), '_'), '', shiny_grps), split='_subvar')))
-            shiny_grps2 = as.data.frame(do.call('rbind', strsplit(sub(paste0(shiny_varname, '_',current_session_idx(), '_'), '', shiny_grps), split='_subvar')))
+            #@shiny_grps2 = as.data.frame(do.call('rbind', strsplit(sub(paste0(shiny_varname, '_XvalueX',CurrentSessionIdx(), '_'), '', shiny_grps), split='_subvar')))
+            shiny_grps2 = as.data.frame(do.call('rbind', strsplit(sub(paste0(shiny_varname, '_',CurrentSessionIdx(), '_'), '', shiny_grps), split='_subvar')))
             shiny_grps2[,2] = as.integer(shiny_grps2[,2])
             for ( dataset_name in unique(shiny_grps2[,1]) ) {
               sub_shiny_grps = which(shiny_grps2[,1]==dataset_name)
@@ -1898,7 +2012,7 @@ server <- function(input, output, session) {
         } else {
           res <- sapply(datasets_NSC,
                         function(dataset) {
-                          parse_option(input[[paste0(opt_line$shiny_varname, '_XvalueX', current_session_idx(), '_', dataset)]])
+                          ParseOption(input[[paste0(opt_line$shiny_varname, '_XvalueX', CurrentSessionIdx(), '_', dataset)]])
                         })
           names(res) <- datasets
           res
@@ -1921,12 +2035,12 @@ server <- function(input, output, session) {
 
 
   # get annotation options from shiny ####
-  get_shiny_annotation_options <- reactive({
+  GetShinyAnnotationOptions <- reactive({
     opts <- options_table$option_name[options_table$option_group == 'annotation_option']
-    anno_names <- names(current_session()$annots)
+    anno_names <- names(CurrentSession()$annots)
     anno_names_NSC = sapply(anno_names, function(name) gsub('\\s+', 'YvalueY', name))
     anno_names_NSC = sapply(anno_names_NSC, function(name) gsub("[[:punct:]]", "ZvalueZ", name))
-    if( length(current_session()$annots) == 0 ){
+    if( length(CurrentSession()$annots) == 0 ){
       return(NULL)
     }
     l <- lapply(opts, function(opt) {
@@ -1940,7 +2054,7 @@ server <- function(input, output, session) {
       } else if(opt_line$option_class == 'text_choices') {
         res <- sapply(anno_names_NSC,
                       function(anno) {
-                        parse_option(input[[paste0(opt_line$shiny_varname, '_XvalueX', current_session_idx(), '_',anno)]])
+                        ParseOption(input[[paste0(opt_line$shiny_varname, '_XvalueX', CurrentSessionIdx(), '_',anno)]])
                       })
         names(res) <- anno_names
         res
@@ -1948,7 +2062,7 @@ server <- function(input, output, session) {
         #alt_names = as.character(sapply(anno_names, function(name) gsub('\\s+', 'YvalueY', name))) #@ colourInput does not take whitespace names apparantly
         res <- sapply(anno_names_NSC,
                       function(anno) {
-                        parse_option(input[[paste0('xyz_', opt_line$shiny_varname, '_XvalueX', current_session_idx(), '_',anno)]])
+                        ParseOption(input[[paste0('xyz_', opt_line$shiny_varname, '_XvalueX', CurrentSessionIdx(), '_',anno)]])
                       })
         names(res) <- anno_names
         if (any(res=='white')){
@@ -1959,7 +2073,7 @@ server <- function(input, output, session) {
       }else{
           res <- sapply(anno_names_NSC,
                  function(anno) {
-                   parse_option(input[[paste0(opt_line$shiny_varname, '_XvalueX', current_session_idx(), '_',anno)]])
+                   ParseOption(input[[paste0(opt_line$shiny_varname, '_XvalueX', CurrentSessionIdx(), '_',anno)]])
                  })
           names(res) <- anno_names
           res
@@ -1982,12 +2096,12 @@ server <- function(input, output, session) {
 
   # build session from shiny elements ####
   seqNdisplayR_session <- reactive({
-    template_session <- load_template()
+    template_session <- LoadTemplate()
     if (length(template_session$annots) == 0) {
       template_session['annots'] <- list(NULL)
     }
 
-    shiny_session_global_options <- get_shiny_global_options()
+    shiny_session_global_options <- GetShinyGlobalOptions()
 
     op_names = names(shiny_session_global_options)
     template_session[op_names] = shiny_session_global_options[op_names]
@@ -2013,14 +2127,14 @@ server <- function(input, output, session) {
         }
       }
     }
-    shiny_session_annotation_options <- get_shiny_annotation_options()
+    shiny_session_annotation_options <- GetShinyAnnotationOptions()
     if( !is.null(shiny_session_annotation_options) ) {
       op_names <- names(shiny_session_annotation_options)
       template_session[op_names] <- shiny_session_annotation_options[op_names]
     }
 
     ## which samples from tree
-    which_samples <- get_selected_samples()
+    which_samples <- GetSelectedSamples()
     for ( sample_name in names(template_session$parameters) ) {
       if ( !(sample_name %in% names(which_samples)) ) {
         #exclude all
@@ -2047,8 +2161,8 @@ server <- function(input, output, session) {
                  if (is.null(input$input_file)) {
                    "Please load Excel or IGV template and provide locus name or coordinates."
                  } else {
-                   feature <- get_feature()
-                   locus <- get_locus()
+                   feature <- GetFeature()
+                   locus <- GetLocus()
                    if (feature == '' & locus[1] == '') {
                      output$console <- renderText({"Please provide locus name or coordinates for region to be plotted."})
                    } else {
@@ -2067,46 +2181,62 @@ server <- function(input, output, session) {
                      }
                    }
                  })
-
-
-
-  # save to pdf --> when hitting save button ####
+  
+  
   output$save_pdf <- downloadHandler(
     filename = function() {
-      feature <- get_feature()
-      locus <- get_locus()
-      if ( feature == ''  & locus[1] == '' ) {
-         output$console <- renderText({"Please provide locus name or coordinates for region to be plotted."})
+      feature = GetFeature()
+      locus = GetLocus()
+      if (locus != ''){
+        locus[2] = ifelse(locus[2]=='+', 'plus', 'minus')
+        locus_string = paste(locus, collapse='_')
+      }else{
+        locus_string = ''
       }
-      paste0("seqNdisplayR_", Sys.Date(), '_', feature, locus, ".pdf")
+      if ( feature == ''  & locus[1] == '' ) {
+         output$console = renderText({"Please provide locus name or coordinates for region to be plotted."})
+      }
+      #cat(paste0("seqNdisplayR_", Sys.Date(), '_', feature, locus_string, ".pdf"), '\n') #@ 2022-10-10
+      paste0("seqNdisplayR_", Sys.Date(), '_', feature, locus_string, ".pdf")
+      #paste0("seqNdisplayR_", Sys.Date(), '_', feature, locus_string)
     },
     content = function(file) {
-      if (is.null(input$input_file)) {
-        "Please load Excel or IGV template and provide locus name or coordinates."
+      if ( is.null(input$input_file) ) {
+        output$console = renderText({"Please load Excel or IGV template and provide locus name or coordinates."})
       } else {
-        feature <- get_feature()
-        locus <- get_locus()
+        feature = GetFeature()
+        locus = GetLocus()
         if (feature == '' & locus[1] == '') {
-          output$console <- renderText({"Please provide locus name or coordinates for region to be plotted."})
+          output$console = renderText({"Please provide locus name or coordinates for region to be plotted."})
         } else {
-          session_to_plot <- seqNdisplayR_session()
-
-          show_modal_spinner(spin='circle', text='Creating plot, this can take some time. The plot will appear in a different window')
-          x <- 'plotting failed, please check your settings'
+          session_to_plot = seqNdisplayR_session()
+          if ( locus != '' ){   #@ 2022-10-10 ->
+            locus[2] = ifelse(locus[2]=='+', 'plus', 'minus')
+            locus_string = paste(locus, collapse='_')
+          } else {
+            locus_string = ''
+          } #@ 2022-10-10 <-
+          #pdfname = basename(file) # for some reason the file/filename are not in accordance
+          #pdfdir = dirname(file)
+          pdfname = paste0("seqNdisplayR_", Sys.Date(), '_', feature, locus_string, ".pdf")
+          #pdfdir = '~/Desktop/'
+          #cat(paste0(pdfdir, pdfname), '\n') #@ 2022-10-10
+          show_modal_spinner(spin='circle', text=paste('Creating plot, this can take some time. The plot will be saved as pdf:', pdfname))
+          x = 'plotting failed, please check your settings'
           spsComps::shinyCatch({
-            if (feature != '') {
-              x <- capture.output(plot(session_to_plot, feature=feature, interface='shiny',
+          if (feature != '') {
+            x <- capture.output(plot(session_to_plot, feature=feature, interface='shiny',
                                        pdf = TRUE,
-                                       pdf_name = sub('.pdf', '', basename(file)),
+                                       pdf_name = sub('.pdf', '', basename(file)), #@ 2022-10-11
                                        pdf_dir = dirname(file)))
-            } else if (locus[1] != '') {
-              x <- capture.output(plot(session_to_plot, locus=locus, interface='shiny',
+          } else if (locus_string != '') {
+            x <- capture.output(plot(session_to_plot, locus=locus, interface='shiny',
                                        pdf = TRUE,
-                                       pdf_name = sub('.pdf', '', basename(file)),
+                                       pdf_name = sub('.pdf', '', basename(file)), #@ 2022-10-11
                                        pdf_dir = dirname(file)))
             }
-          },position = 'top-center',blocking_level='none', prefix='Plotting error', shiny=TRUE)
-          output$console <- renderText({paste0('pdf creation log:\n', paste(x, collapse  = "\n"))})
+          }, position = 'top-center', blocking_level='none', prefix='Plotting error', shiny=TRUE)
+          output$console = renderText({paste0(pdfname, '\n', 'pdf creation log:\n', paste(x, collapse  = "\n"))}) #@ 2022-10-10 pdfdir, pdfname <- file
           remove_modal_spinner()
         }
       }
@@ -2118,25 +2248,25 @@ server <- function(input, output, session) {
   # save settings to excel file --> when hitting save button ####
   output$save_settings <- downloadHandler(
     filename = function() {
-      paste0("seqNdisplayRsession", Sys.Date(), ".xlsx")
+      paste0("seqNdisplayRsession_", Sys.Date(), ".xlsx")
     },
     content = function(file) {
+      #cat(file, '\n') #@ 2022-10-10
       if ( is.null(input$input_file) ) {
-        output$console <- renderText("Please first load Excel or IGV template")
+        output$console = renderText("Please first load Excel or IGV template")
       } else {
-        loaded_session <- seqNdisplayR_session()
-        seqNdisplayR::session_to_xlsx(loaded_session, path = file)
+        loaded_session = seqNdisplayR_session()
+        seqNdisplayR::Session2xlsx(loaded_session, path = file)
       }
     }
   )
 
 
-
   # Various information buttons for debugging ####
   # TO DO: remove debugging buttons
   observeEvent(input$show_settings, {
-    shiny_session_global_options <- get_shiny_global_options()
-    shiny_session_annotation_options <- get_shiny_annotation_options()
+    shiny_session_global_options <- GetShinyGlobalOptions()
+    shiny_session_annotation_options <- GetShinyAnnotationOptions()
     if ( !is.null(shiny_session_annotation_options) ) {
       opt_names <- c(names(shiny_session_global_options), names(shiny_session_annotation_options))
     } else {
@@ -2148,21 +2278,21 @@ server <- function(input, output, session) {
     output$console <- renderText(
       paste(
         lapply(intersect(opt_names,names(cur_session)),
-               function(i) paste0(i, '  -->  ', seqNdisplayR::deparse_option(cur_session[[i]]),  '\t', class(cur_session[[i]]))  # , '\n'
+               function(i) paste0(i, '  -->  ', DeparseOption(cur_session[[i]]),  '\t', class(cur_session[[i]]))  #@ 2022-10-07 seqNdisplayR::DeparseOption
         ),
         collapse ='\n')
     )
   })
 
   observeEvent(input$show_parameters, {
-    template_session <- load_template()
+    template_session <- LoadTemplate()
     shiny_session_dataset_options <- get_shiny_dataset_options()
 
     textLog('dataset options:\n')
     for ( para in names(shiny_session_dataset_options) ) {
       textLog(paste0(textLog(), para, '\n'))
       for ( sample_name in names(shiny_session_dataset_options[[para]]) ) {
-        textLog(paste0(textLog(), '  ', sample_name, ': ', seqNdisplayR::deparse_option(shiny_session_dataset_options[[para]][[sample_name]]), '\n'))
+        textLog(paste0(textLog(), '  ', sample_name, ': ', DeparseOption(shiny_session_dataset_options[[para]][[sample_name]]), '\n')) #@ 2022-10-07 seqNdisplayR::DeparseOption
       }
     }
     output$console <- renderText( textLog() )
@@ -2170,13 +2300,13 @@ server <- function(input, output, session) {
 
   observeEvent(input$show_samples, {
     output$console  <- renderPrint({
-      current_session()$samples
+      CurrentSession()$samples
     })
   })
 
   observeEvent(input$which_samples, {
     output$console  <- renderPrint({
-      get_selected_samples()
+      GetSelectedSamples()
     })
   })
 
@@ -2188,8 +2318,8 @@ server <- function(input, output, session) {
   })
 
   observeEvent(input$reset, {
-    current_session_fname('')
-    load_template()
+    CurrentSessionFname('')
+    LoadTemplate()
     output$console  <- renderPrint('All values were reset to template values')
   })
 
@@ -2198,7 +2328,7 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$debug, {
-    output$console  <- renderPrint(current_session()$annot_panel_color)
+    output$console  <- renderPrint(CurrentSession()$annot_panel_color)
   })
   
 }

@@ -1,184 +1,146 @@
-##################################################################################################
-###### seqNdisplayR: A Tool for Customizable and Reproducible Plotting of Sequencing Coverage Data
-##################################################################################################
+#########################################################################################################
+###### seqNdisplayR: A Tool for Customizable and Reproducible Plotting of Sequencing Coverage Data ######
+#########################################################################################################
 
-.onLoad <- function(libname, pkgname) {
+.onLoad = function(libname, pkgname) {
   packageStartupMessage("\nWelcome to seqNdisplayR\nThis package sets the global locale to C.\n\nThis software is free and comes with ABSOLUTELY NO WARRANTY!")
   Sys.setlocale(locale="C")
 }
 
-#### Constants and Defaults (package-wide available arguments)
-line_width_scaling_factor = 0.25/0.38 # scaling factor to use for the line width (if multiplied with 1 it will give 0.5-pt line width in the pdf with default dimensions)
-points_per_cm = 28.3465
-arrow_constant = 0.4                  # used for scaling directional arrows in annotation with feature heights
-cm_to_in = 0.393701					          # 1 cm = 0.393701 inches
-std_letter_width = 0.023              # gives the width of the standard letter if multiplied by font size
-std_letter_height = 0.045             # gives the height of the standard letter if multiplied by font size
-min_font_size = 4                     # the minimum font size for all formats
-annot_panel_dist = 0.4                # right margin for annotation title panel
 
-## default vertical proportions of various plotting segment types relative to 'seq' tracks
-plot_vertical_parameters = c('header'=2.2,  ## vertical units used for header segment
-                             'seq'=1, ## vertical units used for each sequencing track ??????FIXED!!!
-                             'scale'=0.8, ## vertical units used for the genomic scale
-                             'line-spacer'=0.2, ## vertical units used for spacers
-                             'empty-spacer'=0.2, ## vertical units used for empty spacers (w/o possibility of horizontal lines)
-                             'thickline-spacer'=0.4, ## vertical units used for annotation separator
-                             'annot'=0.8,  # per annotation line...if annotation_packing is not squished
-                             'annot_squished'=0.4, # per annotation line...if annotation_packing is squished
-                             'annot_text_segment'=0.8) #
-
-
-## markup code:
+###### # MARKUP CODE # ######
 # #@ recently changed - currently testing
 # #$ suggested improvement
+# #% clean-up
 
 
-#' Default plot options
-#'
-#' @return A named list of default plot options
-#'
-#' @export
-default_plot_options <- function(){
-  list(plotting_segment_order=NULL,                               #(v)
-       preloaded_tracks=NULL,                                     ## not in app
-       output_tracks=FALSE,                                       ## not in app
-       output_parameters=FALSE,                                   ## not in app
-       input_parameters=NULL,                                     ## not in app
-       both_strands=TRUE,                                         #(v)
-       strands_intermingled=TRUE,                                 #(v)
-       neg_vals_neg_strand=FALSE,                                  #(v)
-       reverse_strand_direction=FALSE,                              #(v)
-       alternating_background=TRUE,                               #(v)
-       bgr_colors=c('#C1B49A', '#F1F1F2'),                        #(v) two colors (hex or name) - will auto-default with warning message
-       bgr_alpha = 0.2,                                           #(v) positive numeric value (0-1)
-       strands_alpha=c(100,100),                                  #(v) positive numeric values (0-100)
-       intermingled_color=c('same', 'complementary', 'analogous_right', 'analogous_left')[1],
-       extra_space=c(1.5, 1.5),                                   #(v) positive numeric values
-       annot_panel_color='steelblue',                             #(v) color (hex or name)
-       annot_panel_font_size=NULL,                                #(v) NULL or positive integer value
-       bin_start=NULL,                                            #(v) NULL or positive integer value
-       bin_size='auto',                                           #(v) 'auto'/'automatic' or positive integer value (>=1)
-       bins_per_cm=250,                                           #(v) positive integer value (>=1)
-       track_width_cm=12,                                         #(v) NULL or positive numeric value
-       full_width_cm=NULL,                                        #(v) NULL or positive numeric value (*caution)
-       full_height_cm=NULL,                                       #(v) NULL or positive numeric value (*caution)
-       track_height_cm=0.3,                                       #(v) NULL or positive numeric value
-       title_field_height_cm=0.66,                                #(v) NULL or positive numeric value
-       genomic_scale_height_cm=0.24,                              #(v) NULL or positive numeric value
-       annotation_height_cm=0.24,                                 #(v) NULL or positive numeric value
-       spacer_height_cm=0.06,                                     #(v) NULL or positive numeric value
-       panels_max_width_cm='auto',                                #(v) 'auto'/'automatic' or positive numeric value
-       margin_width_cm=0.05,                                      #(v) NULL or positive numeric value - will auto-default with warning message
-       fixed_panel_width=FALSE,                                   #(v)
-       horizontal_panels_list=NULL,                               #(v)% needs a function to assess the input
-       panel_font_sizes=NULL,                                     #(v)% needs a function to assess the input
-       panel_font_size_list=NULL,                                 #(v)% needs a function to assess the input
-       panel_text_colors=c('darkgreen', 'black'),                 #(v) two colors (hex or name) - will auto-default with warning message
-       horizontal_spacers=TRUE,                                   #(v)
-       panel_separators=c(FALSE, TRUE),                           #(v) will auto-default
-       separators_lwds=c(0.5, 1, 0.5),                            #(v) three positive numeric values - will auto-default with warning message
-       separators_colors='black',                                 #(v) one or three colors (hex or name) - will auto-default with warning message
-       incl_first_panel=TRUE,                                     #(v)
-       print_one_line_sample_names=FALSE,                         #(v)
-       replicate_names=NULL, # 'rep'                              #(v) NULL or character value
-       incl_track_scales=TRUE,                                    #(v)
-       scientific_scale=c('allow', 'all', 'none')[1],             #(v) one of 'allow', 'all', 'none'
-       force_scale=NULL,                                          #(v)
-       scale_font_size=NULL,                                      #(v) NULL or positive integer value (>4)
-       scale_panel_width_cm='auto',                               #(v) 'auto'/'automatic' or positive numeric value
-       scale_font_color='darkred',                                #(v) color (hex or name) - will auto-default with warning message
-       header=NULL,                                               #(v)
-       suppress_header=FALSE,                                     #(v)
-       header_font_sizes=NULL,                                    #(v) NULL or one or three positive integer value (>4)
-       header_font_colors=c('black', 'darkgray', 'black'),        #(v) one or three colors (hex or name) - will auto-default with warning message
-       include_genomic_scale=TRUE,                                #(v)
-       genomic_scale_on_top=TRUE,                                 #(v)
-       genomic_scale_font_size=NULL,                              #(v) NULL or positive integer value (>4)
-       genomic_scale_font_color='black',                          #(v) color (hex or name) - will auto-default with warning message
-       feature_names_alternating=TRUE,                            #(v)
-       feature_names_font_size=NULL,                              #(v) NULL or positive integer value (>4)
-       feature_shading_colors=c('steelblue', 'hotpink'),          #(v) two colors (hex or name) - will auto-default with warning message
-       feature_shading_alpha=0.05,                                #(v) positive numeric value (0-1)
-       center_of_mass=FALSE,                                      #(v)
-       feature_names_font_color='black',                          #(v) color (hex or name) - will auto-default with warning message
-       dummy_plot=FALSE,                                          #(v)
-       scaling_factor=1,                                          #(v) positive numeric value - will auto-default with warning message
-       verbosity=c('off', 'no warnings', 'normal', 'detailed')[3],#
-       interface=c('R', 'shiny')[1]                               # output directed towards R- or shiny-users
-       )
-}
+###### # PACKAGE FUNCTIONS # ######
 
-#' Default Annotation Display Options
-#'
-#' @details Default values for options regarding annotation display in seqNdisplayR session object.
-#' @return A named list of default annotation-display options.
-#'
-#' @export
-default_annotation_options <- function() {
-  list('incl_feature_names'=TRUE,                                 #(v)
-       'feature_names_above'=FALSE,                               #(v)
-       'incl_feature_brackets'=TRUE,                              #(v)
-       'incl_feature_shadings'=TRUE,                              #(v)
-       'annotation_packing'='collapsed2',                         #(v)
-       'annot_cols'='black'                                       #(v)
-  )
-}
-
-#' Default Dataset-Specific Options
-#'
-#' @details Default values for parameters object in seqNdisplayR session object.
-#' @return A named list of default Dataset-specific options.
-#'
-#' @export
-default_parameters <- function() {
-  list(
-    'whichSamples' = NULL,
-    'bin_stats' = c('mean','median', 'max')[1],
-    'enhance_signals'=FALSE,
-    'log2transform'=FALSE,
-    'pseudoCount'=1,
-    'batchCorrect'=FALSE,
-    'batch'=NULL,
-    'whichReps'=NULL,
-    'negative_valued_bw'=FALSE,
-    'calcMean'=TRUE,
-    'negValsSet0'=FALSE,
-    'force_scale'=NULL,
-    'group_autoscale'=TRUE
-  )
-}
-
-#### MAIN Plot FUNCTIONS
 
 #' seq'N'display
 #'
+#' @description Main plotting function
 #'
-#' @param 70+_arguments see xxx #@
+#' @author SLA
 #'
-#' @details
-#' Main function to create a plot. See xxx #@
+#' @param datasets 
+#' @param colors 
+#' @param bigwig_dirs 
+#' @param bigwigs 
+#' @param parameters 
+#' @param plotting_segment_order 
+#' @param preloaded_tracks 
+#' @param output_tracks 
+#' @param output_parameters 
+#' @param input_parameters 
+#' @param both_strands 
+#' @param strands_intermingled 
+#' @param neg_vals_neg_strand 
+#' @param reverse_strand_direction 
+#' @param alternating_background 
+#' @param bgr_colors 
+#' @param bgr_alpha 
+#' @param strands_alpha 
+#' @param intermingled_color 
+#' @param feature 
+#' @param locus 
+#' @param extra_space 
+#' @param annots 
+#' @param annotation_packing 
+#' @param annot_cols 
+#' @param annot_panel_color 
+#' @param annot_panel_font_size 
+#' @param bin_start 
+#' @param bin_size 
+#' @param bins_per_cm 
+#' @param track_width_cm 
+#' @param full_width_cm 
+#' @param full_height_cm 
+#' @param track_height_cm 
+#' @param title_field_height_cm 
+#' @param genomic_scale_height_cm 
+#' @param annotation_height_cm 
+#' @param spacer_height_cm 
+#' @param panels_max_width_cm 
+#' @param margin_width_cm 
+#' @param fixed_panel_width 
+#' @param horizontal_panels_list 
+#' @param panel_font_sizes 
+#' @param panel_font_size_list 
+#' @param panel_text_colors 
+#' @param horizontal_spacers 
+#' @param panel_separators 
+#' @param separators_lwds 
+#' @param separators_colors 
+#' @param incl_first_panel 
+#' @param print_one_line_sample_names 
+#' @param replicate_names 
+#' @param group_autoscale 
+#' @param incl_track_scales 
+#' @param scientific_scale 
+#' @param force_scale 
+#' @param scale_font_size 
+#' @param scale_panel_width_cm 
+#' @param scale_font_color 
+#' @param header 
+#' @param suppress_header 
+#' @param header_font_sizes 
+#' @param header_font_colors 
+#' @param include_genomic_scale 
+#' @param genomic_scale_on_top 
+#' @param genomic_scale_font_size 
+#' @param genomic_scale_font_color 
+#' @param incl_feature_names 
+#' @param feature_names_above 
+#' @param feature_names_alternating 
+#' @param feature_names_font_size 
+#' @param incl_feature_brackets 
+#' @param incl_feature_shadings 
+#' @param feature_shading_colors 
+#' @param feature_shading_alpha 
+#' @param center_of_mass 
+#' @param feature_names_font_color 
+#' @param dummy_plot 
+#' @param pdf 
+#' @param pdf_name 
+#' @param pdf_dir 
+#' @param scaling_factor 
+#' @param verbosity 
+#' @param interface 
+#' @param ... 
 #'
-#' @return
+#' @return A customized "genome-browser" plot
+#' 
+#' @import S4Vectors
+#' @import GenomicRanges
+#' @import IRanges
+#' @importFrom BiocGenerics strand
+#' 
+#' @export
 #'
 #' @examples
-#'
-#' @export
+#' 
 seqNdisplay = function(
-  datasets, colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
-  both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, reverse_strand_direction=FALSE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,100), intermingled_color='same',
-  feature=NULL, locus=NULL, extra_space=c(1.5,1.5),
-  annots=NULL, annotation_packing='collapsed2', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
-  bin_start=NULL, bin_size='automatic', bins_per_cm=250, track_width_cm=10, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3, title_field_height_cm=0.66, genomic_scale_height_cm=0.24, annotation_height_cm=0.24, spacer_height_cm=0.06,
-  panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=NULL, panel_font_sizes=NULL, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
-  horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names='rep',
-  group_autoscale=TRUE, incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
-  header=NULL, suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
-  include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
-  incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=TRUE, incl_feature_shadings=TRUE, feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
-  dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1, verbosity='normal', interface='R', ...){
-
+    datasets, colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
+    both_strands=TRUE, strands_intermingled=TRUE, neg_vals_neg_strand=TRUE, reverse_strand_direction=FALSE, alternating_background=TRUE, bgr_colors=c('#C1B49A', '#F1F1F2'), bgr_alpha=0.2, strands_alpha=c(100,100), intermingled_color='same',
+    feature=NULL, locus=NULL, extra_space=c(1.5,1.5),
+    annots=NULL, annotation_packing='collapsed2', annot_cols=NULL, annot_panel_color='steelblue', annot_panel_font_size=NULL,
+    bin_start=NULL, bin_size='automatic', bins_per_cm=250, track_width_cm=10, full_width_cm=NULL, full_height_cm=NULL, track_height_cm=0.3, title_field_height_cm=0.66, genomic_scale_height_cm=0.24, annotation_height_cm=0.24, spacer_height_cm=0.06,
+    panels_max_width_cm='auto', margin_width_cm=0.05, fixed_panel_width=FALSE, horizontal_panels_list=NULL, panel_font_sizes=NULL, panel_font_size_list=NULL, panel_text_colors=c('darkgreen', 'black'),
+    horizontal_spacers=TRUE, panel_separators=c(FALSE, TRUE), separators_lwds=c(0.5, 1, 0.5), separators_colors='black', incl_first_panel=TRUE, print_one_line_sample_names=FALSE, replicate_names='rep',
+    group_autoscale=TRUE, incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
+    header=NULL, suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
+    include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
+    incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=TRUE, incl_feature_shadings=TRUE, feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
+    dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1, verbosity='normal', interface='R', ...){
+  
   t1 = Sys.time()
+  
+  constants_defaults = ConstantsDefaults()
+  cm_to_in = constants_defaults['cm_to_in'] #@ 2022-10-05
+  std_letter_width = constants_defaults['std_letter_width'] #@ 2022-10-05
+  std_letter_height = constants_defaults['std_letter_height'] #@ 2022-10-05
+  min_font_size = constants_defaults['min_font_size'] #@ 2022-10-05
   #### -> check parameters part 1 - abort or auto correct
   .verbosity = structure(0:3, names=c('off', 'no warnings', 'normal', 'detailed'))[as.character(ScrutinizeExpandAndNameParameter(verbosity, 1, use_names=FALSE, default_value='normal', expect_standard=NULL, expect=c('off', 'no warnings', 'normal', 'detailed'), revert_to_default=TRUE, alt_par_name=NULL, verbosity=3))]
   .interface = as.character(ScrutinizeExpandAndNameParameter(interface, 1, use_names=FALSE, default_value='R', expect_standard=NULL, expect=c('R', 'shiny'), revert_to_default=TRUE, alt_par_name=NULL, verbosity=.verbosity))
@@ -196,8 +158,8 @@ seqNdisplay = function(
   if (!is.null(full_height_cm) & !is.null(track_height_cm)){
     if (.verbosity > 1){
       .warning.message = paste0('WARNING: ', ifelse(interface=='R', '"track_height_cm"', '"Tracks Height"'), ' = ', track_height_cm, ' and ', ifelse(interface=='R', '"full_height_cm"', '"Full Plot Height"'), ' = ', full_height_cm,
-                              '\n', '\t', '.) ', 'one of the arguments should be a positive numeric value and the other should be NULL',
-                              '\n', '\t', '.) ', ifelse(interface=='R', '"track_height_cm"', '"Tracks Height"'), ' set to NULL')
+                                '\n', '\t', '.) ', 'one of the arguments should be a positive numeric value and the other should be NULL',
+                                '\n', '\t', '.) ', ifelse(interface=='R', '"track_height_cm"', '"Tracks Height"'), ' set to NULL')
       cat(.warning.message, '\n')
     }
     track_height_cm = NULL
@@ -380,8 +342,10 @@ seqNdisplay = function(
   .stranded.datasets[intersect(names(.panels.list[['+']]), names(.panels.list[['-']]))] = TRUE
   .plotting.segment.order = BuildScrutinizePlotSegmentOrder(plotting_segment_order, .plotted.region, datasets, .plotted.samples, header, include_genomic_scale, genomic_scale_on_top, incl_annot=!is.null(annots), horizontal_spacers, .tracks.listed, both_strands, .any.stranded.beds, .any.unstranded.beds, .strands.intermingled, .verbosity, .interface)
   if (is.null(.plotting.segment.order)){ return() }
+  plot_vertical_parameters = PlotVerticalParameters() #@ 2022-10-05
   .plot.vertical.parameters = plot_vertical_parameters
   if (!is.null(track_height_cm)){ #@ ->
+    plot_vertical_parameters = PlotVerticalParameters() #@ 2022-10-05
     .plot.vertical.parameters = UpdatePlotVerticalParameters(plot_vertical_parameters, track_height_cm, .title.field.height.cm, genomic_scale_height_cm, annotation_height_cm, spacer_height_cm)
   }
   .estimated.plot.heights = AdjustEstimatedPlotHeights(structure(lapply(names(.plotted.region), function(.strand) EstimatePlotHeights(.annot.info[[.strand]], .incl.feature.names, .annotation.packing, .incl.feature.brackets, .plotting.segment.order[[.strand]], .tracks.listed[[.strand]], track_height_cm, full_height_cm, .stranded.beds[[.strand]], .plot.vertical.parameters, .verbosity, .interface)), names=names(.plotted.region)), .plot.vertical.parameters, full_height_cm, track_height_cm, .title.field.height.cm, genomic_scale_height_cm, annotation_height_cm, spacer_height_cm)
@@ -557,29 +521,29 @@ seqNdisplay = function(
   if (verbosity > 2){
     # Plot dimensions (w or w/o scaling)
     .detailed.output[['"Plot Dimensions (w scaling)"']] = paste0('\t', '.) ', 'Plot Width: ', round(.scaling.factor*.width.in/cm_to_in, 3), ' cm',
-                                                     '\n', '\t', '.) ', 'Plot Height: ', round(.scaling.factor*.height.in/cm_to_in, 3), ' cm')
+                                                                 '\n', '\t', '.) ', 'Plot Height: ', round(.scaling.factor*.height.in/cm_to_in, 3), ' cm')
     .detailed.output[['"Plot Dimensions (w/o scaling)"']] = paste0('\t', '.) ', 'Plot Width: ', round(.width.in/cm_to_in, 3), ' cm',
-                                                                 '\n', '\t', '.) ', 'Plot Height: ', round(.height.in/cm_to_in, 3), ' cm')
+                                                                   '\n', '\t', '.) ', 'Plot Height: ', round(.height.in/cm_to_in, 3), ' cm')
     # Width of panels
     .plot.width.parameters = .panel.info[[1]][['plot.width.parameters']]
     .detailed.output[['"Width of panels (w/o scaling)"']] = paste0('\t', '.) ', 'All panels: ', round(.width.in/cm_to_in, 3), ' cm',
-                                               '\n', '\t', '.) ', 'Left (sample names): ', round(.plot.width.parameters[['panels.max.width.cm']], 3), ' cm',
-                                               '\n', '\t', '.) ', 'Scale: ', round(.plot.width.parameters[['scale.panel.width.cm']], 3), ' cm',
-                                               '\n', '\t', '.) ', 'Margins: ', round(.plot.widths.cm[['margin.width.cm']], 3), ' cm',
-                                               '\n', '\t', '.) ', 'Tracks: ', round(.plot.width.parameters[['tracks.width.cm']], 3), ' cm')
+                                                                   '\n', '\t', '.) ', 'Left (sample names): ', round(.plot.width.parameters[['panels.max.width.cm']], 3), ' cm',
+                                                                   '\n', '\t', '.) ', 'Scale: ', round(.plot.width.parameters[['scale.panel.width.cm']], 3), ' cm',
+                                                                   '\n', '\t', '.) ', 'Margins: ', round(.plot.widths.cm[['margin.width.cm']], 3), ' cm',
+                                                                   '\n', '\t', '.) ', 'Tracks: ', round(.plot.width.parameters[['tracks.width.cm']], 3), ' cm')
     # Height of panels
     .track.height.cm = .basic.plot.parameters[[1]][['track.height.cm']]
     .plot.height.parameters = .plot.vertical.parameters * .track.height.cm
     .detailed.output[['"Height of panels (w/o scaling)"']] = paste0('\t', '.) ', 'All panels: ', round(.height.in/cm_to_in, 3), ' cm',
-                                                      '\n', '\t', '.) ', 'Header: ', round(.plot.height.parameters['header'], 3), ' cm/segment',
-                                                      '\n', '\t', '.) ', 'Genomic scale: ', round(.plot.height.parameters['scale'], 3), ' cm/segment',
-                                                      '\n', '\t', '.) ', 'Tracks: ', round(.plot.height.parameters['seq'], 3), ' cm/segment',
-                                                      '\n', '\t', '.) ', 'Line-spacer: ', round(.plot.height.parameters['line-spacer'], 3), ' cm/segment',
-                                                      '\n', '\t', '.) ', 'Empty-spacer: ', round(.plot.height.parameters['empty-spacer'], 3), ' cm/segment',
-                                                      '\n', '\t', '.) ', 'Thickline-spacer: ', round(.plot.height.parameters['thickline-spacer'], 3), ' cm/segment',
-                                                      '\n', '\t', '.) ', 'Annotation: ', round(.plot.height.parameters['annot'], 3), ' cm/line',
-                                                      '\n', '\t', '.) ', 'Squished annotation: ', round(.plot.height.parameters['annot_squished'], 3), ' cm/line',
-                                                      '\n', '\t', '.) ', 'Annotation text: ', round(.plot.height.parameters['annot_text_segment'], 3), ' cm/line')
+                                                                    '\n', '\t', '.) ', 'Header: ', round(.plot.height.parameters['header'], 3), ' cm/segment',
+                                                                    '\n', '\t', '.) ', 'Genomic scale: ', round(.plot.height.parameters['scale'], 3), ' cm/segment',
+                                                                    '\n', '\t', '.) ', 'Tracks: ', round(.plot.height.parameters['seq'], 3), ' cm/segment',
+                                                                    '\n', '\t', '.) ', 'Line-spacer: ', round(.plot.height.parameters['line-spacer'], 3), ' cm/segment',
+                                                                    '\n', '\t', '.) ', 'Empty-spacer: ', round(.plot.height.parameters['empty-spacer'], 3), ' cm/segment',
+                                                                    '\n', '\t', '.) ', 'Thickline-spacer: ', round(.plot.height.parameters['thickline-spacer'], 3), ' cm/segment',
+                                                                    '\n', '\t', '.) ', 'Annotation: ', round(.plot.height.parameters['annot'], 3), ' cm/line',
+                                                                    '\n', '\t', '.) ', 'Squished annotation: ', round(.plot.height.parameters['annot_squished'], 3), ' cm/line',
+                                                                    '\n', '\t', '.) ', 'Annotation text: ', round(.plot.height.parameters['annot_text_segment'], 3), ' cm/line')
     # Panels text orientation
     .horizontal.panels.list = .panel.info[[1]][['horizontal.panels.list']]
     .detailed.output[['"Panel text orientation"']] = paste(unlist(lapply(names(.horizontal.panels.list), function(x) paste0(c(paste0('\t', '.) ', x, ':', '\t'), sapply(.horizontal.panels.list[[x]], function(y) ifelse(y, 'HOR', 'VER'))), collapse=' ') )), collapse='\n')
@@ -588,15 +552,15 @@ seqNdisplay = function(
     .detailed.output[['"Panel font sizes"']] = paste(unlist(lapply(names(.panel.font.size.list), function(x) paste0(c(paste0('\t', '.) ', x, ':', '\t'), .panel.font.size.list[[x]]), collapse=' ') )), collapse='\n')
     # Other Font sizes
     .detailed.output[['"Other font sizes"']] = paste0('\t', '.) ', 'Title: ', .header.font.sizes['main'],
-                                                     '\n', '\t', '.) ', 'Subtitle: ', .header.font.sizes['sub'],
-                                                     '\n', '\t', '.) ', 'Scalebar: ', .header.font.sizes['scale'],
-                                                     '\n', '\t', '.) ', 'Genomic scale: ', .genomic.scale.font.size,
-                                                     '\n', '\t', '.) ', 'Data scale: ', .scale.fontsize,
-                                                     '\n', '\t', '.) ', 'Dataset names: ', max(sapply(.panel.font.size.list, function(x) x[1])),
-                                                     '\n', '\t', '.) ', 'Sample names (max): ', max(unlist(lapply(.panel.font.size.list, function(x) x[2:length(x)]))),
-                                                     '\n', '\t', '.) ', 'Sample names (min): ', min(unlist(lapply(.panel.font.size.list, function(x) x[2:length(x)]))),
-                                                     '\n', '\t', '.) ', 'Annotation titles: ', .annot.panel.font.size,
-                                                     '\n', '\t', '.) ', 'Annotation names: ', .feature.names.font.size)
+                                                      '\n', '\t', '.) ', 'Subtitle: ', .header.font.sizes['sub'],
+                                                      '\n', '\t', '.) ', 'Scalebar: ', .header.font.sizes['scale'],
+                                                      '\n', '\t', '.) ', 'Genomic scale: ', .genomic.scale.font.size,
+                                                      '\n', '\t', '.) ', 'Data scale: ', .scale.fontsize,
+                                                      '\n', '\t', '.) ', 'Dataset names: ', max(sapply(.panel.font.size.list, function(x) x[1])),
+                                                      '\n', '\t', '.) ', 'Sample names (max): ', max(unlist(lapply(.panel.font.size.list, function(x) x[2:length(x)]))),
+                                                      '\n', '\t', '.) ', 'Sample names (min): ', min(unlist(lapply(.panel.font.size.list, function(x) x[2:length(x)]))),
+                                                      '\n', '\t', '.) ', 'Annotation titles: ', .annot.panel.font.size,
+                                                      '\n', '\t', '.) ', 'Annotation names: ', .feature.names.font.size)
     # Plotting Segment Order
     .detailed.output.vector = c()
     if (.strands.intermingled){
@@ -653,12 +617,1121 @@ seqNdisplay = function(
 }
 
 
-#### Functions
+#' seq'N'display'R Session
+#'
+#' @description Container for seqNdisplayR session information
+#'
+#' @author MS (minor additions by SLA)
+#'
+#' @param df an optional df, overrides all other options except annotations
+#' @param samples samples object as used by seqNdisplay
+#' @param colors colors object as used by seqNdisplay
+#' @param bigwig_dirs bigwig_dirs object as used by seqNdisplay
+#' @param bigwigs bigwigs object as used by seqNdisplay
+#' @param parameters parameters object as used by seqNdisplay
+#' @param annotations annotations object as used by seqNdisplay
+#' @param options named list of other arguments used by seqNdisplay function
+#' @param load_annotations load annotations as GRanges? default=FALSE
+#'
+#' @details seqNdisplayR session object holding above slots identical to parameters
+#'   for seqNdisplay. If df is provided parses information from columns, colors,
+#'   bigwig_file, bigwig_directory, dataset and subgroup_1, subgroup_2 etc. See
+#'   Excel template sheet in
+#'   \code{system.file('extdata','example_excel_template.xls',
+#'   package='seqNdisplayR')} for more information. The df here is tidy, ie all
+#'   "empty" slots are filled. Otherwise see \code{vignette(package='seqNdisplayR')}. 
+#'   If options are not provided, adds default options to session object. 
+#'   If load_annotations=TRUE will try to load annotations using \link[rtracklayer]{import}. 
+#'   OPS: Currently only bed files are used correctly by seqNdisplayR.
+#'
+#' @return Object of class seqNdisplayRSession, which is a named list with slots samples, colors, bigwig_dirs, bigwigs, parameters and annotation_files and annots. 
+#' Annots is either identical to annotation_files or a named list of loaded GRanges.
+#' 
+#' @import GenomicRanges
+#' @importFrom rtracklayer import import.bed
+#' 
+#' @export
+#'
+#' @examples
+#' xl_fname = system.file('extdata', 'seqNdisplayR_sample_sheet_elaborate2.xlsx', package='seqNdisplayR')
+#' session <- LoadExcel(xl_fname, load_annotations = T) # takes some time, since annotations are loaded...
+#' feat = 'LMO4'
+#' plot(session, feature=feat)
+#' 
+seqNdisplayRSession = function(df=NULL, samples=NULL, colors=NULL, bigwig_dirs=NULL, bigwigs=NULL, parameters=NULL, annotations=NULL, options=NULL, load_annotations=F) {
+  if ( !missing(df) ) {
+    for ( col in c('dataset', colnames(df)[grepl('^subgroup_', colnames(df))]) ){
+      if ( any(grepl(';', df[[col]])) ) {
+        cat('Note: Semicolons not allowed in dataset and subgroup names, will be exchanged to colon [":"] in ', col, '\n')
+        df[[col]] = sub(';', ':', df[[col]])
+      }
+    }
+    
+    samples = GetSamples(df)
+    colors = GetColors(df)
+    bigwig_dirs = GetBigwigDirs(df)
+    bigwigs = GetBigwigs(df)
+    if ( missing(parameters) ) {
+      parameters = lapply(names(samples), function(n) {x = DefaultParameters(); x})
+      names(parameters) = names(samples)
+    }
+    
+  }
+  
+  if ( missing(options) ) {
+    options = DefaultPlotOptions()
+    options = c(options, DefaultAnnotationOptions())
+  }
+  
+  if ( load_annotations & !is.null(annotations)) {
+    .annots = lapply(annotations, function(anno) GenomicRanges::GRanges(rtracklayer::import.bed(anno)))
+  } else {
+    .annots = annotations
+  }
+  
+  structure(
+    c(list(
+      samples = samples,
+      colors = colors,
+      bigwig_dirs = bigwig_dirs,
+      bigwigs = bigwigs,
+      parameters = parameters,
+      annotation_files = annotations,
+      annots = .annots),
+      options
+    ),
+    class='seqNdisplayRSession'
+  )
+  
+}
+
+
+#' plot seq'N'display'R Session
+#'
+#' @description Container for seqNdisplayR session information
+#'
+#' @author MS (minor additions by SLA)
+#'
+#' @param session object of class seqNdisplayRSession
+#' @param ... arguments passed to seqNdisplay. Should contain at least the argument feature or locus.
+#'
+#' @details see seqNdisplay for details. Session contains samples, colors, bigwigs, bigwig_dirs, parameters and annotation information.
+#'
+#' @return On-screen plot or pdf 
+#' 
+#' @export
+#'
+#' @examples
+#' xl_fname = system.file('extdata', 'seqNdisplayR_sample_sheet_elaborate2.xlsx', package='seqNdisplayR')
+#' session = LoadExcel(xl_fname, load_annotations =F)
+#' class(session) # 'seqNdisplayRSession'
+#' plot(session, feature='TAF1D')
+#' 
+plot.seqNdisplayRSession = function(session, ...){
+  external_args = list(...)
+  # use default args except if present in ellipsis (...) (first priority), or in session (2nd priority)
+  from_dots = intersect(names(external_args), names(session))
+  session[from_dots] = external_args[from_dots]
+  # add external_args not in args ((ie add feature or locus!))
+  only_dots = setdiff(names(external_args), names(session))
+  session = c(session, external_args[only_dots])
+  # add default for all for some reason missing
+  default_args = DefaultPlotOptions()
+  only_default = setdiff(names(default_args), names(session))
+  session = c(session, default_args[only_default])
+  # handle replicate_names (prefix)
+  if (!is.null(session$replicate_names)){
+    if (session$replicate_names=='NA'){
+      session$replicate_names = ''
+    }
+  }
+  if ( !('force_scale' %in% names(external_args)) ) {
+    session$force_scale = NULL
+  }
+  # handle group_autoscale which is part of parameters but needs to passed differently to plot function
+  if ( !('group_autoscale' %in% names(external_args)) ) {
+    group_autoscale = unlist(lapply(session$parameters, function(para) {
+      ga = ParseOption(para$group_autoscale)
+      if (is.null(ga)) {
+        NA
+      }else{
+        ga
+      }
+    }))
+    names(group_autoscale) = names(session$parameters)
+    session$group_autoscale = group_autoscale
+  }
+  session$parameters = lapply(session$parameters, function(x) x[!(names(x)=='group_autoscale')])
+  # samples renamed to dataset for function call
+  names(session) = sub('^samples$', 'datasets', names(session))
+  do.call('seqNdisplay', session)
+}
+
+
+#' print seq'N'displayR Session
+#'
+#' @description Prints an overview over samples, colors and associated bigwigs in a seqNdisplayR Session.
+#' Just a pretty overview over a session.
+#'
+#' @author MS
+#'
+#' @param session seqNdisplayRSession object
+#' @param verbose print detailed information? default=FALSE
+#' @param ... arguments to GlimpseSession
+#'
+#' @details Convenience function for checking parsing of samples, colors and bigwigs. See GlimpseSession for details.
+#'
+#' @return Print to R session.
+#' 
+#' @export
+#'
+#' @examples
+#' xl_fname = system.file('extdata', 'seqNdisplayR_sample_sheet_elaborate2.xlsx', package='seqNdisplayR')
+#' session = LoadExcel(xl_fname, load_annotations =F)
+#' print(session)
+#' print(session, verbose=T)
+#' 
+print.seqNdisplayRSession = function(session, verbose=FALSE, ...) {
+  GlimpseSession(session$samples,
+                 session$colors,
+                 session$bigwigs,
+                 ...)
+  if ( verbose ) {
+    cat('\nBigwig Paths:\n')
+    print(session$bigwig_dirs)
+    cat('\nBigwigs:\n')
+    print(session$bigwigs)
+    cat('\nParameters:\n')
+    print(session$parameters)
+    cat('\nAnnotations:\n')
+    print(session$annotation_files)
+    cat('\nOptions:\n')
+    for ( opt in names(DefaultPlotOptions()) ) {
+      print(session[opt])
+    }
+    for ( opt in names(DefaultAnnotationOptions()) ) {
+      print(session[opt])
+    }
+  }
+}
+
+
+#' Load Excel
+#'
+#' @description Load Excel Template in a format that fits to seqNdisplayR (see documentation or examples for details)
+#'
+#' @author MS/SLA
+#'
+#' @param xl_fname excel template file including path
+#' @param load_annotations load annotations (paths in ANNOTATIONS sheet in excel template) as GRanges? default=FALSE.
+#'
+#' @details Load Excel template and parses information to seqNdisplayR session
+#'   object. See examples of the format of Excel Templates in
+#'   \code{ExamplesSampleSheetsFolder()} for more information.
+#'
+#' @return seqNdisplayRSession object, essentially a named list with slots samples,
+#'   colors, bigwig_dirs, bigwigs, parameters and annotations and optional arguments
+#'   to be fed into seqNdisplay function
+#' 
+#' @importFrom readxl read_excel
+#' 
+#' @export
+#'
+#' @examples
+#' #' # EXAMPLE 1:
+#' xl_fname = system.file('extdata', 'seqNdisplayR_sample_sheet_elaborate2.xlsx', package='seqNdisplayR')
+#' session = LoadExcel(xl_fname, load_annotations = TRUE)
+#' plot(session, feature='LMO4')
+#' 
+#' # EXAMPLE 2:
+#' example_folder = ExamplesSampleSheetsFolder()
+#' xl_fname = paste0(example_folder, 'seqNdisplayR_sample_sheet_elaborate2.xlsx')
+#' session = LoadExcel(xl_fname, load_annotations = TRUE)
+#' plot(session, feature='LMO4')
+#' 
+#' @note change throughout from load_excel to LoadExcel - done? #% 2022-10-04
+#' 
+LoadExcel = function(xl_fname, load_annotations=FALSE) {
+  if (!file.exists(xl_fname)){
+    cat('The provided file does not exist', '\n')
+    return()
+  }else if ( !(grepl('.xls$', xl_fname) | grepl('.xlsx$', xl_fname))  ) {
+    cat('The provided file does not have the right format - lacking extension "xls" or "xlsx"', '\n')
+    return()
+  }
+  
+  cat('Parsing Excel Template File\n')
+  
+  samples_df = NULL
+  tryCatch(
+    { noout = capture.output( samples_df <- readxl::read_excel(xl_fname, sheet = 'SAMPLES') ) },
+    error=function(cond) {
+      cat('  Samples table               --> Required sheet "SAMPLES" not found in file\n')
+      cat('  ERROR: ! \n')
+    }
+  )
+  if (is.null(samples_df)){
+    return()
+  }
+  
+  if (nrow(samples_df) > 1){
+    samples_df = samples_df[!apply(apply(samples_df, 2, is.na), 1, all),,drop=FALSE] 
+    samples_df = samples_df[,!apply(apply(samples_df, 2, is.na), 2, all),drop=FALSE] 
+    mandatory_columns = c('bigwig_directory', 'bigwig_file', 'strand', 'dataset', 'subgroup_1')
+    missing_columns = setdiff(mandatory_columns, colnames(samples_df)) 
+    if (length(missing_columns) > 0){ 
+      cat(paste0('  Samples table               --> Required ', ifelse(length(missing_columns)==1, 'column (', 'columns ('), paste(missing_columns, collapse=', '), ') missing in sheet "SAMPLES"'), '\n')
+      cat('  ERROR: ! \n')
+      return()
+    } 
+    top_row_NAs = is.na(samples_df[1,mandatory_columns])
+    if ( any(top_row_NAs) ){
+      cat(paste0('  Samples table               --> Required first row ', ifelse(sum(top_row_NAs)==1, 'value (', 'values ('), paste(names(top_row_NAs)[top_row_NAs], collapse=', '), ') missing in sheet "SAMPLES"'), '\n')
+      cat('  ERROR: ! \n')
+      return()
+    }
+    cat('  Samples table               --> OK\n') 
+    samples_df = FillDf(samples_df)
+  }
+  datasets = unique(samples_df$dataset) 
+  
+  params_df = data.frame(dataset = unique(samples_df$dataset))
+  tryCatch(
+    { noout = capture.output( params_df <- readxl::read_excel(xl_fname, sheet = 'DATASET_OPTIONS') )
+      cat('  Dataset-specific options    --> OK\n')  
+    },
+    error=function(cond) {
+      cat('  Dataset-specific options    --> Sheet "DATASET_OPTIONS" was not found in file or empty; using defaults.\n')
+    }
+  )
+  params = GetParameters(samples_df, params_df)
+  
+  annot_and_options = list(annot = NULL, annot_plot_options = DefaultAnnotationOptions())
+  tryCatch(
+    { noout = capture.output( anno_df <- readxl::read_excel(xl_fname, sheet = 'ANNOTATIONS') )
+      annot_and_options = GetAnnotations(anno_df)
+      cat('  Annotations                 --> OK\n')  
+    },
+    error=function(cond) {
+      cat('  Annotations                 --> Sheet "ANNOTATIONS" was not found in excel file or empty; proceeding without annotations.\n')
+    }
+  )
+  
+  options = DefaultPlotOptions()
+  tryCatch(
+    { noout = capture.output( options_df <- readxl::read_excel(xl_fname, sheet = 'GLOBAL_OPTIONS') )
+      options = suppressWarnings(GetPlotOptions(options_df))
+      cat('  Other plotting options      --> OK\n') 
+    },
+    error=function(cond) {
+      cat('  Other plotting options      --> Sheet "GLOBAL_OPTIONS" was not found in excel file or empty; using default options.\n')
+    }
+  )
+  
+  if ( length(setdiff(datasets, names(params)))!=0 ){
+    cat('  - there are datasets in "Samples table" that are not in "Dataset-specific options" - using defaults', '\n')
+  }
+  if ( length(setdiff(names(params), datasets))!=0 ){
+    cat('  - there are datasets in "Dataset-specific options" that are not in "Samples table" - ignoring those', '\n')
+    params = params[datasets]
+  }
+  
+  ##add annotation-specific options
+  for ( opt in names(annot_and_options$annot_plot_options) ) {
+    options[[opt]] = annot_and_options$annot_plot_options[[opt]]
+  }
+  
+  if (!('color' %in% colnames(samples_df))){ 
+    cat('  - color(s) are not defined in "Samples table" - using default ("#346C88")', '\n')
+    samples_df$color = "#346C88"
+  }
+  
+  if (!('batch' %in% colnames(samples_df))){ 
+    samples_df$batch = NA
+  }
+  standard_sample_cols = c('color', 'bigwig_directory', 'bigwig_file', 'strand', 'batch', 'dataset', 'subgroup_1')
+  add_columns = setdiff(colnames(samples_df), standard_sample_cols)
+  if (length(add_columns) > 0){
+    if (!(all(grepl('subgroup_', add_columns)))){
+      cat(paste0('  - there ', ifelse(length(add_columns)==1, 'is a column (', 'are columns ('), paste(add_columns, collapse=', '), ') in sheet "SAMPLES", which will be ignored because they do not fit the standard input'), '\n')
+    }
+    appr_add_columns = sort(grep('subgroup_', add_columns, value=TRUE))
+    standard_sample_cols = c(standard_sample_cols, appr_add_columns)
+  }
+  samples_df = samples_df[, standard_sample_cols]
+  
+  seqNdisplayRSession(
+    df = samples_df,
+    parameters = params,
+    annotations = annot_and_options$annot,
+    options = options,
+    load_annotations = load_annotations
+  )
+}
+
+
+#' Load IGV Session
+#' 
+#' @description Load IGV Session in a format that fits to seqNdisplayR (see documentation or examples for details)
+#'
+#' @author MS
+#'
+#' @param igvsession_fname path to igv session xml file
+#' @param group_by group tracks info string: 'common_prefix', 'autoscalegroups', 'do_not_group', default = 'autoscalegroups'
+#' @param strand_regex for stranded files a regex distinguishing plus and minus strand file names
+#' @param load_annotations load annotations as GRanges? default=FALSE
+#'
+#' @details This is experimental as IGV and seqNdisplayR have very different
+#'   approach. In IGV each track is considered a separate entity wheres seqNdisplayR
+#'   shines when it comes to combination of different kind of track groups etc.
+#'   This function is therefore a first guess, may be used in combination with
+#'   Session2Df, which then allows to specify better the grouping on the
+#'   resulting data.frame (see examples).
+#'   group_by: autoscalegroups assumes that all samples within one
+#'   autoscalegroup are one experiment and will consider these a separate group.
+#'   Group name will be guessed from a common prefix present in all track names.
+#'   If no common prefix is found, uses grp and an unique index.
+#'   group_by: common_prefix assumes that all samples with a shared prefix are
+#'   from one sample group. ie if your igv session track names are RNAseq wt;
+#'   RNAseq ko1; RNAseq ko2; ChIPSeq a; ChIPseq b etc this will create a group
+#'   RNAseq and a group ChIPseq.
+#'   If group_by is none of the above will simply not assign datasets. Uses
+#'   strand_regex to assign strand information, if strand_regex = NULL, will not
+#'   try to assign strand information and treat all tracks as + strand tracks.
+#'   This last version is the most robust.
+#'   Parameters returned are essentially defaults except that if autoscale
+#'   groups are found all samples within one group are considered the same
+#'   batch.
+#'   UPS: annotations are imported correct, except the default RefSeq/NCBI used
+#'   in IGV is not implemented. Better set these by hand afterwards.
+#'
+#' @return A named list with entries samples, colors, bigwig_dirs, bigwigs,
+#'   parameters and annotations
+#' 
+#' @import xml2
+#' @importFrom dplyr bind_rows
+#' 
+#' @export
+#'
+#' @examples
+#' igvsession_fname = system.file('extdata','example_igv_session.xml',package='seqNdisplayR')
+#' igvtbl = LoadIGVSession( igvsession_fname, group_by = 'autoscalegroups' )
+#' igvtbl$samples
+#' igvtbl$colors
+#' igvtbl$bigwigs
+#' igvtbl$bigwig_dirs
+#' igvtbl$parameters
+#' igvtbl$annotations
+#'
+#' Session2Df(igvtbl$samples, igvtbl$colors, igvtbl$bigwigs, igvtbl$bigwig_dirs,strand_regex = c('+'='plus', '-'='minus'))
+#' 
+#' @note change throughout from load_igvsession to LoadIGVSession - done? #% 2022-10-04
+#' 
+LoadIGVSession = function( igvsession_fname,
+                           group_by = 'autoscalegroups',
+                           strand_regex = c('+'= 'plus', '-'= 'minus'),
+                           load_annotations = FALSE) {
+  igv = xml2::read_xml(igvsession_fname)
+  session = xml2::xml_find_all(igv, "//Session")
+  genome = xml2::xml_attr(session, "genome")
+  tracks = xml2::xml_find_all(igv, "//Track")
+  dataSourceTracks =
+    tracks[which(xml2::xml_attr(tracks, "clazz") == "org.broad.igv.track.DataSourceTrack")]
+  featureTracks =
+    tracks[which(xml2::xml_attr(tracks, "clazz") == "org.broad.igv.track.FeatureTrack")]
+  
+  annots = as.list(xml2::xml_attr(featureTracks, "id"))
+  names(annots) = xml2::xml_attr(featureTracks, "attributeKey")
+  
+  annots[genome] = paste0('http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/Genomes/', genome, '.refGene.nohosted.bed')
+  
+  #annots = annots[grepl('.bed', annots) | grepl('.gtf', annots) | grepl('.gff', annots)]
+  annots = annots[grepl('.bed$', annots)]
+  annots
+  
+  annots = lapply(annots, function(ann) gsub(' ', '%20', ann))
+  
+  bw_paths = xml2::xml_attr(dataSourceTracks, "id")
+  tracknames = xml2::xml_attr(dataSourceTracks, "name")
+  autoscalegroups = xml2::xml_attr(dataSourceTracks, "autoscaleGroup")
+  autoscalegroups = sapply(autoscalegroups, function(x) ifelse(is.na(x), 'NA', x))
+  
+  trackcolors = xml2::xml_attr(dataSourceTracks, "color")
+  trackcolors =
+    sapply(trackcolors, function(cl)
+      if (is.na(cl)) {
+        '#000000' #black
+      } else{
+        {
+          cls = as.integer(strsplit(cl, ',')[[1]]) / 255
+          rgb(cls[1], cls[2], cls[3])
+        }
+      })
+  
+  if ( !is.null(strand_regex) ) {
+    track_strands = ifelse(grepl(strand_regex['-'], bw_paths), 'minus', 'plus')
+  } else {
+    track_strands = rep('', length(bw_paths))
+  }
+  
+  
+  tbl = data.frame(
+    color = as.character(trackcolors),
+    name = as.character(tracknames),
+    bigwig_directory = '',
+    bigwig_file = bw_paths,
+    strand = track_strands,
+    batch = as.character(autoscalegroups),
+    dataset = '',
+    subgroup_1 = '',
+    stringsAsFactors = F
+  )
+  
+  if (group_by == 'autoscalegroups') {
+    tbl$dataset = autoscalegroups
+    
+    for ( grp in unique(autoscalegroups) ) {
+      grp_rows = which(tbl$batch == grp)
+      
+      if ( sum(tbl$dataset[grp_rows] != grp) != 0 ) {
+        next
+      }
+      
+      ## extract common bigwig_dir
+      ### need to take into account that stranded data,
+      #### negative strand may have different autoscale group in IGV,
+      #### but in PTSD this is considered by default...
+      grp_bws = tbl$bigwig_file[grp_rows]
+      minus_bws_rows =
+        unlist(lapply(grp_bws, function(bw)
+          which(
+            tbl$bigwig_file == sub(strand_regex['+'], strand_regex['-'], bw, fixed = T)
+          )))
+      ##could simply be that plus, minus are not in names!!
+      minus_bws_rows =
+        minus_bws_rows[!(minus_bws_rows %in% grp_rows)]
+      
+      if ( length(minus_bws_rows) > 0 ) {
+        grp_rows = c(grp_rows, minus_bws_rows)
+      }
+      
+      name_common_prefix = CommonPrefix(tbl$name[grp_rows])
+      grp_name = gsub(' $', '', name_common_prefix)
+      
+      if ( grp_name %in% tbl$dataset ) {
+        i = 1
+        while ( grp_name %in% tbl$dataset ) {
+          grp_name = paste0(grp_name, i)
+          i = i + 1
+        }
+      }
+      
+      if ( name_common_prefix != '' ) {
+        tbl$dataset[grp_rows] = grp_name
+        tbl$subgroup_1[grp_rows] =
+          sub(name_common_prefix, '', tbl$name[grp_rows], fixed = TRUE)
+      } else {
+        i = 1
+        grp_name = paste0('grp', i)
+        while ( grp_name %in% tbl$dataset ) {
+          grp_name = paste0('grp', i)
+          i = i + 1
+        }
+        tbl$dataset[grp_rows] = grp_name
+        tbl$subgroup_1[grp_rows] = tbl$name[grp_rows]
+      }
+      
+      bw_dir = CommonPrefix(tbl$bigwig_file[grp_rows])
+      tbl$bigwig_directory[grp_rows] = bw_dir
+      if(bw_dir != ''){
+        tbl$bigwig_file[grp_rows] =
+          sub(bw_dir, '', tbl$bigwig_file[grp_rows], fixed = TRUE)
+      }
+      
+      
+      for ( row in grp_rows ) {
+        if ( tbl$strand[row] == 'minus' ) {
+          bw_minus_subgrp1 = tbl$subgroup_1[row]
+          bw_plus_name = sub(strand_regex['-'], strand_regex['+'], tbl[row, 'bigwig_file'])
+          bw_plus_row = tbl$bigwig_file == bw_plus_name
+          bw_plus_subgrp1 = tbl$subgroup_1[bw_plus_row]
+          subgrp1_pfx = CommonPrefix(c(bw_plus_subgrp1, bw_minus_subgrp1))
+          subgrp1_pfx = gsub(' $', '', subgrp1_pfx)
+          if ( nchar(subgrp1_pfx) > 0 & !(subgrp1_pfx %in% tbl$subgroup_1[grp_rows]) ) {
+            tbl$subgroup_1[row] = subgrp1_pfx
+            tbl$subgroup_1[bw_plus_row] = subgrp1_pfx
+          }
+        }
+      }
+      
+    }
+    
+    for ( col in c('subgroup_1', 'dataset') ) {
+      tbl = dplyr::bind_rows(lapply(unique(tbl[[col]]), function(coli) tbl[tbl[[col]]==coli,]))
+    }
+    
+  } else if (group_by == 'common_prefix') {
+    
+    cp = ''
+    i = 1
+    j = 2
+    while (i < nrow(tbl)) {
+      cp = CommonPrefix(c(tbl$name[i], tbl$name[j]))
+      while (!is.na(cp) & cp != '' & j <= nrow(tbl)) {
+        cp = CommonPrefix(c(tbl$name[i], tbl$name[j]))
+        j = j + 1
+      }
+      if (j > (i + 1)) {
+        if (j == (nrow(tbl) + 1)) {
+          grp_rows = i:nrow(tbl)
+        } else {
+          grp_rows = i:(j - 2)
+        }
+        name_common_prefix = CommonPrefix(tbl$name[grp_rows])
+        if (sum(tbl$dataset[grp_rows] != '') == 0) {
+          ## extract common bigwig_dir
+          ### need to take into account that stranded data,
+          #### negative strand may have different autoscale group in IGV,
+          #### but in PTSD this is considered by default...
+          grp_bws = tbl$bigwig_file[grp_rows]
+          minus_bws_rows =
+            unlist(lapply(grp_bws, function(bw)
+              which(
+                tbl$bigwig_file == sub('plus', 'minus', bw, fixed = T)
+              )))
+          ##could simply be that plus, minus are not in names!!
+          minus_bws_rows =
+            minus_bws_rows[!(minus_bws_rows %in% grp_rows)]
+          minus_names = tbl$name[grp_rows]
+          cp_minus = grepl(paste0('^', cp), minus_names)
+          if (length(minus_bws_rows) > 0) {
+            grp_rows = c(grp_rows, minus_bws_rows)
+          }
+          
+          grp_name = gsub(' $', '', name_common_prefix)
+          
+          if (grp_name %in% tbl$dataset) {
+            grp_i = 1
+            while (grp_name %in% tbl$dataset) {
+              grp_name = paste0(grp_name, grp_i)
+              grp_i = grp_i + 1
+            }
+          }
+          
+          if (name_common_prefix != '') {
+            tbl$dataset[grp_rows] = grp_name
+            tbl$subgroup_1[grp_rows] =
+              sub(name_common_prefix, '', tbl$name[grp_rows], fixed = TRUE)
+          } else {
+            grp_i = 1
+            grp_name = paste0('grp', grp_i)
+            while (grp_name %in% tbl$dataset) {
+              grp_name = paste0('grp', grp_i)
+              grp_i = grp_i + 1
+            }
+            tbl$dataset[grp_rows] = grp_name
+            tbl$subgroup_1[grp_rows] = tbl$name[grp_rows]
+          }
+          
+          bw_dir = CommonPrefix(tbl$bigwig_file[grp_rows])
+          tbl$bigwig_directory[grp_rows] = bw_dir
+          tbl$bigwig_file[grp_rows] =
+            sub(bw_dir, '', tbl$bigwig_file[grp_rows], fixed = TRUE)
+          
+          for ( row in grp_rows ) {
+            if ( tbl$strand[row] == 'minus' ) {
+              bw_minus_subgrp1 = tbl$subgroup_1[row]
+              bw_plus_name = sub(strand_regex['-'], strand_regex['+'], tbl[row, 'bigwig_file'])
+              bw_plus_row = tbl$bigwig_file == bw_plus_name
+              bw_plus_subgrp1 = tbl$subgroup_1[bw_plus_row]
+              subgrp1_pfx = CommonPrefix(c(bw_plus_subgrp1, bw_minus_subgrp1))
+              subgrp1_pfx = gsub(' $', '', subgrp1_pfx)
+              if ( nchar(subgrp1_pfx) > 0 & !(subgrp1_pfx %in% tbl$subgroup_1[grp_rows]) ) {
+                tbl$subgroup_1[row] = subgrp1_pfx
+                tbl$subgroup_1[bw_plus_row] = subgrp1_pfx
+              } else {
+                tbl$subgroup_1[row] = bw_plus_subgrp1
+              }
+            }
+          }
+          
+        }
+      } else {
+        
+      }
+      if ( i > (j-1) ) {
+        i = j - 1
+      } else {
+        i = i + 1
+      }
+      j = i + 1
+    }
+  } else {
+    tbl$dataset = tracknames
+    tbl$subgroup_1 = '_'
+    if ( !is.null(strand_regex) ) {
+      for ( row in 1:nrow(tbl) ) {
+        if ( tbl$strand[row] == 'minus' ) {
+          bw_minus_subgrp1 = tbl$dataset[row]
+          bw_plus_name = sub(strand_regex['-'], strand_regex['+'], tbl[row, 'bigwig_file'])
+          bw_plus_row = tbl$bigwig_file == bw_plus_name
+          bw_plus_subgrp1 = tbl$dataset[bw_plus_row]
+          subgrp1_pfx = CommonPrefix(c(bw_plus_subgrp1, bw_minus_subgrp1))
+          subgrp1_pfx = gsub(' $', '', subgrp1_pfx)
+          if ( nchar(subgrp1_pfx) > 0 & !(subgrp1_pfx %in% tbl$dataset[-bw_plus_row]) ) {
+            tbl$dataset[row] = subgrp1_pfx
+            tbl$dataset[bw_plus_row] = subgrp1_pfx
+          } else {
+            tbl$dataset[row] = bw_plus_subgrp1
+          }
+          tbl$subgroup_1[row] = tbl$subgroup_1[bw_plus_row]
+        }
+      }
+    }
+  }
+  
+  opts = DefaultPlotOptions()
+  opts[['replicate_names']] = NULL #makes more sense imho
+  opts = c(opts, list('replicate_names'=NULL))
+  
+  ##add annotation-specific options
+  anno_options = DefaultAnnotationOptions()
+  anno_names = names(annots)
+  n_annos = length(annots)
+  for ( opt in names(anno_options) ) {
+    opts[[opt]] = rep(anno_options[[opt]], n_annos)
+    names(opts[[opt]]) = anno_names
+  }
+  
+  # ??replicate averaging does not make sense in this case, disable
+  params = DefaultParameters()
+  params$calcMean = FALSE
+  params$preMean = FALSE
+  
+  datasets = unique(tbl$dataset)
+  param_list = lapply(datasets, function(n) {x = params; x})
+  names(param_list) = datasets
+  
+  seqNdisplayRSession(
+    df = tbl,
+    annotations = annots,
+    parameters = param_list,
+    options = opts,
+    load_annotations = load_annotations
+  )
+}
+
+
+#' Session2xlsx
+#'
+#' @description Save session object to Excel xlsx-file
+#'
+#' @author MS (minor additions by SLA)
+#'
+#' @param session seqNdisplayRSession object
+#' @param path Excel file path
+#' @param ... 
+#'
+#' @return Write Excel template as described in \link{LoadExcel}.
+#' 
+#' @importFrom dplyr bind_cols bind_rows
+#' @importFrom jsonlite toJSON
+#' @importFrom writexl write_xlsx
+#' 
+#' @export
+#'
+#' @examples
+#' 
+#' @note change throughout from session_to_xlsx to Session2xlsx - done? #% 2022-10-04
+#' 
+Session2xlsx = function(session, path, ...) {
+  samples = Session2Df(session$samples,
+                       session$colors,
+                       session$bigwigs,
+                       session$bigwig_dirs,
+                       session$parameters,
+                       strand_regex = c('+'= 'plus', '-'='minus'))
+  
+  #clean redundancy for better human readability
+  ## optional but makes sense imho
+  samples = EmptyDf(samples)
+  
+  annos = NULL
+  anno_display_option_names = names(DefaultAnnotationOptions())
+  if (!is.null(session$annotation_files)){
+    annos = data.frame('annotation_name' = names(session$annotation_files),
+                       'annotation_file' = as.character(session$annotation_files))
+    anno_display_options = session[anno_display_option_names]
+    #ensure consistent sorting
+    anno_display_options = lapply(anno_display_options, function(x) sapply(x, DeparseOption))
+    anno_display_options_df = as.data.frame(anno_display_options)
+    annos = dplyr::bind_cols(annos, anno_display_options_df)
+  }
+  
+  para_df = data.frame(dataset = names(session$parameters))
+  para_df = dplyr::bind_cols(para_df,
+                             dplyr::bind_rows(lapply(session$parameters, function(para) sapply(para[names(para) != 'whichSamples'], DeparseOption) ) ))
+  #special handling for whichSamples
+  para_df$whichSamples = sapply(names(session$parameters), function(dataset) {
+    whichSamples = session$parameters[[dataset]]$whichSamples
+    if ( !is.null(whichSamples) ) {
+      if ( length(whichSamples) == 0 | is.na(whichSamples)){
+        #exclude entire dataset
+        'NA'
+      }else{
+        #specific samples from dataset or all
+        whichSamples_str = jsonlite::toJSON(whichSamples)
+        samples_str = jsonlite::toJSON(session$samples[[dataset]])
+        if( whichSamples_str == samples_str ) {
+          #include all
+          'NULL'
+        } else {
+          #specific samples
+          whichSamples_str
+        }
+      }
+    } else {
+      #include all
+      'NULL'
+    }
+  })
+  
+  session_options = session[!names(session) %in% c('samples', 'colors', 'bigwigs', 'bigwig_dirs', 'parameters', 'annotation_files', 'annots', anno_display_option_names)]
+  
+  options = data.frame('Option' = names(session_options),
+                       'Value' = as.character(
+                         sapply(session_options, DeparseOption, USE.NAMES = FALSE)
+                       )
+  )
+  options = options[order(names(session_options)),]
+  if (!is.null(annos)){
+    writexl::write_xlsx(list('SAMPLES' = samples,
+                             'DATASET_OPTIONS' = para_df,
+                             'ANNOTATIONS' = annos,
+                             'GLOBAL_OPTIONS' = options),
+                        path)
+  }else{
+    writexl::write_xlsx(list('SAMPLES' = samples,
+                             'DATASET_OPTIONS' = para_df,
+                             'GLOBAL_OPTIONS' = options),
+                        path)
+  }
+}
+
+
+#' Examples Sample Sheets Folder
+#'
+#' @description Finds the folder with example Excel Templates for seqNdisplayR
+#'
+#' @author SLA
+#'
+#' @return finds and returns the folder with example Excel Templates for seqNdisplayR
+#'
+#' @export
+#'
+#' @examples
+#' example_folder = ExamplesSampleSheetsFolder()
+#' list.files(example_folder)
+#' fname = list.files(example_folder)[7]
+#' xl_fname = paste0(example_folder, fname)
+#' session = LoadExcel(xl_fname, load_annotations = T)
+#' plot(session, feature='LMO4')
+#' 
+ExamplesSampleSheetsFolder = function(){
+  libpaths = .libPaths()
+  for (libpath in libpaths){
+    lf = list.files(libpath)
+    if (any(grepl('seqNdisplayR', lf))){
+      samples_sheets_folders = paste0(libpath, '/seqNdisplayR/extdata/')
+    }
+  }
+  samples_sheets_folders
+}
+
+
+#' List Examples Sample Sheets
+#'
+#' @description Finds and outputs the example seqNdisplayR Excel Templates that comes with the package
+#'
+#' @author SLA
+#'
+#' @return the example seqNdisplayR Excel Templates that comes with the package
+#' 
+#' @export
+#'
+#' @examples
+#' example_sample_sheets = ListExamplesSampleSheets()
+#' example_folder = ExamplesSampleSheetsFolder()
+#' xl_fname = paste0(example_folder, example_sample_sheets[1])
+#' session = LoadExcel(xl_fname, load_annotations = T)
+#' plot(session, feature='LMO4')
+#' 
+ListExamplesSampleSheets = function(){
+  libpaths = .libPaths()
+  for (libpath in libpaths){
+    lf = list.files(libpath)
+    if (any(grepl('seqNdisplayR', lf))){
+      samples_sheets_folders = paste0(libpath, '/seqNdisplayR/extdata/')
+    }
+  }
+  list.files(samples_sheets_folders)
+}
+
+
+#' run seq'N'displayR app
+#'
+#' @description Run the shiny app
+#'
+#' @author SLA
+#'
+#' @return
+#' 
+#' @import shiny
+#' 
+#' @export
+#'
+#' @examples
+#' run_seqNdisplayR_app()
+#' run_seqNdisplayR_app(launch.browser = TRUE)
+#' 
+run_seqNdisplayR_app = function(...){
+  libpaths = .libPaths()
+  for (libpath in libpaths){
+    lf = list.files(libpath)
+    if (any(grepl('seqNdisplayR', lf))){
+      app = paste0(libpath, '/seqNdisplayR/shiny/seqNdisplayR_app.R')
+    }
+  }
+  shiny::runApp(app, ...) #@ 2022-10-10 
+}
+
+
+
+###### # INTERNAL FUNCTIONS # ######
+
+#' Constants and Defaults
+#'
+#' @description Internal function
+#' Container for Constants and Defaults
+#'
+#' @author SLA
+#'
+#' @return a named vector with constants and defaults (package-wide available arguments)
+#'
+#' @examples
+#' constants_defaults = ConstantsDefaults()
+#' line_width_scaling_factor = constants_defaults['line_width_scaling_factor']
+#' points_per_cm = constants_defaults['points_per_cm']
+#' arrow_constant = constants_defaults['arrow_constant']
+#' cm_to_in = constants_defaults['cm_to_in']
+#' std_letter_width = constants_defaults['std_letter_width']
+#' std_letter_height = constants_defaults['std_letter_height']
+#' min_font_size = constants_defaults['min_font_size']
+#' annot_panel_dist = constants_defaults['annot_panel_dist']
+#' 
+#' @note implement function throughout - done? #% 2022-10-05
+#' 
+ConstantsDefaults = function(){
+  c(line_width_scaling_factor = 0.25/0.38,   # scaling factor to use for the line width (if multiplied with 1 it will give 0.5-pt line width in the pdf with default dimensions)
+    points_per_cm = 28.3465,
+    arrow_constant = 0.4,                    # used for scaling directional arrows in annotation with feature heights
+    cm_to_in = 0.393701,					           # 1 cm = 0.393701 inches
+    std_letter_width = 0.023,                # gives the width of the standard letter if multiplied by font size
+    std_letter_height = 0.045,               # gives the height of the standard letter if multiplied by font size
+    min_font_size = 4,                       # the minimum font size for all formats
+    annot_panel_dist = 0.4 )                 # right margin for annotation title panel
+}
+
+
+#' Plot Vertical Parameters
+#'
+#' @description Internal function
+#'
+#' @author SLA 
+#'         
+#' @return a named vector with default vertical proportions of various plotting segment types relative to 'seq' tracks
+#'
+#' @examples
+#' plot_vertical_parameters = PlotVerticalParameters()
+#' 
+#' @note implement function throughout - done? #% 2022-10-05
+#' 
+PlotVerticalParameters = function(){
+  c('header'=2.2,             ## vertical units used for header segment
+    'seq'=1,                  ## vertical units used for each sequencing track
+    'scale'=0.8,              ## vertical units used for the genomic scale
+    'line-spacer'=0.2,        ## vertical units used for spacers
+    'empty-spacer'=0.2,       ## vertical units used for empty spacers (w/o possibility of horizontal lines)
+    'thickline-spacer'=0.4,   ## vertical units used for annotation separator
+    'annot'=0.8,              ## per annotation line...if annotation_packing is not squished
+    'annot_squished'=0.4,     ## per annotation line...if annotation_packing is squished
+    'annot_text_segment'=0.8) ## 
+}
+
+
+#' Default Plot Options
+#'
+#' @description Internal function
+#'
+#' @author MS/SLA
+#'
+#' @return a named list of default plot options
+#'
+#' @examples
+#' default_plot_options = DefaultPlotOptions()
+#' 
+#' @note change throughout to DefaultPlotOptions - done? #% 2022-10-05
+#' 
+DefaultPlotOptions = function(){
+  list(plotting_segment_order=NULL,                               #(v)
+       preloaded_tracks=NULL,                                     ## not in app
+       output_tracks=FALSE,                                       ## not in app
+       output_parameters=FALSE,                                   ## not in app
+       input_parameters=NULL,                                     ## not in app
+       both_strands=TRUE,                                         #(v)
+       strands_intermingled=TRUE,                                 #(v)
+       neg_vals_neg_strand=FALSE,                                 #(v)
+       reverse_strand_direction=FALSE,                            #(v)
+       alternating_background=TRUE,                               #(v)
+       bgr_colors=c('#C1B49A', '#F1F1F2'),                        #(v) two colors (hex or name) - will auto-default with warning message
+       bgr_alpha = 0.2,                                           #(v) positive numeric value (0-1)
+       strands_alpha=c(100,100),                                  #(v) positive numeric values (0-100)
+       intermingled_color=c('same', 'complementary', 'analogous_right', 'analogous_left')[1],
+       extra_space=c(1.5, 1.5),                                   #(v) positive numeric values
+       annot_panel_color='steelblue',                             #(v) color (hex or name)
+       annot_panel_font_size=NULL,                                #(v) NULL or positive integer value
+       bin_start=NULL,                                            #(v) NULL or positive integer value
+       bin_size='auto',                                           #(v) 'auto'/'automatic' or positive integer value (>=1)
+       bins_per_cm=250,                                           #(v) positive integer value (>=1)
+       track_width_cm=12,                                         #(v) NULL or positive numeric value
+       full_width_cm=NULL,                                        #(v) NULL or positive numeric value (*caution)
+       full_height_cm=NULL,                                       #(v) NULL or positive numeric value (*caution)
+       track_height_cm=0.3,                                       #(v) NULL or positive numeric value
+       title_field_height_cm=0.66,                                #(v) NULL or positive numeric value
+       genomic_scale_height_cm=0.24,                              #(v) NULL or positive numeric value
+       annotation_height_cm=0.24,                                 #(v) NULL or positive numeric value
+       spacer_height_cm=0.06,                                     #(v) NULL or positive numeric value
+       panels_max_width_cm='auto',                                #(v) 'auto'/'automatic' or positive numeric value
+       margin_width_cm=0.05,                                      #(v) NULL or positive numeric value - will auto-default with warning message
+       fixed_panel_width=FALSE,                                   #(v)
+       horizontal_panels_list=NULL,                               #(v)% needs a function to assess the input
+       panel_font_sizes=NULL,                                     #(v)% needs a function to assess the input
+       panel_font_size_list=NULL,                                 #(v)% needs a function to assess the input
+       panel_text_colors=c('darkgreen', 'black'),                 #(v) two colors (hex or name) - will auto-default with warning message
+       horizontal_spacers=TRUE,                                   #(v)
+       panel_separators=c(FALSE, TRUE),                           #(v) will auto-default
+       separators_lwds=c(0.5, 1, 0.5),                            #(v) three positive numeric values - will auto-default with warning message
+       separators_colors='black',                                 #(v) one or three colors (hex or name) - will auto-default with warning message
+       incl_first_panel=TRUE,                                     #(v)
+       print_one_line_sample_names=FALSE,                         #(v)
+       replicate_names=NULL, # 'rep'                              #(v) NULL or character value
+       incl_track_scales=TRUE,                                    #(v)
+       scientific_scale=c('allow', 'all', 'none')[1],             #(v) one of 'allow', 'all', 'none'
+       force_scale=NULL,                                          #(v)
+       scale_font_size=NULL,                                      #(v) NULL or positive integer value (>4)
+       scale_panel_width_cm='auto',                               #(v) 'auto'/'automatic' or positive numeric value
+       scale_font_color='darkred',                                #(v) color (hex or name) - will auto-default with warning message
+       header=NULL,                                               #(v)
+       suppress_header=FALSE,                                     #(v)
+       header_font_sizes=NULL,                                    #(v) NULL or one or three positive integer value (>4)
+       header_font_colors=c('black', 'darkgray', 'black'),        #(v) one or three colors (hex or name) - will auto-default with warning message
+       include_genomic_scale=TRUE,                                #(v)
+       genomic_scale_on_top=TRUE,                                 #(v)
+       genomic_scale_font_size=NULL,                              #(v) NULL or positive integer value (>4)
+       genomic_scale_font_color='black',                          #(v) color (hex or name) - will auto-default with warning message
+       feature_names_alternating=TRUE,                            #(v)
+       feature_names_font_size=NULL,                              #(v) NULL or positive integer value (>4)
+       feature_shading_colors=c('steelblue', 'hotpink'),          #(v) two colors (hex or name) - will auto-default with warning message
+       feature_shading_alpha=0.05,                                #(v) positive numeric value (0-1)
+       center_of_mass=FALSE,                                      #(v)
+       feature_names_font_color='black',                          #(v) color (hex or name) - will auto-default with warning message
+       dummy_plot=FALSE,                                          #(v)
+       scaling_factor=1,                                          #(v) positive numeric value - will auto-default with warning message
+       verbosity=c('off', 'no warnings', 'normal', 'detailed')[3],#
+       interface=c('R', 'shiny')[1]                               # output directed towards R- or shiny-users
+  )
+}
+
+
+#' Default Annotation Options
+#'
+#' @description Internal function
+#'
+#' @author MS/SLA
+#'
+#' @return a named list of default annotation-display options.
+#'
+#' @examples
+#' default_annotation_options = DefaultAnnotationOptions()
+#' 
+#' @note change throughout to DefaultAnnotationOptions - done? #% 2022-10-05
+#' 
+DefaultAnnotationOptions = function() {
+  list('incl_feature_names'=TRUE,                                 #(v)
+       'feature_names_above'=FALSE,                               #(v)
+       'incl_feature_brackets'=TRUE,                              #(v)
+       'incl_feature_shadings'=TRUE,                              #(v)
+       'annotation_packing'='collapsed2',                         #(v)
+       'annot_cols'='black'                                       #(v)
+  )
+}
+
+
+#' Default Parameters 
+#'
+#' @description Internal function
+#' 
+#' @author MS/SLA
+#' 
+#' @return a named list of default Dataset-specific options
+#'
+#' @examples
+#' default_parameters = DefaultParameters()
+#' 
+#' @note change throughout to DefaultParameters - done? #% 2022-10-05
+#' 
+DefaultParameters = function() {
+  list(
+    'whichSamples' = NULL,
+    'bin_stats' = c('mean','median', 'max')[1],
+    'enhance_signals'=FALSE,
+    'log2transform'=FALSE,
+    'pseudoCount'=1,
+    'batchCorrect'=FALSE,
+    'batch'=NULL,
+    'whichReps'=NULL,
+    'negative_valued_bw'=FALSE,
+    'calcMean'=TRUE,
+    'negValsSet0'=FALSE,
+    'force_scale'=NULL,
+    'group_autoscale'=TRUE
+  )
+}
+
 
 #' Print Output
 #'
-#' @details
-#' Internal function: print output, warnings and errors based on messages list
+#' @description Internal function
+#'
+#' @author SLA
+#'
+#' @param messages a list with messages stored under 'output', 'warnings' and 'errors' 
+#' @param verbosity indicated by an integer 0 to 3 referring to the levels 'off', 'no warnings', 'normal', and 'detailed'
+#' @param no_line_change boolean whether a string of warning messages should be printed on the same line (TRUE) or different lines (FALSE)
+#'
+#' @return print output, warnings and errors based on messages list
+#'
+#' @examples
+#' messages = list('output'=list('This is the output string'), 'errors'=list('This is an error string'), 'warnings'=list('This is a warning string'))
+#' PrintOutput(messages, verbosity=0)
+#' PrintOutput(messages, verbosity=1)
+#' PrintOutput(messages, verbosity=2)
+#' 
+#' messages2 = list('output'=list('This is the output string and no errors or warnings'), 'errors'=list(), 'warnings'=list())
+#' PrintOutput(messages2, verbosity=2)
+#' 
+#' @note find example for usage of no_line_change=TRUE
+#' 
 PrintOutput = function(messages, verbosity, no_line_change=FALSE){
   if (length(messages[['output']]) > 0 & verbosity>0){
     cat(paste(unlist(messages[['output']]), collapse='\n'), '\n')
@@ -680,9 +1753,32 @@ PrintOutput = function(messages, verbosity, no_line_change=FALSE){
 
 #' Plot Widths
 #'
-#' @details
-#' Internal function: Make sense of the supplied width arguments
+#' @description Internal function: 
+#' Make sense of the supplied width arguments
+#' 
+#' @author SLA
 #'
+#' @param panels_max_width_cm maximum width (in cm) of the combined panels plotted to the left of the data tracks ('auto'/'automatic' or positive numeric value) - 'auto' is only accepted if full_width_cm=NULL
+#' @param scale_panel_width_cm width (in cm) of the scale panel plotted to the left of the data tracks and to the right of all other panels ('auto'/'automatic' or positive numeric value) - 'auto' is only accepted if full_width_cm=NULL
+#' @param margin_width_cm width (in cm) of the margins on each side of the data tracks (NULL or positive numeric value - will auto-default with warning message)
+#' @param track_width_cm width (in cm) of the data tracks (NULL or positive numeric value)
+#' @param full_width_cm width (in cm) of the full plotted area (NULL or positive numeric value)
+#' @param incl_track_scales if TRUE tracks scales will be included (left of the data tracks and to the right of all other panels)
+#' @param verbosity indicated by an integer 0 to 3 referring to the levels 'off', 'no warnings', 'normal', and 'detailed'
+#' @param interface 'R' or 'shiny'
+#'
+#' @note the following expression needs to be true: full_width_cm = panels_max_width_cm + scale_panel_width_cm + track_width_cm + 2 * margin_width_cm
+#' consider setting one of the arguments "full_width_cm" or "track_width_cm" to NULL 
+#'
+#' @return a named vector with values for 'panels.max.width.cm', 'scale.panel.width.cm', 'margin.width.cm', 'track.width.cm' and 'full.width.cm'
+#'
+#' @examples
+#' plot_widths = PlotWidths(panels_max_width_cm='auto', scale_panel_width_cm='auto', margin_width_cm=0.05, track_width_cm=12, full_width_cm=NULL, incl_track_scales=TRUE, verbosity=3, interface='R')
+#' plot_widths = PlotWidths(panels_max_width_cm='auto', scale_panel_width_cm='auto', margin_width_cm=0.05, track_width_cm=12, full_width_cm=15, incl_track_scales=TRUE, verbosity=3, interface='R')
+#' plot_widths = PlotWidths(panels_max_width_cm=2, scale_panel_width_cm=0.6, margin_width_cm=0.05, track_width_cm=12, full_width_cm=15, incl_track_scales=TRUE, verbosity=3, interface='R')
+#' plot_widths = PlotWidths(panels_max_width_cm=2.3, scale_panel_width_cm=0.6, margin_width_cm=0.05, track_width_cm=12, full_width_cm=15, incl_track_scales=TRUE, verbosity=3, interface='R')
+#' plot_widths = PlotWidths(panels_max_width_cm=2, scale_panel_width_cm=0.6, margin_width_cm=0.05, track_width_cm=NULL, full_width_cm=15, incl_track_scales=TRUE, verbosity=3, interface='R')
+#' 
 PlotWidths = function(panels_max_width_cm, scale_panel_width_cm, margin_width_cm, track_width_cm, full_width_cm, incl_track_scales, verbosity, interface){
   .messages = list('output'=list(), 'errors'=list(), 'warnings'=list())
   .margin.width.cm = NULL
@@ -742,8 +1838,8 @@ PlotWidths = function(panels_max_width_cm, scale_panel_width_cm, margin_width_cm
       .arg.name1 = ifelse(interface=='R', '"full_width_cm"', '"Full Plot Width"')
       .arg.name2 = ifelse(interface=='R', '"track_width_cm"', '"Tracks Width"')
       .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'at least one of the arguments ', .arg.name1, ' and ', .arg.name2, ' should be assigned a numeric value (recommended between 5 and 25 cm)',
-                              '\n', '\t', '.) ', .arg.name1, ': ', full_width_cm,
-                              '\n', '\t', '.) ', .arg.name2, ': ', track_width_cm)
+                                                                        '\n', '\t', '.) ', .arg.name1, ': ', full_width_cm,
+                                                                        '\n', '\t', '.) ', .arg.name2, ': ', track_width_cm)
     }
   }else if (is.numeric(full_width_cm)){
     if (sign(full_width_cm) > 0){
@@ -756,30 +1852,30 @@ PlotWidths = function(panels_max_width_cm, scale_panel_width_cm, margin_width_cm
             .arg.name1 = ifelse(interface=='R', '"full_width_cm"', '"Full Plot Width"')
             .arg.name2 = ifelse(interface=='R', '"track_width_cm"', '"Tracks Width"')
             .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'the provided "width" arguments do not fit together',
-                                    '\n', '\t', '.) the following expression needs to be true:',
-                                    '\n', '\t', '\t', 'full_width_cm = panels_max_width_cm + scale_panel_width_cm + track_width_cm + 2 * margin_width_cm',
-                                    '\n', '\t', '.) ', 'consider setting one of the arguments ', .arg.name1, ' or ', .arg.name2, ' to NULL')
+                                                                              '\n', '\t', '.) the following expression needs to be true:',
+                                                                              '\n', '\t', '\t', 'full_width_cm = panels_max_width_cm + scale_panel_width_cm + track_width_cm + 2 * margin_width_cm',
+                                                                              '\n', '\t', '.) ', 'consider setting one of the arguments ', .arg.name1, ' or ', .arg.name2, ' to NULL')
           }
         }
         if (sign(.track.width.cm) <= 0){
           .arg.name = ifelse(interface=='R', '"track_width_cm"', '"Tracks Width"')
           .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'the calculated ', .arg.name, ' argument is negative',
-                                  '\n', '\t', '.) the following expression needs to be true:',
-                                  '\n', '\t', '\t', 'full_width_cm = panels_max_width_cm + scale_panel_width_cm + track_width_cm + 2 * margin_width_cm')
-
+                                                                            '\n', '\t', '.) the following expression needs to be true:',
+                                                                            '\n', '\t', '\t', 'full_width_cm = panels_max_width_cm + scale_panel_width_cm + track_width_cm + 2 * margin_width_cm')
+          
         }
       }
       if (.panels.max.width.cm==-1){
         .arg.name1 = ifelse(interface=='R', '"panels_max_width_cm"', '"Panels Width"')
         .arg.name2 = ifelse(interface=='R', '"full_width_cm"', '"Full Plot Width"')
         .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', .arg.name1, ' argument is set to ', panels_max_width_cm, ', which is only accepted if ', .arg.name2, ' is NULL in which case it will be calculated based on the "optimal" organization of panels',
-                                '\n', '\t', '.) if ', .arg.name2,' is correctly set to ', full_width_cm, ' cm, then change ', .arg.name1, ' to the max width of panels in centimeters (recommended numeric value between 1.5-6)')
+                                                                          '\n', '\t', '.) if ', .arg.name2,' is correctly set to ', full_width_cm, ' cm, then change ', .arg.name1, ' to the max width of panels in centimeters (recommended numeric value between 1.5-6)')
       }
       if (.scale.panel.width.cm==-1){
         .arg.name1 = ifelse(interface=='R', '"scale_panel_width_cm"', '"Tracks Scale Width"')
         .arg.name2 = ifelse(interface=='R', '"full_width_cm"', '"Full Plot Width"')
         .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', .arg.name1, ' argument is set to ', scale_panel_width_cm, ', which is only accepted if ', .arg.name2, ' is NULL',
-                                '\n', '\t', '.) if ', .arg.name2,' is correctly set to ', full_width_cm, ' cm, then change ', .arg.name1, ' to the desired width of scale panels in centimeters (recommended numeric value between 0.5-2)')
+                                                                          '\n', '\t', '.) if ', .arg.name2,' is correctly set to ', full_width_cm, ' cm, then change ', .arg.name1, ' to the desired width of scale panels in centimeters (recommended numeric value between 0.5-2)')
       }
     }else{
       .arg.name = ifelse(interface=='R', '"full_width_cm"', '"Full Plot Width"')
@@ -798,18 +1894,36 @@ PlotWidths = function(panels_max_width_cm, scale_panel_width_cm, margin_width_cm
 }
 
 
-#' Read In Annotations
+#' Read In Annotations 
 #'
-#' @details
-#' Internal function: Read in annotations as GRanges objects from bed files - stored in list format
+#' @description Internal function: 
+#' Read in annotations as GRanges objects from bed files - stored in list format
+#' 
+#' @author SLA 
 #'
+#' @param annots named list of bed file names (incl. full path; can be stored both locally and on http)
+#' @param verbosity indicated by an integer 0 to 3 referring to the levels 'off', 'no warnings', 'normal', and 'detailed'
+#'
+#' @return named list GRanges objects for each given bed file
+#' 
+#' @importFrom rtracklayer import import.bed
+#' 
+#' @note bed files can be imported from http on both MacOS and Windows (not true for bigwig files on Windows)
+#' 
+#' @examples
+#' annots_fnames = list('gencode v21'='http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/annotations/gencode.v21.annotation.nohosted.bed',
+#'                      'in-house'='http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/annotations/HeLa_major_isoform_hg38_gc34.bed')
+#' annots_listedGR = ReadInAnnotations(annots=annots_fnames, verbosity=3)               
+#' 
 ReadInAnnotations = function(annots, verbosity){
-  if (verbosity > 0){ cat('reading annotations', '\n') }
-  cat(paste(names(annots), collapse='\t'), '\n')
+  if (verbosity > 0){ 
+    cat('reading annotations', '\n') 
+    cat(paste(names(annots), collapse='\t'), '\n')
+  }
   if (!is.null(annots)){
     annotations = list()
     for (annot in names(annots)){
-      annotations[[annot]] = rtracklayer::import(annots[[annot]], format='bed') #@ works on MacOS and Windows
+      annotations[[annot]] = rtracklayer::import(annots[[annot]], format='bed')
     }
   }else{
     annotations = NULL
@@ -820,9 +1934,38 @@ ReadInAnnotations = function(annots, verbosity){
 
 #' Region GRanges
 #'
-#' @details
-#' Internal function: Convert feature name or locus to be plotted to a GRanges object
+#' @description Internal function: 
+#' Convert feature name or locus to be plotted to a GRanges object
 #'
+#' @author SLA 
+#'
+#' @param locus genomic coordinates, incl. strand, of locus (e.g., c("chr1", "+", 87297784, 87379607)
+#' @param tracks_width width of plotted data tracks in cm
+#' @param feature the name of a genomic locus (e.g., LMO4; the name needs to be present within the name column of the provided annotations, which will be searched in the given order).
+#' @param annotations named list of GRanges objects representing annotations (produced by ReadInAnnotations)
+#' @param bin_start Center the bins around the given genomic position. Provide an integer value that lies within the plotted region. Per default the bin center will be at the 5'-end of the plotted region if it is defined by genomic coordinates and at the 5'-end of the locus if the plotted region is defined by locus name
+#' @param extra_space Extra space up- and downstream of and relative to the selected genomic feature (0.1 = 10 percent). Only taken into account when genomic locus (feature) name is entered - ignored when genomic coordinates are entered.  Numeric vector - default c(1.0,1.0).
+#' @param verbosity indicated by an integer 0 to 3 referring to the levels 'off', 'no warnings', 'normal', and 'detailed'
+#' @param interface 'R' or 'shiny'
+#'
+#' @return a GRanges object with user-supplied locus coordinates (two metadata columns included with bin_start and tracks_width)
+#' 
+#' @note bin_start indicates the coordinate from where binning is centered
+#' @note tracks_width is the plotted width in cm
+#' 
+#' @import S4Vectors
+#' @import IRanges
+#' @import GenomicRanges
+#' @importFrom BiocGenerics strand
+#' @importFrom GenomeInfoDb seqnames
+#'
+#' @examples
+#' annots_fnames = list('gencode v21'='http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/annotations/gencode.v21.annotation.nohosted.bed',
+#'                      'in-house'='http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/annotations/HeLa_major_isoform_hg38_gc34.bed')
+#' annots_listedGR = ReadInAnnotations(annots=annots_fnames, verbosity=3)       
+#' locus_gr = RegionGRanges(locus=NULL, tracks_width=12, feature='LMO4', annotations=annots_listedGR, bin_start=NULL, extra_space=c(0.1,0.1), verbosity=3, interface='R')
+#' locus_gr = RegionGRanges(locus=c('chr1', '+', 87326423, 87350968), tracks_width=12, feature=NULL, annotations=NULL, bin_start=NULL, extra_space=c(0.1,0.1), verbosity=3, interface='R')
+#' 
 RegionGRanges = function(locus, tracks_width, feature=NULL, annotations=NULL, bin_start=NULL, extra_space=c(0.1,0.1), verbosity, interface){
   .messages = list('output'=list(), 'errors'=list(), 'warnings'=list())
   if (!is.null(feature) & !is.null(annotations)){
@@ -886,12 +2029,25 @@ RegionGRanges = function(locus, tracks_width, feature=NULL, annotations=NULL, bi
 }
 
 
-#' Find Nonoverlapping IVs
+#' Find Nonoverlapping Intervals
 #'
-#' @details
-#' Internal function: Find nonoverlapping intervals within a GRanges object for each interval (based on the SelfHits object obtained by findOverlaps function applied to the GRanges object beforehand)
+#' @description Internal function: 
+#' Find nonoverlapping intervals within a GRanges object for each interval (based on the SelfHits object obtained by findOverlaps function applied to the GRanges object beforehand)
 #' - used together with "ConnectIVs" to organize the individual feature annotations, such that they take up as little space as possible
 #'
+#' @author SLA 
+#'
+#' @param n_IV 
+#' @param n_IVs 
+#' @param overlaps 
+#'
+#' @return 
+#' 
+#' @import S4Vectors
+#'
+#' @examples
+#' 
+#' 
 FindNonoverlappingIVs = function(n_IV, n_IVs, overlaps){
   nonoverlapping.IVs = c(n_IV, setdiff(1:n_IVs, S4Vectors::subjectHits(overlaps)[which(S4Vectors::queryHits(overlaps)==n_IV)]))
   nonoverlapping.IVs = nonoverlapping.IVs[which(nonoverlapping.IVs >= n_IV)]
@@ -899,12 +2055,22 @@ FindNonoverlappingIVs = function(n_IV, n_IVs, overlaps){
 }
 
 
-#' Connect IVs
+#' Connect Intervals
 #'
-#' @details
-#' Internal function: Connect non-overlapping intervals, such that the number of "lines" used in the annotation track is minimized
+#' @description Internal function: 
+#' Connect non-overlapping intervals, such that the number of "lines" used in the annotation track is minimized
 #' - used together with "FindNonoverlappingIVs" IVs to organize the individual feature annotations, such that they take up as little space as possible
 #'
+#' @author SLA 
+#'
+#' @param n_IV 
+#' @param nonoverlapping_IVs 
+#' @param remaining_IVs 
+#'
+#' @return 
+#'
+#' @examples
+#' 
 ConnectIVs = function(n_IV, nonoverlapping_IVs, remaining_IVs){
   .nonoverlapping = nonoverlapping_IVs[[rev(n_IV)[1]]]
   .nonoverlapping = .nonoverlapping[which(.nonoverlapping > rev(n_IV)[1])]
@@ -917,11 +2083,22 @@ ConnectIVs = function(n_IV, nonoverlapping_IVs, remaining_IVs){
 }
 
 
-#' Organize Overlapping IVs
+#' Organize Overlapping Intervals
 #'
-#' @details
-#' Internal function: Overlapping feature intervals (transcripts/genes/transcription units) are organized in separate lines to allow "non-overlapping" plotting
+#' @description Internal function: 
+#' Overlapping feature intervals (transcripts/genes/transcription units) are organized in separate lines to allow "non-overlapping" plotting
 #'
+#' @author SLA 
+#'
+#' @param annotation_gr 
+#' @param gap 
+#'
+#' @return
+#' 
+#' @import GenomicRanges
+#'
+#' @examples
+#' 
 OrganizeOverlappingIVs = function(annotation_gr, gap=-1L){
   if (length(annotation_gr) > 1){
     .overlaps = GenomicRanges::findOverlaps(annotation_gr, maxgap=gap)
@@ -947,10 +2124,24 @@ OrganizeOverlappingIVs = function(annotation_gr, gap=-1L){
 
 #' Annotated Features In Region
 #'
-#' @details
-#' Internal function: This function is the first step in organizing the annotated features in the plotted region into various formats
+#' @description Internal function: 
+#' This function is the first step in organizing the annotated features in the plotted region into various formats
 #' Used together with "OrganizeOverlappingLoci" and "ConvertCollapsedFormat" to create a final organized version of the annotated features
 #'
+#' @author SLA
+#'
+#' @param plotted_region 
+#' @param annotations 
+#'
+#' @return
+#' 
+#' @import IRanges
+#' @import S4Vectors
+#' @import GenomicRanges
+#' @importFrom BiocGenerics strand
+#'
+#' @examples
+#' 
 AnnotatedFeaturesInRegion = function(plotted_region, annotations){
   .strand = as.character(BiocGenerics::strand(plotted_region))
   .plot.width = IRanges::width(plotted_region)
@@ -1095,10 +2286,20 @@ AnnotatedFeaturesInRegion = function(plotted_region, annotations){
 
 #' Organize Overlapping Loci
 #'
-#' @details
-#' Internal function: This function is the second step in organizing the annotated features in the plotted region into various formats
+#' @param annot_info 
+#'
+#' @description Internal function: 
+#' This function is the second step in organizing the annotated features in the plotted region into various formats
 #' Used after AnnotatedFeaturesInRegion and before ConvertCollapsedFormat to create a final organized version of the annotated features
 #'
+#' @author SLA 
+#'
+#' @return
+#' 
+#' @import S4Vectors
+#'
+#' @examples
+#' 
 OrganizeOverlappingLoci = function(annot_info){
   for (.annot.name in names(annot_info)){
     annot_info[[.annot.name]][['packing2']] = NULL
@@ -1131,11 +2332,23 @@ OrganizeOverlappingLoci = function(annot_info){
 
 #' Convert Collapsed Format
 #'
-#' @details
-#' Internal function: This function is the third step in organizing the annotated features in the plotted region into various formats
+#' @description Internal function: 
+#' This function is the third step in organizing the annotated features in the plotted region into various formats
 #' Used after AnnotatedFeaturesInRegion and OrganizeOverlappingLoci to create a final organized version of the annotated features
 #' Converts the format of "collapsed" and "collapsed2" from GRanges to GRangesLists to make the overall formatting uniform; one GRanges object per 'feature name' (e.g. "TAF1D" and "RP11-178H8.7")
 #'
+#' @author SLA 
+#'
+#' @param annot_info 
+#'
+#' @return
+#' 
+#' @import S4Vectors
+#' @import GenomicRanges
+#' @importFrom BiocGenerics strand
+#'
+#' @examples
+#' 
 ConvertCollapsedFormat = function(annot_info){
   for (.annot.name in names(annot_info)){
     if (!is.null(annot_info[[.annot.name]][['collapsed']])){
@@ -1156,9 +2369,18 @@ ConvertCollapsedFormat = function(annot_info){
 
 #' Organize Annotated Features In Region
 #'
-#' @details
-#' Internal function: Wrapper function that executes the three above functions
+#' @description Internal function: 
+#' Wrapper function that executes the three above functions
+#' 
+#' @author SLA 
 #'
+#' @param plotted_region 
+#' @param annotations 
+#'
+#' @return
+#'
+#' @examples
+#' 
 OrganizeAnnotatedFeaturesInRegion = function(plotted_region, annotations){
   annot_info = AnnotatedFeaturesInRegion(plotted_region, annotations)
   annot_info = OrganizeOverlappingLoci(annot_info)
@@ -1167,14 +2389,31 @@ OrganizeAnnotatedFeaturesInRegion = function(plotted_region, annotations){
 }
 
 
-#' is.color
+#' Is Color
 #'
-#' @details
-#' Internal function: Helper function that determines whether input (vector) is a color
+#' @description Internal function: 
+#' Helper function that determines whether input (vector) is a color
 #'
-is.color = function(put_color_vector) {
+#' @author SLA (with help from https://stackoverflow.com/questions/13289009/check-if-character-string-is-a-valid-color-representation/13290832#13290832)
+#'
+#' @param put_color_vector putative vector of colors
+#'
+#' @return
+#' 
+#' @importFrom grDevices col2rgb rgb
+#'
+#' @examples
+#' IsColor('black')
+#' IsColor('white')
+#' IsColor('gnyf')
+#' IsColor(c('white', 'blue', 'gnyf'))
+#' IsColor('#0098AD')
+#' 
+#' @note change throughout to IsColor - done? #% 2022-10-05
+#' 
+IsColor = function(put_color_vector) {
   sapply(put_color_vector, function(.put.color) {
-    tryCatch(is.matrix(col2rgb(.put.color)),
+    tryCatch(is.matrix(grDevices::col2rgb(.put.color)),
              error = function(e) FALSE)
   })
 }
@@ -1182,9 +2421,25 @@ is.color = function(put_color_vector) {
 
 #' Scrutinize Expand And Name Parameter
 #'
-#' @details
-#' Internal function: Helper function that will expand a common "one-dimensional" parameter to fit all the names of a named object
+#' @description Internal function: 
+#' Helper function that will expand a common "one-dimensional" parameter to fit all the names of a named object
+#' 
+#' @author SLA
 #'
+#' @param parameter 
+#' @param name_vector 
+#' @param use_names 
+#' @param default_value 
+#' @param expect_standard 
+#' @param expect 
+#' @param revert_to_default 
+#' @param alt_par_name 
+#' @param verbosity 
+#'
+#' @return
+#'
+#' @examples
+#' 
 ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FALSE, default_value=NULL, expect_standard=NULL, expect=NULL, revert_to_default=FALSE, alt_par_name=NULL, verbosity){
   .messages = list('output'=list(), 'errors'=list(), 'warnings'=list())
   .var.name1 = deparse(substitute(parameter))
@@ -1221,7 +2476,7 @@ ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FA
   if (length(.messages[['errors']])==0){
     if (!is.null(expect_standard)){
       if (expect_standard=='logical'){
-        if (!all(is.logical(parameter)) | any(is.na(parameter))){ #@  added | any(is.na(parameter))
+        if (!all(is.logical(parameter)) | any(is.na(parameter))){
           if (revert_to_default & !is.null(default_value)){
             .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be a logical vector - using default values',
                                                                                   '\n', '\t', '.) ', paste(default_value, collapse=','))
@@ -1231,7 +2486,7 @@ ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FA
           }
         }
       }else if (expect_standard=='integer'){
-        if (!all(is.integer(parameter)) | any(is.na(parameter))){ #@  added | any(is.na(parameter))
+        if (!all(is.integer(parameter)) | any(is.na(parameter))){ 
           if (revert_to_default & !is.null(default_value)){
             .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be an integer vector - using default values',
                                                                                   '\n', '\t', '.) ', paste(default_value, collapse=','))
@@ -1241,7 +2496,7 @@ ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FA
           }
         }
       }else if (expect_standard=='numeric'){
-        if (!all(is.numeric(parameter)) | any(is.na(parameter))){ #@  added | any(is.na(parameter))
+        if (!all(is.numeric(parameter)) | any(is.na(parameter))){ 
           if (revert_to_default & !is.null(default_value)){
             .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be a numeric vector - using default values',
                                                                                   '\n', '\t', '.) ', paste(default_value, collapse=','))
@@ -1251,7 +2506,7 @@ ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FA
           }
         }
       }else if (expect_standard=='color'){
-        if (!all(is.color(parameter)) | any(is.na(parameter))){ #@  added | any(is.na(parameter))
+        if (!all(IsColor(parameter)) | any(is.na(parameter))){
           if (revert_to_default & !is.null(default_value)){
             .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be a color vector - using default values',
                                                                                   '\n', '\t', '.) ', paste(default_value, collapse=','))
@@ -1261,7 +2516,7 @@ ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FA
           }
         }
       }else if (expect_standard=='character'){
-        if (!all(is.character(parameter)) | any(is.na(parameter))){ #@  added | any(is.na(parameter))
+        if (!all(is.character(parameter)) | any(is.na(parameter))){
           if (revert_to_default & !is.null(default_value)){
             .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', '"', .var.name1, '" argument should be a character vector - using default values',
                                                                                   '\n', '\t', '.) ', paste(default_value, collapse=','))
@@ -1282,8 +2537,8 @@ ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FA
           parameter = default_value
         }else{
           .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', '"', .var.name1, '" argument contains unexpected values [',  paste(setdiff(parameter, expect), collapse=', '), '] with no default replacement(s) - aborting',
-                                                                                '\n', '\t', '.) allowed values are:',
-                                                                                '\n', paste(paste('\t', '\t', expect), collapse='\n'))
+                                                                            '\n', '\t', '.) allowed values are:',
+                                                                            '\n', paste(paste('\t', '\t', expect), collapse='\n'))
         }
       }
     }else{
@@ -1326,9 +2581,24 @@ ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FA
 
 #' Evaluate Numeric Value
 #'
-#' @details
-#' Internal function: Evaluate whether a vector/value is numeric and falls within recommmended range
+#' @description Internal function: 
+#' Evaluate whether a vector/value is numeric and falls within recommmended range
+#' 
+#' @author SLA
 #'
+#' @param num_val 
+#' @param positive_val 
+#' @param min_val 
+#' @param max_val 
+#' @param interval_obligatory 
+#' @param turn_errors_to_warnings 
+#' @param alt_par_name 
+#' @param verbosity 
+#'
+#' @return
+#'
+#' @examples
+#' 
 EvaluateNumericValue = function(num_val, positive_val, min_val, max_val, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=NULL, verbosity){
   .messages = list('output'=list(), 'errors'=list(), 'warnings'=list())
   .var.name1 = deparse(substitute(num_val))
@@ -1363,20 +2633,17 @@ EvaluateNumericValue = function(num_val, positive_val, min_val, max_val, interva
     }
     if (identical(as.logical(num_val >= 0), .positive.val)){
       if (any(num_val < .min.val) | any(num_val > .max.val)){
-        #@.messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', .var.name1, ' = ', paste(num_val, collapse=','), ':')
         .messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]][[length(.messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]])+1]] = paste0(' - ', .var.name1, ' = ', paste(num_val, collapse=','), ':')
-        #@.messages[[ifelse(interval_obligatory, 'errors', ifelse(turn_errors_to_warnings, 'warnings', 'errors'))]][[length(.messages[[ifelse(interval_obligatory, 'errors', ifelse(turn_errors_to_warnings, 'warnings', 'errors'))]])+1]] = paste0(' - ', .var.name1, ' = ', paste(num_val, collapse=','), ':')
         for (i in 1:length(num_val)){
           if ((num_val < .min.val)[i] | (num_val > .max.val)[i]){
             .messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]][[length(.messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]])+1]] = paste0('\t', '.) ', .var.name1, '[', i, '] = ', num_val[i], ';', ' it should preferably be between ', .min.val[i], ' and ', .max.val[i])
-            #@.messages[[ifelse(interval_obligatory, 'errors', ifelse(turn_errors_to_warnings, 'warnings', 'errors'))]][[length(.messages[[ifelse(interval_obligatory, 'errors', ifelse(turn_errors_to_warnings, 'warnings', 'errors'))]])+1]] = paste0('\t', '.) ', .var.name1, '[', i, '] = ', num_val[i], ';', ' it should preferably be between ', .min.val[i], ' and ', .max.val[i])
           }
         }
-        if (interval_obligatory){ #@$ ->
+        if (interval_obligatory){ 
           .messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]][[length(.messages[[ifelse(turn_errors_to_warnings, 'warnings', 'errors')]])+1]] = paste0('\t', '.) ', ifelse(turn_errors_to_warnings, 'setting to default value', 'aborting'))
           PrintOutput(.messages, verbosity)
           return(FALSE)
-        } #@$ <-
+        } 
       }
       PrintOutput(.messages, verbosity)
       return(TRUE)
@@ -1403,9 +2670,22 @@ EvaluateNumericValue = function(num_val, positive_val, min_val, max_val, interva
 
 #' List Depth
 #'
-#' @details
-#' Internal function: Max number of nested levels in a nested list of lists
+#' @description Internal function: 
+#' Max number of nested levels in a nested list of lists
+#' 
+#' @author SLA
 #'
+#' @param query_list 
+#'
+#' @return
+#'
+#' @examples
+#' ListDepth(c('a','b','c'))
+#' l = list('x'=c('a1','b1','c1'), 'y'=c('a2','b2','c2'))
+#' ListDepth(l)
+#' l = list('x0'=list('x1'=c('a1','b1','c1'), 'x2'=c('a2','b2','c2')), 'y'=c('a2','b2','c2'))
+#' ListDepth(l)
+#' 
 ListDepth = function(query_list){
   ifelse(is.list(query_list), 1L + max(sapply(query_list, ListDepth)), 0L)
 }
@@ -1413,9 +2693,23 @@ ListDepth = function(query_list){
 
 #' Panel Font Size List
 #'
-#' @details
-#' Internal function: Constructs a panel_font_size_list (a font size provided to each panel)
+#' @description Internal function: 
+#' Constructs a panel_font_size_list (a font size provided to each panel)
+#' 
+#' @author SLA
 #'
+#' @param samples 
+#' @param panel_font_sizes 
+#' @param panel_font_size_list 
+#' @param incl_reps 
+#' @param replicate_names 
+#' @param verbosity 
+#' @param interface 
+#'
+#' @return
+#'
+#' @examples
+#' 
 PanelFontSizeList = function(samples, panel_font_sizes, panel_font_size_list, incl_reps, replicate_names, verbosity, interface){
   .messages = list('output'=list(), 'errors'=list(), 'warnings'=list())
   if (is.null(panel_font_size_list)){
@@ -1442,9 +2736,9 @@ PanelFontSizeList = function(samples, panel_font_sizes, panel_font_size_list, in
           .final.panel.font.sizes = c(.panel.font.sizes[1], rev(rev(.panel.font.sizes)[1:(.n.panels-1)]))
         }
         .panel.font.size.list[[.seqtype]] = as.numeric(.final.panel.font.sizes)
-        if (incl_reps[.seqtype] & !is.null(replicate_names)){ #@ ->
+        if (incl_reps[.seqtype] & !is.null(replicate_names)){ 
           .panel.font.size.list[[.seqtype]] = c(.panel.font.size.list[[.seqtype]], rev(.panel.font.size.list[[.seqtype]])[1])
-        } #@ <-
+        } 
       }
     }
   }else{
@@ -1460,9 +2754,9 @@ PanelFontSizeList = function(samples, panel_font_sizes, panel_font_size_list, in
           if (is.numeric(.panel.font.sizes) & length(.panel.font.sizes)==.n.panels){
             .final.panel.font.sizes = ScrutinizeExpandAndNameParameter(.panel.font.sizes, paste0('panel', 1:.n.panels), use_names=FALSE, default_value=NULL, expect_standard='numeric', expect=NULL, revert_to_default=FALSE, alt_par_name=ifelse(interface=='R', 'panel_font_size_list', 'Detailed Panel Text Font Sizes'), verbosity=verbosity)
             .panel.font.size.list[[.seqtype]] = as.numeric(.final.panel.font.sizes)
-            if (incl_reps[.seqtype] & !is.null(replicate_names)){ #@ ->
+            if (incl_reps[.seqtype] & !is.null(replicate_names)){ 
               .panel.font.size.list[[.seqtype]] = c(.panel.font.size.list[[.seqtype]], rev(.panel.font.size.list[[.seqtype]])[1])
-            } #@ <-
+            }
           }else if (!is.numeric(.panel.font.sizes)){
             .no.numeric = TRUE
           }else{
@@ -1489,9 +2783,22 @@ PanelFontSizeList = function(samples, panel_font_sizes, panel_font_size_list, in
 
 #' Horizontal Panels List
 #'
-#' @details
-#' Internal function: Checks/constructs a horizontal_panels_list
+#' @description Internal function: 
+#' Checks/constructs a horizontal_panels_list
+#' 
+#' @author SLA
 #'
+#' @param samples 
+#' @param horizontal_panels_list 
+#' @param incl_reps 
+#' @param replicate_names 
+#' @param verbosity 
+#' @param interface 
+#'
+#' @return
+#'
+#' @examples
+#' 
 HorizontalPanelsList = function(samples, horizontal_panels_list, incl_reps, replicate_names, verbosity, interface){
   .messages = list('output'=list(), 'errors'=list(), 'warnings'=list())
   .horizontal.panels.list = NULL
@@ -1508,9 +2815,9 @@ HorizontalPanelsList = function(samples, horizontal_panels_list, incl_reps, repl
           if (is.logical(.horizontal.panels) & length(.horizontal.panels)==.n.panels){
             .final.horizontal.panels = ScrutinizeExpandAndNameParameter(.horizontal.panels, paste0('panel', 1:.n.panels), use_names=FALSE, default_value=NULL, expect_standard='logical', expect=NULL, revert_to_default=FALSE, alt_par_name=ifelse(interface=='R', 'horizontal_panels_list', 'Panels Text Orientation'), verbosity=verbosity)
             .horizontal.panels.list[[.seqtype]] = as.numeric(.final.horizontal.panels)
-            if (incl_reps[.seqtype] & !is.null(replicate_names)){ #@ ->
+            if (incl_reps[.seqtype] & !is.null(replicate_names)){ 
               .horizontal.panels.list[[.seqtype]] = c(.horizontal.panels.list[[.seqtype]], TRUE)
-            } #@ <-
+            }
           }else if (!is.logical(.horizontal.panels)){
             .no.logical = TRUE
           }else{
@@ -1534,47 +2841,23 @@ HorizontalPanelsList = function(samples, horizontal_panels_list, incl_reps, repl
   return(.horizontal.panels.list)
 }
 
-#' Parse Option String
-#'
-#' Parse string into relevant R object class
-#'
-#' @param option_str string representation of the option
-#'
-#' @details String can represent a named list, unnamed list, named vector, unnamed vector or single value. If string contains ";" assumes a list; if string contains "," assumes a vector; individual strings are interprated as "NULL" -> NULL; if "TRUE" or "FALSE" --> TRUE/FALSE; if single number --> as.numeric; if single non-number --> as.character;
-#'
-# parse_option <- function(option_str) {
-#   if( is.null(option_str) ){
-#     NULL
-#   }else if(grepl(';', option_str)){
-#     option_list <- strsplit(option_str,';')[[1]]
-#     option_list_names <- lapply(option_list, function(op) if(grepl(':', op)){sub(':.*', '', op)}else{NULL})
-#     option_list <- lapply(option_list, function(op) parse_option(sub('.*:', '', op)))
-#     names(option_list) <- option_list_names
-#     option_list
-#   }else if(grepl(',', option_str)){
-#     sapply(strsplit(option_str,',')[[1]], parse_option, USE.NAMES = FALSE)
-#   }else if( is.na(option_str) | option_str == '' ){  #same as empty cell in excel sheet
-#     NULL
-#   }else if(option_str == 'TRUE' | option_str == 'T'){
-#     TRUE
-#   }else if(option_str == 'FALSE' | option_str == 'F'){
-#     FALSE
-#   }else if(option_str == 'NULL'){
-#     NULL
-#   }else if( !is.na(suppressWarnings(as.numeric(option_str))) ){
-#     as.numeric(option_str)
-#   }else{
-#     option_str
-#   }
-# }
 
-#' Force Scale List
+#' Handle Forced Scale From Parameters
 #'
-#' @details
-#' Internal function: Checks/constructs a force_scale_list
-#' handle force_scale which is part of parameters but needs to passed differently to plot function
+#' @description Internal function: 
+#' Checks/constructs a force_scale_list
+#' Handle force_scale which is part of "parameters" argument but needs to passed differently to plot function
+#' 
+#' @author MS/SLA
+#'
+#' @param pars 
+#'
+#' @return
+#'
+#' @examples
+#' 
 HandleForcedScaleFromParameters = function(pars){
-  force_scales <- lapply(pars, function(para) {
+  force_scales = lapply(pars, function(para) {
     fc = para$force_scale
     if (is.null(fc)) {
       suppressWarnings(as.numeric(c(NA,NA)))
@@ -1583,9 +2866,9 @@ HandleForcedScaleFromParameters = function(pars){
       suppressWarnings(as.numeric(fc))
     }
   })
-  names(force_scales) <- names(pars)
-
-  force_scale_list <- list(
+  names(force_scales) = names(pars)
+  
+  force_scale_list = list(
     '+' = unlist(lapply(force_scales, function(x) x[1])),
     '-' = unlist(lapply(force_scales, function(x) if (length(x)==2){x[2]}else{NULL}))
   )
@@ -1593,12 +2876,23 @@ HandleForcedScaleFromParameters = function(pars){
 }
 
 
-
 #' Force Scale List
 #'
-#' @details
-#' Internal function: Checks/constructs a force_scale_list
+#' @description Internal function: 
+#' Checks/constructs a force_scale_list
+#' 
+#' @author SLA
 #'
+#' @param samples 
+#' @param force_scale 
+#' @param strands 
+#' @param verbosity 
+#' @param interface 
+#'
+#' @return
+#'
+#' @examples
+#' 
 ForceScaleList = function(samples, force_scale, strands, verbosity, interface){
   .messages = list('output'=list(), 'errors'=list(), 'warnings'=list())
   .force.scale.list = NULL
@@ -1623,7 +2917,6 @@ ForceScaleList = function(samples, force_scale, strands, verbosity, interface){
       .force.scale.list = list()
       for (.strand in .strands){
         if (length(force_scale[[.strand]])==1 | length(force_scale[[.strand]])==length(samples[[.strand]]) ){
-          #@cat(paste0(.strand, .force.scale.list[[.strand]]), '\n') #@cat
           if (all(is.na(force_scale[[.strand]]))){
             .force.scale.list[[.strand]] = force_scale[[.strand]]
           }else if (is.numeric(force_scale[[.strand]]) & all(force_scale[[.strand]]>0, na.rm=TRUE)){
@@ -1663,9 +2956,19 @@ ForceScaleList = function(samples, force_scale, strands, verbosity, interface){
 
 #' Sort Unlisted Sample Names
 #'
-#' @details
-#' Internal function: Sort Unlisted Sample Names
+#' @description Internal function: 
+#' Sort Unlisted Sample Names
+#' 
+#' @author SLA
+#' 
+#' @param unlisted_which_sample 
+#' @param unlisted_sample_names 
+#' @param incl_rep 
 #'
+#' @return
+#'
+#' @examples
+#' 
 SortUnlistedSampleNames = function(unlisted_which_sample, unlisted_sample_names, incl_rep=F){
   .subsamples = strsplit(unlisted_which_sample, split='.', fixed=T)[[1]]
   if (incl_rep){
@@ -1677,7 +2980,6 @@ SortUnlistedSampleNames = function(unlisted_which_sample, unlisted_sample_names,
   for (i in 1:length(.subsamples)){
     unlisted.sample.name = grep(.subsamples[i], unlisted.sample.name, fixed=TRUE, value=T)
   }
-  #@ ->
   if (length(unlisted.sample.name)>1){
     .sample.name.matrix = do.call('rbind', lapply(unlisted.sample.name, function(x) strsplit(x, split='.', fixed=T)[[1]]))
     unlisted.sample.name.index = 1:nrow(.sample.name.matrix)
@@ -1690,7 +2992,6 @@ SortUnlistedSampleNames = function(unlisted_which_sample, unlisted_sample_names,
     }
     unlisted.sample.name = unlisted.sample.name[unlisted.sample.name.index]
   }
-  #@ <-
   if (incl_rep){
     unlisted.sample.name = paste0(unlisted.sample.name, '.rep', .n.rep)
   }
@@ -1698,20 +2999,26 @@ SortUnlistedSampleNames = function(unlisted_which_sample, unlisted_sample_names,
 }
 
 
-if (FALSE){
-#@ ->
-.tracks.listed.converted = list()
-.sample.name.matrix = do.call('rbind', lapply(.tracks.listed[['+']][["3'end-seq"]], function(x) strsplit(x, split='.', fixed=T)[[1]]))
-rles = lapply(apply(.sample.name.matrix, 2, Rle), function(x) structure(runLength(x), names=runValue(x)))
-.tracks.listed.converted[['+']][["3'end-seq"]] = apply(.sample.name.matrix[,order(lengths(rles), decreasing=FALSE)], 1, paste, collapse='.')
-#@ <-
-}
-
 #' Unpack Samples
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#' 
+#' @author SLA
+#' 
+#' @param seqtype 
+#' @param samples 
+#' @param which_samples 
+#' @param which_reps 
+#' @param bigwig_list 
+#' @param bigwig_dirs 
+#' @param verbosity 
 #'
+#' @return
+#' 
+#' @importFrom rlist list.flatten
+#'
+#' @examples
+#' 
 UnpackSamples = function(seqtype, samples, which_samples, which_reps, bigwig_list, bigwig_dirs, verbosity){
   .messages = list('output'=list(), 'errors'=list(), 'warnings'=list())
   .all.sample.names = samples[[seqtype]]
@@ -1816,9 +3123,32 @@ UnpackSamples = function(seqtype, samples, which_samples, which_reps, bigwig_lis
 
 #' Load And Transform Data For Track
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#' 
+#' @author SLA
+#' 
+#' @param seqtype 
+#' @param plotted_region 
+#' @param samples 
+#' @param bigwigs 
+#' @param bigwig_dirs 
+#' @param parameters 
+#' @param get_subsamples 
+#' @param print_order 
+#' @param verbosity 
 #'
+#' @return
+#' 
+#' @import IRanges
+#' @import GenomicRanges
+#' @importFrom rtracklayer import import.bed
+#' @importFrom rlist list.flatten
+#' @importFrom limma removeBatchEffect
+#' @importFrom BiocGenerics strand
+#' @importFrom GenomeInfoDb seqnames
+#'
+#' @examples
+#' 
 LoadAndTransformDataForTrack = function(seqtype, plotted_region, samples, bigwigs, bigwig_dirs, parameters=NULL, get_subsamples=FALSE, print_order=FALSE, verbosity){
   .chrom = as.character(GenomeInfoDb::seqnames(plotted_region))
   .strand = as.character(BiocGenerics::strand(plotted_region))
@@ -1901,14 +3231,14 @@ LoadAndTransformDataForTrack = function(seqtype, plotted_region, samples, bigwig
           .bw.file = .bw.files[[.sample.rep.name]]
           if (file.exists(.bw.file) | url.exists(.bw.file)){
             .data.from.bw = tryCatch( expr = { rtracklayer::import(.bw.file, which=GenomicRanges::GRanges(seqnames=.chrom, ranges=IRanges::IRanges(start=.chrom.start, end=.chrom.end)), as='NumericList')[[1]] },
-                                       error = function(e){ FALSE }, #@ cat(paste('error1', .sample.rep.name), '\n');
-                                       warning = function(w){ FALSE }) #@ cat(paste('warning1', .sample.rep.name), '\n');
+                                      error = function(e){ FALSE }, 
+                                      warning = function(w){ FALSE }) 
             if (sum(.data.from.bw)==0){
               if (is.logical(.data.from.bw)){
                 .alt.chrom = strsplit(.chrom, split='chr')[[1]][2]
                 .alt.data.from.bw = tryCatch(  expr = { rtracklayer::import(.bw.file, which=GenomicRanges::GRanges(seqnames=.alt.chrom, ranges=IRanges::IRanges(start=.chrom.start, end=.chrom.end)), as='NumericList')[[1]] },
-                                               error = function(e){ FALSE }, #@ cat(paste('error2', .sample.rep.name), '\n');
-                                               warning = function(w){ FALSE }) #@ cat(paste('warning2', .sample.rep.name), '\n');
+                                               error = function(e){ FALSE }, 
+                                               warning = function(w){ FALSE }) 
                 if (sum(.alt.data.from.bw)==0){
                   if (is.logical(.alt.data.from.bw)){
                     .bw.list[[.sample.rep.name]] = rep(0, .chrom.end - .chrom.start + 1)
@@ -1935,7 +3265,7 @@ LoadAndTransformDataForTrack = function(seqtype, plotted_region, samples, bigwig
         }
         .bw.matrix = do.call(cbind, .bw.list)
         rownames(.bw.matrix) = .chrom.start:.chrom.end
-        if (FALSE){ #@ -> #@ auto-detection of major sign in bw files
+        if (FALSE){ #$ -> auto-detection of major sign in bw files (currently not active)
           cumPos = sum(.bw.matrix[which(.bw.matrix > 0)])
           cumNeg = sum(.bw.matrix[which(.bw.matrix < 0)])
           if (verbosity > 1){
@@ -1945,13 +3275,13 @@ LoadAndTransformDataForTrack = function(seqtype, plotted_region, samples, bigwig
               cat(paste('\t', '.)', .bw.file), '\n')
             }
           }
-        } #@ <-
+        } #$ <-
         if (.neg.valued.bw & .strand=='-'){
           .bw.matrix = -1*.bw.matrix
         }
         if (.log2.transform){
           .signs.bw.matrix = sign(.bw.matrix)
-          if (any(.signs.bw.matrix <= 0) | .pseudo.count < 1){ #@ any(.signs.bw.matrix <= 0) <- any(.signs.bw.matrix < 0); added "| .pseudo.count < 1"
+          if (any(.signs.bw.matrix <= 0) | .pseudo.count < 1){ 
             .abs.bw.matrix = abs(.bw.matrix) + .pseudo.count
             if (any(.abs.bw.matrix < 1)){
               .adj.pseudo.count = 1 - min(abs(.bw.matrix))
@@ -1981,7 +3311,7 @@ LoadAndTransformDataForTrack = function(seqtype, plotted_region, samples, bigwig
           if (length(.batches) > 1){
             if (!.log2.transform){ # if signals are not overall log2transformed, they need to be for the batch correction
               .signs.bw.matrix = sign(.bw.matrix)
-              if (any(.signs.bw.matrix <= 0) | .pseudo.count < 1){ #@ any(.signs.bw.matrix <= 0) <- any(.signs.bw.matrix < 0); added " | .pseudo.count < 1"
+              if (any(.signs.bw.matrix <= 0) | .pseudo.count < 1){
                 .abs.bw.matrix = abs(.bw.matrix) + .pseudo.count
                 if (any(.abs.bw.matrix < 1)){
                   .adj.pseudo.count = 1 - min(abs(.bw.matrix))
@@ -2012,7 +3342,6 @@ LoadAndTransformDataForTrack = function(seqtype, plotted_region, samples, bigwig
           for (.sample.name in .sample.names){
             .all.replicate.names = sapply(colnames(.bw.matrix), function(x) strsplit(x, split='.rep', fixed=TRUE)[[1]][1])
             .replicate.names = names(.all.replicate.names[which(.all.replicate.names==.sample.name)])
-            #@grep(paste0('^', .sample.name, '\\.rep'), colnames(.bw.matrix), fixed=FALSE, value=T)
             .mean.track = rowMeans(.bw.matrix[, .replicate.names, drop=FALSE])
             if (.neg.vals.set.0){
               .mean.track[which(.mean.track<0)] = 0
@@ -2040,19 +3369,39 @@ LoadAndTransformDataForTrack = function(seqtype, plotted_region, samples, bigwig
 
 #' Delete NULLs
 #'
-#' @details
-#' Internal function: delele null/empty entries in a list
+#' @description Internal function: 
+#' Delele null/empty entries in a list
+#' 
+#' @author SLA
+#' 
+#' @param x_list 
 #'
-DeleteNULLs  <-  function(x_list){
+#' @return
+#'
+#' @examples
+#' 
+DeleteNULLs  =  function(x_list){
   x_list[unlist(lapply(x_list, length) != 0)]
 }
 
 
 #' Load Tracks
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#' 
+#' @author SLA
+#' 
+#' @param plotted_region 
+#' @param samples 
+#' @param bigwigs 
+#' @param bigwig_dirs 
+#' @param parameters 
+#' @param verbosity 
 #'
+#' @return
+#'
+#' @examples
+#' 
 LoadTracks = function(plotted_region, samples, bigwigs, bigwig_dirs, parameters, verbosity){
   .tracks = list()
   for (.seqtype in names(samples)){
@@ -2065,19 +3414,29 @@ LoadTracks = function(plotted_region, samples, bigwigs, bigwig_dirs, parameters,
 
 #' Organized Panels List
 #'
-#' @details
-#' Internal function: Organize the panels with track-names to be plotted on the left side of the tracks
+#' @description Internal function: 
+#' Organize the panels with track-names to be plotted on the left side of the tracks
+#' 
+#' @author SLA
+#' 
+#' @param tracks_listed 
 #'
+#' @return
+#' 
+#' @import S4Vectors
+#'
+#' @examples
+#' 
 OrganizedPanelsList = function(tracks_listed){
   panels.list = list()
   for (.seqtype in names(tracks_listed)){
     panels.list[[.seqtype]] = list()
     .subsamples = tracks_listed[[.seqtype]]
     .subsample.matrix = do.call('rbind', sapply(.subsamples, function(.sep) strsplit(.sep, split='.', fixed=T)))
-    if (ncol(.subsample.matrix) > 1){ #@ ->
+    if (ncol(.subsample.matrix) > 1){
       .rles = lapply(apply(.subsample.matrix, 2, Rle), function(x) structure(runLength(x), names=runValue(x)))
       .subsample.matrix = .subsample.matrix[,order(lengths(.rles))]
-    } #@ <-
+    }
     .n.levels = ncol(.subsample.matrix)
     for (.n.level in 1:.n.levels){
       .nextlayer.rle = S4Vectors::Rle(sapply(1:nrow(.subsample.matrix), function(r) paste(.subsample.matrix[r,1:.n.level], collapse=';')))
@@ -2092,9 +3451,22 @@ OrganizedPanelsList = function(tracks_listed){
 
 #' Plotting Segment Order
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#' 
+#' @author SLA
+#' 
+#' @param plotting_segment_order 
+#' @param sample_names 
+#' @param header 
+#' @param include_genomic_scale 
+#' @param genomic_scale_on_top 
+#' @param incl_annot 
+#' @param horizontal_spacers 
 #'
+#' @return
+#'
+#' @examples
+#' 
 PlottingSegmentOrder = function(plotting_segment_order, sample_names, header, include_genomic_scale, genomic_scale_on_top, incl_annot, horizontal_spacers){
   if (is.null(plotting_segment_order)){
     if (horizontal_spacers){
@@ -2117,10 +3489,25 @@ PlottingSegmentOrder = function(plotting_segment_order, sample_names, header, in
 
 #' Finalize Plotting Segment Order
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#' 
+#' @author SLA
+#' 
+#' @param plotting_segment_order 
+#' @param tracks_listed 
+#' @param both_strands 
+#' @param include_genomic_scale 
+#' @param genomic_scale_on_top 
+#' @param any_stranded_beds 
+#' @param any_unstranded_beds 
+#' @param strands_intermingled 
+#' @param verbosity 
+#' @param interface 
 #'
+#' @return
 #'
+#' @examples
+#' 
 FinalizePlottingSegmentOrder = function(plotting_segment_order, tracks_listed, both_strands, include_genomic_scale, genomic_scale_on_top, any_stranded_beds, any_unstranded_beds, strands_intermingled, verbosity, interface){
   if (both_strands){
     .unstranded.seqtypes = setdiff(names(tracks_listed[['+']]), names(tracks_listed[['-']]))
@@ -2154,7 +3541,7 @@ FinalizePlottingSegmentOrder = function(plotting_segment_order, tracks_listed, b
       .plotting.segment.order.plus = .plotting.segment.order.plus[.plotting.segment.order.plus != 'scale']
       .plotting.segment.order.minus = c(.plotting.segment.order.minus, 'scale')
     }
-    if (any_unstranded_beds & !("unstranded-beds" %in% .plotting.segment.order.plus)){ #@ added & !("unstranded-beds" %in% .plotting.segment.order.plus)
+    if (any_unstranded_beds & !("unstranded-beds" %in% .plotting.segment.order.plus)){ 
       .annot.index = which(.plotting.segment.order.plus == "annotations")
       if (!strands_intermingled){
         if (any_stranded_beds){
@@ -2185,7 +3572,7 @@ FinalizePlottingSegmentOrder = function(plotting_segment_order, tracks_listed, b
   }else{
     if ("annotations" %in% plotting_segment_order){
       .annot.index = which(plotting_segment_order == "annotations")
-      if (any_unstranded_beds & !("unstranded-beds" %in% plotting_segment_order)){ #@ added & !("unstranded-beds" %in% plotting_segment_order)
+      if (any_unstranded_beds & !("unstranded-beds" %in% plotting_segment_order)){ 
         if (any_stranded_beds){
           .plotting.segment.order = c(plotting_segment_order[1:(.annot.index-1)], "unstranded-beds", "empty-spacer", plotting_segment_order[.annot.index:length(plotting_segment_order)])
         }else{
@@ -2202,7 +3589,6 @@ FinalizePlottingSegmentOrder = function(plotting_segment_order, tracks_listed, b
       .spacers = grep('-spacer', .plotting.segment.order[[.strand]], fixed=TRUE)
       if (length(.spacers) > 0){
         if (.spacers[1]==1){
-          #@.plotting.segment.order[[.strand]] = .plotting.segment.order[[.strand]][-1]
           .plotting.segment.order[[.strand]] = .plotting.segment.order[[.strand]][setdiff(1:length(.plotting.segment.order[[.strand]]), .spacers)[1]:length(.plotting.segment.order[[.strand]])]
         }
       }
@@ -2210,83 +3596,6 @@ FinalizePlottingSegmentOrder = function(plotting_segment_order, tracks_listed, b
       .spacers = grep('-spacer', .plotting.segment.order[[.strand]], fixed=TRUE)
       if (length(.spacers) > 0){
         if (rev(.spacers)[1]==length(.plotting.segment.order[[.strand]])){
-          #@.plotting.segment.order[[.strand]] = .plotting.segment.order[[.strand]][-length(.plotting.segment.order[[.strand]])]
-          .plotting.segment.order[[.strand]] = .plotting.segment.order[[.strand]][1:rev(setdiff(1:length(.plotting.segment.order[[.strand]]), .spacers))[1]]
-        }
-      }
-    }
-  }
-  return(.plotting.segment.order)
-}
-
-FinalizePlottingSegmentOrder_obs = function(plotting_segment_order, tracks_listed, both_strands, include_genomic_scale, genomic_scale_on_top, any_stranded_beds, any_unstranded_beds, strands_intermingled){
-  if (!is.list(plotting_segment_order)){
-    if (both_strands){
-      .unstranded.seqtypes = setdiff(names(tracks_listed[['+']]), names(tracks_listed[['-']]))
-      .plotting.segment.order.plus = plotting_segment_order
-      .plotting.segment.order.minus = .plotting.segment.order.plus[!.plotting.segment.order.plus %in% c('header', 'scale', 'unstranded-beds', .unstranded.seqtypes)]
-      if (include_genomic_scale & !genomic_scale_on_top){
-        .plotting.segment.order.plus = .plotting.segment.order.plus[.plotting.segment.order.plus != 'scale']
-        .plotting.segment.order.minus = c(.plotting.segment.order.minus, 'scale')
-      }
-      if (any_unstranded_beds & !("unstranded-beds" %in% .plotting.segment.order.plus)){ #@ added & !("unstranded-beds" %in% .plotting.segment.order.plus)
-        .annot.index = which(.plotting.segment.order.plus == "annotations")
-        if (!strands_intermingled){
-          if (any_stranded_beds){
-            .plotting.segment.order.plus = c(.plotting.segment.order.plus, "thickline-spacer", "unstranded-beds")
-          }else{
-            .plotting.segment.order.plus[.annot.index] = "unstranded-beds"
-          }
-        }else{
-          if (any_stranded_beds){
-            .plotting.segment.order.plus = c(plotting_segment_order[1:(.annot.index-1)], "unstranded-beds", "empty-spacer", plotting_segment_order[.annot.index:length(plotting_segment_order)])
-          }else{
-            .plotting.segment.order.plus[.annot.index] = "unstranded-beds"
-          }
-        }
-      }
-      if ('annotations' %in% .plotting.segment.order.minus){
-        if (any_stranded_beds){
-          .plotting.segment.order.minus = c('thickline-spacer', 'annotations', 'empty-spacer', .plotting.segment.order.minus[!.plotting.segment.order.minus %in% c('annotations', 'empty-spacer')])
-        }else{
-          .plotting.segment.order.minus = c('empty-spacer', .plotting.segment.order.minus[!.plotting.segment.order.minus %in% c('annotations', 'empty-spacer')])
-        }
-      }else{
-        .plotting.segment.order.minus = c('thickline-spacer', .plotting.segment.order.minus)
-      }
-      .plotting.segment.order = list('+'=.plotting.segment.order.plus, '-'=.plotting.segment.order.minus)
-    }else{
-      if ("annotations" %in% plotting_segment_order){
-        .annot.index = which(plotting_segment_order == "annotations")
-        if (any_unstranded_beds & !("unstranded-beds" %in% plotting_segment_order)){ #@ added & !("unstranded-beds" %in% plotting_segment_order)
-          if (any_stranded_beds){
-            .plotting.segment.order = c(plotting_segment_order[1:(.annot.index-1)], "unstranded-beds", "empty-spacer", plotting_segment_order[.annot.index:length(plotting_segment_order)])
-          }else{
-            .plotting.segment.order[.annot.index] = "unstranded-beds"
-          }
-        }else{
-          .plotting.segment.order = plotting_segment_order
-        }
-      }
-      .plotting.segment.order = structure(list(.plotting.segment.order), names=names(tracks_listed))
-    }
-  }else{
-    .plotting.segment.order = plotting_segment_order
-  }
-  for (.strand in names(.plotting.segment.order)){
-    if (.strand == '+'){
-      .spacers = grep('-spacer', .plotting.segment.order[[.strand]], fixed=TRUE)
-      if (length(.spacers) > 0){
-        if (.spacers[1]==1){
-          #@.plotting.segment.order[[.strand]] = .plotting.segment.order[[.strand]][-1]
-          .plotting.segment.order[[.strand]] = .plotting.segment.order[[.strand]][setdiff(1:length(.plotting.segment.order[[.strand]]), .spacers)[1]:length(.plotting.segment.order[[.strand]])]
-        }
-      }
-    }else if (.strand == '-'){
-      .spacers = grep('-spacer', .plotting.segment.order[[.strand]], fixed=TRUE)
-      if (length(.spacers) > 0){
-        if (rev(.spacers)[1]==length(.plotting.segment.order[[.strand]])){
-          #@.plotting.segment.order[[.strand]] = .plotting.segment.order[[.strand]][-length(.plotting.segment.order[[.strand]])]
           .plotting.segment.order[[.strand]] = .plotting.segment.order[[.strand]][1:rev(setdiff(1:length(.plotting.segment.order[[.strand]]), .spacers))[1]]
         }
       }
@@ -2296,15 +3605,37 @@ FinalizePlottingSegmentOrder_obs = function(plotting_segment_order, tracks_liste
 }
 
 
-#' BuildScrutinizePlotSegmentOrder
+#' Build Scrutinize Plot Segment Order
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#' 
+#' @author SLA
+#' 
+#' @param plotting_segment_order 
+#' @param plotted_region 
+#' @param datasets 
+#' @param plotted_samples 
+#' @param header 
+#' @param include_genomic_scale 
+#' @param genomic_scale_on_top 
+#' @param incl_annot 
+#' @param horizontal_spacers 
+#' @param tracks_listed 
+#' @param both_strands 
+#' @param any_stranded_beds 
+#' @param any_unstranded_beds 
+#' @param strands_intermingled 
+#' @param verbosity 
+#' @param interface 
 #'
+#' @return
+#'
+#' @examples
+#' 
 BuildScrutinizePlotSegmentOrder = function(plotting_segment_order, plotted_region, datasets, plotted_samples, header, include_genomic_scale, genomic_scale_on_top, incl_annot, horizontal_spacers, tracks_listed, both_strands, any_stranded_beds, any_unstranded_beds, strands_intermingled, verbosity, interface){
   .plotting.segment.order = NULL
   if (!is.null(plotting_segment_order)){
-    if (is.list(plotting_segment_order) & both_strands & !strands_intermingled){ #@ added & both_strands & strands_intermingled
+    if (is.list(plotting_segment_order) & both_strands & !strands_intermingled){ 
       if (identical(names(plotting_segment_order), names(plotted_region))){
         plotting_segment_order_temp = list()
         for (.plot.strand in names(plotting_segment_order)){
@@ -2328,9 +3659,9 @@ BuildScrutinizePlotSegmentOrder = function(plotting_segment_order, plotted_regio
         return()
       }
     }else{
-      if (is.list(plotting_segment_order)){ #@ ->
+      if (is.list(plotting_segment_order)){ 
         plotting_segment_order = plotting_segment_order[['+']]
-      } #@ <-
+      } 
       plotting_segment_order_temp_vector = as.character(ScrutinizeExpandAndNameParameter(plotting_segment_order, plotting_segment_order, use_names=FALSE, default_value=NULL, expect_standard=NULL, expect=c("header", "scale", "empty-spacer", "thickline-spacer", "line-spacer", "annotations", "unstranded-beds", names(datasets)), revert_to_default=FALSE, alt_par_name=ifelse(interface=='R', 'plotting_segment_order', 'Plotting Segment Order'), verbosity=verbosity))
       if (length(plotting_segment_order_temp_vector)==0){ return() }
       .plotting.segment.order = plotting_segment_order_temp_vector
@@ -2378,9 +3709,16 @@ BuildScrutinizePlotSegmentOrder = function(plotting_segment_order, plotted_regio
 
 #' Numbering Spacers
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#' 
+#' @author SLA
+#' 
+#' @param stranded_list 
 #'
+#' @return
+#'
+#' @examples
+#' 
 NumberingSpacers = function(stranded_list){
   .index = 0
   if (!is.null(stranded_list[['+']])){
@@ -2402,9 +3740,27 @@ NumberingSpacers = function(stranded_list){
 
 #' Estimate Plot Heights
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#' 
+#' @author SLA
+#' 
+#' @param annot_info 
+#' @param incl_feature_names 
+#' @param annotation_packing 
+#' @param incl_feature_brackets 
+#' @param plotting_segment_order 
+#' @param tracks_listed 
+#' @param track_height_cm 
+#' @param full_height_cm 
+#' @param stranded_beds 
+#' @param plot_vertical_parameters 
+#' @param verbosity 
+#' @param interface 
 #'
+#' @return
+#'
+#' @examples
+#' 
 EstimatePlotHeights = function(annot_info, incl_feature_names, annotation_packing, incl_feature_brackets, plotting_segment_order, tracks_listed, track_height_cm, full_height_cm, stranded_beds, plot_vertical_parameters, verbosity, interface){
   .messages = list('output'=list(), 'errors'=list(), 'warnings'=list())
   .warning.message = NULL
@@ -2464,8 +3820,8 @@ EstimatePlotHeights = function(annot_info, incl_feature_names, annotation_packin
           .max.bracket.heights = as.numeric(plot_vertical_parameters['annot'] * .max.bracket.lines)
           .max.annot.heights.incl.text[[.annot]] = as.numeric(.annot.heights[[.annot]] + ifelse(incl_feature_names[.annot], 1, 0) * (plot_vertical_parameters['annot_text_segment'] * .max.bracket.lines + ifelse(incl_feature_brackets[.annot], 1, 0) * .max.bracket.heights))
         }
-        .min.annot.heights.combined = sum(unlist(.min.annot.heights.incl.text)) #@ removed [[.annot]]
-        .max.annot.heights.combined = sum(unlist(.max.annot.heights.incl.text)) #@ removed [[.annot]]
+        .min.annot.heights.combined = sum(unlist(.min.annot.heights.incl.text)) 
+        .max.annot.heights.combined = sum(unlist(.max.annot.heights.incl.text)) 
       }else{
         .min.annot.heights.combined = 0
         .max.annot.heights.combined = 0
@@ -2486,7 +3842,7 @@ EstimatePlotHeights = function(annot_info, incl_feature_names, annotation_packin
     }else{
       .plotting.segment.order =  .plotting.segment.order
     }
-    if (!is.null(tracks_listed)){ #@ if/else added
+    if (!is.null(tracks_listed)){
       .track.vector = unlist(lapply(.plotting.segment.order, function(.segment.type) if(.segment.type %in% names(plot_vertical_parameters)){plot_vertical_parameters[.segment.type]}else{structure(rep(plot_vertical_parameters['seq'], length(tracks_listed[[.segment.type]])), names=paste0(.segment.type, '_', tracks_listed[[.segment.type]]))} ))
     }else{
       .track.vector = NULL
@@ -2518,42 +3874,23 @@ EstimatePlotHeights = function(annot_info, incl_feature_names, annotation_packin
 
 #' Adjust Estimated Plot Heights
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#' 
+#' @author SLA
+#' 
+#' @param estimated_plot_heights 
+#' @param plot_vertical_parameters 
+#' @param full_height_cm 
+#' @param track_height_cm 
+#' @param title_field_height_cm 
+#' @param genomic_scale_height_cm 
+#' @param annotation_height_cm 
+#' @param spacer_height_cm 
 #'
-AdjustEstimatedPlotHeights_obs = function(estimated_plot_heights, full_height_cm, track_height_cm){
-  .all.spacers = c()
-  .min.combined.track.vector = c()
-  .max.combined.track.vector = c()
-  for (.strand in names(estimated_plot_heights)){
-    .spacers = grep('spacer', names(estimated_plot_heights[[.strand]][['track.vector']]), fixed=TRUE)
-    if (length(.spacers) > 0){
-      names(estimated_plot_heights[[.strand]][['track.vector']])[.spacers] = paste(names(estimated_plot_heights[[.strand]][['track.vector']])[.spacers], length(.all.spacers) + 1:length(.spacers), sep='')
-    }
-    .min.combined.track.vector = c(.min.combined.track.vector, estimated_plot_heights[[.strand]][['track.vector']])
-    .min.combined.track.vector[paste0('annot', .strand)] = estimated_plot_heights[[.strand]][['min.tracks.annots']]
-    .max.combined.track.vector = c(.max.combined.track.vector, estimated_plot_heights[[.strand]][['track.vector']])
-    .max.combined.track.vector[paste0('annot', .strand)] = estimated_plot_heights[[.strand]][['max.tracks.annots']]
-    .all.spacers = c(.all.spacers, .spacers)
-  }
-  .min.tracks.annots = sum(.min.combined.track.vector)
-  .max.tracks.annots = sum(.max.combined.track.vector)
-  for (.strand in names(estimated_plot_heights)){
-    if (is.null(full_height_cm)){
-      estimated_plot_heights[[.strand]][['min.track.height.cm.est']] = track_height_cm
-      estimated_plot_heights[[.strand]][['max.track.height.cm.est']] = track_height_cm
-      estimated_plot_heights[[.strand]][['min.full.height.cm.est']] = .min.tracks.annots*track_height_cm
-      estimated_plot_heights[[.strand]][['max.full.height.cm.est']] = .max.tracks.annots*track_height_cm
-    }else{
-      estimated_plot_heights[[.strand]][['min.track.height.cm.est']] = full_height_cm/.max.tracks.annots
-      estimated_plot_heights[[.strand]][['max.track.height.cm.est']] = full_height_cm/.min.tracks.annots
-      estimated_plot_heights[[.strand]][['min.full.height.cm.est']] = full_height_cm
-      estimated_plot_heights[[.strand]][['max.full.height.cm.est']] = full_height_cm
-    }
-  }
-  return(estimated_plot_heights)
-}
-
+#' @return
+#'
+#' @examples
+#' 
 AdjustEstimatedPlotHeights = function(estimated_plot_heights, plot_vertical_parameters, full_height_cm, track_height_cm, title_field_height_cm, genomic_scale_height_cm, annotation_height_cm, spacer_height_cm){
   .all.spacers = c()
   .min.combined.track.vector = c()
@@ -2604,7 +3941,7 @@ AdjustEstimatedPlotHeights = function(estimated_plot_heights, plot_vertical_para
       estimated_plot_heights[[.strand]][['min.full.height.cm.est']] = full_height_cm
       estimated_plot_heights[[.strand]][['max.full.height.cm.est']] = full_height_cm
     }
-    estimated_plot_heights[[.strand]][['annot.heights']] = lapply(estimated_plot_heights[[.strand]][['annot.heights']], function(x) x/plot_vertical_parameters[['annot']]) #@
+    estimated_plot_heights[[.strand]][['annot.heights']] = lapply(estimated_plot_heights[[.strand]][['annot.heights']], function(x) x/plot_vertical_parameters[['annot']])
     estimated_plot_heights[[.strand]][['min.combined.track.vector']] = .min.combined.track.vector
     estimated_plot_heights[[.strand]][['max.combined.track.vector']] = .max.combined.track.vector
   }
@@ -2614,10 +3951,22 @@ AdjustEstimatedPlotHeights = function(estimated_plot_heights, plot_vertical_para
 
 #' Recommended Font Sizes
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#' 
+#' @author SLA
+#' 
+#' @param est_track_height_cm 
+#' @param est_min_annot_height 
+#' @param plot_vertical_parameters 
 #'
+#' @return
+#'
+#' @examples
+#' 
 RecommendedFontSizes = function(est_track_height_cm, est_min_annot_height, plot_vertical_parameters){
+  constants_defaults = ConstantsDefaults()
+  std_letter_height = constants_defaults['std_letter_height'] #@ 2022-10-05
+  min_font_size = constants_defaults['min_font_size'] #@ 2022-10-05
   .max.font.size.std.tracks = round( est_track_height_cm / std_letter_height, 0)
   .est.min.annot.height.cm = est_track_height_cm * est_min_annot_height
   .max.font.size.std.annot = round( .est.min.annot.height.cm / std_letter_height, 0) + 2
@@ -2641,9 +3990,25 @@ RecommendedFontSizes = function(est_track_height_cm, est_min_annot_height, plot_
 
 #' Coords Of Feat Name
 #'
-#' @details
-#' Internal function: Given a chromosomal coordinate (for the center of the annotated feature name) the parameters necessary for plotting the word such that it fits inside the plotted region are calculated
+#' @description Internal function: 
+#' Given a chromosomal coordinate (for the center of the annotated feature name) the parameters necessary for plotting the word such that it fits inside the plotted region are calculated
+#' 
+#' @author SLA
+#' 
+#' @param chrom_coord_feature 
+#' @param feat_width_cm 
+#' @param word_width_cm 
+#' @param word_width_feat_fit 
+#' @param word_width_plot_fit 
+#' @param feature_gr 
+#' @param plotted_region 
 #'
+#' @return
+#' 
+#' @import IRanges
+#'
+#' @examples
+#' 
 CoordsOfFeatName = function(chrom_coord_feature, feat_width_cm, word_width_cm, word_width_feat_fit, word_width_plot_fit, feature_gr, plotted_region){
   if (is.na(word_width_cm)){
     return(data.frame('chrom.coord.feature'=NA, 'adj'=NA, 'feat.start'=NA, 'feat.end'=NA, 'feat.width'=NA, 'feat.name.width'=NA, 'text.fit.feat'=NA, 'text.fit.plot'=NA))
@@ -2688,9 +4053,25 @@ CoordsOfFeatName = function(chrom_coord_feature, feat_width_cm, word_width_cm, w
 
 #' Organize Annotation Text
 #'
-#' @details
-#' Internal function: Given a set of possible font sizes (e.g. helvetica 4-8 given by letter_widths) where should the feature names within the region be plotted
+#' @description Internal function: 
+#' Given a set of possible font sizes (e.g. helvetica 4-8 given by letter_widths), where should the feature names within the region be plotted
+#' 
+#' @author SLA
 #'
+#' @param plotted_region 
+#' @param annot_info 
+#' @param annotation_packing 
+#' @param letter_widths 
+#' @param center_of_mass 
+#' @param verbosity 
+#'
+#' @return
+#' 
+#' @import S4Vectors
+#' @import IRanges
+#'
+#' @examples
+#' 
 OrganizeAnnotationText = function(plotted_region, annot_info, annotation_packing, letter_widths, center_of_mass=FALSE, verbosity){
   if (!is.null(annot_info)){
     feature.text = list()
@@ -2761,9 +4142,24 @@ OrganizeAnnotationText = function(plotted_region, annot_info, annotation_packing
 
 #' Organize All Annotation Texts In Plotted Region
 #'
-#' @details
-#' Internal function: Determine the y-axis organization of names of annotated features within plotted region depending on font size
+#' @description Internal function: 
+#' Determine the y-axis organization of names of annotated features within plotted region depending on font size
+#' 
+#' @author SLA
 #'
+#' @param feature_text 
+#' @param plotted_region 
+#' @param letter_widths 
+#'
+#' @return
+#' 
+#' @import GenomicRanges
+#' @import IRanges
+#' @import S4Vectors
+#' @importFrom BiocGenerics strand
+#'
+#' @examples
+#' 
 OrganizeAllAnnotationTextsInPlottedRegion = function(feature_text, plotted_region, letter_widths){
   if (!is.null(feature_text)){
     .strand = as.character(BiocGenerics::strand(plotted_region))
@@ -2877,11 +4273,24 @@ OrganizeAllAnnotationTextsInPlottedRegion = function(feature_text, plotted_regio
   }
 }
 
+
 #' Update Plot Vertical Parameters
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#' 
+#' @author SLA
 #'
+#' @param plot_vertical_parameters 
+#' @param track_height_cm_estimate 
+#' @param title_field_height_cm 
+#' @param genomic_scale_height_cm 
+#' @param annotation_height_cm 
+#' @param spacer_height_cm 
+#'
+#' @return
+#'
+#' @examples
+#' 
 UpdatePlotVerticalParameters = function(plot_vertical_parameters, track_height_cm_estimate, title_field_height_cm, genomic_scale_height_cm, annotation_height_cm, spacer_height_cm){
   if (!is.null(title_field_height_cm)){
     plot_vertical_parameters['header'] = title_field_height_cm/track_height_cm_estimate
@@ -2902,11 +4311,25 @@ UpdatePlotVerticalParameters = function(plot_vertical_parameters, track_height_c
   return(plot_vertical_parameters)
 }
 
-#' Update Plot Vertical Parameters v2
+
+#' Calculate Track Height
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#' 
+#' @author SLA
 #'
+#' @param combined_track_vector 
+#' @param total_annotation_lines 
+#' @param full_height_cm 
+#' @param title_field_height_cm 
+#' @param genomic_scale_height_cm 
+#' @param annotation_height_cm 
+#' @param spacer_height_cm 
+#'
+#' @return
+#'
+#' @examples
+#' 
 CalculateTrackHeight = function(combined_track_vector, total_annotation_lines, full_height_cm, title_field_height_cm, genomic_scale_height_cm, annotation_height_cm, spacer_height_cm){
   .non.track.height.cm  = 0
   if (!is.null(title_field_height_cm)){
@@ -2933,9 +4356,17 @@ CalculateTrackHeight = function(combined_track_vector, total_annotation_lines, f
 
 #' Update Track Vector
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#' 
+#' @author SLA
 #'
+#' @param track_vector 
+#' @param plot_vertical_parameters 
+#'
+#' @return
+#'
+#' @examples
+#' 
 UpdateTrackVector = function(track_vector, plot_vertical_parameters){
   track_vector[grep('header', names(track_vector))] = plot_vertical_parameters['header']
   track_vector[grep('scale', names(track_vector))] = plot_vertical_parameters['scale']
@@ -2951,12 +4382,25 @@ UpdateTrackVector = function(track_vector, plot_vertical_parameters){
 }
 
 
-
-#' Relative Annotation Height
+#' RelativeAnnotationHeight
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#' 
+#' @author SLA
 #'
+#' @param annot_info 
+#' @param annot_heights 
+#' @param letter_heights 
+#' @param incl_feature_names 
+#' @param feature_text_org 
+#' @param annotation_packing 
+#' @param incl_feature_brackets 
+#' @param stranded_beds 
+#'
+#' @return
+#'
+#' @examples
+#' 
 RelativeAnnotationHeight = function(annot_info, annot_heights, letter_heights, incl_feature_names, feature_text_org, annotation_packing, incl_feature_brackets, stranded_beds){
   .annot.heights.incl.text = list()
   if (!is.null(annot_info)){
@@ -2982,46 +4426,32 @@ RelativeAnnotationHeight = function(annot_info, annot_heights, letter_heights, i
 
 #' Plot Height Parameters
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#' 
+#' @author SLA
 #'
-PlotHeightParameters_obs = function(annot_info, track_vector, max_annot_lines, annot_heights, letter_heights, incl_feature_names, feature_text_org, annotation_packing, incl_feature_brackets, track_height_cm, full_height_cm, stranded_beds, plot_vertical_parameters){
-  .annot.heights.incl.text = list()
-  if (!is.null(annot_info)){
-    if (any(stranded_beds)){
-      for (.annot in names(annot_info)[stranded_beds]){
-        if (!is.null(feature_text_org[['names.packing.list']][[.annot]])){
-          .bracket.lines = lengths(feature_text_org[['names.packing.list']][[.annot]])
-        }else{
-          .bracket.lines = rep(1, length(letter_heights))
-        }
-        .bracket.heights = as.numeric(plot_vertical_parameters['annot'] * .bracket.lines)
-        .annot.heights.incl.text[[.annot]] = annot_heights[[.annot]] + ifelse(incl_feature_names[.annot], 1, 0) * (plot_vertical_parameters['annot_text_segment'] * .bracket.lines + ifelse(incl_feature_brackets[.annot], 1, 0) * .bracket.heights)
-      }
-      .annot.heights.combined = colSums(do.call(rbind, .annot.heights.incl.text))
-    }else{
-      .annot.heights.combined = rep(0, length(letter_heights))
-    }
-  }else{
-    .annot.heights.combined = rep(0, length(letter_heights))
-  }
-  # setup plotting area - vertical part
-  .n.tracks = sum(track_vector)
-  .n.tracks.annots = .n.tracks + .annot.heights.combined ## vector where indices correspond to font size of feature name
-  if (is.null(full_height_cm)){
-    .track.height.cm = rep(track_height_cm, length(.n.tracks.annots))
-    .full.height.cm = .n.tracks.annots*.track.height.cm
-  }else{
-    .track.height.cm = full_height_cm/.n.tracks.annots
-    .full.height.cm = rep(full_height_cm, length(.n.tracks.annots))
-  }
-  # plot height (1x) as function of font.size of annotated feature name
-  .full.height.in = .full.height.cm * cm_to_in				 ## full_height_cm of figure in inches for pdf
-  return(list('full.height.in'=.full.height.in, 'track.vector'=track_vector, 'n.tracks.annots'=.n.tracks.annots, 'track.height.cm'=.track.height.cm, 'max.annot.lines'=max_annot_lines, 'annot.heights'=annot_heights, 'annot.heights.incl.text'=.annot.heights.incl.text))
-}
-
-
+#' @param combined_track_vector 
+#' @param track_vector 
+#' @param annotation_lines 
+#' @param total_annotation_lines 
+#' @param annot_heights_incl_text 
+#' @param max_annot_lines 
+#' @param annot_heights 
+#' @param track_height_cm 
+#' @param full_height_cm 
+#' @param title_field_height_cm 
+#' @param genomic_scale_height_cm 
+#' @param annotation_height_cm 
+#' @param spacer_height_cm 
+#' @param plot_vertical_parameters 
+#'
+#' @return 
+#'
+#' @examples
+#' 
 PlotHeightParameters = function(combined_track_vector, track_vector, annotation_lines, total_annotation_lines, annot_heights_incl_text, max_annot_lines, annot_heights, track_height_cm, full_height_cm, title_field_height_cm, genomic_scale_height_cm, annotation_height_cm, spacer_height_cm, plot_vertical_parameters){
+  constants_defaults = ConstantsDefaults()
+  cm_to_in = constants_defaults['cm_to_in'] #@ 2022-10-05
   if (!is.null(full_height_cm)){
     .annot.heights.incl.text = annot_heights_incl_text
     .annot.heights = lapply(annot_heights, function(x) rep(x, length(annotation_lines)))
@@ -3053,17 +4483,50 @@ PlotHeightParameters = function(combined_track_vector, track_vector, annotation_
     .track.vector = lapply(1:length(.n.tracks.annots), function(x) track_vector)
   }
   # plot height (1x) as function of font.size of annotated feature name
-  .full.height.in = .full.height.cm * cm_to_in				 ## full_height_cm of figure in inches for pdf
+  .full.height.in = .full.height.cm * cm_to_in ## full_height_cm of figure in inches for pdf
   return(list('full.height.in'=.full.height.in, 'track.vector'=.track.vector, 'n.tracks.annots'=.n.tracks.annots, 'track.height.cm'=.track.height.cm, 'max.annot.lines'=max_annot_lines, 'annot.heights'=.annot.heights, 'annot.heights.incl.text'=.annot.heights.incl.text))
 }
 
 
 #' Organize Panels Dimensions
 #'
-#' @details
-#' Internal function: The overall panel dimensions can fixed upfront or it can be left open for the function to determine the dimension - with some initial parameters defined.
+#' @description Internal function: 
+#' The overall panel dimensions can be fixed upfront or it can be left open for the function to determine the dimension - with some initial parameters defined
+#'  
+#' @author SLA
 #'
+#' @param datasets 
+#' @param min_word_length 
+#' @param replicate_names 
+#' @param print_one_line_sample_names 
+#' @param incl_first_panel 
+#' @param plot_height_parameters 
+#' @param feature_names_font_size 
+#' @param font_size_range 
+#' @param recommended_font_sizes 
+#' @param scale_font_size 
+#' @param horizontal_panels_list 
+#' @param panel_font_size_list 
+#' @param panels_list 
+#' @param plot_widths_cm 
+#' @param panel_separators 
+#' @param strand 
+#' @param both_strands 
+#' @param strands_intermingled 
+#' @param stranded_samples 
+#' @param fixed_panel_width 
+#' @param verbosity 
+#'
+#' @return
+#'
+#' @examples
+#' 
+#' @note .penalties.0hor.list obsolete? (#%)
+#' 
 OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, print_one_line_sample_names, incl_first_panel, plot_height_parameters, feature_names_font_size, font_size_range, recommended_font_sizes, scale_font_size, horizontal_panels_list, panel_font_size_list, panels_list, plot_widths_cm, panel_separators, strand, both_strands, strands_intermingled, stranded_samples, fixed_panel_width=FALSE, verbosity){
+  constants_defaults = ConstantsDefaults()
+  std_letter_width = constants_defaults['std_letter_width'] #@ 2022-10-05
+  std_letter_height = constants_defaults['std_letter_height'] #@ 2022-10-05
   # get vertical and horizontal restrictions
   .tracks.vector = plot_height_parameters[['track.vector']][[feature_names_font_size]]
   .track.height.cm = plot_height_parameters[['track.height.cm']][feature_names_font_size]
@@ -3074,7 +4537,7 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
   .word.vert.space = 1.5  # how much more vertical (relative to word) space (in standard letters) should be assigned (multiplied) per word
   # set up lists for analyses
   .penalties.list = list()
-  .penalties.0hor.list = list()
+  #% .penalties.0hor.list = list()
   # find panel sizes for various font sizes for the different 'datasets'
   .n.levels.list = list()
   .n.chars.list = list()
@@ -3202,13 +4665,13 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
     .penalties = sign(sign(.hor.penalties) + sign(.ver.penalties))
     .penalties.0hor = sign(sign(.hor.penalties.0hor) + sign(.ver.penalties.0hor))
     .penalties.list[[.dataset]] = .penalties
-    .penalties.0hor.list[[.dataset]] = .penalties.0hor
+    #% .penalties.0hor.list[[.dataset]] = .penalties.0hor
   }
   .eligible.font.sizes = apply(do.call('rbind', lapply(.penalties.list, function(m) apply(m, 2, function(c) any(c==0)))), 2, function(c) all(c))
   .common.font.size = ifelse(any(.eligible.font.sizes), .font.size.range[max(which(.eligible.font.sizes))], min(.font.size.range))
   .panel.config = list()
   if (!is.null(horizontal_panels_list)){
-    .panel.config = horizontal_panels_list[datasets] #@ horizontal_panels_list
+    .panel.config = horizontal_panels_list[datasets] 
   }else if (any(.eligible.font.sizes)){
     for (.dataset in names(.penalties.list)){
       .config = rep(TRUE, .n.levels.list[[.dataset]])  ## TRUE refers to horizontal or not
@@ -3277,14 +4740,13 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
   ## if one or more 1st panels need to be horizontal
   if (.incl.first.panel){
     if (any(as.logical(sapply(.panel.config, function(x) x[1]))) & is.null(horizontal_panels_list)){
-      #@.eligible.font.sizes = apply(do.call('rbind', lapply(.penalties.0hor.list, function(m) apply(m, 2, function(c) any(c==0)))), 2, function(c) all(c))
       .eligible.font.sizes = apply(do.call('rbind', lapply(.penalties.list, function(m) apply(m, 2, function(c) any(c==0)))), 2, function(c) all(c))
       .panel.config = list()
       if (any(.eligible.font.sizes)){
         .common.font.size = .font.size.range[max(which(.eligible.font.sizes))]
-        for (.dataset in names(.penalties.list)){ #@ .penalties.0hor.list <-> .penalties.list
+        for (.dataset in names(.penalties.list)){ #%  .penalties.0hor.list <-> .penalties.list
           .config = rep(TRUE, .n.levels.list[[.dataset]])  ## TRUE refers to horizontal or not
-          .n.ver.panels = max(which(.penalties.list[[.dataset]][,paste0('f', .common.font.size)]==0))-1 #@ .penalties.0hor.list <-> .penalties.list
+          .n.ver.panels = max(which(.penalties.list[[.dataset]][,paste0('f', .common.font.size)]==0))-1 #% .penalties.0hor.list <-> .penalties.list
           if (.n.ver.panels > 0){
             .config[1:.n.ver.panels] = FALSE
           }
@@ -3292,10 +4754,10 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
         }
       }else{
         .common.font.size = min(.font.size.range)
-        for (.dataset in names(.penalties.list)){ #@ .penalties.0hor.list <-> .penalties.list
+        for (.dataset in names(.penalties.list)){ #% .penalties.0hor.list <-> .penalties.list
           .config = rep(TRUE, .n.levels.list[[.dataset]])  ## TRUE refers to horizontal or not
-          if (any(.penalties.list[[.dataset]][,paste0('f', .common.font.size)]==0)){ #@ .penalties.0hor.list <-> .penalties.list
-            .n.ver.panels = max(which(.penalties.list[[.dataset]][,paste0('f', .common.font.size)]==0))-1 #@ .penalties.0hor.list <-> .penalties.list
+          if (any(.penalties.list[[.dataset]][,paste0('f', .common.font.size)]==0)){ #% .penalties.0hor.list <-> .penalties.list
+            .n.ver.panels = max(which(.penalties.list[[.dataset]][,paste0('f', .common.font.size)]==0))-1 #% .penalties.0hor.list <-> .penalties.list
             if (.n.ver.panels > 0){
               .config[1:.n.ver.panels] = FALSE
             }
@@ -3337,7 +4799,7 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
               .panel.word.widths[ , .n.ver.panels+1] = .word.vert.space * .common.font.size * std_letter_height
             }
             .penalties = .hor.penalties + .ver.penalties
-            if (all(.penalties < 0)){ #@ ->  .config[1:(max(which(.penalties==min(abs(.penalties))))-1)] = FALSE
+            if (all(.penalties < 0)){ 
               if (.panels.max.width.cm!=-1){
                 .lowest.penalty = which(abs(.penalties)==min(abs(.penalties))) - 1
                 if (.lowest.penalty > 0){
@@ -3349,7 +4811,7 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
               if (.lowest.penalty > 0){
                 .config[1:.lowest.penalty] = FALSE
               }
-            } #@ <-
+            }
           }
           .panel.config[[.dataset]] = .config
         }
@@ -3374,12 +4836,11 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
       .ver.penalties = structure(rep(NA, .n.levels), names=paste0('+', 1:.n.levels-1))
       ### set up matrices with widths and heights of each panel for each possible font size in fully 'horizontal' representation
       .heigths.cm = .heigths.cm.list[[.dataset]]
-      .subpanels = sapply(1:.n.levels, function(.n.level) length(runValue(Rle(.subsample.matrices[[.dataset]][,.n.level])))) #@ .heigths.cm[1]/.heigths.cm
+      .subpanels = sapply(1:.n.levels, function(.n.level) length(runValue(Rle(.subsample.matrices[[.dataset]][,.n.level])))) 
       .panel.word.widths = matrix(ncol=.n.levels, nrow=max(.subpanels))
       .panel.word.widths[,1] = .common.font.size * (ifelse(!.config[1], nchar(.dataset), max(nchar(datasets))) + .word.extensions) * std_letter_width
       .panel.word.heights = .common.font.size * matrix(1, ncol=.n.levels, nrow=max(.subpanels)) * std_letter_height
       .panel.heights = matrix(rep(.heigths.cm, each=max(.subpanels)), ncol=.n.levels, nrow=max(.subpanels))
-      #cat(paste0(.dataset, ': ', paste(.config, collapse='\t')), '\n') #@
       .hor.panels = which(.config)
       .hor.subpanels = .hor.panels[.hor.panels > 1]
       if (any(.hor.subpanels>0)){
@@ -3428,7 +4889,6 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
             .panel.word.heights[!is.na(.panel.word.heights[,.n.level]),.n.level] = (.common.font.size + 1) * std_letter_height
           }else{
             .panel.word.widths[,.n.level] = .word.vert.space * (.common.font.size + 1) * std_letter_height
-            #@.panel.word.heights[!is.na(.panel.word.heights[,.n.level]),.n.level] = (.common.font.size + 1) * nchar(rep(names(panels_list[[.dataset]][[.n.level-1]]), each=.conseq.entries))[!is.na(.panel.word.heights[,.n.level])] * std_letter_width
             .panel.word.heights[!is.na(.panel.word.heights[,.n.level]),.n.level] = (.common.font.size + 1) * nchar(rep(names(panels_list[[.dataset]][[.n.level-1]]), panels_list[[.dataset]][[.n.level-1]]))[!is.na(.panel.word.heights[,.n.level])] * std_letter_width
           }
         }
@@ -3479,7 +4939,7 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
   }else{
     .panel.width.list = lapply(.panel.width.list, function(x) {x[1]=.outer.panel.width; x[-1]=.inner.panels.width*x[-1]/sum(x[-1]); return(x)})
   }
-  .panel.width.list = lapply(.panel.width.list, function(x) {l=length(x); if (l > 1){.n.panel.separators=l-1-ifelse(.incl.first.panel,0,1); if (.n.panel.separators>0){y=rep(NA, l+.n.panel.separators); y[setdiff(1:length(y), seq(ifelse(.incl.first.panel, 2, 3), length(y), by=2))]=x; y[seq(ifelse(.incl.first.panel, 2, 3), length(y), by=2)]=.panel.separator.cm}else{y=x}; return(y)}else{return(x)}})  #@ seq(1, length(y), by=2) <- setdiff(1:length(y), seq(ifelse(.incl.first.panel, 2, 3), length(y), by=2)) AND seq(ifelse(.incl.first.panel, 2, 3), length(y), by=2) <- seq(ifelse(.incl.first.panel, 2, 4), length(y), by=2)
+  .panel.width.list = lapply(.panel.width.list, function(x) {l=length(x); if (l > 1){.n.panel.separators=l-1-ifelse(.incl.first.panel,0,1); if (.n.panel.separators>0){y=rep(NA, l+.n.panel.separators); y[setdiff(1:length(y), seq(ifelse(.incl.first.panel, 2, 3), length(y), by=2))]=x; y[seq(ifelse(.incl.first.panel, 2, 3), length(y), by=2)]=.panel.separator.cm}else{y=x}; return(y)}else{return(x)}}) 
   .total.panel.widths.cm = unlist(lapply(.panel.width.list, sum))
   .diff.total.panel.widths.cm = max(.total.panel.widths.cm) - .total.panel.widths.cm
   .panel.width.list = structure(lapply(1:length(.panel.width.list), function(n) {x=.panel.width.list[[n]]; x[length(x)]=x[length(x)]+.diff.total.panel.widths.cm[n]; return(x)}), names=names(.panel.width.list))
@@ -3533,12 +4993,20 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
 
 #' Finalize Panels Dimensions
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA
 #'
+#' @param panel_info 
+#' @param both_strands 
+#'
+#' @return
+#'
+#' @examples
+#' 
 FinalizePanelsDimensions = function(panel_info, both_strands){
   if (both_strands){
-    if (is.null(panel_info[['-']])){ #@ added this condition
+    if (is.null(panel_info[['-']])){
       .panel.info = panel_info
     }else if (!identical(panel_info[['+']], panel_info[['-']])){
       .panel.info = list('+'=panel_info[['+']], '-'=panel_info[['+']])
@@ -3560,9 +5028,20 @@ FinalizePanelsDimensions = function(panel_info, both_strands){
 
 #' Get Bin Size
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA
 #'
+#' @param bin_size 
+#' @param plot_width 
+#' @param tracks_width_cm 
+#' @param bins_per_cm 
+#' @param verbosity 
+#'
+#' @return
+#'
+#' @examples
+#' 
 GetBinSize = function(bin_size, plot_width, tracks_width_cm, bins_per_cm, verbosity){
   .messages = list('output'=list(), 'errors'=list())
   .autodetermine = FALSE
@@ -3590,9 +5069,18 @@ GetBinSize = function(bin_size, plot_width, tracks_width_cm, bins_per_cm, verbos
 
 #' Final Organized Annotation Texts In Plotted Region
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA
 #'
+#' @param organized_annotation_texts 
+#' @param annotation_names 
+#' @param font_size 
+#'
+#' @return
+#'
+#' @examples
+#' 
 FinalOrganizedAnnotationTextsInPlottedRegion = function(organized_annotation_texts, annotation_names, font_size){
   final.organized.annotation.texts = list('names.gr.list'=list(), 'names.packing.list'=list())
   for (.name in annotation_names){
@@ -3605,17 +5093,44 @@ FinalOrganizedAnnotationTextsInPlottedRegion = function(organized_annotation_tex
 
 #' Basic Plot Parameters
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA
 #'
+#' @param plotted_strand 
+#' @param plotted_region 
+#' @param feature_names_font_size 
+#' @param plot_height_parameters 
+#' @param plot_width_parameters 
+#' @param full_width_cm 
+#' @param full_height_cm 
+#' @param track_height_cm 
+#' @param plot_vertical_parameters 
+#' @param bin_size 
+#' @param bins_per_cm 
+#' @param plotting_segment_order 
+#' @param tracks_listed 
+#' @param unstranded_beds 
+#'
+#' @return
+#' 
+#' @import IRanges
+#' @import S4Vectors
+#'
+#' @examples
+#' 
 BasicPlotParameters = function(plotted_strand, plotted_region, feature_names_font_size, plot_height_parameters, plot_width_parameters, full_width_cm, full_height_cm=NULL, track_height_cm=0.3, plot_vertical_parameters, bin_size, bins_per_cm, plotting_segment_order, tracks_listed, unstranded_beds){
+  constants_defaults = ConstantsDefaults()
+  line_width_scaling_factor = constants_defaults['line_width_scaling_factor'] #@ 2022-10-05
+  points_per_cm = constants_defaults['points_per_cm'] #@ 2022-10-05
+  cm_to_in = constants_defaults['cm_to_in'] #@ 2022-10-05
   # binning
   .plot.width = IRanges::width(plotted_region[[plotted_strand]])
   .tracks.width.cm = plot_width_parameters[['tracks.width.cm']]
   .bases.per.cm = .plot.width/.tracks.width.cm
   .bins.per.cm = .bases.per.cm/bin_size
   .points.per.bin = points_per_cm/.bins.per.cm
-  .bin.width = 2*line_width_scaling_factor*.points.per.bin #@ 2*line_width_scaling_factor ~ 1pt in pdf
+  .bin.width = 2*line_width_scaling_factor*.points.per.bin # 2*line_width_scaling_factor ~ 1pt in pdf
   if (.bases.per.cm < bins_per_cm){
     .bin.width = .bin.width * bins_per_cm/.bases.per.cm  # to ensure same density of colors
   }
@@ -3633,7 +5148,7 @@ BasicPlotParameters = function(plotted_strand, plotted_region, feature_names_fon
       names(.annotations.heights) = paste0(names(.annotations.heights), plotted_strand)
     }
   }
-  if (!is.null(tracks_listed)){ #@ added if/else
+  if (!is.null(tracks_listed)){ 
     .track.vector = unlist(lapply(plotting_segment_order[[plotted_strand]],
                                   function(.segment.type) if(.segment.type %in% names(plot_vertical_parameters))
                                   { plot_vertical_parameters[.segment.type] }else{ if(.segment.type=='annotations'){ .annotations.heights }else if(.segment.type=='unstranded-beds'){ .unstranded.beds.heights }else{ structure(rep(plot_vertical_parameters['seq'], length(tracks_listed[[plotted_strand]][[.segment.type]])), names=paste0(.segment.type, '_', tracks_listed[[plotted_strand]][[.segment.type]])) }} ))
@@ -3652,23 +5167,34 @@ BasicPlotParameters = function(plotted_strand, plotted_region, feature_names_fon
   .n.tracks = plot_height_parameters[[plotted_strand]][['n.tracks.annots']][feature_names_font_size]
   .mean.window.height = 1/.n.tracks	## sets the relative height of each track window
   .windows.height = c('top'=1, 1-cumsum(.track.vector*.mean.window.height)); .windows.height[length(.windows.height)] = 0
-
+  
   # plot dimensions (1x)
   .full.width.in = full_width_cm * cm_to_in					 ## full_width_cm of figure in inches for pdf
   .full.height.in = plot_height_parameters[[plotted_strand]][['full.height.in']][feature_names_font_size]				 ## full_height_cm of figure in inches for pdf
   .plot.dim.in = c(.full.width.in, .full.height.in)
-  .annot.heights = lapply(plot_height_parameters[[plotted_strand]][['annot.heights']], function(x) x[feature_names_font_size]) #@
-  #@.annot.heights = lapply(plot_height_parameters[[plotted_strand]][['annot.heights']], function(x) x[feature_names_font_size] * as.numeric(plot_vertical_parameters['annot'])) #@
+  .annot.heights = lapply(plot_height_parameters[[plotted_strand]][['annot.heights']], function(x) x[feature_names_font_size]) 
   return(list('track.vector'=.track.vector, 'windows.height'=.windows.height, 'max.annot.lines'=plot_height_parameters[[plotted_strand]][['max.annot.lines']], 'annot.heights'=.annot.heights, 'plot.dim.in'=.plot.dim.in, 'track.height.cm'=.track.height.cm, 'bin.info'=.bin.info))
 }
 
 
 #' Align Basic Plot Parameters
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA
 #'
+#' @param basic_plot_parameters 
+#' @param both_strands 
+#' @param strands_intermingled 
+#' @param fixed_plot_vertical_parameters 
+#'
+#' @return
+#'
+#' @examples
+#' 
 AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands_intermingled, fixed_plot_vertical_parameters){
+  constants_defaults = ConstantsDefaults()
+  cm_to_in = constants_defaults['cm_to_in'] #@ 2022-10-05
   .basic.plot.parameters = basic_plot_parameters
   if (both_strands){
     .height.in = .basic.plot.parameters[['+']][['plot.dim.in']][2] + .basic.plot.parameters[['-']][['plot.dim.in']][2]
@@ -3691,7 +5217,7 @@ AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands
       .track.vector.minus = structure(sapply(.track.vector.names, function(.name) .basic.plot.parameters[['-']][['track.vector']][.name], USE.NAMES=FALSE), names=.track.vector.names)
       .track.vector.minus[is.na(.track.vector.minus)] = 0
       .track.vector = .track.vector.plus + .track.vector.minus
-      if (!fixed_plot_vertical_parameters[1]){ #@ ->
+      if (!fixed_plot_vertical_parameters[1]){ 
         .unadjusted.track.vector.sum = sum(.track.vector)
         .diff = sum(c(.basic.plot.parameters[['+']][['track.vector']], .basic.plot.parameters[['-']][['track.vector']])) - .unadjusted.track.vector.sum
         .indices = list()
@@ -3709,13 +5235,13 @@ AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands
         .diff.indices = unlist(.indices[names(fixed_plot_vertical_parameters)[!fixed_plot_vertical_parameters]])
         .diff.weights = unlist(.weights[names(fixed_plot_vertical_parameters)[!fixed_plot_vertical_parameters]])
         .track.vector[.diff.indices] = .track.vector[.diff.indices] + .diff*.diff.weights/sum(.diff.weights)
-      } #@ <-
+      } 
       .windows.height = c('top'=1, 1-cumsum(.track.vector)/sum(.track.vector)); .windows.height[length(.windows.height)] = 0
       .basic.plot.parameters[['+-']] = list('track.vector'=.track.vector, 'windows.height'=.windows.height)
       .annot.names = names(.basic.plot.parameters[['+']][['max.annot.lines']])
       .basic.plot.parameters[['+-']][['max.annot.lines']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['+']][['max.annot.lines']][[.annot.name]] + ifelse(.annot.name %in% .unstranded.beds.names, 0, .basic.plot.parameters[['-']][['max.annot.lines']][[.annot.name]])), names=.annot.names)
       .basic.plot.parameters[['+-']][['annot.heights']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['+']][['annot.heights']][[.annot.name]] + ifelse(.annot.name %in% .unstranded.beds.names, 0, .basic.plot.parameters[['-']][['annot.heights']][[.annot.name]])), names=.annot.names)
-      .basic.plot.parameters[['+-']][['plot.dim.in']] = c(.basic.plot.parameters[['+']][['plot.dim.in']][1], cm_to_in * sum(.basic.plot.parameters[['+']][['track.height.cm']] * .track.vector)) #@ added
+      .basic.plot.parameters[['+-']][['plot.dim.in']] = c(.basic.plot.parameters[['+']][['plot.dim.in']][1], cm_to_in * sum(.basic.plot.parameters[['+']][['track.height.cm']] * .track.vector)) 
       .basic.plot.parameters[['+-']][['track.height.cm']] = .basic.plot.parameters[['+']][['track.height.cm']]
       .basic.plot.parameters[['+-']][['bin.info']] = .basic.plot.parameters[['+']][['bin.info']]
     }else{
@@ -3738,9 +5264,23 @@ AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands
 
 #' Prepare Plotting Interface
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA
 #'
+#' @param plot_dim 
+#' @param pdf 
+#' @param pdf_name 
+#' @param pdf_dir 
+#' @param header 
+#' @param bin_size 
+#' @param feature 
+#' @param scaling_factor 
+#'
+#' @return
+#'
+#' @examples
+#' 
 PreparePlottingInterface = function(plot_dim, pdf, pdf_name, pdf_dir, header, bin_size, feature, scaling_factor){
   .full.width.in = plot_dim[1]
   .full.height.in = plot_dim[2]
@@ -3776,14 +5316,28 @@ PreparePlottingInterface = function(plot_dim, pdf, pdf_name, pdf_dir, header, bi
   }
 }
 
-#' hex2hsl
+
+#' Hex2Hsl
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA (based on https://bitbucket.org/mattgove/color-theory/src/master/mg_colors.py)
 #'
-hex2hsl = function(c){
-  ## based on https://bitbucket.org/mattgove/color-theory/src/master/mg_colors.py 
-  c_rgb_vector = as.vector(col2rgb(c))/255
+#' @param c 
+#'
+#' @return
+#' 
+#' @importFrom grDevices col2rgb rgb
+#'
+#' @examples
+#' Hex2Hsl('black')
+#' Hex2Hsl('blue')
+#' Hex2Hsl('#FFA550')
+#' 
+#' @note change throughout from hex2hsl to Hex2Hsl - done? #% 2022-10-04
+#' 
+Hex2Hsl = function(c){
+  c_rgb_vector = as.vector(grDevices::col2rgb(c))/255
   r = c_rgb_vector[1]
   g = c_rgb_vector[2]
   b = c_rgb_vector[3]
@@ -3822,12 +5376,25 @@ hex2hsl = function(c){
   return(c(hue, saturation, lightness))
 }
 
-#' adjust_color_phi
+
+#' Adjust Color Phi
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA (based on https://bitbucket.org/mattgove/color-theory/src/master/mg_colors.py)
 #'
-adjust_color_phi = function(c_hsl, phi=180){
+#' @param c_hsl 
+#' @param phi 
+#'
+#' @return
+#'
+#' @examples
+#' c_hsl = Hex2Hsl('#FFA550')
+#' c_hsl_180 = AdjustColorPhi(c_hsl)
+#'  
+#' @note change throughout from adjust_color_phi to AdjustColorPhi - done? #% 2022-10-04
+#' 
+AdjustColorPhi = function(c_hsl, phi=180){
   hue = c_hsl[1] + phi
   if (hue >= 360){
     hue = hue - 360
@@ -3838,13 +5405,28 @@ adjust_color_phi = function(c_hsl, phi=180){
   return(adjusted_c_hsl)
 }
 
-#' hsl2hex
+
+#' Hsl2Hex
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA (based on https://www.rapidtables.com/convert/color/hsl-to-rgb.html)
 #'
-hsl2hex = function(c_hsl){
-  ## from https://www.rapidtables.com/convert/color/hsl-to-rgb.html
+#' @param c_hsl 
+#'
+#' @return
+#' 
+#' @importFrom grDevices col2rgb rgb
+#'
+#' @examples
+#' c_hex = '#FFA550'
+#' c_hsl = Hex2Hsl(c_hex)
+#' c_hsl_180 = AdjustColorPhi(c_hsl)
+#' c_hex_180 = Hsl2Hex(c_hsl_180)
+#' 
+#' @note change throughout from hsl2hex to Hsl2Hex - done? #% 2022-10-04
+#' 
+Hsl2Hex = function(c_hsl){
   h = c_hsl[1]
   s = c_hsl[2]/100
   l = c_hsl[3]/100
@@ -3865,28 +5447,65 @@ hsl2hex = function(c_hsl){
     rgb_prime = c(c, 0, x)
   }
   RGB = c(rgb_prime[1]+m, rgb_prime[2]+m, rgb_prime[3]+m)
-  return(rgb(RGB[1], RGB[2], RGB[3]))
+  return(grDevices::rgb(RGB[1], RGB[2], RGB[3]))
 }
+
 
 #' Convert Color
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA 
 #'
-convert_color = function(c, phi=180){
-  c_hsl = hex2hsl(c)
-  c_hsl_conv = adjust_color_phi(c_hsl, phi)
-  c_conv = hsl2hex(c_hsl_conv)
+#' @param c 
+#' @param phi 
+#'
+#' @return
+#'
+#' @examples
+#' c_hex = '#FFA550'
+#' c_hex_180 = ConvertColor(c_hex)
+#' 
+#' @note change throughout to from convert_color to ConvertColor - done? #% 2022-10-04
+#' 
+ConvertColor = function(c, phi=180){
+  c_hsl = Hex2Hsl(c)
+  c_hsl_conv = AdjustColorPhi(c_hsl, phi)
+  c_conv = Hsl2Hex(c_hsl_conv)
   return(c_conv)
 }
 
 
 #' Plot Header
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA 
 #'
+#' @param windows_height 
+#' @param n_segment 
+#' @param coords_tracks 
+#' @param full_width_cm 
+#' @param plot_width 
+#' @param header 
+#' @param header_font_sizes 
+#' @param chrom 
+#' @param both_strands 
+#' @param plotted_strand 
+#' @param plot_start 
+#' @param plot_end 
+#' @param font_colors 
+#' @param font_family 
+#' @param first_plot 
+#' @param scaling_factor 
+#'
+#' @return
+#'
+#' @examples
+#' 
 PlotHeader = function(windows_height, n_segment, coords_tracks, full_width_cm,  plot_width, header, header_font_sizes, chrom, both_strands, plotted_strand, plot_start, plot_end, font_colors, font_family, first_plot, scaling_factor){
+  constants_defaults = ConstantsDefaults()
+  line_width_scaling_factor = constants_defaults['line_width_scaling_factor'] #@ 2022-10-05
   par(fig=c(0,1,windows_height[n_segment+1],windows_height[n_segment]), mai=scaling_factor*c(0, 0, 0, 0), bg='transparent', col='black', new=ifelse(n_segment==1 & first_plot, F, T))
   plot(0, 0, type='n', xlim=c(-1,1), ylim=c(-1,1), ann=FALSE, axes=FALSE, bg='transparent', bty='n', xaxs='i', yaxs ='i')
   text(x=-1 + 2*coords_tracks[1], y=0.5, labels=header, adj=0, col=font_colors['header'], cex=header_font_sizes['main']*scaling_factor/12, font=4, family=font_family)
@@ -3908,10 +5527,25 @@ PlotHeader = function(windows_height, n_segment, coords_tracks, full_width_cm,  
 
 #' Coords Of Genomic Scale
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA 
 #'
+#' @param chrom_coord 
+#' @param font_size 
+#' @param coords_tracks 
+#' @param full_width_cm 
+#' @param plot_width 
+#' @param plot_start 
+#' @param plot_end 
+#'
+#' @return
+#'
+#' @examples
+#' 
 CoordsOfGenomicScale = function(chrom_coord, font_size, coords_tracks, full_width_cm, plot_width, plot_start, plot_end){
+  constants_defaults = ConstantsDefaults()
+  std_letter_width = constants_defaults['std_letter_width'] #@ 2022-10-05
   .coord.width.cm = nchar(chrom_coord) * std_letter_width*font_size
   if (is.na(.coord.width.cm)){
     return(NA)
@@ -3933,11 +5567,10 @@ CoordsOfGenomicScale = function(chrom_coord, font_size, coords_tracks, full_widt
       .chrom.coord = as.integer(chrom_coord)
       .adj = 0.5
     }
-
+    
     if (diff(c(plot_start, plot_end)) < 0){
       .adj = abs(.adj-1)
     }
-
     return(data.frame('chrom.coord'=.chrom.coord, 'adj'=.adj))
   }
 }
@@ -3945,17 +5578,39 @@ CoordsOfGenomicScale = function(chrom_coord, font_size, coords_tracks, full_widt
 
 #' Plot Scale
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA 
 #'
+#' @param windows_height 
+#' @param n_segment 
+#' @param coords_tracks 
+#' @param full_width_cm 
+#' @param genomic_scale_on_top 
+#' @param plot_width 
+#' @param plot_start 
+#' @param plot_end 
+#' @param first_plot 
+#' @param font_color 
+#' @param font_family 
+#' @param genomic_scale_font_size 
+#' @param scaling_factor 
+#'
+#' @return
+#'
+#' @examples
+#' 
 PlotScale = function(windows_height, n_segment, coords_tracks, full_width_cm, genomic_scale_on_top, plot_width, plot_start, plot_end, first_plot, font_color, font_family, genomic_scale_font_size, scaling_factor){
+  constants_defaults = ConstantsDefaults()
+  line_width_scaling_factor = constants_defaults['line_width_scaling_factor'] #@ 2022-10-05
+  std_letter_width = constants_defaults['std_letter_width'] #@ 2022-10-05
   par(fig=c(coords_tracks[1],coords_tracks[2],windows_height[n_segment+1],windows_height[n_segment]), mai=scaling_factor*c(0, 0, 0, 0), new=ifelse(n_segment==1 & first_plot, F, T))
   plot(0, 0, type='n', xlim=c(plot_start, plot_end), ylim=c(-1,1), ann=FALSE, axes=FALSE, bg='transparent', bty='n', xaxs='i', yaxs ='i')
   abline(h=ifelse(genomic_scale_on_top, -1, 1)*0.8, col=font_color['genomic_axis'], lwd=scaling_factor*line_width_scaling_factor*0.5, lend=1)
   .tickmarks = as.integer(axTicks(side=1))
-  .full.width.coord.letters.cm = sum(nchar(format(.tickmarks, nsmall=0))) * (std_letter_width*genomic_scale_font_size) #@
-  .tracks.width.cm = diff(coords_tracks)*full_width_cm #@
-  if (.full.width.coord.letters.cm > .tracks.width.cm){ #@ ->
+  .full.width.coord.letters.cm = sum(nchar(format(.tickmarks, nsmall=0))) * (std_letter_width*genomic_scale_font_size)
+  .tracks.width.cm = diff(coords_tracks)*full_width_cm
+  if (.full.width.coord.letters.cm > .tracks.width.cm){
     if (length(.tickmarks) %% 2 == 1){
       .remaining.indices = seq(1, length(.tickmarks), 2)
     }else{
@@ -3968,7 +5623,7 @@ PlotScale = function(windows_height, n_segment, coords_tracks, full_width_cm, ge
       }
     }
     .tickmarks = .tickmarks[.remaining.indices]
-  } #@ <-
+  } 
   .scale.plot.coords = as.integer(unlist(lapply(.tickmarks, function(.tickmark) CoordsOfGenomicScale(.tickmark, genomic_scale_font_size, coords_tracks, full_width_cm, plot_width, as.integer(plot_start), as.integer(plot_end))['chrom.coord'])))
   .scale.plot.adjs = as.numeric(unlist(lapply(.tickmarks, function(.tickmark) CoordsOfGenomicScale(.tickmark, genomic_scale_font_size, coords_tracks, full_width_cm, plot_width, plot_start, plot_end)['adj'])))
   segments(x0=axTicks(side=1), y0=ifelse(genomic_scale_on_top, -1, 1)*0.8, y1=ifelse(genomic_scale_on_top, -1, 1)*0.4, col=font_color['genomic_axis'], lwd=scaling_factor*line_width_scaling_factor*0.5, lend=1)
@@ -3987,12 +5642,30 @@ PlotScale = function(windows_height, n_segment, coords_tracks, full_width_cm, ge
 }
 
 
+
 #' Plot Spacer
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA 
 #'
+#' @param windows_height 
+#' @param spacer_segment 
+#' @param right_border 
+#' @param plotted_strand 
+#' @param neg_vals_neg_strand 
+#' @param panel_separators 
+#' @param separators_lwds 
+#' @param separators_colors 
+#' @param scaling_factor 
+#'
+#' @return
+#'
+#' @examples
+#' 
 PlotSpacer = function(windows_height, spacer_segment, right_border, plotted_strand, neg_vals_neg_strand, panel_separators, separators_lwds, separators_colors, scaling_factor){
+  constants_defaults = ConstantsDefaults()
+  line_width_scaling_factor = constants_defaults['line_width_scaling_factor'] #@ 2022-10-05
   .left.border = 1 - right_border
   par(fig=c(.left.border,right_border,windows_height[spacer_segment],windows_height[which(names(windows_height)==spacer_segment)-1]), mai=scaling_factor*c(0, 0, 0, 0), new=TRUE)
   if (grepl('thickline-spacer', spacer_segment, fixed=TRUE)){
@@ -4007,18 +5680,48 @@ PlotSpacer = function(windows_height, spacer_segment, right_border, plotted_stra
 
 #' Plot Panels
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#' Sample info at the left side of the plots  
+#'  
+#' @author SLA 
 #'
+#' @param plotting_segment 
+#' @param plotted_strand 
+#' @param panel_info 
+#' @param panels_list 
+#' @param panel_separators 
+#' @param separators_lwds 
+#' @param separators_colors 
+#' @param incl_first_panel 
+#' @param print_one_line_sample_names 
+#' @param replicate_names 
+#' @param plot_width_parameters 
+#' @param windows_height 
+#' @param vertical_slots 
+#' @param segment_top 
+#' @param full_width_cm 
+#' @param font_color 
+#' @param font_family 
+#' @param colors 
+#' @param first_plot 
+#' @param letter_heights 
+#' @param scaling_factor 
+#'
+#' @return
+#'
+#' @examples
+#' 
 PlotPanels = function(plotting_segment, plotted_strand, panel_info, panels_list, panel_separators, separators_lwds, separators_colors, incl_first_panel, print_one_line_sample_names, replicate_names, plot_width_parameters, windows_height, vertical_slots, segment_top, full_width_cm, font_color, font_family, colors, first_plot, letter_heights, scaling_factor){
-  ### sample info at the left side of the plots
+  constants_defaults = ConstantsDefaults()
+  line_width_scaling_factor = constants_defaults['line_width_scaling_factor'] #@ 2022-10-05
+  std_letter_width = constants_defaults['std_letter_width'] #@ 2022-10-05
   .panel.width.list = panel_info[[plotted_strand]]$panel.width.list
   .n.panels = length(.panel.width.list[[plotting_segment]])
   .n.panel.separators = ifelse(incl_first_panel & !print_one_line_sample_names, as.integer(.n.panels/2), as.integer((.n.panels-1)/2))
   .panels = ifelse(incl_first_panel & !print_one_line_sample_names, 1, 2):.n.panels
   .separators = c()
   if (.n.panel.separators>0){
-    .separators = seq(ifelse(incl_first_panel | print_one_line_sample_names, 2, 3), .n.panels, by=2) #@ 3 <- 4
+    .separators = seq(ifelse(incl_first_panel | print_one_line_sample_names, 2, 3), .n.panels, by=2) 
     .panels = setdiff(.panels, .separators)
   }
   .subsample.matrix = do.call('cbind', lapply(panels_list[[plotted_strand]][[plotting_segment]], function(v) rep(names(v), v)))
@@ -4056,12 +5759,7 @@ PlotPanels = function(plotting_segment, plotted_strand, panel_info, panels_list,
   }
   for (.n.panel in .n.panels.iv){
     if (.n.panel %in% .panels){
-      .panel = which(.panels==.n.panel) + ifelse(incl_first_panel & !print_one_line_sample_names, 0, 1) #@
-      #@ if (.n.panel == 2){
-      #@   .panel = 2
-      #@ }else{
-      #@   .panel = which(.panels==.n.panel)
-      #@ }
+      .panel = which(.panels==.n.panel) + ifelse(incl_first_panel & !print_one_line_sample_names, 0, 1) 
     }
     if (print_one_line_sample_names){
       .sub.panels = structure(rep(1, length(.one.line.sample.names)), names=.one.line.sample.names)
@@ -4093,9 +5791,9 @@ PlotPanels = function(plotting_segment, plotted_strand, panel_info, panels_list,
         .trackname.cex = .font.size.first.panel*scaling_factor/12
         .horizontal.panels.list = panel_info[[plotted_strand]]$horizontal.panels.list
         .horizontal = .horizontal.panels.list[[plotting_segment]][.panel]
-        if (print_one_line_sample_names){ #@ ->
+        if (print_one_line_sample_names){ 
           .horizontal = TRUE
-        } #@ <-
+        } 
         if (.horizontal){
           text(x=ifelse(.n.panel != .n.panels, 0.8, -0.5*std_letter_width), y=0, labels=names(.sub.panels)[.sub.panel], adj=c(1, 0.5), srt=0, cex=.trackname.cex, family=font_family, font=ifelse(.panel==1,4,1), col=font_color[ifelse(.panel==1,'panel_1st','panel')])
         }else{
@@ -4113,9 +5811,31 @@ PlotPanels = function(plotting_segment, plotted_strand, panel_info, panels_list,
 
 #' Plot Matrix
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA 
 #'
+#' @param plotted_region 
+#' @param basic_plot_parameters 
+#' @param plot_start 
+#' @param plot_end 
+#' @param plot_width 
+#' @param bin_size 
+#' @param reverse_strand_direction 
+#' @param sample_subset 
+#' @param dummy_plot 
+#' @param tracks 
+#' @param plotting_segment 
+#' @param bin_stats 
+#'
+#' @return
+#' 
+#' @import S4Vectors
+#' @import IRanges
+#' @importFrom BiocGenerics strand
+#'
+#' @examples
+#' 
 PlotMatrix = function(plotted_region, basic_plot_parameters, plot_start, plot_end, plot_width, bin_size, reverse_strand_direction, sample_subset, dummy_plot, tracks, plotting_segment, bin_stats){
   .strand = unique(as.character(BiocGenerics::strand(plotted_region)))
   .bin.start = S4Vectors::mcols(plotted_region)$bin.start
@@ -4166,10 +5886,47 @@ PlotMatrix = function(plotted_region, basic_plot_parameters, plot_start, plot_en
 
 #' Plot Data
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA 
 #'
+#' @param plotting_segment 
+#' @param plot_mat 
+#' @param colors 
+#' @param strands_alpha 
+#' @param intermingled_color 
+#' @param sample_subset 
+#' @param windows_height 
+#' @param coords_tracks 
+#' @param coords_scale 
+#' @param first_plot 
+#' @param neg_vals_neg_strand 
+#' @param plotted_strand 
+#' @param y_par 
+#' @param plot_start 
+#' @param plot_end 
+#' @param bin_width 
+#' @param group_autoscale 
+#' @param incl_track_scales 
+#' @param scientific_scale 
+#' @param scale_font_size 
+#' @param log2transformed 
+#' @param full_width_cm 
+#' @param font_colors 
+#' @param font_family 
+#' @param scaling_factor 
+#' @param letter_widths 
+#' @param enhance_signals 
+#' @param scale_warning 
+#' @param verbosity 
+#'
+#' @return
+#'
+#' @examples
+#' 
 PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, intermingled_color, sample_subset, windows_height, coords_tracks, coords_scale, first_plot, neg_vals_neg_strand, plotted_strand, y_par, plot_start, plot_end, bin_width, group_autoscale, incl_track_scales, scientific_scale, scale_font_size, log2transformed, full_width_cm, font_colors, font_family, scaling_factor, letter_widths, enhance_signals, scale_warning=NULL, verbosity){
+  constants_defaults = ConstantsDefaults()
+  line_width_scaling_factor = constants_defaults['line_width_scaling_factor'] #@ 2022-10-05
   if (verbosity > 0) { cat(paste('plotting',  plotting_segment, 'data for samples'), '\n') }
   .base.cols = unlist(colors[[plotting_segment]])
   .enhance = enhance_signals[plotting_segment]
@@ -4189,50 +5946,49 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, interming
     .n.decimals = structure(c(NA, NA), names=c('+', '-'))
     if (.plotted.strand=='+-' & length(plot_mat)==2){
       .y.max = as.numeric(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['+']][['max']])), y_par[['+']][['max']], y_par[['+']][['max']][.seq.sample]))
-      .y.min = -as.numeric(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['-']][['max']])), y_par[['-']][['max']], y_par[['-']][['max']][.seq.sample])) #@ -y_par[['-']]['max']
-      .y.limits = structure(c(-1.5, 1.5), names=c('min', 'max')) # structure(c(.y.min, .y.max), names=c('min', 'max'))
-      .y.val['+'] = as.numeric(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['+']][['val']])), y_par[['+']][['val']], y_par[['+']][['val']][.seq.sample])) #@ y_par[['+']]['val']
-      .y.val['-'] = as.numeric(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['-']][['val']])), y_par[['-']][['val']], y_par[['-']][['val']][.seq.sample])) #@ y_par[['-']]['val']
-      .n.decimals['+'] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['+']][['dec']])), y_par[['+']][['dec']], y_par[['+']][['dec']][.seq.sample])) #@ y_par[['+']]['dec']
-      .n.decimals['-'] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['-']][['dec']])), y_par[['-']][['dec']], y_par[['-']][['dec']][.seq.sample])) #@ y_par[['-']]['dec']
-      .scientific =  as.logical(ifelse(scientific_scale=='all', TRUE, ifelse(scientific_scale=='none', FALSE, (ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['+']][['sci']])), y_par[['+']][['sci']], y_par[['+']][['sci']][.seq.sample]) | ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['-']][['sci']])), y_par[['-']][['sci']], y_par[['-']][['sci']][.seq.sample]))))) #@ (y_par[['+']]['sci'] | y_par[['-']]['sci'])
-      .y.exp['+'] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['+']][['exp']])), y_par[['+']][['exp']], y_par[['+']][['exp']][.seq.sample])) #@ y_par[['+']]['exp']
-      .y.exp['-'] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['-']][['exp']])), y_par[['-']][['exp']], y_par[['-']][['exp']][.seq.sample])) #@ y_par[['-']]['exp']
+      .y.min = -as.numeric(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['-']][['max']])), y_par[['-']][['max']], y_par[['-']][['max']][.seq.sample])) 
+      .y.limits = structure(c(-1.5, 1.5), names=c('min', 'max')) 
+      .y.val['+'] = as.numeric(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['+']][['val']])), y_par[['+']][['val']], y_par[['+']][['val']][.seq.sample])) 
+      .y.val['-'] = as.numeric(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['-']][['val']])), y_par[['-']][['val']], y_par[['-']][['val']][.seq.sample])) 
+      .n.decimals['+'] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['+']][['dec']])), y_par[['+']][['dec']], y_par[['+']][['dec']][.seq.sample])) 
+      .n.decimals['-'] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['-']][['dec']])), y_par[['-']][['dec']], y_par[['-']][['dec']][.seq.sample])) 
+      .scientific =  as.logical(ifelse(scientific_scale=='all', TRUE, ifelse(scientific_scale=='none', FALSE, (ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['+']][['sci']])), y_par[['+']][['sci']], y_par[['+']][['sci']][.seq.sample]) | ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['-']][['sci']])), y_par[['-']][['sci']], y_par[['-']][['sci']][.seq.sample]))))) 
+      .y.exp['+'] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['+']][['exp']])), y_par[['+']][['exp']], y_par[['+']][['exp']][.seq.sample])) 
+      .y.exp['-'] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[['-']][['exp']])), y_par[['-']][['exp']], y_par[['-']][['exp']][.seq.sample])) 
       .plot.mat = plot_mat[['+']] / .y.val['+']
     }else{
-      .y.max = as.numeric(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[[.plotted.strand]][['max']])), y_par[[.plotted.strand]][['max']], y_par[[.plotted.strand]][['max']][.seq.sample])) #@ y_par[[.plotted.strand]]['max']
+      .y.max = as.numeric(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[[.plotted.strand]][['max']])), y_par[[.plotted.strand]][['max']], y_par[[.plotted.strand]][['max']][.seq.sample])) 
       .y.min = 0
       .y.limits = structure(sort(ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*c(0, 1.5)), names=c('min', 'max'))
-      .y.val[.plotted.strand] = as.numeric(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[[.plotted.strand]][['val']])), y_par[[.plotted.strand]][['val']], y_par[[.plotted.strand]][['val']][.seq.sample])) #@ y_par[[.plotted.strand]]['val']
-      .n.decimals[.plotted.strand] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[[.plotted.strand]][['dec']])), y_par[[.plotted.strand]][['dec']], y_par[[.plotted.strand]][['dec']][.seq.sample])) #@ y_par[[.plotted.strand]]['dec']
-      .scientific = as.logical(ifelse(scientific_scale=='all', TRUE, ifelse(scientific_scale=='none', FALSE, ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[[.plotted.strand]][['sci']])), y_par[[.plotted.strand]][['sci']], y_par[[.plotted.strand]][['sci']][.seq.sample])))) #@ y_par[[.plotted.strand]]['sci']
-      .y.exp[.plotted.strand] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[[.plotted.strand]][['exp']])), y_par[[.plotted.strand]][['exp']], y_par[[.plotted.strand]][['exp']][.seq.sample])) #@ y_par[[.plotted.strand]]['exp']
+      .y.val[.plotted.strand] = as.numeric(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[[.plotted.strand]][['val']])), y_par[[.plotted.strand]][['val']], y_par[[.plotted.strand]][['val']][.seq.sample])) 
+      .n.decimals[.plotted.strand] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[[.plotted.strand]][['dec']])), y_par[[.plotted.strand]][['dec']], y_par[[.plotted.strand]][['dec']][.seq.sample])) 
+      .scientific = as.logical(ifelse(scientific_scale=='all', TRUE, ifelse(scientific_scale=='none', FALSE, ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[[.plotted.strand]][['sci']])), y_par[[.plotted.strand]][['sci']], y_par[[.plotted.strand]][['sci']][.seq.sample]))))
+      .y.exp[.plotted.strand] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[[.plotted.strand]][['exp']])), y_par[[.plotted.strand]][['exp']], y_par[[.plotted.strand]][['exp']][.seq.sample])) 
       .plot.mat = plot_mat[[.plotted.strand]] / .y.val[.plotted.strand]
     }
     if (any(.plot.mat > 1.5)){ .plot.mat[which(.plot.mat > 1.5)] = 1.5 }
     plot(0, 0, type='n', xlim=c(plot_start, plot_end), ylim=.y.limits, ann=FALSE, axes=FALSE, bg='transparent', bty='n', xaxs='i', yaxs ='i')
     .adj.colors = structure(unlist(lapply(c('+', '-'), function(.strand) {.adj.rgb = (255 - (ifelse(!.enhance, strands_alpha[.strand], 100)/100)*(255 - as.vector(col2rgb(.base.cols[.base.seq.sample]))))/255; .adj.color = rgb(.adj.rgb[1], .adj.rgb[2], .adj.rgb[3]); return(.adj.color)})), names=c('+', '-'))
     if (.plotted.strand=='+-'){
-      #abline(h=0, col='darkgray', lwd=scaling_factor*line_width_scaling_factor*0.25, lend=1) #@ 
       lines(as.integer(rownames(.plot.mat)), ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*.plot.mat[,.seq.sample], type='h', lend=1,
-            lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors['+']) #@ ifelse(.enhance, 2, 1) -> ifelse(.enhance, 5, 1)
+            lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors['+']) 
       .plot.mat = plot_mat[['-']] / .y.val['-']
       if (any(.plot.mat > 1.5)){ .plot.mat[which(.plot.mat > 1.5)] = 1.5 }
       if (intermingled_color!='same'){
         if (intermingled_color=='complementary'){
-          .adj.colors['-'] = sapply(.adj.colors['-'], function(c) convert_color(c, phi=180))
+          .adj.colors['-'] = sapply(.adj.colors['-'], function(c) ConvertColor(c, phi=180))
         }else if (intermingled_color=='analogous_right'){
-          .adj.colors['-'] = sapply(.adj.colors['-'], function(c) convert_color(c, phi=30))
+          .adj.colors['-'] = sapply(.adj.colors['-'], function(c) ConvertColor(c, phi=30))
         }else if (intermingled_color=='analogous_left'){
-          .adj.colors['-'] = sapply(.adj.colors['-'], function(c) convert_color(c, phi=-30))
+          .adj.colors['-'] = sapply(.adj.colors['-'], function(c) ConvertColor(c, phi=-30))
         }
       }
       lines(as.integer(rownames(.plot.mat)), -1*.plot.mat[,.seq.sample], type='h', lend=1,
-            lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors['-'])  #@ ifelse(.enhance, 2, 1) -> ifelse(.enhance, 5, 1)
-      abline(h=0, col='whitesmoke', lwd=scaling_factor*line_width_scaling_factor*0.5, lend=1) #@ 
+            lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors['-'])  
+      abline(h=0, col='whitesmoke', lwd=scaling_factor*line_width_scaling_factor*0.5, lend=1) 
     }else{
       lines(as.integer(rownames(.plot.mat)), ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*.plot.mat[,.seq.sample], type='h', lend=1,
-            lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors[.plotted.strand])  #@ ifelse(.enhance, 2, 1) -> ifelse(.enhance, 5, 1)
+            lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors[.plotted.strand])  
     }
     if (incl_track_scales){
       .coords.per.mm = 2/(diff(coords_scale)*full_width_cm*10)
@@ -4295,16 +6051,26 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, interming
 
 #' Y Parameters
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA 
 #'
+#' @param plot_mat 
+#' @param plotting_segment 
+#' @param force_scale_list 
+#' @param group_autoscale 
+#'
+#' @return
+#'
+#' @examples
+#' 
 YParameters = function(plot_mat, plotting_segment, force_scale_list, group_autoscale){
   if (!is.null(force_scale_list)){
     if (is.null(force_scale_list[[plotting_segment]]) | is.na(force_scale_list[[plotting_segment]])){
       if (as.logical(group_autoscale[plotting_segment])){
         .y.val = structure(max(plot_mat, na.rm=T), names='max')
       }else{
-        .y.val = apply(plot_mat, 2, max, na.rm=T) #@ new part
+        .y.val = apply(plot_mat, 2, max, na.rm=T) 
       }
     }else{
       .y.val = structure(as.numeric(ifelse(is.na(force_scale_list[plotting_segment]), max(plot_mat, na.rm=T), force_scale_list[plotting_segment])), names='forced')
@@ -4313,7 +6079,7 @@ YParameters = function(plot_mat, plotting_segment, force_scale_list, group_autos
     if (as.logical(group_autoscale[plotting_segment])){
       .y.val = structure(max(plot_mat, na.rm=T), names='max')
     }else{
-      .y.val = apply(plot_mat, 2, max, na.rm=T) #@ new part
+      .y.val = apply(plot_mat, 2, max, na.rm=T) 
     }
   }
   .scientific = structure(rep(FALSE, length(.y.val)), names=names(.y.val))
@@ -4335,38 +6101,26 @@ YParameters = function(plot_mat, plotting_segment, force_scale_list, group_autos
   return(list('max'=.y.max, 'val'=.y.val, 'dec'=.n.decimals, 'sci'=.scientific, 'exp'=.final.exponent))
 }
 
-YParameters_obs = function(plot_mat, plotting_segment, force_scale, group_autoscale){
-  if (is.null(force_scale)){
-    .y.val = max(plot_mat, na.rm=T)
-  }else{
-    .y.val = as.numeric(ifelse(is.na(force_scale[plotting_segment]), max(plot_mat, na.rm=T), force_scale[plotting_segment]))
-  }
-  .scientific = FALSE
-  .n.decimals = 0
-  if (.y.val==0){
-    .y.val = 1
-  }
-  .exponent = as.integer(log10(.y.val)) + ifelse(.y.val < 1, -1, 0)
-  .y.val = 10^.exponent*round(.y.val/10^.exponent, 1)
-  if (abs(.exponent) > 2){
-    .scientific = TRUE
-    .n.decimals = 1
-  }else if (.y.val < 1){
-    .n.decimals = abs(.exponent)
-  }
-  .y.val = round(.y.val, .n.decimals)
-  .final.exponent = as.integer(log10(.y.val)) + ifelse(.y.val < 1, -1, 0)
-  .y.max = 1.5*.y.val
-  return(c('max'=.y.max, 'val'=.y.val, 'dec'=.n.decimals, 'sci'=.scientific, 'exp'=.final.exponent))
-}
-
-
 
 #' Segment Top
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA 
 #'
+#' @param plotting_segment 
+#' @param plotted_strand 
+#' @param windows_height 
+#' @param annot_info 
+#' @param dummy_plot 
+#' @param tracks 
+#' @param unstranded_beds_names 
+#' @param verbosity 
+#'
+#' @return
+#'
+#' @examples
+#' 
 SegmentTop = function(plotting_segment, plotted_strand, windows_height, annot_info, dummy_plot, tracks, unstranded_beds_names, verbosity){
   if (plotting_segment %in% names(windows_height)){
     .segment.top = which(names(windows_height)==plotting_segment)-1
@@ -4399,10 +6153,56 @@ SegmentTop = function(plotting_segment, plotted_strand, windows_height, annot_in
 
 #' Plot Annotation
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA 
 #'
+#' @param annot_info 
+#' @param stranded 
+#' @param annot_cols 
+#' @param annotation_packing 
+#' @param plotted_region 
+#' @param plotted_strand 
+#' @param substrand 
+#' @param basic_plot_parameters 
+#' @param plot_start 
+#' @param plot_end 
+#' @param plot_width 
+#' @param bin_size 
+#' @param reverse_strand_direction 
+#' @param incl_feature_names 
+#' @param feature_names_above 
+#' @param incl_feature_brackets 
+#' @param incl_feature_shadings 
+#' @param feature_shading_colors 
+#' @param feature_shading_alpha 
+#' @param plot_width_parameters 
+#' @param plot_vertical_parameters 
+#' @param final_feature_text_org 
+#' @param windows_height 
+#' @param feature_font_size 
+#' @param annotation_panel_font_size 
+#' @param annot_panel_dist 
+#' @param coords_tracks 
+#' @param font_colors 
+#' @param font_family 
+#' @param first_plot 
+#' @param scaling_factor 
+#' @param verbosity 
+#'
+#' @return
+#' 
+#' @import S4Vectors
+#' @import IRanges
+#'
+#' @examples
+#' 
 PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, plotted_region, plotted_strand, substrand, basic_plot_parameters, plot_start, plot_end, plot_width, bin_size, reverse_strand_direction, incl_feature_names, feature_names_above, incl_feature_brackets, incl_feature_shadings, feature_shading_colors, feature_shading_alpha, plot_width_parameters, plot_vertical_parameters, final_feature_text_org, windows_height, feature_font_size, annotation_panel_font_size, annot_panel_dist=0.4, coords_tracks, font_colors, font_family, first_plot, scaling_factor, verbosity){
+  constants_defaults = ConstantsDefaults()
+  line_width_scaling_factor = constants_defaults['line_width_scaling_factor'] #@ 2022-10-05
+  arrow_constant = constants_defaults['arrow_constant'] #@ 2022-10-05
+  std_letter_width = constants_defaults['std_letter_width'] #@ 2022-10-05
+  annot_panel_dist = constants_defaults['annot_panel_dist'] #@ 2022-10-05
   .strand = substrand # ifelse(plotted_strand == '+' | plotted_strand == '+-', '+', '-')
   .bin.start = S4Vectors::mcols(plotted_region)$bin.start
   .bin.width = basic_plot_parameters[[plotted_strand]]$bin.info[2]
@@ -4413,7 +6213,7 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
   .length.arrows = 0.363*.coords.per.mm/arrow_constant
   .direction.arrows = ifelse(.strand=='+', -1, +1)*.length.arrows
   .line.width = 4*scaling_factor*line_width_scaling_factor
-  .y.scaling = as.numeric(plot_vertical_parameters['annot']/0.8) #@ as.numeric(plot_vertical_parameters['annot'] * basic_plot_parameters[[plotted_strand]][['track.height.cm']])/(0.8*0.3)
+  .y.scaling = as.numeric(plot_vertical_parameters['annot']/0.8) 
   for (.annotation in names(annot_info[[.strand]])){
     if (stranded){
       .stranded.annotation = paste0(.annotation, .strand)
@@ -4452,8 +6252,7 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
             for (.annot.line in .packing[[.feat.name]][[.pack.line]]){
               .overall.annot.range = IRanges::ranges(.feat.annotation)[.annot.line]
               .y.vals = sort(ifelse(feature_names_above[[.strand]][.annotation], -1, 1)*c(.annot.steps*((-.pack.line+0.5)-0.25), .annot.steps*((-.pack.line+0.5)+0.25)))
-              #@cat(.y.vals, '\n') #@cat
-              .arrow.scaling = abs(diff(.y.vals))/.y.scaling  #@ replace abs(diff(.y.vals)) with .arrow.scaling
+              .arrow.scaling = abs(diff(.y.vals))/.y.scaling  
               .y.center = mean(.y.vals)
               if (is.null(annot_cols[[.annotation]])){
                 if ('itemRgb' %in% colnames(S4Vectors::mcols(.feat.annotation))){
@@ -4633,9 +6432,76 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
 
 #' Plot Segment
 #'
-#' @details
-#' Internal function:
+#' @description Internal function: 
+#'  
+#' @author SLA 
 #'
+#' @param feature 
+#' @param plotted_region 
+#' @param plotted_strand 
+#' @param both_strands 
+#' @param plotting_segment 
+#' @param basic_plot_parameters 
+#' @param neg_vals_neg_strand 
+#' @param plot_width_parameters 
+#' @param plot_vertical_parameters 
+#' @param annot_info 
+#' @param panel_info 
+#' @param panels_list 
+#' @param panel_separators 
+#' @param separators_lwds 
+#' @param separators_colors 
+#' @param incl_first_panel 
+#' @param print_one_line_sample_names 
+#' @param replicate_names 
+#' @param header 
+#' @param header_font_sizes 
+#' @param scaling_factor 
+#' @param full_width_cm 
+#' @param genomic_scale_on_top 
+#' @param genomic_scale_font_size 
+#' @param reverse_strand_direction 
+#' @param bin_stats 
+#' @param dummy_plot 
+#' @param tracks 
+#' @param strands_alpha 
+#' @param intermingled_color 
+#' @param unstranded_beds 
+#' @param annotation_packing 
+#' @param annotation_panel_font_size 
+#' @param incl_feature_names 
+#' @param feature_font_size 
+#' @param feature_names_above 
+#' @param final_feature_text_org 
+#' @param incl_feature_brackets 
+#' @param incl_feature_shadings 
+#' @param feature_shading_colors 
+#' @param feature_shading_alpha 
+#' @param annot_cols 
+#' @param group_autoscale 
+#' @param incl_track_scales 
+#' @param scientific_scale 
+#' @param scale_font_size 
+#' @param force_scale_list 
+#' @param log2transformed 
+#' @param colors 
+#' @param alternating_background 
+#' @param bgr_colors 
+#' @param bgr_alpha 
+#' @param font_colors 
+#' @param letter_widths 
+#' @param letter_heights 
+#' @param enhance_signals 
+#' @param first_plot 
+#' @param verbosity 
+#'
+#' @return
+#' 
+#' @import IRanges
+#' @importFrom GenomeInfoDb seqnames
+#'
+#' @examples
+#' 
 PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, plotting_segment, basic_plot_parameters, neg_vals_neg_strand, plot_width_parameters, plot_vertical_parameters, annot_info, panel_info, panels_list, panel_separators, separators_lwds, separators_colors, incl_first_panel, print_one_line_sample_names, replicate_names, header, header_font_sizes, scaling_factor, full_width_cm, genomic_scale_on_top, genomic_scale_font_size, reverse_strand_direction, bin_stats, dummy_plot, tracks, strands_alpha, intermingled_color,  unstranded_beds, annotation_packing, annotation_panel_font_size, incl_feature_names, feature_font_size, feature_names_above, final_feature_text_org, incl_feature_brackets, incl_feature_shadings, feature_shading_colors, feature_shading_alpha, annot_cols, group_autoscale, incl_track_scales, scientific_scale, scale_font_size, force_scale_list, log2transformed, colors, alternating_background, bgr_colors, bgr_alpha, font_colors, letter_widths, letter_heights, enhance_signals, first_plot, verbosity){
   .strand = ifelse(plotted_strand == '+' | plotted_strand == '+-', '+', '-')
   .plotted.region = plotted_region[[.strand]]
@@ -4644,18 +6510,18 @@ PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, pl
   .plot.start = ifelse(.strand=='+' | !reverse_strand_direction, IRanges::start(.plotted.region), IRanges::end(.plotted.region))
   .plot.end = ifelse(.strand=='+' | !reverse_strand_direction, IRanges::end(.plotted.region), IRanges::start(.plotted.region))
   .font.family = 'sans'
-
+  
   .windows.height=basic_plot_parameters[[plotted_strand]]$windows.height
   .coords.tracks=plot_width_parameters$coords.tracks
   .coords.scale=plot_width_parameters$coords.scale
   .bin.size=as.integer(basic_plot_parameters[[plotted_strand]]$bin.info[1])
   .panel.width=diff(plot_width_parameters$coords.panels)
-
+  
   .segment.top = SegmentTop(plotting_segment, .strand, .windows.height, annot_info, dummy_plot, tracks, unstranded_beds, verbosity)
   if (.segment.top==1 & first_plot & verbosity > 0){
     cat(paste0('plotting ', ifelse(!is.null(feature), paste0(feature, '@'), ''), .chrom, ':', .plot.start, '-', .plot.end), '\n')
   }
-
+  
   if (grepl('spacer', plotting_segment, fixed=TRUE)){
     PlotSpacer(.windows.height, plotting_segment, .coords.tracks[2], plotted_strand, neg_vals_neg_strand, panel_separators, separators_lwds, separators_colors, scaling_factor)
   }else if (plotting_segment=='header'){
@@ -4682,7 +6548,7 @@ PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, pl
       .annots.indices = unlist(lapply(names(.stranded.annot.info[[.strand]]), grep, names(basic_plot_parameters[['+-']][['windows.height']]), fixed=TRUE))
       .space.index = setdiff(seq(min(.annots.indices), max(.annots.indices), 1), .annots.indices)
       if (length(.space.index) > 0){
-        spacer_segment = names(basic_plot_parameters[['+-']][['windows.height']])[rev(.space.index)[1]] #@ rev(.space.index)[1] <- .space.index
+        spacer_segment = names(basic_plot_parameters[['+-']][['windows.height']])[rev(.space.index)[1]] 
         if (grepl('spacer', spacer_segment, fixed=TRUE)){
           PlotSpacer(.windows.height, spacer_segment, .coords.tracks[2], plotted_strand, neg_vals_neg_strand, panel_separators, separators_lwds, separators_colors, scaling_factor)
         }
@@ -4708,9 +6574,9 @@ PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, pl
     }
     .n.track = which(names(tracks[[.strand]])==plotting_segment)
     .vertical.slots = grep(paste0("^", plotting_segment), names(.windows.height))
-    if (length(.vertical.slots)==0){ #@ ->
+    if (length(.vertical.slots)==0){ 
       .vertical.slots = grep(paste0(plotting_segment), names(.windows.height), fixed=TRUE)
-    } #@ <-
+    } 
     .first.plot = first_plot
     if (alternating_background){
       .bgr.colors = c(adjustcolor(bgr_colors[1], alpha.f=bgr_alpha), adjustcolor(bgr_colors[2], alpha.f=bgr_alpha))
@@ -4730,4 +6596,825 @@ PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, pl
     .bin.width = basic_plot_parameters[[plotted_strand]]$bin.info[2]
     PlotData(plotting_segment, .plot.mat, colors, strands_alpha, intermingled_color, .sample.subset, .windows.height, .coords.tracks, .coords.scale, .first.plot, neg_vals_neg_strand, plotted_strand, .y.par, .plot.start, .plot.end, .bin.width, group_autoscale, incl_track_scales, scientific_scale, scale_font_size, log2transformed, full_width_cm, font_colors, .font.family, scaling_factor, letter_widths, enhance_signals, scale_warning=NULL, verbosity)
   }
+}
+
+
+#' Is Empty 
+#'
+#' @description Internal function: 
+#' Convenience function checks whether all NA or empty string
+#' 
+#' @author MS
+#'
+#' @param x vector
+#'
+#' @return TRUE/FALSE for each element in input vector
+#' 
+#' @examples
+#' IsEmpty(NA)
+#' IsEmpty(c(NA, NA))
+#' IsEmpty(c('', NA))
+#' IsEmpty(c('fnyg', NA)) 
+#' 
+#' @note change throughout from isempty to IsEmpty - done? #% 2022-10-04
+#' 
+IsEmpty = function(x){
+  is.na(x) | x == ''
+}
+
+
+#' All Empty
+#'
+#' @description Internal function: 
+#' Convenience function checks whether all NA or empty in a vector of strings
+#' 
+#' @author MS
+#'
+#' @param x vector
+#'
+#' @return TRUE/FALSE
+#' 
+#' @examples
+#' AllEmpty(NA)
+#' AllEmpty(c(NA, NA))
+#' AllEmpty(c('', NA))
+#' AllEmpty(c('fnyg', NA)) 
+#' 
+#' @note change throughout from allempty to AllEmpty - done? #% 2022-10-04
+#' 
+AllEmpty = function(x){
+  sum( sapply(x, IsEmpty) ) == length(x)
+}
+
+
+#' Ordered Split
+#'
+#' @description Internal function: 
+#' Split data frame by values in a column but maintain order as order of appearance. 
+#' Different to base R split.data.frame where order of split objects are ordered as default factors.
+#' 
+#' @author MS
+#'
+#' @param x 
+#' @param f 
+#' @param drop 
+#'
+#' @return
+#'
+#' @examples
+#' 
+#' @note change throughout from ordered_split to OrderedSplit - done? #% 2022-10-04
+#' 
+OrderedSplit = function(x, f, drop=TRUE){
+  spl = split(x, f, drop)
+  spl[unique(as.character(f))]
+}
+
+
+#' Get Annotations
+#'
+#' @description Internal function: 
+#' Reads Annotations (paths and options) from Excel template
+#'
+#' @author MS (minor additions by SLA)
+#'
+#' @param annotations Dataframe based on ANNOTATIONS sheet in Excel template
+#' 
+#' @details annotations is a data.frame with at least 2 columns *annotation_file* and *annotation_name*, both
+#'   case-sensitive and the space is required.
+#'
+#' @return Named list of path, or named list of GRanges. Names used are entries in the *annotation_name* column.
+#'
+#' @examples
+#' 
+#' @note change throughout from get_annotations to GetAnnotations - done? #% 2022-10-04
+#' 
+GetAnnotations = function(annotations) {
+  annot=as.list(annotations$annotation_file)
+  names(annot) = annotations$annotation_name
+  
+  default_options = DefaultAnnotationOptions()
+  
+  annot_plot_options = lapply(names(default_options), function(opt) {
+    if ( opt %in% colnames(annotations) ) {
+      if (is.list(annotations[[opt]])){
+        l = annotations[[opt]]
+      }else{ 
+        l = sapply(annotations[[opt]], function(x) if(x=='TRUE' | x=='FALSE'){as.logical(x)}else{x})
+      } 
+    } else {
+      l = rep(default_options[[opt]], nrow(annotations))
+    }
+    names(l) = annotations$annotation_name
+    l
+  })
+  names(annot_plot_options) = names(default_options)
+  
+  list('annot' = annot,
+       'annot_plot_options' = annot_plot_options)
+  
+}
+
+
+#' Parse Option
+#'
+#' @description Internal function: 
+#' Parse string into relevant R object class
+#'
+#' @author MS
+#'
+#' @param option_str string representation of the option
+#'
+#' @details String can represent a named list, unnamed list, named vector, unnamed vector or single value. If string contains ";" assumes a list; if string contains "," assumes a vector; individual strings are interprated as "NULL" -> NULL; if "TRUE" or "FALSE" --> TRUE/FALSE; if single number --> as.numeric; if single non-number --> as.character;
+#'
+#' @return
+#'
+#' @examples
+#' ParseOption("1.2,3")
+#' ParseOption("RNA-seq:1.2,3;TT-seq:2,4")
+#' 
+#' @note change throughout from parse_option to ParseOption - done? #% 2022-10-04
+#' 
+ParseOption = function(option_str) {
+  if( is.null(option_str) ){
+    NULL
+  }else if(grepl(';', option_str)){
+    option_list = strsplit(option_str,';')[[1]]
+    option_list_names = lapply(option_list, function(op) if(grepl(':', op)){sub(':.*', '', op)}else{NULL})
+    option_list = lapply(option_list, function(op) ParseOption(sub('.*:', '', op)))
+    names(option_list) = option_list_names
+    option_list
+  }else if(grepl(',', option_str)){
+    sapply(strsplit(option_str,',')[[1]], ParseOption, USE.NAMES = FALSE)
+  }else if( is.na(option_str) | option_str == '' ){  #same as empty cell in excel sheet
+    NULL
+  }else if(option_str == 'TRUE' | option_str == 'T'){
+    TRUE
+  }else if(option_str == 'FALSE' | option_str == 'F'){
+    FALSE
+  }else if(option_str == 'NULL'){
+    NULL
+  }else if( !is.na(suppressWarnings(as.numeric(option_str))) ){
+    as.numeric(option_str)
+  }else{
+    option_str
+  }
+}
+
+
+#' Deparse Option
+#'
+#' @description Internal function: 
+#' Parse option into string
+#'
+#' @author MS
+#'
+#' @param option named list, vector or single element
+#'
+#' @return String representation of object, compatible with ParseOption
+#'
+#' @examples
+#' DeparseOption(c(1.2,3))
+#' DeparseOption(list('RNA-seq' = c(1.2,3), 'TT-seq' = c(2,4)))
+#' DeparseOption(list('RNA-seq' = c(TRUE,FALSE), 'TT-seq' = c(TRUE,FALSE)))
+#' 
+#' @note change throughout from deparse_option to DeparseOption - done? #% 2022-10-04
+#' 
+DeparseOption = function(option) {
+  if( length(option) > 1 ){
+    if ( is.list(option) ) {
+      elems = lapply(option, DeparseOption)
+      paste(paste(names(elems), elems, sep=':'), collapse=';')
+    } else {
+      paste(sapply(option, DeparseOption), collapse=',')
+    }
+  } else if( is.null(option) ) {
+    "NULL"
+  } else if( option == '' ) {
+    "NULL"
+  } else if( is.character(option) ) {
+    option
+  } else if( is.numeric(option) ) {
+    as.character(option)
+  } else if( option == TRUE ){
+    "TRUE"
+  }else if( option == FALSE ){
+    "FALSE"
+  }else  {
+    option
+  }
+}
+
+
+#' Common Prefix
+#'
+#' @description Internal function: 
+#' Find common prefix
+#'
+#' @author MS
+#'
+#' @param vector_of_strings 
+#'
+#' @return A single string which is a common prefix in all strings
+#'
+#' @examples
+#' 
+#' @note change throughout from common_prefix to CommonPrefix - done? #% 2022-10-04
+#' 
+CommonPrefix = function(vector_of_strings) {
+  if ( length(vector_of_strings) == 1 ) {
+    ''
+  } else {
+    str1 = vector_of_strings[1]
+    
+    eq_chars = sapply(1:nchar(str1), function(i)
+      all(
+        substring(str1, i, i) == sapply(vector_of_strings, function(n)
+          substring(n, i, i))
+      ))
+    
+    if ( all(eq_chars == TRUE) ) {
+      str1
+    } else {
+      substring(str1, 1, min(which(eq_chars == FALSE)) - 1)
+    }
+  }
+}
+
+
+#' Get Plot Options
+#'
+#' @description Internal function: 
+#' Reads Global Options from Excel template
+#'
+#' @author MS
+#'
+#' @param options Dataframe based on GLOBAL_OPTIONS sheet in Excel template
+#' 
+#' @details options is a data.frame with columns named *Option* and *Value*,
+#'   both case-sensitive. Several entries are vectors of character, numeric or
+#'   boolean. This function tries to parse this correctly.
+#'   
+#' @return Named list of values
+#'
+#' @examples
+#' 
+#' @note change throughout from get_plot_options to GetPlotOptions - done? #% 2022-10-04
+#' 
+GetPlotOptions = function(options) {
+  if(is.null(options)){
+    cat(' ! no options found in Excel sheet, setting all to defaults')
+    opts = DefaultPlotOptions()
+  }else{
+    opts = as.list(options$Value)
+    names(opts) = options$Option
+    opts = lapply(opts, ParseOption)
+  }
+  opts
+}
+
+
+#' Fill Df
+#'
+#' @description Internal function: 
+#' Fill Empty Rows in individual columns in dataframe
+#'
+#' @author MS/SLA
+#'
+#' @param df Dataframe
+#'
+#' @details Empty rows in dataframe from loaded XL sheet are filled with values
+#'   from columns above in hierarchical fashion such that the right-most columns
+#'   are only filled if specified in the dataset defining row of the seqtype.
+#'   See Excel template sheet in \code{inst/extdata/example_excel_template.xls}
+#'   for more information.
+#'
+#' @return Dataframe
+#'
+#' @examples
+#' 
+#' @note change throughout from fill_df to FillDf - done? #% 2022-10-04
+#' 
+FillDf = function(df) {
+  filled_df = data.frame()
+  datasets = df$dataset[!is.na(df$dataset)]
+  dateset_start_rows = structure(which(!is.na(df$dataset)), names=datasets)
+  if (length(datasets) == 1){
+    dateset_end_rows = structure(nrow(df), names=datasets)  
+  }else{
+    dateset_end_rows = structure(c(dateset_start_rows-1, nrow(df))[2:(length(datasets)+1)], names=datasets) 
+  }
+  for (dataset in datasets){
+    sub_df = df[dateset_start_rows[dataset]:dateset_end_rows[dataset], , drop=FALSE]
+    allowed_cols = intersect(colnames(sub_df)[which(!is.na(sub_df[1,]))], c('color', 'bigwig_directory', 'dataset', grep('subgroup_', colnames(df), value=TRUE)))
+    for ( i in 2:nrow(sub_df) ) {
+      for (col in allowed_cols){
+        if ( IsEmpty(sub_df[[col]][i]) & !IsEmpty(sub_df[[col]][i-1]) ){
+          sub_df[[col]][i] = sub_df[[col]][i-1]
+        }
+      }
+    }
+    filled_df = rbind(filled_df, sub_df)
+  }
+  filled_df
+}
+
+
+#' Empty Df
+#'
+#' @description Internal function: 
+#' Empty Unnecessary Cells in Sample DataFrame
+#'
+#' @author MS
+#'
+#' @param df a dataframe
+#'
+#' @details Empty rows in data frame from a session data frame such that cells
+#'   which have exactly same entry in cell above are left empty. This only
+#'   applies to columns named 'bigwig_directory', 'dataset' and all columns with
+#'   prefix 'subgroup_'. Output should look similar to the Samples sheet in the
+#'   Excel template in \code{inst/extdata/example_excel_template.xls}.
+#'   
+#' @return trimmed dataframe
+#'
+#' @examples
+#' 
+#' @note change throughout from empty_df to EmptyDf - done? #% 2022-10-04
+#' 
+EmptyDf = function(df) {
+  emptied_df = df
+  if ( nrow(df) > 1 ) {
+    cols = c('bigwig_directory', 'dataset', colnames(df)[grepl('^subgroup_', colnames(df))])
+    for ( i in 2:nrow(emptied_df) ) {
+      for ( col in cols ) {
+        if ( is.na(emptied_df[[col]][[i]]) ) {
+          emptied_df[[col]][[i]] = ''
+        } else if ( !is.na(df[[col]][[i - 1]]) & emptied_df[[col]][[i]] == df[[col]][[i-1]] ) {
+          emptied_df[[col]][[i]] = ''
+        }
+      }
+    }
+  }
+  emptied_df
+}
+
+
+#' Get Samples
+#'
+#' @description Internal function: 
+#' Get samples from a data frame containing at a minimum columns dataset
+#'
+#' @author MS
+#'
+#' @param filled_df a filled dataframe (see details)
+#' 
+#' @details Get samples from a data frame containing at a minimum columns
+#'   dataset. Columns on the right to dataset may contain subcategories,
+#'   called subgroup_1, subgroup_2 etc.
+#'   
+#' @return Named lists or nested lists of named lists
+#'
+#' @examples
+#' df = data.frame(dataset=c(rep('a',4), rep('b',2)), subgroup_1=c('x','x','y','y', 'x','y'), stringsAsFactors=FALSE)
+#' GetSamples(df)
+#' df = data.frame(dataset=c(rep('a',4), rep('b',2)), subgroup_1=c('x','x','y','y', 'x','y'), subgroup_2=c('a', 'b', 'a', 'b', NA, NA), stringsAsFactors=FALSE)
+#' GetSamples(df)
+#' 
+#' @note change throughout from get_samples to GetSamples - done? #% 2022-10-04
+#' 
+GetSamples = function(filled_df){
+  start_col = which(colnames(filled_df) == 'dataset')
+  sample_split = function(df, split_col) {
+    if( split_col >= ncol(df) ) {
+      return( as.character(unique(df[[ncol(df)]])) )
+    } else if ( AllEmpty(df[[split_col+1]]) ) { 
+      return ( as.character(unique(df[[split_col]])) )
+    } else {
+      return ( lapply(OrderedSplit(df, df[[split_col]], drop=TRUE), function(dfi) sample_split(dfi, split_col+1)) )
+    }
+  }
+  sample_split(filled_df, start_col)
+}
+
+
+#' Get Colors
+#'
+#' @description Internal function: 
+#' Get colors from a data frame containing at a minimum columns color and dataset
+#'
+#' @author MS
+#'
+#' @param filled_df a filled dataframe (see details)
+#' 
+#' @details Get colors from a data frame containing at a minimum columns
+#'   color and dataset. Columns on the right to dataset may contain subcategories,
+#'   called subgroup_1, subgroup_2 etc. UPS: dataset and subgroup_s must be the right-most columns, see example below.
+#'
+#' @return Named lists or nested lists of named lists
+#'
+#' @importFrom dplyr distinct
+#'
+#' @examples
+#' df = data.frame(color=c(rep('red', 4), rep('green', 2)),dataset=c(rep('a',4), rep('b',2)), subgroup_1=c('x','x','y','y', 'x','y'), subgroup_2=1:6, stringsAsFactors=FALSE)
+#' GetColors(df)
+#' 
+#' @note change throughout from get_colors to GetColors - done? #% 2022-10-04
+#' 
+GetColors = function(filled_df){
+  start_col = which(colnames(filled_df) == 'dataset')
+  color_split = function(df, split_col) {
+    if( split_col >= ncol(df) ) {
+      split_col_name = colnames(df)[ncol(df)]
+      df_dist = dplyr::distinct(df, .data[[split_col_name]], color)
+      colors = df_dist$color
+      names(colors) = df_dist[[split_col_name]]
+      return (colors)
+    } else if ( AllEmpty(df[[split_col+1]]) ) { 
+      split_col_name = colnames(df)[split_col]
+      df_dist = dplyr::distinct(df, .data[[split_col_name]], color)
+      colors = df_dist$color
+      names(colors) = df_dist[[split_col_name]]
+      return (colors)
+    } else {
+      return ( lapply(OrderedSplit(df, df[[split_col]], drop=TRUE), function(dfi) color_split(dfi, split_col+1)) )
+    }
+  }
+  color_split(filled_df, start_col)
+}
+
+
+#' Get Bigwig Dirs
+#'
+#' @description Internal function: 
+#' Get bigwig dirs file names from a data frame containing at a minimum columns bigwig_file and dataset
+#'
+#' @author MS
+#'
+#' @param filled_df a filled dataframe (see details)
+#' 
+#' @details Get bigwig dirs file names from a data frame containing at a minimum columns
+#'   bigwig_file and dataset. Note: in seqNdisplayR only one bigwig_dir is allowed per seqtype.
+#'
+#' @return Named vector
+#' 
+#' @importFrom dplyr distinct
+#' @importFrom dplyr filter
+#'
+#' @examples
+#' df = data.frame(bigwig_directory=c(rep('http://seqA/', 4), rep('http://seqB/', 2)),dataset=c(rep('a',4), rep('b',2)), subgroup_1=c('x','x','y','y', 'x','y'), subgroup_2=1:6, stringsAsFactors=FALSE)
+#' GetBigwigDirs(df)
+#' 
+#' @note change throughout from get_bigwig_dirs to GetBigwigDirs - done? #% 2022-10-04
+#' 
+GetBigwigDirs = function(filled_df){
+  bigwig_dirs_df = dplyr::distinct(filled_df, bigwig_directory, dataset)
+  bigwig_dirs_df = dplyr::filter(bigwig_dirs_df, !is.na(bigwig_directory))
+  bigwig_dirs = bigwig_dirs_df$bigwig_directory
+  names(bigwig_dirs) = bigwig_dirs_df$dataset
+  bigwig_dirs
+}
+
+
+#' Get Bigwigs
+#'
+#' @description Internal function: 
+#' Get bigwig file names from a data frame containing at a minimum columns bigwig_file, strand and dataset
+#'
+#' @author MS
+#'
+#' @param filled_df a filled dataframe (see details)
+#' 
+#' @details Get bigwig file names from a data frame containing at a minimum columns
+#'   bigwig_file, strand and dataset. Strand must be 'plus' or 'minus', use 'plus' for unstranded data. Columns on the right to dataset may contain subcategories,
+#'   called subgroup_1, subgroup_2 etc. UPS: dataset and subgroup_s must be the right-most columns, see example below.
+#'
+#' @return Named lists or nested lists of named lists
+#'
+#' @examples
+#' df = data.frame(bigwig_file=c('a.bw', 'b.bw', 'c.bw', 'd.bw', 'e.bw', 'f.bw'),
+#'   strand = rep('plus', 6), dataset=c(rep('a',4), rep('b',2)),
+#'   subgroup_1=c('x','x','y','y', 'x','y'),
+#'   stringsAsFactors=FALSE)
+#' GetBigwigs(df)
+#'
+#' df = data.frame(
+#'   bigwig_file=c('a_plus.bw', 'a_minus.bw', 'b_plus.bw', 'b_minus.bw', 'c_plus.bw', 'c_minus.bw'),
+#'   strand = rep(c('plus', 'minus'), 3),
+#'   dataset=c(rep('a',4), rep('b',2)),
+#'   subgroup_1=c('x','x','y','y', 'x','y'),
+#'   stringsAsFactors=FALSE)
+#' GetBigwigs(df)
+#' 
+#' @note change throughout from get_bigwigs to GetBigwigs - done? #% 2022-10-04
+#' 
+GetBigwigs = function(filled_df) {
+  split_col = which(colnames(filled_df) == 'dataset')
+  bw_split = function(df, split_col) {
+    if( split_col >= ncol(df) ) {
+      return ( lapply( OrderedSplit(df, df[[ncol(df)]], drop=TRUE), function(df) df$bigwig_file) )
+    } else if ( AllEmpty(df[[split_col+1]]) ) { #| length(unique(df[[split_col+1]])) == 1
+      return ( lapply( OrderedSplit(df, df[[split_col]], drop=TRUE), function(df) df$bigwig_file) )
+    } else {
+      return ( lapply(OrderedSplit(df, df[[split_col]], drop=TRUE), function(dfi) bw_split(dfi, split_col+1)) )
+    }
+  }
+  bw_plus = bw_split(filled_df[filled_df$strand == 'plus' | is.na(filled_df$strand) | filled_df$strand == '',], split_col)
+  if( any(grepl('minus', filled_df$strand)) ) {
+    bw_minus = bw_split(filled_df[filled_df$strand == 'minus' | is.na(filled_df$strand) | filled_df$strand == '',], split_col)
+  }else{
+    bw_minus = NULL
+  }
+  list('+' = bw_plus,
+       '-' = bw_minus)
+}
+
+
+#' Empty 2 Null
+#'
+#' @description Internal function: 
+#' Helper used for parsing parameters$<dataset>$whichSamples
+#'
+#' @author MS
+#'
+#' @param x 
+#'
+#' @return
+#' 
+#' @examples
+#' 
+#' @note change throughout from empty_to_null to Empty2Null - done? #% 2022-10-04
+#' 
+Empty2Null = function(x){
+  if ( !is.list(x) ) {
+    x
+  } else if ( length(x) == 0 ) {
+    NULL
+  } else {
+    lapply(x, Empty2Null)
+  }
+}
+
+
+#' Get Parameters
+#'
+#' @description Internal function: 
+#' Reads parameters from Excel template 
+#'
+#' @author MS
+#'
+#' @param samples_df Dataframe based on SAMPLES sheet in Excel template (see details)
+#' @param params_df Dataframe based on DATASET_OPTIONS sheet in Excel template
+#'
+#' @details Prepare seqNdisplayR parameters based on info in param_df. param_df
+#'   needs to contain a column called dataset, all column names are considered
+#'   names of dataset-specific options. Each row should contain one dataset and
+#'   its information. See examples below. Batch information is from a data frame
+#'   containing the track info. Needs to contain at a minimum columns strand,
+#'   batch and dataset. Strand must be 'plus' or 'minus', use 'plus' for
+#'   unstranded data. If batch is all empty, NAs or all identical, will assume
+#'   no batch correction, otherwise set parameters to batch correction using
+#'   information from the batch column. You can manually change individual
+#'   parameters after this (see examples below in the man page).
+#'
+#' @return Named list
+#'
+#' @importFrom jsonlite fromJSON
+#'
+#' @examples
+#' samples_df = data.frame(bigwig_file=c('a.bw', 'b.bw', 'c.bw', 'd.bw', 'e.bw', 'f.bw'),
+#'   strand = rep('plus', 6),
+#'   batch = rep(NA, 6),
+#'   dataset=c(rep('a',4), rep('b',2)),
+#'   subgroup_1=c('x','x','y','y', 'x','y'), stringsAsFactors=FALSE)
+#' params_df = data.frame(dataset=c('a','b'), calcMean=c('TRUE','FALSE'), log2Transform=c('TRUE','FALSE'), stringsAsFactors=FALSE)
+#' GetParameters(samples_df, params_df)
+#'
+#' df = data.frame(bigwig_file=c('a.bw', 'b.bw', 'c.bw', 'd.bw', 'e.bw', 'f.bw'),
+#'   strand = rep('plus', 6),
+#'   batch = rep(c('rep1','rep2'), 3),
+#'   dataset=c(rep('a',4), rep('b',2)),
+#'   subgroup_1=c('x','x','y','y', 'x','y'), stringsAsFactors=FALSE)
+#' params = GetParameters(df, params_df)
+#' params
+#'
+#' #change specific arguments afterwards
+#' params$a$calcMean = FALSE
+#' params$b$log2Transform = TRUE
+#' 
+#' @note change throughout from get_parameters to GetParameters - done? #% 2022-10-04
+#' 
+GetParameters = function(samples_df, params_df){
+  default_params = DefaultParameters()
+  param_names = names(default_params)
+  
+  #fill in defaults if there are missing columns in params_df
+  for ( param_name in param_names[!(param_names %in% colnames(params_df))] ) {
+    if ( !is.null(default_params[[param_name]]) ) {
+      params_df[[param_name]] = default_params[[param_name]]
+    } else {
+      params_df[[param_name]] = ''
+    }
+  }
+  
+  #clean params_df to only contain useful columns for parameters_list
+  params_df = params_df[,c('dataset', param_names)]
+  
+  #create params list used by seqNdisplayR except for batch
+  params = lapply(split(params_df, params_df$dataset), function(xl) lapply(as.list(xl[,colnames(xl)!='dataset']), ParseOption))
+  
+  # fix special case whichSamples
+  dataset_names = names(params)
+  params = lapply(dataset_names, function(dataset) {
+    para = params[[dataset]]
+    whichSamples = params_df$whichSamples[params_df$dataset == dataset][[1]]
+    if ( is.null(whichSamples) | whichSamples == 'NULL' | whichSamples == '') {
+      #include all
+      para['whichSamples'] = list(NULL)
+    } else if ( is.na(whichSamples) | whichSamples == 'NA' ) {
+      #exclude all
+      para$whichSamples = NA
+    } else {
+      #include specific ones
+      para$whichSamples = Empty2Null(jsonlite::fromJSON(whichSamples))
+    }
+    para
+  })
+  names(params) = dataset_names
+  
+  # add batch info from filled_df
+  df_plus = samples_df[samples_df$strand != 'minus' | IsEmpty(samples_df$strand),]
+  parameter_split = split(df_plus, df_plus$dataset)
+  batches = lapply(parameter_split, function(x) x$batch)
+  
+  for ( dataset in names(params) ) {
+    batch = batches[[dataset]]
+    if ( sum(!is.na(batch)) > 0 & !all(batch == batch[1]) ) {
+      params[[dataset]]$batch =  batch
+    }
+  }
+  params
+}
+
+
+#' Glimpse Session
+#'
+#' @description Internal function: 
+#' Prints an overview over samples, colors and associated bigwigs in a seqNdisplayR Session.
+#'
+#' @author MS
+#'
+#' @param samples samples object as used by seqNdisplayR
+#' @param colors colors object as used by seqNdisplayR
+#' @param bigwigs bigwigs object as used by seqNdisplayR
+#' @param levels used only for internal recursion, don't change default=1.
+#' @param indent_size string used for indent spacing of levels in the outpur
+#'
+#' @details Convenience function for checking parsing of samples, colors and bigwigs.
+#'
+#' @return Print to R session
+#'
+#' @examples
+#' 
+#' @note change throughout from glimpse_session to GlimpseSession - done? #% 2022-10-04
+#' 
+GlimpseSession = function(samples, colors, bigwigs, level=0, indent_size='   ') {
+  if ( is.list(samples) ) {
+    for ( .sample in names(samples) ) {
+      cat(rep(indent_size, level), .sample, '\n')
+      GlimpseSession(samples[[.sample]],
+                     colors[[.sample]],
+                     list('+'=bigwigs[['+']][[.sample]], '-'=bigwigs[['-']][[.sample]]),
+                     level=level+1)
+    }
+  } else {
+    for ( .sample in samples ) {
+      if( .sample == '' ) {
+        cat(rep(indent_size, level), .sample, ' color:', colors, '  bigwigs+:', length(bigwigs[['+']][[1]]), '  bigwigs-:', length(bigwigs[['-']][[1]]), '\n')
+      } else {
+        cat(rep(indent_size, level), .sample, ' color:', colors[[.sample]], '  bigwigs+:', length(bigwigs[['+']][[.sample]]), '  bigwigs-:', length(bigwigs[['-']][[.sample]]), '\n')
+      }
+    }
+  }
+}
+
+
+#' Session 2 Df
+#'
+#' @description Internal function: 
+#' Converts session information to data frame as in Excel import sheet.
+#'
+#' @author MS
+#'
+#' @param .samples samples object as used by seqNdisplayR
+#' @param .colors colors object as used by seqNdisplayR
+#' @param .bigwigs bigwigs object as used by seqNdisplayR
+#' @param .bigwig_dirs bigwig_dirs as used in seqNdisplayR
+#' @param .parameters list of parameters as used in seqNdisplayR
+#' @param strand_regex named vector c('+': ..., '-': ...) for regex for converting plus strand to minus strand bigwig names
+#' @param factorize TRUE/FALSE. Default: FALSE
+#' @param level do not change, required internally during recursion, defaults=0.
+#'
+#' @details Converts session information to dataframe as specified in Excel
+#'   import sheet but using all-filled mode. Batch information is obtained from parameters.
+#'
+#' @return A dataframe with columns: color, bigwig_directory, bigwig_file, strand, batch, dataset and optionally subgroup_1, subgroup_2, ...
+#'
+#' @importFrom dplyr bind_rows
+#'
+#' @examples
+#' 
+#' @note change throughout from session_to_df to Session2Df - done? #% 2022-10-04
+#' 
+Session2Df = function(.samples, .colors, .bigwigs, .bigwig_dirs, .parameters, strand_regex = c('+'= 'plus', '-'='minus'), factorize = FALSE, level = 0) {
+  if (level == 0) {
+    grpname = 'dataset'
+  } else {
+    grpname = paste0('subgroup_', level)
+  }
+  if ( is.list(.samples) ) {
+    inner_df =
+      lapply(names(.samples), function(samplei)
+        Session2Df(
+          .samples[[samplei]],
+          .colors[[samplei]],
+          list('+' =
+                 .bigwigs[['+']][[samplei]],
+               '-' =
+                 .bigwigs[['-']][[samplei]]),
+          .bigwig_dirs,
+          .parameters,
+          level = level + 1
+        ))
+    
+    for ( i in seq_along(inner_df) ) {
+      inner_df[[i]][grpname] = names(.samples)[i]
+    }
+    df_out = dplyr::bind_rows(inner_df)
+    if (level == 0) {
+      df_out$bigwig_directory = .bigwig_dirs[df_out$dataset]
+      df_out$strand = ifelse(grepl(strand_regex['-'], df_out$bigwig_file), 'minus', 'plus')
+      df_out$batch = NA
+      datasets = unique(df_out$dataset)
+      for ( dataset in datasets ) {
+        if ( !is.null(.parameters[[dataset]]$batch) ) {
+          df_out$batch[df_out$dataset == dataset & df_out$strand == 'plus'] = .parameters[[dataset]]$batch
+          df_out$batch[df_out$dataset == dataset & df_out$strand == 'minus'] = .parameters[[dataset]]$batch
+        }
+      }
+      subgroup__names = colnames(df_out)[grepl('^subgroup_', colnames(df_out))]
+      ordered_subgroup__names = subgroup__names[order(subgroup__names)]
+      colnames_order = c('color', 'bigwig_directory', 'bigwig_file', 'strand', 'batch', 'dataset', ordered_subgroup__names)
+      return( df_out[,colnames_order] )
+    }else{
+      return( df_out )
+    }
+  } else {
+    dplyr::bind_rows(
+      lapply(.samples, function(samplei) {
+        df = data.frame(color = .colors[samplei],
+                        bigwig_file = .bigwigs[['+']][[samplei]],
+                        bigwig_directory = .bigwig_dirs[samplei],
+                        grp = samplei,
+                        row.names = NULL,
+                        stringsAsFactors = FALSE)
+        colnames(df)[colnames(df) == 'grp'] = grpname
+        
+        if ( !is.null(.bigwigs[['-']]) & length(.bigwigs[['-']][[samplei]]) > 0)  {
+          dfm = data.frame(color = .colors[samplei],
+                           bigwig_file = .bigwigs[['-']][[samplei]],
+                           bigwig_directory = .bigwig_dirs[samplei],
+                           grp = samplei,
+                           row.names = NULL,
+                           stringsAsFactors = FALSE)
+          colnames(dfm)[colnames(dfm) == 'grp'] = grpname
+          df = dplyr::bind_rows(df, dfm)
+        }
+        df
+      })
+    )
+  }
+}
+
+
+#' Open Options Table
+#'
+#' @description Open the Options table (Excel sheet with info for app)
+#'
+#' @author SLA
+#'
+#' @return
+#' 
+#' @importFrom readxl read_excel
+#' 
+#' @examples
+#' 
+OpenOptionsTable = function(){
+  libpaths = .libPaths()
+  for (libpath in libpaths){
+    lf = list.files(libpath)
+    if (any(grepl('seqNdisplayR', lf))){
+      options_table = paste0(libpath, '/seqNdisplayR/shiny/variable_defaults_and_help.xlsx')
+    }
+  }
+  readxl::read_excel(options_table, sheet='Shiny_Args')
 }

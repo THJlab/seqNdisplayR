@@ -6,9 +6,26 @@
 \usage{
 GetBinSize(bin_size, plot_width, tracks_width_cm, bins_per_cm, verbosity)
 }
-\description{
-Get Bin Size
+\arguments{
+\item{bin_size}{}
+
+\item{plot_width}{}
+
+\item{tracks_width_cm}{}
+
+\item{bins_per_cm}{}
+
+\item{verbosity}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }

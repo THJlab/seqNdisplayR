@@ -15,9 +15,32 @@ PreparePlottingInterface(
   scaling_factor
 )
 }
-\description{
-Prepare Plotting Interface
+\arguments{
+\item{plot_dim}{}
+
+\item{pdf}{}
+
+\item{pdf_name}{}
+
+\item{pdf_dir}{}
+
+\item{header}{}
+
+\item{bin_size}{}
+
+\item{feature}{}
+
+\item{scaling_factor}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }

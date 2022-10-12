@@ -15,9 +15,43 @@ RegionGRanges(
   interface
 )
 }
-\description{
-Region GRanges
+\arguments{
+\item{locus}{genomic coordinates, incl. strand, of locus (e.g., c("chr1", "+", 87297784, 87379607)}
+
+\item{tracks_width}{width of plotted data tracks in cm}
+
+\item{feature}{the name of a genomic locus (e.g., LMO4; the name needs to be present within the name column of the provided annotations, which will be searched in the given order).}
+
+\item{annotations}{named list of GRanges objects representing annotations (produced by ReadInAnnotations)}
+
+\item{bin_start}{Center the bins around the given genomic position. Provide an integer value that lies within the plotted region. Per default the bin center will be at the 5'-end of the plotted region if it is defined by genomic coordinates and at the 5'-end of the locus if the plotted region is defined by locus name}
+
+\item{extra_space}{Extra space up- and downstream of and relative to the selected genomic feature (0.1 = 10 percent). Only taken into account when genomic locus (feature) name is entered - ignored when genomic coordinates are entered.  Numeric vector - default c(1.0,1.0).}
+
+\item{verbosity}{indicated by an integer 0 to 3 referring to the levels 'off', 'no warnings', 'normal', and 'detailed'}
+
+\item{interface}{'R' or 'shiny'}
 }
-\details{
-Internal function: Convert feature name or locus to be plotted to a GRanges object
+\value{
+a GRanges object with user-supplied locus coordinates (two metadata columns included with bin_start and tracks_width)
+}
+\description{
+Internal function: 
+Convert feature name or locus to be plotted to a GRanges object
+}
+\note{
+bin_start indicates the coordinate from where binning is centered
+
+tracks_width is the plotted width in cm
+}
+\examples{
+annots_fnames = list('gencode v21'='http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/annotations/gencode.v21.annotation.nohosted.bed',
+                     'in-house'='http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/annotations/HeLa_major_isoform_hg38_gc34.bed')
+annots_listedGR = ReadInAnnotations(annots=annots_fnames, verbosity=3)       
+locus_gr = RegionGRanges(locus=NULL, tracks_width=12, feature='LMO4', annotations=annots_listedGR, bin_start=NULL, extra_space=c(0.1,0.1), verbosity=3, interface='R')
+locus_gr = RegionGRanges(locus=c('chr1', '+', 87326423, 87350968), tracks_width=12, feature=NULL, annotations=NULL, bin_start=NULL, extra_space=c(0.1,0.1), verbosity=3, interface='R')
+
+}
+\author{
+SLA
 }

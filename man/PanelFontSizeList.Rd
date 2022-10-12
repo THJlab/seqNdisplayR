@@ -14,9 +14,31 @@ PanelFontSizeList(
   interface
 )
 }
-\description{
-Panel Font Size List
+\arguments{
+\item{samples}{}
+
+\item{panel_font_sizes}{}
+
+\item{panel_font_size_list}{}
+
+\item{incl_reps}{}
+
+\item{replicate_names}{}
+
+\item{verbosity}{}
+
+\item{interface}{}
 }
-\details{
-Internal function: Constructs a panel_font_size_list (a font size provided to each panel)
+\value{
+
+}
+\description{
+Internal function: 
+Constructs a panel_font_size_list (a font size provided to each panel)
+}
+\examples{
+
+}
+\author{
+SLA
 }

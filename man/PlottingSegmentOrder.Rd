@@ -14,9 +14,30 @@ PlottingSegmentOrder(
   horizontal_spacers
 )
 }
-\description{
-Plotting Segment Order
+\arguments{
+\item{plotting_segment_order}{}
+
+\item{sample_names}{}
+
+\item{header}{}
+
+\item{include_genomic_scale}{}
+
+\item{genomic_scale_on_top}{}
+
+\item{incl_annot}{}
+
+\item{horizontal_spacers}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }

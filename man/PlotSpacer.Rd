@@ -16,9 +16,34 @@ PlotSpacer(
   scaling_factor
 )
 }
-\description{
-Plot Spacer
+\arguments{
+\item{windows_height}{}
+
+\item{spacer_segment}{}
+
+\item{right_border}{}
+
+\item{plotted_strand}{}
+
+\item{neg_vals_neg_strand}{}
+
+\item{panel_separators}{}
+
+\item{separators_lwds}{}
+
+\item{separators_colors}{}
+
+\item{scaling_factor}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }

@@ -6,9 +6,19 @@
 \usage{
 DeleteNULLs(x_list)
 }
-\description{
-Delete NULLs
+\arguments{
+\item{x_list}{}
 }
-\details{
-Internal function: delele null/empty entries in a list
+\value{
+
+}
+\description{
+Internal function: 
+Delele null/empty entries in a list
+}
+\examples{
+
+}
+\author{
+SLA
 }

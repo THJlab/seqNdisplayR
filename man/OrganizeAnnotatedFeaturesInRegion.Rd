@@ -6,9 +6,21 @@
 \usage{
 OrganizeAnnotatedFeaturesInRegion(plotted_region, annotations)
 }
-\description{
-Organize Annotated Features In Region
+\arguments{
+\item{plotted_region}{}
+
+\item{annotations}{}
 }
-\details{
-Internal function: Wrapper function that executes the three above functions
+\value{
+
+}
+\description{
+Internal function: 
+Wrapper function that executes the three above functions
+}
+\examples{
+
+}
+\author{
+SLA
 }

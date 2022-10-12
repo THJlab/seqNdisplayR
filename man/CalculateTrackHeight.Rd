@@ -2,7 +2,7 @@
 % Please edit documentation in R/seqNdisplayR.R
 \name{CalculateTrackHeight}
 \alias{CalculateTrackHeight}
-\title{Update Plot Vertical Parameters v2}
+\title{Calculate Track Height}
 \usage{
 CalculateTrackHeight(
   combined_track_vector,
@@ -14,9 +14,30 @@ CalculateTrackHeight(
   spacer_height_cm
 )
 }
-\description{
-Update Plot Vertical Parameters v2
+\arguments{
+\item{combined_track_vector}{}
+
+\item{total_annotation_lines}{}
+
+\item{full_height_cm}{}
+
+\item{title_field_height_cm}{}
+
+\item{genomic_scale_height_cm}{}
+
+\item{annotation_height_cm}{}
+
+\item{spacer_height_cm}{}
 }
-\details{
+\value{
+
+}
+\description{
 Internal function:
+}
+\examples{
+
+}
+\author{
+SLA
 }
