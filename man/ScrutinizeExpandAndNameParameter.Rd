@@ -48,3 +48,4 @@ Helper function that will expand a common "one-dimensional" parameter to fit all
 \author{
 SLA
 }
+\keyword{internal}

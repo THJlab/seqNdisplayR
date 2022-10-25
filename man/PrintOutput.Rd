@@ -19,9 +19,6 @@ print output, warnings and errors based on messages list
 \description{
 Internal function
 }
-\note{
-find example for usage of no_line_change=TRUE
-}
 \examples{
 messages = list('output'=list('This is the output string'), 'errors'=list('This is an error string'), 'warnings'=list('This is a warning string'))
 PrintOutput(messages, verbosity=0)
@@ -35,3 +32,4 @@ PrintOutput(messages2, verbosity=2)
 \author{
 SLA
 }
+\keyword{internal}

@@ -12,9 +12,6 @@ a named list of default plot options
 \description{
 Internal function
 }
-\note{
-change throughout to DefaultPlotOptions - done? #% 2022-10-05
-}
 \examples{
 default_plot_options = DefaultPlotOptions()
 
@@ -22,3 +19,4 @@ default_plot_options = DefaultPlotOptions()
 \author{
 MS/SLA
 }
+\keyword{internal}

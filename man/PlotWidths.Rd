@@ -54,3 +54,4 @@ plot_widths = PlotWidths(panels_max_width_cm=2, scale_panel_width_cm=0.6, margin
 \author{
 SLA
 }
+\keyword{internal}

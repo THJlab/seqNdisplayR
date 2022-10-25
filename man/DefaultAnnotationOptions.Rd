@@ -12,9 +12,6 @@ a named list of default annotation-display options.
 \description{
 Internal function
 }
-\note{
-change throughout to DefaultAnnotationOptions - done? #% 2022-10-05
-}
 \examples{
 default_annotation_options = DefaultAnnotationOptions()
 
@@ -22,3 +19,4 @@ default_annotation_options = DefaultAnnotationOptions()
 \author{
 MS/SLA
 }
+\keyword{internal}

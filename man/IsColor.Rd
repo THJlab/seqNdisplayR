@@ -16,9 +16,6 @@ IsColor(put_color_vector)
 Internal function: 
 Helper function that determines whether input (vector) is a color
 }
-\note{
-change throughout to IsColor - done? #% 2022-10-05
-}
 \examples{
 IsColor('black')
 IsColor('white')
@@ -30,3 +27,4 @@ IsColor('#0098AD')
 \author{
 SLA (with help from https://stackoverflow.com/questions/13289009/check-if-character-string-is-a-valid-color-representation/13290832#13290832)
 }
+\keyword{internal}

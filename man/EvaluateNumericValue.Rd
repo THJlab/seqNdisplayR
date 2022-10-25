@@ -45,3 +45,4 @@ Evaluate whether a vector/value is numeric and falls within recommmended range
 \author{
 SLA
 }
+\keyword{internal}

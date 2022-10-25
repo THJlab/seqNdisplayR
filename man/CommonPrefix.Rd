@@ -16,12 +16,10 @@ A single string which is a common prefix in all strings
 Internal function: 
 Find common prefix
 }
-\note{
-change throughout from common_prefix to CommonPrefix - done? #% 2022-10-04
-}
 \examples{
 
 }
 \author{
 MS
 }
+\keyword{internal}

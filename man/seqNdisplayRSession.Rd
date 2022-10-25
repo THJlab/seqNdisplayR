@@ -52,7 +52,7 @@ seqNdisplayR session object holding above slots identical to parameters
   "empty" slots are filled. Otherwise see \code{vignette(package='seqNdisplayR')}. 
   If options are not provided, adds default options to session object. 
   If load_annotations=TRUE will try to load annotations using \link[rtracklayer]{import}. 
-  OPS: Currently only bed files are used correctly by seqNdisplayR.
+  OBS: Currently only bed files are used correctly by seqNdisplayR.
 }
 \examples{
 xl_fname = system.file('extdata', 'seqNdisplayR_sample_sheet_elaborate2.xlsx', package='seqNdisplayR')

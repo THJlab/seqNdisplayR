@@ -21,9 +21,6 @@ Get colors from a data frame containing at a minimum columns
   color and dataset. Columns on the right to dataset may contain subcategories,
   called subgroup_1, subgroup_2 etc. UPS: dataset and subgroup_s must be the right-most columns, see example below.
 }
-\note{
-change throughout from get_colors to GetColors - done? #% 2022-10-04
-}
 \examples{
 df = data.frame(color=c(rep('red', 4), rep('green', 2)),dataset=c(rep('a',4), rep('b',2)), subgroup_1=c('x','x','y','y', 'x','y'), subgroup_2=1:6, stringsAsFactors=FALSE)
 GetColors(df)
@@ -32,3 +29,4 @@ GetColors(df)
 \author{
 MS
 }
+\keyword{internal}

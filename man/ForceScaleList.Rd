@@ -30,3 +30,4 @@ Checks/constructs a force_scale_list
 \author{
 SLA
 }
+\keyword{internal}

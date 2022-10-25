@@ -28,3 +28,4 @@ Find nonoverlapping intervals within a GRanges object for each interval (based o
 \author{
 SLA
 }
+\keyword{internal}

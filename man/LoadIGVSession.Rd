@@ -52,9 +52,6 @@ This is experimental as IGV and seqNdisplayR have very different
   UPS: annotations are imported correct, except the default RefSeq/NCBI used
   in IGV is not implemented. Better set these by hand afterwards.
 }
-\note{
-change throughout from load_igvsession to LoadIGVSession - done? #% 2022-10-04
-}
 \examples{
 igvsession_fname = system.file('extdata','example_igv_session.xml',package='seqNdisplayR')
 igvtbl = LoadIGVSession( igvsession_fname, group_by = 'autoscalegroups' )

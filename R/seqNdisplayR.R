@@ -768,7 +768,7 @@ plot.seqNdisplayRSession = function(session, ...){
 }
 
 
-#' print seq'N'displayR Session
+#' print seq'N'display'R Session
 #'
 #' @description Prints an overview over samples, colors and associated bigwigs in a seqNdisplayR Session.
 #' Just a pretty overview over a session.
@@ -1472,7 +1472,7 @@ ListExamplesSampleSheets = function(){
 }
 
 
-#' run seq'N'displayR app
+#' run seq'N'display'R app
 #'
 #' @description Run the shiny app
 #'

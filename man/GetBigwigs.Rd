@@ -21,9 +21,6 @@ Get bigwig file names from a data frame containing at a minimum columns
   bigwig_file, strand and dataset. Strand must be 'plus' or 'minus', use 'plus' for unstranded data. Columns on the right to dataset may contain subcategories,
   called subgroup_1, subgroup_2 etc. UPS: dataset and subgroup_s must be the right-most columns, see example below.
 }
-\note{
-change throughout from get_bigwigs to GetBigwigs - done? #% 2022-10-04
-}
 \examples{
 df = data.frame(bigwig_file=c('a.bw', 'b.bw', 'c.bw', 'd.bw', 'e.bw', 'f.bw'),
   strand = rep('plus', 6), dataset=c(rep('a',4), rep('b',2)),
@@ -43,3 +40,4 @@ GetBigwigs(df)
 \author{
 MS
 }
+\keyword{internal}

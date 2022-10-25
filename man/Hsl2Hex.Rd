@@ -15,9 +15,6 @@ Hsl2Hex(c_hsl)
 \description{
 Internal function:
 }
-\note{
-change throughout from hsl2hex to Hsl2Hex - done? #% 2022-10-04
-}
 \examples{
 c_hex = '#FFA550'
 c_hsl = Hex2Hsl(c_hex)
@@ -28,3 +25,4 @@ c_hex_180 = Hsl2Hex(c_hsl_180)
 \author{
 SLA (based on https://www.rapidtables.com/convert/color/hsl-to-rgb.html)
 }
+\keyword{internal}

@@ -17,14 +17,12 @@ AdjustColorPhi(c_hsl, phi = 180)
 \description{
 Internal function:
 }
-\note{
-change throughout from adjust_color_phi to AdjustColorPhi - done? #% 2022-10-04
-}
 \examples{
 c_hsl = Hex2Hsl('#FFA550')
 c_hsl_180 = AdjustColorPhi(c_hsl)
- 
+
 }
 \author{
 SLA (based on https://bitbucket.org/mattgove/color-theory/src/master/mg_colors.py)
 }
+\keyword{internal}

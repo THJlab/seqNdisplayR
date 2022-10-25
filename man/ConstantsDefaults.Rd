@@ -13,9 +13,6 @@ a named vector with constants and defaults (package-wide available arguments)
 Internal function
 Container for Constants and Defaults
 }
-\note{
-implement function throughout - done? #% 2022-10-05
-}
 \examples{
 constants_defaults = ConstantsDefaults()
 line_width_scaling_factor = constants_defaults['line_width_scaling_factor']
@@ -31,3 +28,4 @@ annot_panel_dist = constants_defaults['annot_panel_dist']
 \author{
 SLA
 }
+\keyword{internal}

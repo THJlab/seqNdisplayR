@@ -19,9 +19,6 @@ Parse string into relevant R object class
 \details{
 String can represent a named list, unnamed list, named vector, unnamed vector or single value. If string contains ";" assumes a list; if string contains "," assumes a vector; individual strings are interprated as "NULL" -> NULL; if "TRUE" or "FALSE" --> TRUE/FALSE; if single number --> as.numeric; if single non-number --> as.character;
 }
-\note{
-change throughout from parse_option to ParseOption - done? #% 2022-10-04
-}
 \examples{
 ParseOption("1.2,3")
 ParseOption("RNA-seq:1.2,3;TT-seq:2,4")
@@ -30,3 +27,4 @@ ParseOption("RNA-seq:1.2,3;TT-seq:2,4")
 \author{
 MS
 }
+\keyword{internal}

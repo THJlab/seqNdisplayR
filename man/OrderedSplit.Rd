@@ -21,12 +21,10 @@ Internal function:
 Split data frame by values in a column but maintain order as order of appearance. 
 Different to base R split.data.frame where order of split objects are ordered as default factors.
 }
-\note{
-change throughout from ordered_split to OrderedSplit - done? #% 2022-10-04
-}
 \examples{
 
 }
 \author{
 MS
 }
+\keyword{internal}

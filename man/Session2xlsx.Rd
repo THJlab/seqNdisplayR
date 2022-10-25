@@ -19,9 +19,6 @@ Write Excel template as described in \link{LoadExcel}.
 \description{
 Save session object to Excel xlsx-file
 }
-\note{
-change throughout from session_to_xlsx to Session2xlsx - done? #% 2022-10-04
-}
 \examples{
 
 }

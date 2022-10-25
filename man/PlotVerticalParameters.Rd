@@ -12,9 +12,6 @@ a named vector with default vertical proportions of various plotting segment typ
 \description{
 Internal function
 }
-\note{
-implement function throughout - done? #% 2022-10-05
-}
 \examples{
 plot_vertical_parameters = PlotVerticalParameters()
 
@@ -22,3 +19,4 @@ plot_vertical_parameters = PlotVerticalParameters()
 \author{
 SLA
 }
+\keyword{internal}

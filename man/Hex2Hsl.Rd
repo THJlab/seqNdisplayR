@@ -15,9 +15,6 @@ Hex2Hsl(c)
 \description{
 Internal function:
 }
-\note{
-change throughout from hex2hsl to Hex2Hsl - done? #% 2022-10-04
-}
 \examples{
 Hex2Hsl('black')
 Hex2Hsl('blue')
@@ -27,3 +24,4 @@ Hex2Hsl('#FFA550')
 \author{
 SLA (based on https://bitbucket.org/mattgove/color-theory/src/master/mg_colors.py)
 }
+\keyword{internal}

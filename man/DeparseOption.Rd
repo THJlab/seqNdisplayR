@@ -16,9 +16,6 @@ String representation of object, compatible with ParseOption
 Internal function: 
 Parse option into string
 }
-\note{
-change throughout from deparse_option to DeparseOption - done? #% 2022-10-04
-}
 \examples{
 DeparseOption(c(1.2,3))
 DeparseOption(list('RNA-seq' = c(1.2,3), 'TT-seq' = c(2,4)))
@@ -28,3 +25,4 @@ DeparseOption(list('RNA-seq' = c(TRUE,FALSE), 'TT-seq' = c(TRUE,FALSE)))
 \author{
 MS
 }
+\keyword{internal}

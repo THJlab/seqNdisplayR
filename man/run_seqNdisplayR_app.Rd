@@ -2,7 +2,7 @@
 % Please edit documentation in R/seqNdisplayR.R
 \name{run_seqNdisplayR_app}
 \alias{run_seqNdisplayR_app}
-\title{run seq'N'displayR app}
+\title{run seq'N'display'R app}
 \usage{
 run_seqNdisplayR_app(...)
 }

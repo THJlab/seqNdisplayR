@@ -2,7 +2,7 @@
 % Please edit documentation in R/seqNdisplayR.R
 \name{print.seqNdisplayRSession}
 \alias{print.seqNdisplayRSession}
-\title{print seq'N'displayR Session}
+\title{print seq'N'display'R Session}
 \usage{
 \method{print}{seqNdisplayRSession}(session, verbose = FALSE, ...)
 }

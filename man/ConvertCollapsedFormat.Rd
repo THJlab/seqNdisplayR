@@ -24,3 +24,4 @@ Converts the format of "collapsed" and "collapsed2" from GRanges to GRangesLists
 \author{
 SLA
 }
+\keyword{internal}

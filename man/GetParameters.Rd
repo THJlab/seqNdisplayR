@@ -30,9 +30,6 @@ Prepare seqNdisplayR parameters based on info in param_df. param_df
   information from the batch column. You can manually change individual
   parameters after this (see examples below in the man page).
 }
-\note{
-change throughout from get_parameters to GetParameters - done? #% 2022-10-04
-}
 \examples{
 samples_df = data.frame(bigwig_file=c('a.bw', 'b.bw', 'c.bw', 'd.bw', 'e.bw', 'f.bw'),
   strand = rep('plus', 6),
@@ -58,3 +55,4 @@ params$b$log2Transform = TRUE
 \author{
 MS
 }
+\keyword{internal}

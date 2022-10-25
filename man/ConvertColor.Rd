@@ -17,9 +17,6 @@ ConvertColor(c, phi = 180)
 \description{
 Internal function:
 }
-\note{
-change throughout to from convert_color to ConvertColor - done? #% 2022-10-04
-}
 \examples{
 c_hex = '#FFA550'
 c_hex_180 = ConvertColor(c_hex)
@@ -28,3 +25,4 @@ c_hex_180 = ConvertColor(c_hex)
 \author{
 SLA
 }
+\keyword{internal}

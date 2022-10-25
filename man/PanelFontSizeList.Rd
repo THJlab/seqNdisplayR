@@ -42,3 +42,4 @@ Constructs a panel_font_size_list (a font size provided to each panel)
 \author{
 SLA
 }
+\keyword{internal}

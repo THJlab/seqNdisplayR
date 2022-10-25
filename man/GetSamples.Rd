@@ -21,9 +21,6 @@ Get samples from a data frame containing at a minimum columns
   dataset. Columns on the right to dataset may contain subcategories,
   called subgroup_1, subgroup_2 etc.
 }
-\note{
-change throughout from get_samples to GetSamples - done? #% 2022-10-04
-}
 \examples{
 df = data.frame(dataset=c(rep('a',4), rep('b',2)), subgroup_1=c('x','x','y','y', 'x','y'), stringsAsFactors=FALSE)
 GetSamples(df)
@@ -34,3 +31,4 @@ GetSamples(df)
 \author{
 MS
 }
+\keyword{internal}

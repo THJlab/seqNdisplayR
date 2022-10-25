@@ -27,12 +27,10 @@ Prints an overview over samples, colors and associated bigwigs in a seqNdisplayR
 \details{
 Convenience function for checking parsing of samples, colors and bigwigs.
 }
-\note{
-change throughout from glimpse_session to GlimpseSession - done? #% 2022-10-04
-}
 \examples{
 
 }
 \author{
 MS
 }
+\keyword{internal}

@@ -21,12 +21,10 @@ options is a data.frame with columns named *Option* and *Value*,
   both case-sensitive. Several entries are vectors of character, numeric or
   boolean. This function tries to parse this correctly.
 }
-\note{
-change throughout from get_plot_options to GetPlotOptions - done? #% 2022-10-04
-}
 \examples{
 
 }
 \author{
 MS
 }
+\keyword{internal}

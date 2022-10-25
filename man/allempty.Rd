@@ -16,9 +16,6 @@ TRUE/FALSE
 Internal function: 
 Convenience function checks whether all NA or empty in a vector of strings
 }
-\note{
-change throughout from allempty to AllEmpty - done? #% 2022-10-04
-}
 \examples{
 AllEmpty(NA)
 AllEmpty(c(NA, NA))
@@ -29,3 +26,4 @@ AllEmpty(c('fnyg', NA))
 \author{
 MS
 }
+\keyword{internal}

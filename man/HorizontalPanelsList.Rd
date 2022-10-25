@@ -39,3 +39,4 @@ Checks/constructs a horizontal_panels_list
 \author{
 SLA
 }
+\keyword{internal}

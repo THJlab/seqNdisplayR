@@ -43,12 +43,10 @@ Converts session information to data frame as in Excel import sheet.
 Converts session information to dataframe as specified in Excel
   import sheet but using all-filled mode. Batch information is obtained from parameters.
 }
-\note{
-change throughout from session_to_df to Session2Df - done? #% 2022-10-04
-}
 \examples{
 
 }
 \author{
 MS
 }
+\keyword{internal}

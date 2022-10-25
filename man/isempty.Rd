@@ -16,9 +16,6 @@ TRUE/FALSE for each element in input vector
 Internal function: 
 Convenience function checks whether all NA or empty string
 }
-\note{
-change throughout from isempty to IsEmpty - done? #% 2022-10-04
-}
 \examples{
 IsEmpty(NA)
 IsEmpty(c(NA, NA))
@@ -29,3 +26,4 @@ IsEmpty(c('fnyg', NA))
 \author{
 MS
 }
+\keyword{internal}

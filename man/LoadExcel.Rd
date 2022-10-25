@@ -24,9 +24,6 @@ Load Excel template and parses information to seqNdisplayR session
   object. See examples of the format of Excel Templates in
   \code{ExamplesSampleSheetsFolder()} for more information.
 }
-\note{
-change throughout from load_excel to LoadExcel - done? #% 2022-10-04
-}
 \examples{
 #' # EXAMPLE 1:
 xl_fname = system.file('extdata', 'seqNdisplayR_sample_sheet_elaborate2.xlsx', package='seqNdisplayR')

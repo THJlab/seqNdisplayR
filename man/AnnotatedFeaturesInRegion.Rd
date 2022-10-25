@@ -25,3 +25,4 @@ Used together with "OrganizeOverlappingLoci" and "ConvertCollapsedFormat" to cre
 \author{
 SLA
 }
+\keyword{internal}

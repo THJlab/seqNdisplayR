@@ -16,12 +16,10 @@ Empty2Null(x)
 Internal function: 
 Helper used for parsing parameters$<dataset>$whichSamples
 }
-\note{
-change throughout from empty_to_null to Empty2Null - done? #% 2022-10-04
-}
 \examples{
 
 }
 \author{
 MS
 }
+\keyword{internal}

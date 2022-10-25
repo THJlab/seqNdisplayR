@@ -12,9 +12,6 @@ a named list of default Dataset-specific options
 \description{
 Internal function
 }
-\note{
-change throughout to DefaultParameters - done? #% 2022-10-05
-}
 \examples{
 default_parameters = DefaultParameters()
 
@@ -22,3 +19,4 @@ default_parameters = DefaultParameters()
 \author{
 MS/SLA
 }
+\keyword{internal}
