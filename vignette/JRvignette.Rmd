@@ -1,0 +1,454 @@
+---
+title: "seqNdisplayR"
+author: "Søren Lykke Andersen"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{seqNdisplayR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+## Introduction
+
+seqNdisplayR aims to provide reproducible, visually appealling genome coverage data visualization including in-built normalization and batch correction features. This vignette describes the basic features of seqNdisplayR using tracks from Lykke-Andersen et al. Mol Cell 2021.
+
+
+## Installation
+
+Locate the source *tar.gz* or the uncompressed folder containing the source and then install from within R. You need to either set the working directory to the same location as the tar file or add the full path.
+
+Install from tar.gz file:
+```{r, eval=FALSE}
+install.packages('XXXXXXXXXXXXX.tar.gz', repos = NULL, type="source")    #to update when package is finished
+```
+
+Install from source directory:
+```{r, eval=FALSE}
+install.packages('<path>/XXXXXXXXXXXXX', repos = NULL, type="source")    #to update when package is finished
+```
+
+
+Alternative is to install from Terminal (see comment about path from above):
+```{bash, eval=FALSE}
+R CMD INSTALL XXXXXXXXXXXXXXXXXXXX.tar.gz   #to update when package is finished
+```
+
+
+Using RStudio:
+Open Project and select the source directory. Build > Install & Restart. There are options on how to build in Build > Configure Build Tools ...
+
+
+The package is also available on GitHub at \link{https://rdrr.io/github/THJlab/seqNdisplayR/}.
+
+and can be installed with remotes \link{https://CRAN.R-project.org/package=remotes}.
+```{r, eval=FALSE}
+install.packages("remotes")
+remotes::install_github("THJlab/seqNdisplayR")
+```
+
+## Basic usage
+
+seqNdisplayR basic usage assumes that sequence coverage tracks to be displayed are grouped, often containing nested subgroups.
+
+### samples
+For plotting this groups are representet in object *samples* which contains nested lists of sample names.
+
+```{r}
+samples = list("TT-seq" = c('CTRL', 'CPSF73', 'INTS11', 'RRP40'),
+               "RNA-seq" = c('CTRL', 'CPSF73', 'INTS11', 'RRP40'),
+               "3'-seq" = list('total' =
+                                list('noPAP' = c('WT','RRP40'),
+                                     'EPAP' = c('WT','RRP40')),
+                              '4sU' =
+                                list('noPAP' = c('WT','RRP40'),
+                                     'EPAP' = c('WT','RRP40'))),
+                                
+               'ChIP-seq'=c('INTS11'))
+```
+
+
+### colors
+Colors each coverage track is displayed in are in a similar nested list, except that deepest list is a named vector.
+
+```{r}
+colors = list("TT-seq" = c('CTRL'='#5E5760', 'CPSF73'='#C7164C', 'INTS11'='#1989B6', 'RRP40'='#E2856A'),
+              "RNA-seq" = c('CTRL'='#5E5760', 'CPSF73'='#C7164C', 'INTS11'='#1989B6', 'RRP40'='#E2856A'),
+              "3'-seq" = list('total' =
+                                list('noPAP' = c('WT'='#5D5D5D', 'RRP40'='#6061A9'),
+                                     'EPAP' = c('WT'='#5D5D5D', 'RRP40'='#6061A9')),
+                              '4sU' =
+                                list('noPAP' = c('WT'='#5D5D5D', 'RRP40'='#6061A9'),
+                                     'EPAP' = c('WT'='#5D5D5D', 'RRP40'='#6061A9'))),
+              'ChIP-seq'=c('INTS11'='#000000'))
+```
+
+
+### bigwig_dirs
+
+Common directories for each outer level of sample groups
+```{r}
+bigwig_dirs = c("TT-seq" = 'http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2017_Molska_TT-seq_RNAseq/TT-seq/hg38/',
+                "RNA-seq" = 'http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2017_Molska_TT-seq_RNAseq/RNA-seq/hg38/',
+                "3'-seq" =  'http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2019_Wu_3pseq_NEXTPAXT/hg38/',
+                "ChIP-seq" = 'http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/GEO/GSE125534_Beckedorff_(Shiekhattar)_2020_nuclear-ncRNA-seq_RNA-seq_CAGE-seq_ChIP-seq_ATAC-seq/ChIP-seq/hg38/')
+
+```
+
+
+### bigwigs
+
+Individual track files in bigwig format. Multiple files are allowed per sample, these are treated internally as replicates from the same sample.
+Bigwigs are separated by strand, for unstranded data simply omit the '-' entry          ########### Has this last point been changed?
+```{r}
+bigwigs = list(
+  '+' = list(
+    "TT-seq" = list(
+      'CTRL' = c(
+        'L_EGFP_rep1_tt_corr_ff_noJncReads_plus.bw',
+        'L_EGFP_rep2_tt_corr_ff_noJncReads_plus.bw'
+      ),
+      'CPSF73' = c(
+        'L_CPSF73_rep1_tt_corr_ff_noJncReads_plus.bw',
+        'L_CPSF73_rep2_tt_corr_ff_noJncReads_plus.bw'
+      ),
+      'INTS11' = c(
+        'L_INTS11_rep1_tt_corr_ff_noJncReads_plus.bw',
+        'L_INTS11_rep2_tt_corr_ff_noJncReads_plus.bw'
+      ),
+      'RRP40' = c(
+        'L_RRP40_rep1_tt_corr_ff_noJncReads_plus.bw',
+        'L_RRP40_rep2_tt_corr_ff_noJncReads_plus.bw'
+      )
+    ),
+    "RNA-seq" = list(
+      'CTRL' = c(
+        'T_EGFP_rep1_tt_corr_plus.bw',
+        'T_EGFP_rep2_tt_corr_plus.bw'
+      ),
+      'ARS2' = c(
+        'T_ARS2_rep1_tt_corr_plus.bw',
+        'T_ARS2_rep2_tt_corr_plus.bw'
+      ),
+      'CPSF73' = c(
+        'T_CPSF73_rep1_tt_corr_plus.bw',
+        'T_CPSF73_rep2_tt_corr_plus.bw'
+      ),
+      'INTS11' = c(
+        'T_INTS11_rep1_tt_corr_plus.bw',
+        'T_INTS11_rep2_tt_corr_plus.bw'
+      ),
+      'RRP40' = c(
+        'T_RRP40_rep1_tt_corr_plus.bw',
+        'T_RRP40_rep2_tt_corr_plus.bw'
+      )
+    ),
+    "3'-seq" = list(
+      'total' = list(
+        'noPAP' = list(
+          'WT' = c(
+            'siGFP_noPAP_in_batch1_plus.bw',
+            'siGFP_noPAP_in_batch2_plus.bw',
+            'siGFP_noPAP_in_batch3_plus.bw'
+          ),
+          'RRP40' = c(
+            'siRRP40_noPAP_in_batch1_plus.bw',
+            'siRRP40_noPAP_in_batch2_plus.bw',
+            'siRRP40_noPAP_in_batch3_plus.bw'
+          )
+        ),
+        'EPAP' = list(
+          'WT' = c(
+            'siGFP_xPAP_in_batch1_plus.bw',
+            'siGFP_xPAP_in_batch2_plus.bw',
+            'siGFP_xPAP_in_batch3_plus.bw'
+          ),
+          'RRP40' = c(
+            'siRRP40_xPAP_in_batch1_plus.bw',
+            'siRRP40_xPAP_in_batch2_plus.bw',
+            'siRRP40_xPAP_in_batch3_plus.bw'
+          )
+        )
+      ),
+      '4sU' = list(
+        'noPAP' = list(
+          'WT' = c(
+            'siGFP_noPAP_ip_batch1_plus.bw',
+            'siGFP_noPAP_ip_batch3_plus.bw'
+          ),
+          'RRP40' = c(
+            'siRRP40_noPAP_ip_batch1_plus.bw',
+            'siRRP40_noPAP_ip_batch3_plus.bw'
+          )
+        ),
+        'EPAP' = list(
+          'WT' = c(
+            'siGFP_xPAP_ip_batch1_plus.bw',
+            'siGFP_xPAP_ip_batch3_plus.bw'
+          ),
+          'RRP40' = c(
+            'siRRP40_xPAP_ip_batch1_plus.bw',
+            'siRRP40_xPAP_ip_batch3_plus.bw'
+          )
+        )
+      )
+    ),
+    'ChIP-seq' = list(
+      'INTS11' = c(
+        'GSM3576716_ChIP_INTS11_abcam_shINTS11_ctrl_Hg38.bw',
+        'GSM3576717_ChIP_INTS11_sig_shINTS11_ctrl_r1_Hg38.bw'
+      )
+    )
+  ),
+  '-' = list(
+    "TT-seq" = list(
+      'CTRL' = c(
+        'L_EGFP_rep1_tt_corr_ff_noJncReads_minus.bw',
+        'L_EGFP_rep2_tt_corr_ff_noJncReads_minus.bw'
+      ),
+      'CPSF73' = c(
+        'L_CPSF73_rep1_tt_corr_ff_noJncReads_minus.bw',
+        'L_CPSF73_rep2_tt_corr_ff_noJncReads_minus.bw'
+      ),
+      'INTS11' = c(
+        'L_INTS11_rep1_tt_corr_ff_noJncReads_minus.bw',
+        'L_INTS11_rep2_tt_corr_ff_noJncReads_minus.bw'
+      ),
+      'RRP40' = c(
+        'L_RRP40_rep1_tt_corr_ff_noJncReads_minus.bw',
+        'L_RRP40_rep2_tt_corr_ff_noJncReads_minus.bw'
+      )
+    ),
+    "RNA-seq" = list(
+      'CTRL' = c(
+        'T_EGFP_rep1_tt_corr_minus.bw',
+        'T_EGFP_rep2_tt_corr_minus.bw'
+      ),
+      'ARS2' = c(
+        'T_ARS2_rep1_tt_corr_minus.bw',
+        'T_ARS2_rep2_tt_corr_minus.bw'
+      ),
+      'CPSF73' = c(
+        'T_CPSF73_rep1_tt_corr_minus.bw',
+        'T_CPSF73_rep2_tt_corr_minus.bw'
+      ),
+      'INTS11' = c(
+        'T_INTS11_rep1_tt_corr_minus.bw',
+        'T_INTS11_rep2_tt_corr_minus.bw'
+      ),
+      'RRP40' = c(
+        'T_RRP40_rep1_tt_corr_minus.bw',
+        'T_RRP40_rep2_tt_corr_minus.bw'
+      )
+    ),
+    "3'-seq" = list(
+      'total' = list(
+        'noPAP' = list(
+          'WT' = c(
+            'siGFP_noPAP_in_batch1_minus.bw',
+            'siGFP_noPAP_in_batch2_minus.bw',
+            'siGFP_noPAP_in_batch3_minus.bw'
+          ),
+          'RRP40' = c(
+            'siRRP40_noPAP_in_batch1_minus.bw',
+            'siRRP40_noPAP_in_batch2_minus.bw',
+            'siRRP40_noPAP_in_batch3_minus.bw'
+          )
+        ),
+        'EPAP' = list(
+          'WT' = c(
+            'siGFP_xPAP_in_batch1_minus.bw',
+            'siGFP_xPAP_in_batch2_minus.bw',
+            'siGFP_xPAP_in_batch3_minus.bw'
+          ),
+          'RRP40' = c(
+            'siRRP40_xPAP_in_batch1_minus.bw',
+            'siRRP40_xPAP_in_batch2_minus.bw',
+            'siRRP40_xPAP_in_batch3_minus.bw'
+          )
+        )
+      ),
+      '4sU' = list(
+        'noPAP' = list(
+          'WT' = c(
+            'siGFP_noPAP_ip_batch1_minus.bw',
+            'siGFP_noPAP_ip_batch3_minus.bw'
+          ),
+          'RRP40' = c(
+            'siRRP40_noPAP_ip_batch1_minus.bw',
+            'siRRP40_noPAP_ip_batch3_minus.bw'
+          )
+        ),
+        'EPAP' = list(
+          'WT' = c(
+            'siGFP_xPAP_ip_batch1_minus.bw',
+            'siGFP_xPAP_ip_batch3_minus.bw'
+          ),
+          'RRP40' = c(
+            'siRRP40_xPAP_ip_batch1_minus.bw',
+            'siRRP40_xPAP_ip_batch3_minus.bw'
+          )
+        )
+      )
+    )
+  )
+)
+```
+
+
+### parameters
+
+Parameters for how to transform values, treat replicates etc. Specific for each outermost group.      ######### premean has been removed right? Add bin_stats, enhance_signal, force scale, groupautoscale
+```{r}
+parameters = list(
+  "TT-seq" = list(
+    'whichSamples' = NULL,
+    'log2transform' = F,
+    'pseudoCount' = 1,
+    'batchCorrect' = T,
+    'batch' = c(1, 2, 1, 2, 1, 2, 1, 2, 2, 2),
+    'whichReps' = NULL,
+    'calcMean' = T,
+    'negValsSet0' = T,
+    'preMean' = F
+  ),
+  "RNA-seq" = list(
+    'whichSamples' = NULL,
+    'log2transform' = F,
+    'pseudoCount' = 1,
+    'batchCorrect' = T,
+    'batch' = c(1, 2, 1, 2, 1, 2, 1, 2, 2, 2),
+    'whichReps' = NULL,
+    'calcMean' = T,
+    'negValsSet0' = T,
+    'preMean' = F
+  ),
+  "3'-seq" = list(
+    'whichSamples' = NULL,
+    'log2transform' = F,
+    'pseudoCount' = 1,
+    'batchCorrect' = T,
+    'batch' = c(1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3),
+    'whichReps' = NULL,
+    'calcMean' = T,
+    'negValsSet0' = T,
+    'preMean' = F
+  ),
+  "ChIP-seq" = list(
+    'whichSamples' = NULL,
+    'log2transform' = F,
+    'pseudoCount' = 1,
+    'batchCorrect' = F,
+    'batch' = NULL,
+    'whichReps' = NULL,
+    'calcMean' = T,
+    'negValsSet0' = T,
+    'preMean' = F
+  )
+)
+```
+
+
+
+### annotations
+
+Each plot will usually also contain one or more types of annotations to be plotted. These can be assembled in a simple named list. For this vignette, we use a simplified annotation file containing only all isoforms of TAF1D from human Gencode v21 annotations.
+
+```{r}
+bed=rtracklayer::import(system.file('extdata', 'hg38_TAF1D.bed', package='seqNdisplayR'))
+annotations=list('gencode v21'=bed)
+```
+
+
+### this can then be plotted like this:
+
+```{r}
+seqNdisplay(samples, colors, bigwig_dirs, bigwigs, parameters, annots=annotations, feature='TAF1D')
+```
+
+
+### plot display options
+
+#### example: display replicates separately in 3'seq and remove batch correction
+
+```{r}
+parameters$`3'-seq`$calcMean <- FALSE
+parameters$`3'-seq`$batchCorrect <- FALSE
+```
+
+```{r}
+seqNdisplay(samples, colors, bigwig_dirs, bigwigs, parameters, annots=annotations, feature='TAF1D')
+```
+
+
+## Working with Sessions
+
+Given the numerous plotting arguments, it can be cumbersome to keep track of details. To facilitate this to some extent, one can also work with *seqNdisplayRSession* objects, which bundle all arguments in one object, essentially a named list containing all the arguments to seqNdisplayR().
+
+```{r}
+session <- seqNdisplayRSession(samples=samples, 
+                            colors=colors,
+                            bigwig_dirs = bigwig_dirs,
+                            bigwigs = bigwigs,
+                            parameters = parameters,
+                            annotations = annotations)
+```
+
+The session object contains a lot of info, simple print gives an overview of the sample contained
+
+```{r}
+session
+```
+
+
+To inspect the details
+```{r}
+print(session, verbose=T)
+```
+
+
+
+### Import and Export To Excel Template
+
+For convenience one can assemble track information in an Excel sheet based on the template at \link{XXXXXXXXXXXXXXupdate when finished} for an example.
+Information about Excel sheet template organization is in sheet 'README' in the above Excel sheet.
+
+Usage of Excel templates with seqNdisplayR is straightforward:
+
+```{r}
+xl_fname <- system.file("extdata", "example_excel_template.xls", package = "seqNdisplayR")
+
+session <- load_excel(xl_fname, load_annotations = TRUE)
+```
+The load_annotations option specifies whether annotation files are directly parsed into GRanges. If FALSE, only the path is stored and annotations are reloaded during each plotting. Recommended is to load them at this stage.
+
+
+To get an overview over what was loaded:
+```{r}
+print(session)
+```
+
+To create a plot using default settings this simply use:
+
+```{r}
+plot(session_obj, feature='TAF1D')
+```
+
+```{r}
+
+
+```
+
+
+```{r}
+
+```
+

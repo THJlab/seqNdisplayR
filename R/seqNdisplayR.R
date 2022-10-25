@@ -642,7 +642,7 @@ seqNdisplay = function(
 #'   "empty" slots are filled. Otherwise see \code{vignette(package='seqNdisplayR')}. 
 #'   If options are not provided, adds default options to session object. 
 #'   If load_annotations=TRUE will try to load annotations using \link[rtracklayer]{import}. 
-#'   OPS: Currently only bed files are used correctly by seqNdisplayR.
+#'   OBS: Currently only bed files are used correctly by seqNdisplayR.
 #'
 #' @return Object of class seqNdisplayRSession, which is a named list with slots samples, colors, bigwig_dirs, bigwigs, parameters and annotation_files and annots. 
 #' Annots is either identical to annotation_files or a named list of loaded GRanges.
@@ -849,8 +849,6 @@ print.seqNdisplayRSession = function(session, verbose=FALSE, ...) {
 #' session = LoadExcel(xl_fname, load_annotations = TRUE)
 #' plot(session, feature='LMO4')
 #' 
-#' @note change throughout from load_excel to LoadExcel - done? #% 2022-10-04
-#' 
 LoadExcel = function(xl_fname, load_annotations=FALSE) {
   if (!file.exists(xl_fname)){
     cat('The provided file does not exist', '\n')
@@ -1024,8 +1022,6 @@ LoadExcel = function(xl_fname, load_annotations=FALSE) {
 #' igvtbl$annotations
 #'
 #' Session2Df(igvtbl$samples, igvtbl$colors, igvtbl$bigwigs, igvtbl$bigwig_dirs,strand_regex = c('+'='plus', '-'='minus'))
-#' 
-#' @note change throughout from load_igvsession to LoadIGVSession - done? #% 2022-10-04
 #' 
 LoadIGVSession = function( igvsession_fname,
                            group_by = 'autoscalegroups',
@@ -1342,8 +1338,6 @@ LoadIGVSession = function( igvsession_fname,
 #'
 #' @examples
 #' 
-#' @note change throughout from session_to_xlsx to Session2xlsx - done? #% 2022-10-04
-#' 
 Session2xlsx = function(session, path, ...) {
   samples = Session2Df(session$samples,
                        session$colors,
@@ -1514,6 +1508,8 @@ run_seqNdisplayR_app = function(...){
 #' @description Internal function
 #' Container for Constants and Defaults
 #'
+#' @keywords internal
+#'
 #' @author SLA
 #'
 #' @return a named vector with constants and defaults (package-wide available arguments)
@@ -1528,8 +1524,6 @@ run_seqNdisplayR_app = function(...){
 #' std_letter_height = constants_defaults['std_letter_height']
 #' min_font_size = constants_defaults['min_font_size']
 #' annot_panel_dist = constants_defaults['annot_panel_dist']
-#' 
-#' @note implement function throughout - done? #% 2022-10-05
 #' 
 ConstantsDefaults = function(){
   c(line_width_scaling_factor = 0.25/0.38,   # scaling factor to use for the line width (if multiplied with 1 it will give 0.5-pt line width in the pdf with default dimensions)
@@ -1547,14 +1541,14 @@ ConstantsDefaults = function(){
 #'
 #' @description Internal function
 #'
+#' @keywords internal
+#' 
 #' @author SLA 
 #'         
 #' @return a named vector with default vertical proportions of various plotting segment types relative to 'seq' tracks
 #'
 #' @examples
 #' plot_vertical_parameters = PlotVerticalParameters()
-#' 
-#' @note implement function throughout - done? #% 2022-10-05
 #' 
 PlotVerticalParameters = function(){
   c('header'=2.2,             ## vertical units used for header segment
@@ -1573,14 +1567,14 @@ PlotVerticalParameters = function(){
 #'
 #' @description Internal function
 #'
+#' @keywords internal
+#' 
 #' @author MS/SLA
 #'
 #' @return a named list of default plot options
 #'
 #' @examples
 #' default_plot_options = DefaultPlotOptions()
-#' 
-#' @note change throughout to DefaultPlotOptions - done? #% 2022-10-05
 #' 
 DefaultPlotOptions = function(){
   list(plotting_segment_order=NULL,                               #(v)
@@ -1657,14 +1651,14 @@ DefaultPlotOptions = function(){
 #'
 #' @description Internal function
 #'
+#' @keywords internal
+#' 
 #' @author MS/SLA
 #'
 #' @return a named list of default annotation-display options.
 #'
 #' @examples
 #' default_annotation_options = DefaultAnnotationOptions()
-#' 
-#' @note change throughout to DefaultAnnotationOptions - done? #% 2022-10-05
 #' 
 DefaultAnnotationOptions = function() {
   list('incl_feature_names'=TRUE,                                 #(v)
@@ -1680,6 +1674,8 @@ DefaultAnnotationOptions = function() {
 #' Default Parameters 
 #'
 #' @description Internal function
+#'
+#' @keywords internal
 #' 
 #' @author MS/SLA
 #' 
@@ -1687,8 +1683,6 @@ DefaultAnnotationOptions = function() {
 #'
 #' @examples
 #' default_parameters = DefaultParameters()
-#' 
-#' @note change throughout to DefaultParameters - done? #% 2022-10-05
 #' 
 DefaultParameters = function() {
   list(
@@ -1713,6 +1707,8 @@ DefaultParameters = function() {
 #'
 #' @description Internal function
 #'
+#' @keywords internal
+#' 
 #' @author SLA
 #'
 #' @param messages a list with messages stored under 'output', 'warnings' and 'errors' 
@@ -1729,8 +1725,6 @@ DefaultParameters = function() {
 #' 
 #' messages2 = list('output'=list('This is the output string and no errors or warnings'), 'errors'=list(), 'warnings'=list())
 #' PrintOutput(messages2, verbosity=2)
-#' 
-#' @note find example for usage of no_line_change=TRUE
 #' 
 PrintOutput = function(messages, verbosity, no_line_change=FALSE){
   if (length(messages[['output']]) > 0 & verbosity>0){
@@ -1755,6 +1749,8 @@ PrintOutput = function(messages, verbosity, no_line_change=FALSE){
 #'
 #' @description Internal function: 
 #' Make sense of the supplied width arguments
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #'
@@ -1898,6 +1894,8 @@ PlotWidths = function(panels_max_width_cm, scale_panel_width_cm, margin_width_cm
 #'
 #' @description Internal function: 
 #' Read in annotations as GRanges objects from bed files - stored in list format
+#'
+#' @keywords internal
 #' 
 #' @author SLA 
 #'
@@ -1937,6 +1935,8 @@ ReadInAnnotations = function(annots, verbosity){
 #' @description Internal function: 
 #' Convert feature name or locus to be plotted to a GRanges object
 #'
+#' @keywords internal
+#' 
 #' @author SLA 
 #'
 #' @param locus genomic coordinates, incl. strand, of locus (e.g., c("chr1", "+", 87297784, 87379607)
@@ -2035,6 +2035,8 @@ RegionGRanges = function(locus, tracks_width, feature=NULL, annotations=NULL, bi
 #' Find nonoverlapping intervals within a GRanges object for each interval (based on the SelfHits object obtained by findOverlaps function applied to the GRanges object beforehand)
 #' - used together with "ConnectIVs" to organize the individual feature annotations, such that they take up as little space as possible
 #'
+#' @keywords internal
+#' 
 #' @author SLA 
 #'
 #' @param n_IV 
@@ -2061,6 +2063,8 @@ FindNonoverlappingIVs = function(n_IV, n_IVs, overlaps){
 #' Connect non-overlapping intervals, such that the number of "lines" used in the annotation track is minimized
 #' - used together with "FindNonoverlappingIVs" IVs to organize the individual feature annotations, such that they take up as little space as possible
 #'
+#' @keywords internal
+#' 
 #' @author SLA 
 #'
 #' @param n_IV 
@@ -2088,6 +2092,8 @@ ConnectIVs = function(n_IV, nonoverlapping_IVs, remaining_IVs){
 #' @description Internal function: 
 #' Overlapping feature intervals (transcripts/genes/transcription units) are organized in separate lines to allow "non-overlapping" plotting
 #'
+#' @keywords internal
+#' 
 #' @author SLA 
 #'
 #' @param annotation_gr 
@@ -2128,6 +2134,8 @@ OrganizeOverlappingIVs = function(annotation_gr, gap=-1L){
 #' This function is the first step in organizing the annotated features in the plotted region into various formats
 #' Used together with "OrganizeOverlappingLoci" and "ConvertCollapsedFormat" to create a final organized version of the annotated features
 #'
+#' @keywords internal
+#' 
 #' @author SLA
 #'
 #' @param plotted_region 
@@ -2286,14 +2294,16 @@ AnnotatedFeaturesInRegion = function(plotted_region, annotations){
 
 #' Organize Overlapping Loci
 #'
-#' @param annot_info 
-#'
 #' @description Internal function: 
 #' This function is the second step in organizing the annotated features in the plotted region into various formats
 #' Used after AnnotatedFeaturesInRegion and before ConvertCollapsedFormat to create a final organized version of the annotated features
 #'
+#' @keywords internal
+#' 
 #' @author SLA 
-#'
+#' 
+#' @param annot_info 
+#' 
 #' @return
 #' 
 #' @import S4Vectors
@@ -2337,6 +2347,8 @@ OrganizeOverlappingLoci = function(annot_info){
 #' Used after AnnotatedFeaturesInRegion and OrganizeOverlappingLoci to create a final organized version of the annotated features
 #' Converts the format of "collapsed" and "collapsed2" from GRanges to GRangesLists to make the overall formatting uniform; one GRanges object per 'feature name' (e.g. "TAF1D" and "RP11-178H8.7")
 #'
+#' @keywords internal
+#'
 #' @author SLA 
 #'
 #' @param annot_info 
@@ -2371,6 +2383,8 @@ ConvertCollapsedFormat = function(annot_info){
 #'
 #' @description Internal function: 
 #' Wrapper function that executes the three above functions
+#'
+#' @keywords internal
 #' 
 #' @author SLA 
 #'
@@ -2394,6 +2408,8 @@ OrganizeAnnotatedFeaturesInRegion = function(plotted_region, annotations){
 #' @description Internal function: 
 #' Helper function that determines whether input (vector) is a color
 #'
+#' @keywords internal
+#'
 #' @author SLA (with help from https://stackoverflow.com/questions/13289009/check-if-character-string-is-a-valid-color-representation/13290832#13290832)
 #'
 #' @param put_color_vector putative vector of colors
@@ -2409,8 +2425,6 @@ OrganizeAnnotatedFeaturesInRegion = function(plotted_region, annotations){
 #' IsColor(c('white', 'blue', 'gnyf'))
 #' IsColor('#0098AD')
 #' 
-#' @note change throughout to IsColor - done? #% 2022-10-05
-#' 
 IsColor = function(put_color_vector) {
   sapply(put_color_vector, function(.put.color) {
     tryCatch(is.matrix(grDevices::col2rgb(.put.color)),
@@ -2423,6 +2437,8 @@ IsColor = function(put_color_vector) {
 #'
 #' @description Internal function: 
 #' Helper function that will expand a common "one-dimensional" parameter to fit all the names of a named object
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #'
@@ -2583,6 +2599,8 @@ ScrutinizeExpandAndNameParameter = function(parameter, name_vector, use_names=FA
 #'
 #' @description Internal function: 
 #' Evaluate whether a vector/value is numeric and falls within recommmended range
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #'
@@ -2672,6 +2690,8 @@ EvaluateNumericValue = function(num_val, positive_val, min_val, max_val, interva
 #'
 #' @description Internal function: 
 #' Max number of nested levels in a nested list of lists
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #'
@@ -2695,6 +2715,8 @@ ListDepth = function(query_list){
 #'
 #' @description Internal function: 
 #' Constructs a panel_font_size_list (a font size provided to each panel)
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #'
@@ -2785,6 +2807,8 @@ PanelFontSizeList = function(samples, panel_font_sizes, panel_font_size_list, in
 #'
 #' @description Internal function: 
 #' Checks/constructs a horizontal_panels_list
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #'
@@ -2847,6 +2871,8 @@ HorizontalPanelsList = function(samples, horizontal_panels_list, incl_reps, repl
 #' @description Internal function: 
 #' Checks/constructs a force_scale_list
 #' Handle force_scale which is part of "parameters" argument but needs to passed differently to plot function
+#'
+#' @keywords internal
 #' 
 #' @author MS/SLA
 #'
@@ -2880,6 +2906,8 @@ HandleForcedScaleFromParameters = function(pars){
 #'
 #' @description Internal function: 
 #' Checks/constructs a force_scale_list
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #'
@@ -2958,6 +2986,8 @@ ForceScaleList = function(samples, force_scale, strands, verbosity, interface){
 #'
 #' @description Internal function: 
 #' Sort Unlisted Sample Names
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #' 
@@ -3002,6 +3032,8 @@ SortUnlistedSampleNames = function(unlisted_which_sample, unlisted_sample_names,
 #' Unpack Samples
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #' 
@@ -3124,6 +3156,8 @@ UnpackSamples = function(seqtype, samples, which_samples, which_reps, bigwig_lis
 #' Load And Transform Data For Track
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #' 
@@ -3371,6 +3405,8 @@ LoadAndTransformDataForTrack = function(seqtype, plotted_region, samples, bigwig
 #'
 #' @description Internal function: 
 #' Delele null/empty entries in a list
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #' 
@@ -3388,6 +3424,8 @@ DeleteNULLs  =  function(x_list){
 #' Load Tracks
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #' 
@@ -3416,6 +3454,8 @@ LoadTracks = function(plotted_region, samples, bigwigs, bigwig_dirs, parameters,
 #'
 #' @description Internal function: 
 #' Organize the panels with track-names to be plotted on the left side of the tracks
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #' 
@@ -3452,6 +3492,8 @@ OrganizedPanelsList = function(tracks_listed){
 #' Plotting Segment Order
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #' 
@@ -3490,6 +3532,8 @@ PlottingSegmentOrder = function(plotting_segment_order, sample_names, header, in
 #' Finalize Plotting Segment Order
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #' 
@@ -3608,6 +3652,8 @@ FinalizePlottingSegmentOrder = function(plotting_segment_order, tracks_listed, b
 #' Build Scrutinize Plot Segment Order
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #' 
@@ -3710,6 +3756,8 @@ BuildScrutinizePlotSegmentOrder = function(plotting_segment_order, plotted_regio
 #' Numbering Spacers
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #' 
@@ -3741,6 +3789,8 @@ NumberingSpacers = function(stranded_list){
 #' Estimate Plot Heights
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #' 
@@ -3875,6 +3925,8 @@ EstimatePlotHeights = function(annot_info, incl_feature_names, annotation_packin
 #' Adjust Estimated Plot Heights
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #' 
@@ -3952,6 +4004,8 @@ AdjustEstimatedPlotHeights = function(estimated_plot_heights, plot_vertical_para
 #' Recommended Font Sizes
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #' 
@@ -3992,6 +4046,8 @@ RecommendedFontSizes = function(est_track_height_cm, est_min_annot_height, plot_
 #'
 #' @description Internal function: 
 #' Given a chromosomal coordinate (for the center of the annotated feature name) the parameters necessary for plotting the word such that it fits inside the plotted region are calculated
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #' 
@@ -4055,6 +4111,8 @@ CoordsOfFeatName = function(chrom_coord_feature, feat_width_cm, word_width_cm, w
 #'
 #' @description Internal function: 
 #' Given a set of possible font sizes (e.g. helvetica 4-8 given by letter_widths), where should the feature names within the region be plotted
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #'
@@ -4144,6 +4202,8 @@ OrganizeAnnotationText = function(plotted_region, annot_info, annotation_packing
 #'
 #' @description Internal function: 
 #' Determine the y-axis organization of names of annotated features within plotted region depending on font size
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #'
@@ -4277,6 +4337,8 @@ OrganizeAllAnnotationTextsInPlottedRegion = function(feature_text, plotted_regio
 #' Update Plot Vertical Parameters
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #'
@@ -4315,6 +4377,8 @@ UpdatePlotVerticalParameters = function(plot_vertical_parameters, track_height_c
 #' Calculate Track Height
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #'
@@ -4357,6 +4421,8 @@ CalculateTrackHeight = function(combined_track_vector, total_annotation_lines, f
 #' Update Track Vector
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #'
@@ -4385,6 +4451,8 @@ UpdateTrackVector = function(track_vector, plot_vertical_parameters){
 #' RelativeAnnotationHeight
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #'
@@ -4427,6 +4495,8 @@ RelativeAnnotationHeight = function(annot_info, annot_heights, letter_heights, i
 #' Plot Height Parameters
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #'
@@ -4492,6 +4562,8 @@ PlotHeightParameters = function(combined_track_vector, track_vector, annotation_
 #'
 #' @description Internal function: 
 #' The overall panel dimensions can be fixed upfront or it can be left open for the function to determine the dimension - with some initial parameters defined
+#'
+#' @keywords internal
 #'  
 #' @author SLA
 #'
@@ -4994,6 +5066,8 @@ OrganizePanelsDimensions = function(datasets, min_word_length, replicate_names, 
 #' Finalize Panels Dimensions
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA
 #'
@@ -5029,6 +5103,8 @@ FinalizePanelsDimensions = function(panel_info, both_strands){
 #' Get Bin Size
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA
 #'
@@ -5070,6 +5146,8 @@ GetBinSize = function(bin_size, plot_width, tracks_width_cm, bins_per_cm, verbos
 #' Final Organized Annotation Texts In Plotted Region
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA
 #'
@@ -5094,6 +5172,8 @@ FinalOrganizedAnnotationTextsInPlottedRegion = function(organized_annotation_tex
 #' Basic Plot Parameters
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA
 #'
@@ -5180,6 +5260,8 @@ BasicPlotParameters = function(plotted_strand, plotted_region, feature_names_fon
 #' Align Basic Plot Parameters
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA
 #'
@@ -5265,6 +5347,8 @@ AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands
 #' Prepare Plotting Interface
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA
 #'
@@ -5320,6 +5404,8 @@ PreparePlottingInterface = function(plot_dim, pdf, pdf_name, pdf_dir, header, bi
 #' Hex2Hsl
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA (based on https://bitbucket.org/mattgove/color-theory/src/master/mg_colors.py)
 #'
@@ -5333,8 +5419,6 @@ PreparePlottingInterface = function(plot_dim, pdf, pdf_name, pdf_dir, header, bi
 #' Hex2Hsl('black')
 #' Hex2Hsl('blue')
 #' Hex2Hsl('#FFA550')
-#' 
-#' @note change throughout from hex2hsl to Hex2Hsl - done? #% 2022-10-04
 #' 
 Hex2Hsl = function(c){
   c_rgb_vector = as.vector(grDevices::col2rgb(c))/255
@@ -5380,6 +5464,8 @@ Hex2Hsl = function(c){
 #' Adjust Color Phi
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA (based on https://bitbucket.org/mattgove/color-theory/src/master/mg_colors.py)
 #'
@@ -5391,8 +5477,6 @@ Hex2Hsl = function(c){
 #' @examples
 #' c_hsl = Hex2Hsl('#FFA550')
 #' c_hsl_180 = AdjustColorPhi(c_hsl)
-#'  
-#' @note change throughout from adjust_color_phi to AdjustColorPhi - done? #% 2022-10-04
 #' 
 AdjustColorPhi = function(c_hsl, phi=180){
   hue = c_hsl[1] + phi
@@ -5409,6 +5493,8 @@ AdjustColorPhi = function(c_hsl, phi=180){
 #' Hsl2Hex
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA (based on https://www.rapidtables.com/convert/color/hsl-to-rgb.html)
 #'
@@ -5423,8 +5509,6 @@ AdjustColorPhi = function(c_hsl, phi=180){
 #' c_hsl = Hex2Hsl(c_hex)
 #' c_hsl_180 = AdjustColorPhi(c_hsl)
 #' c_hex_180 = Hsl2Hex(c_hsl_180)
-#' 
-#' @note change throughout from hsl2hex to Hsl2Hex - done? #% 2022-10-04
 #' 
 Hsl2Hex = function(c_hsl){
   h = c_hsl[1]
@@ -5454,6 +5538,8 @@ Hsl2Hex = function(c_hsl){
 #' Convert Color
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA 
 #'
@@ -5466,8 +5552,6 @@ Hsl2Hex = function(c_hsl){
 #' c_hex = '#FFA550'
 #' c_hex_180 = ConvertColor(c_hex)
 #' 
-#' @note change throughout to from convert_color to ConvertColor - done? #% 2022-10-04
-#' 
 ConvertColor = function(c, phi=180){
   c_hsl = Hex2Hsl(c)
   c_hsl_conv = AdjustColorPhi(c_hsl, phi)
@@ -5479,6 +5563,8 @@ ConvertColor = function(c, phi=180){
 #' Plot Header
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA 
 #'
@@ -5528,6 +5614,8 @@ PlotHeader = function(windows_height, n_segment, coords_tracks, full_width_cm,  
 #' Coords Of Genomic Scale
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA 
 #'
@@ -5579,6 +5667,8 @@ CoordsOfGenomicScale = function(chrom_coord, font_size, coords_tracks, full_widt
 #' Plot Scale
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA 
 #'
@@ -5646,6 +5736,8 @@ PlotScale = function(windows_height, n_segment, coords_tracks, full_width_cm, ge
 #' Plot Spacer
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA 
 #'
@@ -5682,6 +5774,8 @@ PlotSpacer = function(windows_height, spacer_segment, right_border, plotted_stra
 #'
 #' @description Internal function: 
 #' Sample info at the left side of the plots  
+#'
+#' @keywords internal
 #'  
 #' @author SLA 
 #'
@@ -5812,6 +5906,8 @@ PlotPanels = function(plotting_segment, plotted_strand, panel_info, panels_list,
 #' Plot Matrix
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA 
 #'
@@ -5887,6 +5983,8 @@ PlotMatrix = function(plotted_region, basic_plot_parameters, plot_start, plot_en
 #' Plot Data
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA 
 #'
@@ -6052,6 +6150,8 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, interming
 #' Y Parameters
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA 
 #'
@@ -6105,6 +6205,8 @@ YParameters = function(plot_mat, plotting_segment, force_scale_list, group_autos
 #' Segment Top
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA 
 #'
@@ -6154,6 +6256,8 @@ SegmentTop = function(plotting_segment, plotted_strand, windows_height, annot_in
 #' Plot Annotation
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA 
 #'
@@ -6433,6 +6537,8 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
 #' Plot Segment
 #'
 #' @description Internal function: 
+#'
+#' @keywords internal
 #'  
 #' @author SLA 
 #'
@@ -6603,6 +6709,8 @@ PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, pl
 #'
 #' @description Internal function: 
 #' Convenience function checks whether all NA or empty string
+#'
+#' @keywords internal
 #' 
 #' @author MS
 #'
@@ -6616,8 +6724,6 @@ PlotSegment = function(feature, plotted_region, plotted_strand, both_strands, pl
 #' IsEmpty(c('', NA))
 #' IsEmpty(c('fnyg', NA)) 
 #' 
-#' @note change throughout from isempty to IsEmpty - done? #% 2022-10-04
-#' 
 IsEmpty = function(x){
   is.na(x) | x == ''
 }
@@ -6627,6 +6733,8 @@ IsEmpty = function(x){
 #'
 #' @description Internal function: 
 #' Convenience function checks whether all NA or empty in a vector of strings
+#'
+#' @keywords internal
 #' 
 #' @author MS
 #'
@@ -6640,8 +6748,6 @@ IsEmpty = function(x){
 #' AllEmpty(c('', NA))
 #' AllEmpty(c('fnyg', NA)) 
 #' 
-#' @note change throughout from allempty to AllEmpty - done? #% 2022-10-04
-#' 
 AllEmpty = function(x){
   sum( sapply(x, IsEmpty) ) == length(x)
 }
@@ -6652,6 +6758,8 @@ AllEmpty = function(x){
 #' @description Internal function: 
 #' Split data frame by values in a column but maintain order as order of appearance. 
 #' Different to base R split.data.frame where order of split objects are ordered as default factors.
+#'
+#' @keywords internal
 #' 
 #' @author MS
 #'
@@ -6662,8 +6770,6 @@ AllEmpty = function(x){
 #' @return
 #'
 #' @examples
-#' 
-#' @note change throughout from ordered_split to OrderedSplit - done? #% 2022-10-04
 #' 
 OrderedSplit = function(x, f, drop=TRUE){
   spl = split(x, f, drop)
@@ -6676,6 +6782,8 @@ OrderedSplit = function(x, f, drop=TRUE){
 #' @description Internal function: 
 #' Reads Annotations (paths and options) from Excel template
 #'
+#' @keywords internal
+#'
 #' @author MS (minor additions by SLA)
 #'
 #' @param annotations Dataframe based on ANNOTATIONS sheet in Excel template
@@ -6686,8 +6794,6 @@ OrderedSplit = function(x, f, drop=TRUE){
 #' @return Named list of path, or named list of GRanges. Names used are entries in the *annotation_name* column.
 #'
 #' @examples
-#' 
-#' @note change throughout from get_annotations to GetAnnotations - done? #% 2022-10-04
 #' 
 GetAnnotations = function(annotations) {
   annot=as.list(annotations$annotation_file)
@@ -6721,6 +6827,8 @@ GetAnnotations = function(annotations) {
 #' @description Internal function: 
 #' Parse string into relevant R object class
 #'
+#' @keywords internal
+#'
 #' @author MS
 #'
 #' @param option_str string representation of the option
@@ -6732,8 +6840,6 @@ GetAnnotations = function(annotations) {
 #' @examples
 #' ParseOption("1.2,3")
 #' ParseOption("RNA-seq:1.2,3;TT-seq:2,4")
-#' 
-#' @note change throughout from parse_option to ParseOption - done? #% 2022-10-04
 #' 
 ParseOption = function(option_str) {
   if( is.null(option_str) ){
@@ -6767,6 +6873,8 @@ ParseOption = function(option_str) {
 #' @description Internal function: 
 #' Parse option into string
 #'
+#' @keywords internal
+#'
 #' @author MS
 #'
 #' @param option named list, vector or single element
@@ -6777,8 +6885,6 @@ ParseOption = function(option_str) {
 #' DeparseOption(c(1.2,3))
 #' DeparseOption(list('RNA-seq' = c(1.2,3), 'TT-seq' = c(2,4)))
 #' DeparseOption(list('RNA-seq' = c(TRUE,FALSE), 'TT-seq' = c(TRUE,FALSE)))
-#' 
-#' @note change throughout from deparse_option to DeparseOption - done? #% 2022-10-04
 #' 
 DeparseOption = function(option) {
   if( length(option) > 1 ){
@@ -6811,6 +6917,8 @@ DeparseOption = function(option) {
 #' @description Internal function: 
 #' Find common prefix
 #'
+#' @keywords internal
+#'
 #' @author MS
 #'
 #' @param vector_of_strings 
@@ -6818,8 +6926,6 @@ DeparseOption = function(option) {
 #' @return A single string which is a common prefix in all strings
 #'
 #' @examples
-#' 
-#' @note change throughout from common_prefix to CommonPrefix - done? #% 2022-10-04
 #' 
 CommonPrefix = function(vector_of_strings) {
   if ( length(vector_of_strings) == 1 ) {
@@ -6847,6 +6953,8 @@ CommonPrefix = function(vector_of_strings) {
 #' @description Internal function: 
 #' Reads Global Options from Excel template
 #'
+#' @keywords internal
+#'
 #' @author MS
 #'
 #' @param options Dataframe based on GLOBAL_OPTIONS sheet in Excel template
@@ -6858,8 +6966,6 @@ CommonPrefix = function(vector_of_strings) {
 #' @return Named list of values
 #'
 #' @examples
-#' 
-#' @note change throughout from get_plot_options to GetPlotOptions - done? #% 2022-10-04
 #' 
 GetPlotOptions = function(options) {
   if(is.null(options)){
@@ -6879,6 +6985,8 @@ GetPlotOptions = function(options) {
 #' @description Internal function: 
 #' Fill Empty Rows in individual columns in dataframe
 #'
+#' @keywords internal
+#'
 #' @author MS/SLA
 #'
 #' @param df Dataframe
@@ -6892,8 +7000,6 @@ GetPlotOptions = function(options) {
 #' @return Dataframe
 #'
 #' @examples
-#' 
-#' @note change throughout from fill_df to FillDf - done? #% 2022-10-04
 #' 
 FillDf = function(df) {
   filled_df = data.frame()
@@ -6925,6 +7031,8 @@ FillDf = function(df) {
 #' @description Internal function: 
 #' Empty Unnecessary Cells in Sample DataFrame
 #'
+#' @keywords internal
+#'
 #' @author MS
 #'
 #' @param df a dataframe
@@ -6938,8 +7046,6 @@ FillDf = function(df) {
 #' @return trimmed dataframe
 #'
 #' @examples
-#' 
-#' @note change throughout from empty_df to EmptyDf - done? #% 2022-10-04
 #' 
 EmptyDf = function(df) {
   emptied_df = df
@@ -6964,6 +7070,8 @@ EmptyDf = function(df) {
 #' @description Internal function: 
 #' Get samples from a data frame containing at a minimum columns dataset
 #'
+#' @keywords internal
+#'
 #' @author MS
 #'
 #' @param filled_df a filled dataframe (see details)
@@ -6979,8 +7087,6 @@ EmptyDf = function(df) {
 #' GetSamples(df)
 #' df = data.frame(dataset=c(rep('a',4), rep('b',2)), subgroup_1=c('x','x','y','y', 'x','y'), subgroup_2=c('a', 'b', 'a', 'b', NA, NA), stringsAsFactors=FALSE)
 #' GetSamples(df)
-#' 
-#' @note change throughout from get_samples to GetSamples - done? #% 2022-10-04
 #' 
 GetSamples = function(filled_df){
   start_col = which(colnames(filled_df) == 'dataset')
@@ -7002,6 +7108,8 @@ GetSamples = function(filled_df){
 #' @description Internal function: 
 #' Get colors from a data frame containing at a minimum columns color and dataset
 #'
+#' @keywords internal
+#'
 #' @author MS
 #'
 #' @param filled_df a filled dataframe (see details)
@@ -7017,8 +7125,6 @@ GetSamples = function(filled_df){
 #' @examples
 #' df = data.frame(color=c(rep('red', 4), rep('green', 2)),dataset=c(rep('a',4), rep('b',2)), subgroup_1=c('x','x','y','y', 'x','y'), subgroup_2=1:6, stringsAsFactors=FALSE)
 #' GetColors(df)
-#' 
-#' @note change throughout from get_colors to GetColors - done? #% 2022-10-04
 #' 
 GetColors = function(filled_df){
   start_col = which(colnames(filled_df) == 'dataset')
@@ -7048,6 +7154,8 @@ GetColors = function(filled_df){
 #' @description Internal function: 
 #' Get bigwig dirs file names from a data frame containing at a minimum columns bigwig_file and dataset
 #'
+#' @keywords internal
+#'
 #' @author MS
 #'
 #' @param filled_df a filled dataframe (see details)
@@ -7064,8 +7172,6 @@ GetColors = function(filled_df){
 #' df = data.frame(bigwig_directory=c(rep('http://seqA/', 4), rep('http://seqB/', 2)),dataset=c(rep('a',4), rep('b',2)), subgroup_1=c('x','x','y','y', 'x','y'), subgroup_2=1:6, stringsAsFactors=FALSE)
 #' GetBigwigDirs(df)
 #' 
-#' @note change throughout from get_bigwig_dirs to GetBigwigDirs - done? #% 2022-10-04
-#' 
 GetBigwigDirs = function(filled_df){
   bigwig_dirs_df = dplyr::distinct(filled_df, bigwig_directory, dataset)
   bigwig_dirs_df = dplyr::filter(bigwig_dirs_df, !is.na(bigwig_directory))
@@ -7079,6 +7185,8 @@ GetBigwigDirs = function(filled_df){
 #'
 #' @description Internal function: 
 #' Get bigwig file names from a data frame containing at a minimum columns bigwig_file, strand and dataset
+#'
+#' @keywords internal
 #'
 #' @author MS
 #'
@@ -7104,8 +7212,6 @@ GetBigwigDirs = function(filled_df){
 #'   subgroup_1=c('x','x','y','y', 'x','y'),
 #'   stringsAsFactors=FALSE)
 #' GetBigwigs(df)
-#' 
-#' @note change throughout from get_bigwigs to GetBigwigs - done? #% 2022-10-04
 #' 
 GetBigwigs = function(filled_df) {
   split_col = which(colnames(filled_df) == 'dataset')
@@ -7134,6 +7240,8 @@ GetBigwigs = function(filled_df) {
 #' @description Internal function: 
 #' Helper used for parsing parameters$<dataset>$whichSamples
 #'
+#' @keywords internal
+#'
 #' @author MS
 #'
 #' @param x 
@@ -7141,8 +7249,6 @@ GetBigwigs = function(filled_df) {
 #' @return
 #' 
 #' @examples
-#' 
-#' @note change throughout from empty_to_null to Empty2Null - done? #% 2022-10-04
 #' 
 Empty2Null = function(x){
   if ( !is.list(x) ) {
@@ -7159,6 +7265,8 @@ Empty2Null = function(x){
 #'
 #' @description Internal function: 
 #' Reads parameters from Excel template 
+#'
+#' @keywords internal
 #'
 #' @author MS
 #'
@@ -7200,8 +7308,6 @@ Empty2Null = function(x){
 #' #change specific arguments afterwards
 #' params$a$calcMean = FALSE
 #' params$b$log2Transform = TRUE
-#' 
-#' @note change throughout from get_parameters to GetParameters - done? #% 2022-10-04
 #' 
 GetParameters = function(samples_df, params_df){
   default_params = DefaultParameters()
@@ -7261,6 +7367,8 @@ GetParameters = function(samples_df, params_df){
 #' @description Internal function: 
 #' Prints an overview over samples, colors and associated bigwigs in a seqNdisplayR Session.
 #'
+#' @keywords internal
+#'
 #' @author MS
 #'
 #' @param samples samples object as used by seqNdisplayR
@@ -7274,8 +7382,6 @@ GetParameters = function(samples_df, params_df){
 #' @return Print to R session
 #'
 #' @examples
-#' 
-#' @note change throughout from glimpse_session to GlimpseSession - done? #% 2022-10-04
 #' 
 GlimpseSession = function(samples, colors, bigwigs, level=0, indent_size='   ') {
   if ( is.list(samples) ) {
@@ -7303,6 +7409,8 @@ GlimpseSession = function(samples, colors, bigwigs, level=0, indent_size='   ') 
 #' @description Internal function: 
 #' Converts session information to data frame as in Excel import sheet.
 #'
+#' @keywords internal
+#'
 #' @author MS
 #'
 #' @param .samples samples object as used by seqNdisplayR
@@ -7322,8 +7430,6 @@ GlimpseSession = function(samples, colors, bigwigs, level=0, indent_size='   ') 
 #' @importFrom dplyr bind_rows
 #'
 #' @examples
-#' 
-#' @note change throughout from session_to_df to Session2Df - done? #% 2022-10-04
 #' 
 Session2Df = function(.samples, .colors, .bigwigs, .bigwig_dirs, .parameters, strand_regex = c('+'= 'plus', '-'='minus'), factorize = FALSE, level = 0) {
   if (level == 0) {
@@ -7399,6 +7505,8 @@ Session2Df = function(.samples, .colors, .bigwigs, .bigwig_dirs, .parameters, st
 #' Open Options Table
 #'
 #' @description Open the Options table (Excel sheet with info for app)
+#'
+#' @keywords internal
 #'
 #' @author SLA
 #'

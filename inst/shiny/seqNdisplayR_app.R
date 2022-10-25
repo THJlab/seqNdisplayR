@@ -11,6 +11,8 @@ options(shinyTree.refresh  = TRUE)
 #'
 #' @description Open the Options table (Excel sheet with info for app)
 #'
+#' @keywords internal
+#'
 #' @author SLA
 #'
 #' @return
@@ -39,6 +41,8 @@ OpenOptionsTable = function(){
 #'
 #' @description Internal function: 
 #' Parse string into relevant R object class
+#'
+#' @keywords internal
 #'
 #' @author MS
 #'
@@ -84,6 +88,8 @@ ParseOption = function(option_str) {
 #' @description Internal function: 
 #' Parse option into string
 #'
+#' @keywords internal
+#'
 #' @author MS
 #'
 #' @param option named list, vector or single element
@@ -124,6 +130,8 @@ DeparseOption = function(option) {
 #'
 #' @description Internal function: 
 #' Max number of nested levels in a nested list of lists
+#'
+#' @keywords internal
 #' 
 #' @author SLA
 #'
@@ -144,6 +152,27 @@ ListDepth = function(query_list){
 
 
 ##### functions for split input values
+#' Split Sliders
+#'
+#' @description Internal function: 
+#'
+#' @keywords internal
+#' 
+#' @author SLA
+#'
+#' @param n 
+#' @param varname 
+#' @param suboptions 
+#' @param vals 
+#' @param optima 
+#' @param step 
+#'
+#' @return
+#' 
+#' @import shiny
+#'
+#' @examples
+#' 
 split_sliders = function(n, varname, suboptions, vals, optima, step){
   if (n%%2==1){
     sliderInput(paste0(varname, '_subvar', 1+(n-1)/2),
@@ -158,6 +187,28 @@ split_sliders = function(n, varname, suboptions, vals, optima, step){
   }
 }
 
+#' Split Sliders Panels
+#'
+#' @description Internal function: 
+#'
+#' @keywords internal
+#' 
+#' @author SLA
+#'
+#' @param n 
+#' @param varname 
+#' @param slider_cells 
+#' @param dataset_name 
+#' @param vals 
+#' @param optima 
+#' @param step 
+#'
+#' @return
+#' 
+#' @import shiny
+#'
+#' @examples
+#' 
 split_sliders_panels = function(n, varname, slider_cells, dataset_name, vals, optima, step){
   if (n %in% slider_cells){
     sliderInput(paste0(varname, '_subvar', which(slider_cells==n)),
@@ -171,6 +222,24 @@ split_sliders_panels = function(n, varname, slider_cells, dataset_name, vals, op
   }
 }
 
+#' Split Headers
+#'
+#' @description Internal function: 
+#'
+#' @keywords internal
+#' 
+#' @author SLA
+#'
+#' @param n 
+#' @param slider_cells 
+#' @param levels 
+#'
+#' @return
+#' 
+#' @import shiny
+#'
+#' @examples
+#' 
 split_headers = function(n, slider_cells, levels){
   if (n %in% slider_cells){
     p(em(strong(levels[[1+(n-1)/2]])))
@@ -179,6 +248,27 @@ split_headers = function(n, slider_cells, levels){
   }
 }
 
+#' Split Numeric Input
+#'
+#' @description Internal function: 
+#'
+#' @keywords internal
+#' 
+#' @author SLA
+#'
+#' @param n 
+#' @param varname 
+#' @param suboptions 
+#' @param vals 
+#' @param optima 
+#' @param step 
+#'
+#' @return
+#' 
+#' @import shiny
+#'
+#' @examples
+#' 
 split_numeric_input = function(n, varname, suboptions, vals, optima, step){
   if (n%%2==1){
     numericInput(paste0(varname, '_subvar', 1+(n-1)/2),
@@ -192,6 +282,28 @@ split_numeric_input = function(n, varname, suboptions, vals, optima, step){
   }
 }
 
+#' Split Numeric Input 2
+#'
+#' @description Internal function: 
+#'
+#' @keywords internal
+#' 
+#' @author SLA
+#'
+#' @param n 
+#' @param varname 
+#' @param input_cells 
+#' @param suboptions 
+#' @param vals 
+#' @param optima 
+#' @param step 
+#'
+#' @return
+#' 
+#' @import shiny
+#'
+#' @examples
+#' 
 split_numeric_input2 = function(n, varname, input_cells, suboptions, vals, optima, step){
   if (n %in% input_cells){
     #cat(paste0('sni2: ', varname, '_subvar', which(input_cells==n)), '\n') #@cat
@@ -206,6 +318,27 @@ split_numeric_input2 = function(n, varname, input_cells, suboptions, vals, optim
   }
 }
 
+#' Split Numeric Panels
+#'
+#' @description Internal function: 
+#'
+#' @keywords internal
+#' 
+#' @author SLA
+#'
+#' @param n 
+#' @param varname 
+#' @param slider_cells 
+#' @param dataset_name 
+#' @param vals 
+#' @param optima 
+#' @param step 
+#'
+#' @return
+#' @import shiny
+#'
+#' @examples
+#' 
 split_numeric_panels = function(n, varname, slider_cells, dataset_name, vals, optima, step){
   if (n %in% slider_cells){
     numericInput(paste0(varname, '_subvar', which(slider_cells==n)),
@@ -219,6 +352,25 @@ split_numeric_panels = function(n, varname, slider_cells, dataset_name, vals, op
   }
 }
 
+#' Spli Text Input
+#'
+#' @description Internal function: 
+#'
+#' @keywords internal
+#' 
+#' @author SLA
+#'
+#' @param n 
+#' @param varname 
+#' @param suboptions 
+#' @param vals 
+#'
+#' @return
+#' 
+#' @import shiny
+#'
+#' @examples
+#' 
 split_text_input = function(n, varname, suboptions, vals){
   if (n%%2==1){
     textInput(paste0(varname, '_subvar', 1+(n-1)/2),
@@ -230,6 +382,27 @@ split_text_input = function(n, varname, suboptions, vals){
   }
 }
 
+#' Split Color Input
+#'
+#' @description Internal function: 
+#'
+#' @keywords internal
+#' 
+#' @author SLA
+#'
+#' @param n 
+#' @param varname 
+#' @param suboptions 
+#' @param vals 
+#' @param allowTransparent 
+#'
+#' @return
+#' 
+#' @import colourpicker
+#' @import shiny
+#'
+#' @examples
+#' 
 split_color_input = function(n, varname, suboptions, vals, allowTransparent){
   if (n%%2==1){
     colourpicker::colourInput(paste0(varname, '_subvar', 1+(n-1)/2),
@@ -243,6 +416,25 @@ split_color_input = function(n, varname, suboptions, vals, allowTransparent){
   }
 }
 
+#' Split Boolean Input
+#'
+#' @description Internal function: 
+#'
+#' @keywords internal
+#' 
+#' @author SLA
+#'
+#' @param n 
+#' @param varname 
+#' @param suboptions 
+#' @param vals 
+#'
+#' @return
+#' 
+#' @import shiny
+#'
+#' @examples
+#' 
 split_bool_input = function(n, varname, suboptions, vals){
   if (n%%2==1){
     checkboxInput(paste0(varname, '_subvar', 1+(n-1)/2),
@@ -256,6 +448,24 @@ split_bool_input = function(n, varname, suboptions, vals){
 
 #### (A) CREATE INPUT ELEMENT (LAYOUT OF APP)
 
+#' Create Input Element
+#'
+#' @description Internal function: 
+#'
+#' @keywords internal
+#' 
+#' @author MS/JR/SLA
+#'
+#' @param option 
+#'
+#' @return
+#' 
+#' @import shiny
+#' @import spsComps
+#' @import colourpicker
+#'
+#' @examples
+#' 
 create_input_element = function(option) {
   options_table = OpenOptionsTable()
   option_par <- options_table[options_table$shiny_varname == option,]
@@ -985,6 +1195,30 @@ ui <- fluidPage(
 
 
 # SERVER ####
+
+#' Server
+#'
+#' @description Internal function: 
+#'
+#' @keywords internal
+#' 
+#' @author MS/JR/SLA
+#'
+#' @param input 
+#' @param output 
+#' @param session 
+#'
+#' @return
+#' 
+#' @import shiny
+#' @import colourpicker
+#' @import shinyTree
+#' @import shinyjs
+#' @import seqNdisplayR
+#' @import spsComps
+#'
+#' @examples
+#' 
 server <- function(input, output, session) {
   options_table = OpenOptionsTable()
   CurrentSession <- reactiveVal(NULL) # a seqNRdisplaySession Object for current session
