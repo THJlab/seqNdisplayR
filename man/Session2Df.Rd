@@ -49,4 +49,3 @@ Converts session information to dataframe as specified in Excel
 \author{
 MS
 }
-\keyword{internal}

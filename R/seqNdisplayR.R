@@ -1318,6 +1318,104 @@ LoadIGVSession = function( igvsession_fname,
 }
 
 
+#' Session 2 Df
+#'
+#' @description Internal function: 
+#' Converts session information to data frame as in Excel import sheet.
+#'
+#' @author MS
+#'
+#' @param .samples samples object as used by seqNdisplayR
+#' @param .colors colors object as used by seqNdisplayR
+#' @param .bigwigs bigwigs object as used by seqNdisplayR
+#' @param .bigwig_dirs bigwig_dirs as used in seqNdisplayR
+#' @param .parameters list of parameters as used in seqNdisplayR
+#' @param strand_regex named vector c('+': ..., '-': ...) for regex for converting plus strand to minus strand bigwig names
+#' @param factorize TRUE/FALSE. Default: FALSE
+#' @param level do not change, required internally during recursion, defaults=0.
+#'
+#' @details Converts session information to dataframe as specified in Excel
+#'   import sheet but using all-filled mode. Batch information is obtained from parameters.
+#'
+#' @return A dataframe with columns: color, bigwig_directory, bigwig_file, strand, batch, dataset and optionally subgroup_1, subgroup_2, ...
+#'
+#' @importFrom dplyr bind_rows
+#' 
+#' @export
+#'
+#' @examples
+#' 
+Session2Df = function(.samples, .colors, .bigwigs, .bigwig_dirs, .parameters, strand_regex = c('+'= 'plus', '-'='minus'), factorize = FALSE, level = 0) {
+  if (level == 0) {
+    grpname = 'dataset'
+  } else {
+    grpname = paste0('subgroup_', level)
+  }
+  if ( is.list(.samples) ) {
+    inner_df =
+      lapply(names(.samples), function(samplei)
+        Session2Df(
+          .samples[[samplei]],
+          .colors[[samplei]],
+          list('+' =
+                 .bigwigs[['+']][[samplei]],
+               '-' =
+                 .bigwigs[['-']][[samplei]]),
+          .bigwig_dirs,
+          .parameters,
+          level = level + 1
+        ))
+    
+    for ( i in seq_along(inner_df) ) {
+      inner_df[[i]][grpname] = names(.samples)[i]
+    }
+    df_out = dplyr::bind_rows(inner_df)
+    if (level == 0) {
+      df_out$bigwig_directory = .bigwig_dirs[df_out$dataset]
+      df_out$strand = ifelse(grepl(strand_regex['-'], df_out$bigwig_file), 'minus', 'plus')
+      df_out$batch = NA
+      datasets = unique(df_out$dataset)
+      for ( dataset in datasets ) {
+        if ( !is.null(.parameters[[dataset]]$batch) ) {
+          df_out$batch[df_out$dataset == dataset & df_out$strand == 'plus'] = .parameters[[dataset]]$batch
+          df_out$batch[df_out$dataset == dataset & df_out$strand == 'minus'] = .parameters[[dataset]]$batch
+        }
+      }
+      subgroup__names = colnames(df_out)[grepl('^subgroup_', colnames(df_out))]
+      ordered_subgroup__names = subgroup__names[order(subgroup__names)]
+      colnames_order = c('color', 'bigwig_directory', 'bigwig_file', 'strand', 'batch', 'dataset', ordered_subgroup__names)
+      return( df_out[,colnames_order] )
+    }else{
+      return( df_out )
+    }
+  } else {
+    dplyr::bind_rows(
+      lapply(.samples, function(samplei) {
+        df = data.frame(color = .colors[samplei],
+                        bigwig_file = .bigwigs[['+']][[samplei]],
+                        bigwig_directory = .bigwig_dirs[samplei],
+                        grp = samplei,
+                        row.names = NULL,
+                        stringsAsFactors = FALSE)
+        colnames(df)[colnames(df) == 'grp'] = grpname
+        
+        if ( !is.null(.bigwigs[['-']]) & length(.bigwigs[['-']][[samplei]]) > 0)  {
+          dfm = data.frame(color = .colors[samplei],
+                           bigwig_file = .bigwigs[['-']][[samplei]],
+                           bigwig_directory = .bigwig_dirs[samplei],
+                           grp = samplei,
+                           row.names = NULL,
+                           stringsAsFactors = FALSE)
+          colnames(dfm)[colnames(dfm) == 'grp'] = grpname
+          df = dplyr::bind_rows(df, dfm)
+        }
+        df
+      })
+    )
+  }
+}
+
+
 #' Session2xlsx
 #'
 #' @description Save session object to Excel xlsx-file
@@ -7400,104 +7498,6 @@ GlimpseSession = function(samples, colors, bigwigs, level=0, indent_size='   ') 
         cat(rep(indent_size, level), .sample, ' color:', colors[[.sample]], '  bigwigs+:', length(bigwigs[['+']][[.sample]]), '  bigwigs-:', length(bigwigs[['-']][[.sample]]), '\n')
       }
     }
-  }
-}
-
-
-#' Session 2 Df
-#'
-#' @description Internal function: 
-#' Converts session information to data frame as in Excel import sheet.
-#'
-#' @keywords internal
-#'
-#' @author MS
-#'
-#' @param .samples samples object as used by seqNdisplayR
-#' @param .colors colors object as used by seqNdisplayR
-#' @param .bigwigs bigwigs object as used by seqNdisplayR
-#' @param .bigwig_dirs bigwig_dirs as used in seqNdisplayR
-#' @param .parameters list of parameters as used in seqNdisplayR
-#' @param strand_regex named vector c('+': ..., '-': ...) for regex for converting plus strand to minus strand bigwig names
-#' @param factorize TRUE/FALSE. Default: FALSE
-#' @param level do not change, required internally during recursion, defaults=0.
-#'
-#' @details Converts session information to dataframe as specified in Excel
-#'   import sheet but using all-filled mode. Batch information is obtained from parameters.
-#'
-#' @return A dataframe with columns: color, bigwig_directory, bigwig_file, strand, batch, dataset and optionally subgroup_1, subgroup_2, ...
-#'
-#' @importFrom dplyr bind_rows
-#'
-#' @examples
-#' 
-Session2Df = function(.samples, .colors, .bigwigs, .bigwig_dirs, .parameters, strand_regex = c('+'= 'plus', '-'='minus'), factorize = FALSE, level = 0) {
-  if (level == 0) {
-    grpname = 'dataset'
-  } else {
-    grpname = paste0('subgroup_', level)
-  }
-  if ( is.list(.samples) ) {
-    inner_df =
-      lapply(names(.samples), function(samplei)
-        Session2Df(
-          .samples[[samplei]],
-          .colors[[samplei]],
-          list('+' =
-                 .bigwigs[['+']][[samplei]],
-               '-' =
-                 .bigwigs[['-']][[samplei]]),
-          .bigwig_dirs,
-          .parameters,
-          level = level + 1
-        ))
-    
-    for ( i in seq_along(inner_df) ) {
-      inner_df[[i]][grpname] = names(.samples)[i]
-    }
-    df_out = dplyr::bind_rows(inner_df)
-    if (level == 0) {
-      df_out$bigwig_directory = .bigwig_dirs[df_out$dataset]
-      df_out$strand = ifelse(grepl(strand_regex['-'], df_out$bigwig_file), 'minus', 'plus')
-      df_out$batch = NA
-      datasets = unique(df_out$dataset)
-      for ( dataset in datasets ) {
-        if ( !is.null(.parameters[[dataset]]$batch) ) {
-          df_out$batch[df_out$dataset == dataset & df_out$strand == 'plus'] = .parameters[[dataset]]$batch
-          df_out$batch[df_out$dataset == dataset & df_out$strand == 'minus'] = .parameters[[dataset]]$batch
-        }
-      }
-      subgroup__names = colnames(df_out)[grepl('^subgroup_', colnames(df_out))]
-      ordered_subgroup__names = subgroup__names[order(subgroup__names)]
-      colnames_order = c('color', 'bigwig_directory', 'bigwig_file', 'strand', 'batch', 'dataset', ordered_subgroup__names)
-      return( df_out[,colnames_order] )
-    }else{
-      return( df_out )
-    }
-  } else {
-    dplyr::bind_rows(
-      lapply(.samples, function(samplei) {
-        df = data.frame(color = .colors[samplei],
-                        bigwig_file = .bigwigs[['+']][[samplei]],
-                        bigwig_directory = .bigwig_dirs[samplei],
-                        grp = samplei,
-                        row.names = NULL,
-                        stringsAsFactors = FALSE)
-        colnames(df)[colnames(df) == 'grp'] = grpname
-        
-        if ( !is.null(.bigwigs[['-']]) & length(.bigwigs[['-']][[samplei]]) > 0)  {
-          dfm = data.frame(color = .colors[samplei],
-                           bigwig_file = .bigwigs[['-']][[samplei]],
-                           bigwig_directory = .bigwig_dirs[samplei],
-                           grp = samplei,
-                           row.names = NULL,
-                           stringsAsFactors = FALSE)
-          colnames(dfm)[colnames(dfm) == 'grp'] = grpname
-          df = dplyr::bind_rows(df, dfm)
-        }
-        df
-      })
-    )
   }
 }
 
