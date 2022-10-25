@@ -777,9 +777,11 @@ plot.seqNdisplayRSession = function(session, ...){
 #'
 #' @param session seqNdisplayRSession object
 #' @param verbose print detailed information? default=FALSE
-#' @param ... arguments to GlimpseSession
+#' @param ... arguments 
+#' 
+#' @note ... arguments are samples, colors, bigwigs objects as used by seqNdisplayR and indent_size (string used for indent spacing of levels in the output)
 #'
-#' @details Convenience function for checking parsing of samples, colors and bigwigs. See GlimpseSession for details.
+#' @details Convenience function for checking parsing of samples, colors and bigwigs.
 #'
 #' @return Print to R session.
 #' 
@@ -7473,7 +7475,7 @@ GetParameters = function(samples_df, params_df){
 #' @param colors colors object as used by seqNdisplayR
 #' @param bigwigs bigwigs object as used by seqNdisplayR
 #' @param levels used only for internal recursion, don't change default=1.
-#' @param indent_size string used for indent spacing of levels in the outpur
+#' @param indent_size string used for indent spacing of levels in the output
 #'
 #' @details Convenience function for checking parsing of samples, colors and bigwigs.
 #'

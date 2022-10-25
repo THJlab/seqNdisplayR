@@ -13,7 +13,7 @@ GlimpseSession(samples, colors, bigwigs, level = 0, indent_size = "   ")
 
 \item{bigwigs}{bigwigs object as used by seqNdisplayR}
 
-\item{indent_size}{string used for indent spacing of levels in the outpur}
+\item{indent_size}{string used for indent spacing of levels in the output}
 
 \item{levels}{used only for internal recursion, don't change default=1.}
 }

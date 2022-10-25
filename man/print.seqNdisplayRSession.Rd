@@ -11,7 +11,7 @@
 
 \item{verbose}{print detailed information? default=FALSE}
 
-\item{...}{arguments to GlimpseSession}
+\item{...}{arguments}
 }
 \value{
 Print to R session.
@@ -21,7 +21,10 @@ Prints an overview over samples, colors and associated bigwigs in a seqNdisplayR
 Just a pretty overview over a session.
 }
 \details{
-Convenience function for checking parsing of samples, colors and bigwigs. See GlimpseSession for details.
+Convenience function for checking parsing of samples, colors and bigwigs.
+}
+\note{
+... arguments are samples, colors, bigwigs objects as used by seqNdisplayR and indent_size (string used for indent spacing of levels in the output)
 }
 \examples{
 xl_fname = system.file('extdata', 'seqNdisplayR_sample_sheet_elaborate2.xlsx', package='seqNdisplayR')
