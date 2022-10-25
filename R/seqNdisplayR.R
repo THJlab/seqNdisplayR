@@ -1322,7 +1322,7 @@ LoadIGVSession = function( igvsession_fname,
 
 #' Session 2 Df
 #'
-#' @description Internal function: 
+#' @description 
 #' Converts session information to data frame as in Excel import sheet.
 #'
 #' @author MS
