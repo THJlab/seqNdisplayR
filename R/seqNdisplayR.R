@@ -581,6 +581,7 @@ seqNdisplay = function(
     .detailed.output[[ifelse(interface=='R', '"plotting_segment_order"', '"Plotting Segment Order"')]] = .detailed.output.vector
   }
   PreparePlottingInterface(plot_dim=c(.width.in, .height.in), pdf, pdf_name, pdf_dir, header, .bin.size, feature, .scaling.factor)
+  # .pdf.name = PreparePlottingInterface(plot_dim=c(.width.in, .height.in), pdf, pdf_name, pdf_dir, header, .bin.size, feature, .scaling.factor) #@ 2022-10-26 added .pdf.name =
   ##### <- pdf or on-screen plotting?
   ##### -> plotting
   .plotting.ready.segment.order = NumberingSpacers(.plotting.segment.order)
@@ -600,7 +601,14 @@ seqNdisplay = function(
     }
   }
   ##### -> plotting
-  if (pdf){ suppressMessages( dev.off() ) }else{ suppressMessages( dev.set(which=2) ) }
+  if (pdf){ 
+    suppressMessages( dev.off() )
+    # if ( !grepl('.pdf$', .pdf.name) ){ #@ 2022-10-26 added ->
+    #   file.rename(.pdf.name, paste0(.pdf.name, '.pdf'))
+    # } #@ 2022-10-26 added <-
+  }else{ 
+    suppressMessages( dev.set(which=2) ) 
+  }
   if (.verbosity > 2){
     cat(paste0('\n', 'Detailed Output:'), '\n')
     for (.det.out in names(.detailed.output)){
@@ -5490,13 +5498,15 @@ PreparePlottingInterface = function(plot_dim, pdf, pdf_name, pdf_dir, header, bi
     if (length(grep(pattern=.pdf.name, list.files(.pdf.dir), fixed=T)) >= 1){
       .pdf.name = paste0(.pdf.name, '_v', 1+length(grep(pattern=.pdf.name, list.files(.pdf.dir), fixed=T)))
     }
-    .pdf.name = paste0(.pdf.name, '.pdf')
+    .pdf.name = paste0(.pdf.name) #@ 2022-10-26 removed the .pdf because of issues with shiny download # , '.pdf'
     if (!dir.exists(.pdf.dir)){
       dir.create(.pdf.dir, recursive=TRUE)
     }
     pdf(paste0(.pdf.dir, '/', .pdf.name), width=.full.width.in, height=.full.height.in)
+    return(paste0(.pdf.dir, '/', .pdf.name)) #@ 2022-10-26 added
   }else{
     dev.new(width=scaling_factor*.full.width.in, height=scaling_factor*.full.height.in, noRStudioGD=T) ## opens a new plotting window with the indicated dimensions
+    return() #@ 2022-10-26 added
   }
 }
 

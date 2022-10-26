@@ -934,7 +934,7 @@ ui <- fluidPage(
           width=560
         ),
         tags$p(em(
-          "The name has to be present in one of the supplied annotations and match case. When entering name and coordinates simultaneously, only the name will be considered."
+          "The locus name has to be present in one of the supplied annotations and match case. When entering locus name and coordinates simultaneously, only the locus name will be considered."
         )),
         tags$br(),
         create_input_element('verbosity')
@@ -1307,6 +1307,14 @@ server <- function(input, output, session) {
   }
 
   # responsive elements show/hide behavior ####
+  observe({
+    toggle(id = "pdf_output_folder_div", condition = input$pdf_output_folder)
+  })
+  
+  observe({
+    toggle(id = "pdf_name_div", condition = input$pdf_name)
+  })
+  
   observe({
     toggle(id = "header_name_div", condition = input$header_name)
   })
@@ -2062,10 +2070,6 @@ server <- function(input, output, session) {
 
   })
 
-  # observe({ GetFeature }) #@ 2022-10-10 
-  
-  # observe({ GetLocus }) #@ 2022-10-10 
-
   # get all setting, options and parameters if changed in shiny ####
   ## called ie before plot or save
   GetShinyGlobalOptions <- reactive({
@@ -2401,7 +2405,7 @@ server <- function(input, output, session) {
                      output$console <- renderText({"Please provide locus name or coordinates for region to be plotted."})
                    } else {
                      session_to_plot <- seqNdisplayR_session()
-                     show_modal_spinner(spin='circle', text='Creating plot, this can take some time. The plot will appear in a separate window')
+                     show_modal_spinner(spin='circle', text='Creating plot, please be patient. The plot will appear in a separate window')
                      x <- 'Plotting failed, please check your settings'
                      spsComps::shinyCatch({
                        if (feature != '') {
@@ -2429,10 +2433,11 @@ server <- function(input, output, session) {
       }
       if ( feature == ''  & locus[1] == '' ) {
          output$console = renderText({"Please provide locus name or coordinates for region to be plotted."})
+      }else if ( feature != '' ){
+        paste0("seqNdisplayR_", Sys.Date(), '_', feature)  
+      }else{
+        paste0("seqNdisplayR_", Sys.Date(), '_', locus_string)  
       }
-      #cat(paste0("seqNdisplayR_", Sys.Date(), '_', feature, locus_string, ".pdf"), '\n') #@ 2022-10-10
-      paste0("seqNdisplayR_", Sys.Date(), '_', feature, locus_string, ".pdf")
-      #paste0("seqNdisplayR_", Sys.Date(), '_', feature, locus_string)
     },
     content = function(file) {
       if ( is.null(input$input_file) ) {
@@ -2444,33 +2449,22 @@ server <- function(input, output, session) {
           output$console = renderText({"Please provide locus name or coordinates for region to be plotted."})
         } else {
           session_to_plot = seqNdisplayR_session()
-          if ( locus != '' ){   #@ 2022-10-10 ->
-            locus[2] = ifelse(locus[2]=='+', 'plus', 'minus')
-            locus_string = paste(locus, collapse='_')
-          } else {
-            locus_string = ''
-          } #@ 2022-10-10 <-
-          #pdfname = basename(file) # for some reason the file/filename are not in accordance
-          #pdfdir = dirname(file)
-          pdfname = paste0("seqNdisplayR_", Sys.Date(), '_', feature, locus_string, ".pdf")
-          #pdfdir = '~/Desktop/'
-          #cat(paste0(pdfdir, pdfname), '\n') #@ 2022-10-10
-          show_modal_spinner(spin='circle', text=paste('Creating plot, this can take some time. The plot will be saved as pdf:', pdfname))
+          show_modal_spinner(spin='circle', text=paste('Plotting to pdf, please be patient'))
           x = 'plotting failed, please check your settings'
           spsComps::shinyCatch({
           if (feature != '') {
             x <- capture.output(plot(session_to_plot, feature=feature, interface='shiny',
                                        pdf = TRUE,
-                                       pdf_name = sub('.pdf', '', basename(file)), #@ 2022-10-11
+                                       pdf_name = basename(file), #@ 2022-10-11 #@ 2022-10-26 sub('.pdf', '', basename(file))
                                        pdf_dir = dirname(file)))
           } else if (locus_string != '') {
             x <- capture.output(plot(session_to_plot, locus=locus, interface='shiny',
                                        pdf = TRUE,
-                                       pdf_name = sub('.pdf', '', basename(file)), #@ 2022-10-11
+                                       pdf_name = basename(file), #@ 2022-10-11 #@ 2022-10-26 sub('.pdf', '', basename(file))
                                        pdf_dir = dirname(file)))
             }
           }, position = 'top-center', blocking_level='none', prefix='Plotting error', shiny=TRUE)
-          output$console = renderText({paste0(pdfname, '\n', 'pdf creation log:\n', paste(x, collapse  = "\n"))}) #@ 2022-10-10 pdfdir, pdfname <- file
+          output$console = renderText({paste0('pdf creation log:\n', paste(x, collapse  = "\n"))}) #@ 2022-10-10 pdfdir, pdfname <- file  #@ 2022-10-26 basename(file), '.pdf' <- pdfname
           remove_modal_spinner()
         }
       }

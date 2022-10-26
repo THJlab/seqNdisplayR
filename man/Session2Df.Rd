@@ -36,7 +36,6 @@ Session2Df(
 A dataframe with columns: color, bigwig_directory, bigwig_file, strand, batch, dataset and optionally subgroup_1, subgroup_2, ...
 }
 \description{
-Internal function: 
 Converts session information to data frame as in Excel import sheet.
 }
 \details{
