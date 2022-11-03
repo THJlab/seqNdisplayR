@@ -311,6 +311,7 @@ Parameters for how to transform values, treat replicates etc. Specific for each 
 parameters = list(
   "TT-seq" = list(
     'whichSamples' = NULL,
+    'bin_stats'=c('mean'),
     'log2transform' = F,
     'pseudoCount' = 1,
     'batchCorrect' = T,
@@ -318,10 +319,12 @@ parameters = list(
     'whichReps' = NULL,
     'calcMean' = T,
     'negValsSet0' = T,
+    'enhance_signals'=F,
     'preMean' = F
   ),
   "RNA-seq" = list(
     'whichSamples' = NULL,
+    'bin_stats'=c('mean'),
     'log2transform' = F,
     'pseudoCount' = 1,
     'batchCorrect' = T,
@@ -329,10 +332,12 @@ parameters = list(
     'whichReps' = NULL,
     'calcMean' = T,
     'negValsSet0' = T,
+    'enhance_signals'=F,
     'preMean' = F
   ),
   "3'-seq" = list(
     'whichSamples' = NULL,
+    'bin_stats'=c('mean'),
     'log2transform' = F,
     'pseudoCount' = 1,
     'batchCorrect' = T,
@@ -340,10 +345,12 @@ parameters = list(
     'whichReps' = NULL,
     'calcMean' = T,
     'negValsSet0' = T,
+    'enhance_signals'=T,
     'preMean' = F
   ),
   "ChIP-seq" = list(
     'whichSamples' = NULL,
+    'bin_stats'=c('mean'),
     'log2transform' = F,
     'pseudoCount' = 1,
     'batchCorrect' = F,
@@ -351,6 +358,7 @@ parameters = list(
     'whichReps' = NULL,
     'calcMean' = T,
     'negValsSet0' = T,
+    'enhance_signals'=F,
     'preMean' = F
   )
 )

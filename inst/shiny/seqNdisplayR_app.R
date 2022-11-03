@@ -2457,7 +2457,7 @@ server <- function(input, output, session) {
                                        pdf = TRUE,
                                        pdf_name = basename(file), #@ 2022-10-11 #@ 2022-10-26 sub('.pdf', '', basename(file))
                                        pdf_dir = dirname(file)))
-          } else if (locus_string != '') {
+          } else if (locus != '') {
             x <- capture.output(plot(session_to_plot, locus=locus, interface='shiny',
                                        pdf = TRUE,
                                        pdf_name = basename(file), #@ 2022-10-11 #@ 2022-10-26 sub('.pdf', '', basename(file))
