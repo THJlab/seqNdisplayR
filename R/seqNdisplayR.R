@@ -1382,7 +1382,13 @@ Session2Df = function(.samples, .colors, .bigwigs, .bigwig_dirs, .parameters, st
     df_out = dplyr::bind_rows(inner_df)
     if (level == 0) {
       df_out$bigwig_directory = .bigwig_dirs[df_out$dataset]
-      df_out$strand = ifelse(grepl(strand_regex['-'], df_out$bigwig_file), 'minus', 'plus')
+      #% needs fixing --> 230517 
+      #% use .bigwigs[['+']] / .bigwigs[['-']]
+      df_out$strand = NA #@ 230517
+      df_out$strand[df_out$bigwig_file %in% unlist(.bigwigs[['+']], use.names = FALSE)] = 'plus'  #@ 230517
+      df_out$strand[df_out$bigwig_file %in% unlist(.bigwigs[['-']], use.names = FALSE)] = 'minus'  #@ 230517
+      #@ df_out$strand = ifelse(grepl(strand_regex['-'], df_out$bigwig_file), 'minus', 'plus') #@
+      #% <--
       df_out$batch = NA
       datasets = unique(df_out$dataset)
       for ( dataset in datasets ) {
