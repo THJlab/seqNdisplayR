@@ -2,6 +2,14 @@
 ###### seqNdisplayR: A Tool for Customizable and Reproducible Plotting of Sequencing Coverage Data ######
 #########################################################################################################
 
+# github token
+# ## or store it manually in '.Renviron':
+# usethis::edit_r_environ()
+# ## store your personal access token in the file that opens in your editor with:
+# ## GITHUB_PAT=xxxyyyzzz
+# ## and make sure '.Renviron' ends with a newline
+
+
 .onLoad = function(libname, pkgname) {
   packageStartupMessage("\nWelcome to seqNdisplayR\nThis package sets the global locale to C.\n\nThis software is free and comes with ABSOLUTELY NO WARRANTY!")
   Sys.setlocale(locale="C")
