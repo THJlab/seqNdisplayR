@@ -2,14 +2,6 @@
 ###### seqNdisplayR: A Tool for Customizable and Reproducible Plotting of Sequencing Coverage Data ######
 #########################################################################################################
 
-# github token
-# ## or store it manually in '.Renviron':
-# usethis::edit_r_environ()
-# ## store your personal access token in the file that opens in your editor with:
-# ## GITHUB_PAT=xxxyyyzzz
-# ## and make sure '.Renviron' ends with a newline
-
-
 .onLoad = function(libname, pkgname) {
   packageStartupMessage("\nWelcome to seqNdisplayR\nThis package sets the global locale to C.\n\nThis software is free and comes with ABSOLUTELY NO WARRANTY!")
   Sys.setlocale(locale="C")
@@ -5684,6 +5676,59 @@ ConvertColor = function(c, phi=180){
 }
 
 
+#' Change Color Lightness
+#'
+#' @description Internal function: 
+#' if the lightness value is <0.5 the color is considered dark
+#' if the lightness value is >=0.5 the color is considered light
+#'
+#' @keywords internal
+#'  
+#' @author SLA 
+#'
+#' @param c 
+#'
+#' @return
+#'
+#' @examples
+#' c_hex = '#FFA550'
+#' c_new = ChangeColorLightness(c_hex, 0.25)
+#' 
+ChangeColorLightness = function(hex_color, factor) {
+  hsl_values = Hex2Hsl(hex_color)
+  lightness = hsl_values[3] / 100
+  saturation = hsl_values[2] / 100
+  hue = hsl_values[1]
+  new_saturation = saturation
+  new_hue = hue
+  if (lightness <= 0.5){ # dark
+    new_lightness = pmax(0, pmin(lightness + factor, 1)) 
+    if (saturation < 0.5){ 
+      new_saturation = pmax(0, pmin(saturation + 0.5, 1))
+      new_lightness = pmax(0, pmin(lightness + 2*factor, 1)) 
+      new_hue = hue + 180
+    }
+  }else{ # light
+    new_lightness = pmax(0, pmin(lightness - factor, 1))  
+    if (saturation > 0.5){ 
+      new_saturation = pmax(0, pmin(saturation - 0.5, 1))
+      new_lightness = pmax(0, pmin(lightness - 2*factor, 1)) 
+      new_hue = hue + 180
+    }
+  }
+  hsl_values[3] = new_lightness * 100
+  hsl_values[2] = new_saturation * 100
+  if (new_hue >= 360){
+    new_hue = new_hue - 360
+  }else if (hue < 0){
+    new_hue = new_hue + 360
+  }
+  hsl_values[1] = new_hue 
+  new_hex_color = Hsl2Hex(hsl_values)
+  return(new_hex_color)
+}
+
+
 #' Plot Header
 #'
 #' @description Internal function: 
@@ -6194,6 +6239,17 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, interming
     if (.plotted.strand=='+-'){
       lines(as.integer(rownames(.plot.mat)), ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*.plot.mat[,.seq.sample], type='h', lend=1,
             lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors['+']) 
+      if (any(.plot.mat == 1.5)){ 
+        saturated_indices = which(.plot.mat[,.seq.sample] == 1.5)
+        .samp.color = .adj.colors['+']
+        .sat.color = ChangeColorLightness(.samp.color, 0.25)
+        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.45, length(saturated_indices)), 
+                 as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.50, length(saturated_indices)), 
+                 lend=1, lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.sat.color)
+        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.40, length(saturated_indices)), 
+                 as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.45, length(saturated_indices)), 
+                 lend=1, lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col='white')
+      }
       .plot.mat = plot_mat[['-']] / .y.val['-']
       if (any(.plot.mat > 1.5)){ .plot.mat[which(.plot.mat > 1.5)] = 1.5 }
       if (intermingled_color!='same'){
@@ -6206,11 +6262,33 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, interming
         }
       }
       lines(as.integer(rownames(.plot.mat)), -1*.plot.mat[,.seq.sample], type='h', lend=1,
-            lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors['-'])  
+            lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors['-'])
+      if (any(.plot.mat == 1.5)){ 
+        saturated_indices = which(.plot.mat[,.seq.sample] == 1.5)
+        .samp.color = .adj.colors['-']
+        .sat.color = ChangeColorLightness(.samp.color, 0.25)
+        segments(as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(1.45, length(saturated_indices)), 
+                 as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(1.50, length(saturated_indices)), 
+                 lend=1, lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.sat.color)  
+        segments(as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(1.40, length(saturated_indices)), 
+                 as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(1.45, length(saturated_indices)), 
+                 lend=1, lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col='white')
+      }
       abline(h=0, col='whitesmoke', lwd=scaling_factor*line_width_scaling_factor*0.5, lend=1) 
     }else{
       lines(as.integer(rownames(.plot.mat)), ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*.plot.mat[,.seq.sample], type='h', lend=1,
-            lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors[.plotted.strand])  
+            lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors[.plotted.strand])
+      if (any(.plot.mat == 1.5)){ 
+        saturated_indices = which(.plot.mat[,.seq.sample] == 1.5)
+        .samp.color = .adj.colors[.plotted.strand]
+        .sat.color = ChangeColorLightness(.samp.color, 0.25)
+        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.45, length(saturated_indices)),
+                 as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.50, length(saturated_indices)),
+                 lend=1, lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.sat.color) 
+        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.40, length(saturated_indices)),
+                 as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.45, length(saturated_indices)),
+                 lend=1, lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col='white') 
+      }
     }
     if (incl_track_scales){
       .coords.per.mm = 2/(diff(coords_scale)*full_width_cm*10)
