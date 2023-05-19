@@ -948,7 +948,7 @@ LoadExcel = function(xl_fname, load_annotations=FALSE) {
   for ( opt in names(annot_and_options$annot_plot_options) ) {
     options[[opt]] = annot_and_options$annot_plot_options[[opt]]
   }
-  
+
   if (!('color' %in% colnames(samples_df))){ 
     cat('  - color(s) are not defined in "Samples table" - using default ("#346C88")', '\n')
     samples_df$color = "#346C88"
@@ -2997,6 +2997,28 @@ HorizontalPanelsList = function(samples, horizontal_panels_list, incl_reps, repl
 #' @examples
 #' 
 HandleForcedScaleFromParameters = function(pars){
+  force_scales = lapply(pars, function(para) {
+    fc = para$force_scale
+    if (is.null(fc)) {
+      suppressWarnings(as.numeric(c(NA,NA)))
+    }else if (is.character(fc)){ #% 230519
+      fc = strsplit(fc, split=',', fixed=TRUE)[[1]]
+      suppressWarnings(as.numeric(fc))
+    }else{
+      fc = fc
+    }
+  })
+  names(force_scales) = names(pars)
+  
+  force_scale_list = list(
+    '+' = unlist(lapply(force_scales, function(x) x[1])),
+    '-' = unlist(lapply(force_scales, function(x) if (length(x)==2){x[2]}else{NULL}))
+  )
+  return(force_scale_list)
+}
+
+#%
+HandleForcedScaleFromParameters_obs = function(pars){
   force_scales = lapply(pars, function(para) {
     fc = para$force_scale
     if (is.null(fc)) {
@@ -5700,7 +5722,7 @@ ChangeColorLightness = function(hex_color, factor) {
   saturation = hsl_values[2] / 100
   hue = hsl_values[1]
   new_saturation = saturation
-  new_hue = hue
+  new_hue = hue # + 180
   if (lightness <= 0.5){ # dark
     new_lightness = pmax(0, pmin(lightness + factor, 1)) 
     if (saturation < 0.5){ 
@@ -6239,15 +6261,15 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, interming
     if (.plotted.strand=='+-'){
       lines(as.integer(rownames(.plot.mat)), ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*.plot.mat[,.seq.sample], type='h', lend=1,
             lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors['+']) 
-      if (any(.plot.mat == 1.5)){ 
+      if (any(.plot.mat[,.seq.sample] == 1.5)){ 
         saturated_indices = which(.plot.mat[,.seq.sample] == 1.5)
         .samp.color = .adj.colors['+']
         .sat.color = ChangeColorLightness(.samp.color, 0.25)
-        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.45, length(saturated_indices)), 
+        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.40, length(saturated_indices)), 
                  as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.50, length(saturated_indices)), 
                  lend=1, lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.sat.color)
-        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.40, length(saturated_indices)), 
-                 as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.45, length(saturated_indices)), 
+        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.35, length(saturated_indices)), 
+                 as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.40, length(saturated_indices)), 
                  lend=1, lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col='white')
       }
       .plot.mat = plot_mat[['-']] / .y.val['-']
@@ -6263,30 +6285,30 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, interming
       }
       lines(as.integer(rownames(.plot.mat)), -1*.plot.mat[,.seq.sample], type='h', lend=1,
             lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors['-'])
-      if (any(.plot.mat == 1.5)){ 
+      if (any(.plot.mat[,.seq.sample] == 1.5)){ 
         saturated_indices = which(.plot.mat[,.seq.sample] == 1.5)
         .samp.color = .adj.colors['-']
         .sat.color = ChangeColorLightness(.samp.color, 0.25)
-        segments(as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(1.45, length(saturated_indices)), 
+        segments(as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(1.40, length(saturated_indices)), 
                  as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(1.50, length(saturated_indices)), 
                  lend=1, lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.sat.color)  
-        segments(as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(1.40, length(saturated_indices)), 
-                 as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(1.45, length(saturated_indices)), 
+        segments(as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(1.35, length(saturated_indices)), 
+                 as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(1.40, length(saturated_indices)), 
                  lend=1, lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col='white')
       }
       abline(h=0, col='whitesmoke', lwd=scaling_factor*line_width_scaling_factor*0.5, lend=1) 
     }else{
       lines(as.integer(rownames(.plot.mat)), ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*.plot.mat[,.seq.sample], type='h', lend=1,
             lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors[.plotted.strand])
-      if (any(.plot.mat == 1.5)){ 
+      if (any(.plot.mat[,.seq.sample] == 1.5)){ 
         saturated_indices = which(.plot.mat[,.seq.sample] == 1.5)
         .samp.color = .adj.colors[.plotted.strand]
         .sat.color = ChangeColorLightness(.samp.color, 0.25)
-        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.45, length(saturated_indices)),
+        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.40, length(saturated_indices)),
                  as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.50, length(saturated_indices)),
                  lend=1, lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.sat.color) 
-        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.40, length(saturated_indices)),
-                 as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.45, length(saturated_indices)),
+        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.35, length(saturated_indices)),
+                 as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.40, length(saturated_indices)),
                  lend=1, lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col='white') 
       }
     }
@@ -7062,12 +7084,15 @@ ParseOption = function(option_str) {
     FALSE
   }else if(option_str == 'NULL'){
     NULL
+  }else if( option_str == 'NA' ){ #$ added 230519
+    NA
   }else if( !is.na(suppressWarnings(as.numeric(option_str))) ){
     as.numeric(option_str)
   }else{
     option_str
   }
 }
+
 
 
 #' Deparse Option
