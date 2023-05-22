@@ -7577,14 +7577,16 @@ GetParameters = function(samples_df, params_df){
   # add batch info from filled_df
   df_plus = samples_df[samples_df$strand != 'minus' | IsEmpty(samples_df$strand),]
   parameter_split = split(df_plus, df_plus$dataset)
-  batches = lapply(parameter_split, function(x) x$batch)
-  
-  for ( dataset in names(params) ) {
-    batch = batches[[dataset]]
-    if ( sum(!is.na(batch)) > 0 & !all(batch == batch[1]) ) {
-      params[[dataset]]$batch =  batch
+  if ('batch' %in% colnames(df_plus)){
+    batches = lapply(parameter_split, function(x) x$batch)
+    for ( dataset in names(params) ) {
+      batch = batches[[dataset]]
+      if ( sum(!is.na(batch)) > 0 & !all(batch == batch[1]) ) {
+        params[[dataset]]$batch =  batch
+      }
     }
   }
+  
   params
 }
 
