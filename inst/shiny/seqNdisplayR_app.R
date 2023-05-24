@@ -1856,13 +1856,13 @@ server <- function(input, output, session) {
     ### build the new ones
     for ( name in rev(dataset_names) ) {
       #$ -->  condition added 230519
+      levels = names(seqNdisplayR_session[['bigwigs']])[sapply(names(seqNdisplayR_session[['bigwigs']]), function(.strand) (name %in% names(seqNdisplayR_session[['bigwigs']][[.strand]])))]
       if ( any(!is.na(unlist(para))) ){ 
         if (!is.null(para[[name]])){
           vals = para[[name]]
           vals[is.na(vals)] = -1
         }
       }else{
-        levels = names(seqNdisplayR_session[['bigwigs']])[sapply(names(seqNdisplayR_session[['bigwigs']]), function(.strand) (name %in% names(seqNdisplayR_session[['bigwigs']][[.strand]])))]
         if (is.null(seqNdisplayR_session[['force_scale']])){
           vals = rep(-1, length(levels))
         }else if (is.null(seqNdisplayR_session[['force_scale']][[name]])){
@@ -2468,7 +2468,7 @@ server <- function(input, output, session) {
       }else if ( feature != '' ){
         paste0("seqNdisplayR_", Sys.Date(), '_', feature)  
       }else{
-        paste0("seqNdisplayR_", Sys.Date(), '_', locus_string)  
+        paste0("seqNdisplayR_", Sys.Date(), '_', locus_string)
       }
     },
     content = function(file) {
@@ -2487,12 +2487,12 @@ server <- function(input, output, session) {
             if (feature != '') {
               x <- capture.output(plot(session_to_plot, feature=feature, interface='shiny',
                                        pdf = TRUE,
-                                       pdf_name = basename(file), #@ 2022-10-11 #@ 2022-10-26 sub('.pdf', '', basename(file))
+                                       pdf_name = sub('.pdf', '', basename(file)), #@ 2022-10-11 #@ 2022-10-26 sub('.pdf', '', basename(file)) #@ 2023-05-22 basename(file)
                                        pdf_dir = dirname(file)))
             } else if (locus[1] != '') {
               x <- capture.output(plot(session_to_plot, locus=locus, interface='shiny',
                                        pdf = TRUE,
-                                       pdf_name = basename(file), #@ 2022-10-11 #@ 2022-10-26 sub('.pdf', '', basename(file))
+                                       pdf_name = sub('.pdf', '', basename(file)), #@ 2022-10-11 #@ 2022-10-26 sub('.pdf', '', basename(file)) #@ 2023-05-22 basename(file)
                                        pdf_dir = dirname(file)))
             }
           }, position = 'top-center', blocking_level='none', prefix='Plotting error', shiny=TRUE)
