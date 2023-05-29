@@ -153,6 +153,30 @@ ListDepth = function(query_list){
   ifelse(is.list(query_list), 1L + max(sapply(query_list, ListDepth)), 0L)
 }
 
+#' Is Empty 
+#'
+#' @description Internal function: 
+#' Convenience function checks whether all NA or empty string
+#'
+#' @keywords internal
+#' 
+#' @author MS
+#'
+#' @param x vector
+#'
+#' @return TRUE/FALSE for each element in input vector
+#' 
+#' @examples
+#' IsEmpty(NA)
+#' IsEmpty(c(NA, NA))
+#' IsEmpty(c('', NA))
+#' IsEmpty(c('fnyg', NA)) 
+#' 
+IsEmpty = function(x){
+  is.na(x) | x == ''
+}
+
+
 #' All Empty
 #'
 #' @description Internal function: 
