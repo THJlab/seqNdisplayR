@@ -26,7 +26,7 @@ OpenOptionsTable = function(){
   for (libpath in libpaths){
     lf = list.files(libpath)
     if (any(grepl('seqNdisplayR', lf))){
-      options_table = paste0(libpath, '/seqNdisplayR/shiny/variable_defaults_and_help.xlsx')
+      options_table = paste0(libpath, '/seqNdisplayR/extdata/variable_defaults_and_help.xlsx') #@ '/seqNdisplayR/shiny/variable_defaults_and_help.xlsx'
     }
   }
   readxl::read_excel(options_table, sheet='Shiny_Args')
@@ -152,6 +152,100 @@ DeparseOption = function(option) {
 ListDepth = function(query_list){
   ifelse(is.list(query_list), 1L + max(sapply(query_list, ListDepth)), 0L)
 }
+
+#' All Empty
+#'
+#' @description Internal function: 
+#' Convenience function checks whether all NA or empty in a vector of strings
+#'
+#' @keywords internal
+#' 
+#' @author MS
+#'
+#' @param x vector
+#'
+#' @return TRUE/FALSE
+#' 
+#' @examples
+#' AllEmpty(NA)
+#' AllEmpty(c(NA, NA))
+#' AllEmpty(c('', NA))
+#' AllEmpty(c('fnyg', NA)) 
+#' 
+AllEmpty = function(x){
+  sum( sapply(x, IsEmpty) ) == length(x)
+}
+
+
+#' Ordered Split
+#'
+#' @description Internal function: 
+#' Split data frame by values in a column but maintain order as order of appearance. 
+#' Different to base R split.data.frame where order of split objects are ordered as default factors.
+#'
+#' @keywords internal
+#' 
+#' @author MS
+#'
+#' @param x 
+#' @param f 
+#' @param drop 
+#'
+#' @return
+#'
+#' @examples
+#' 
+OrderedSplit = function(x, f, drop=TRUE){
+  spl = split(x, f, drop)
+  spl[unique(as.character(f))]
+}
+
+
+#' Get Colors
+#'
+#' @description Internal function: 
+#' Get colors from a data frame containing at a minimum columns color and dataset
+#'
+#' @keywords internal
+#'
+#' @author MS
+#'
+#' @param filled_df a filled dataframe (see details)
+#' 
+#' @details Get colors from a data frame containing at a minimum columns
+#'   color and dataset. Columns on the right to dataset may contain subcategories,
+#'   called subgroup_1, subgroup_2 etc. UPS: dataset and subgroup_s must be the right-most columns, see example below.
+#'
+#' @return Named lists or nested lists of named lists
+#'
+#' @importFrom dplyr distinct
+#'
+#' @examples
+#' df = data.frame(color=c(rep('red', 4), rep('green', 2)),dataset=c(rep('a',4), rep('b',2)), subgroup_1=c('x','x','y','y', 'x','y'), subgroup_2=1:6, stringsAsFactors=FALSE)
+#' GetColors(df)
+#' 
+GetColors = function(filled_df){
+  start_col = which(colnames(filled_df) == 'dataset')
+  color_split = function(df, split_col) {
+    if( split_col >= ncol(df) ) {
+      split_col_name = colnames(df)[ncol(df)]
+      df_dist = dplyr::distinct(df, .data[[split_col_name]], color)
+      colors = df_dist$color
+      names(colors) = df_dist[[split_col_name]]
+      return (colors)
+    } else if ( AllEmpty(df[[split_col+1]]) ) { 
+      split_col_name = colnames(df)[split_col]
+      df_dist = dplyr::distinct(df, .data[[split_col_name]], color)
+      colors = df_dist$color
+      names(colors) = df_dist[[split_col_name]]
+      return (colors)
+    } else {
+      return ( lapply(OrderedSplit(df, df[[split_col]], drop=TRUE), function(dfi) color_split(dfi, split_col+1)) )
+    }
+  }
+  color_split(filled_df, start_col)
+}
+
 
 
 ##### functions for split input values
@@ -355,7 +449,7 @@ split_numeric_panels = function(n, varname, slider_cells, dataset_name, vals, op
   }
 }
 
-#' Spli Text Input
+#' Split Text Input
 #'
 #' @description Internal function: 
 #'
@@ -841,7 +935,7 @@ ui <- fluidPage(
   tags$style(HTML(".shiny-split-layout>div {overflow: visible}")),  #@ this line allows the color widgets to be displayed "in front"
   # HEADER ####
   titlePanel( h1("seq'N'display'R", align = "left") ),
-  h3( "A Tool for Customizable and Reproducible Plotting of Sequencing Coverage Data", align='left' ),
+  h3( "Customizable and Reproducible Plotting of Sequencing Coverage Data", align='left' ),  #@ A Tool for 
   tags$br(),
   
   
@@ -977,6 +1071,18 @@ ui <- fluidPage(
           shinyTree::shinyTree("tree", checkbox=TRUE, dragAndDrop=TRUE, multiple = TRUE, animation = FALSE, themeIcons = FALSE)
         ),
         
+
+        # Track Colors ####
+        tabPanel(
+          "Track Colors",
+          #h4('Track colors:'),
+          tags$br(),
+          column(
+          10,
+          offset = 0,
+          create_input_element('track_colors')
+          )
+        ),
         
         # Optional Args ####
         "Optional Arguments",
@@ -1916,11 +2022,7 @@ server <- function(input, output, session) {
         anchor_elem <- opt_line$shiny_varname
         
         shiny_elems <- grep(paste0(anchor_elem, '_XvalueX', prev_session_idx, '_'), names(input), value=TRUE)
-        
-        # if (anchor_elem == "which_annot_colors"){
-        #   cat(shiny_elems, '\n')
-        # }
-        # 
+  
         if ( length(shiny_elems) != 0 ) {
           for ( elem in shiny_elems ) {
             if (grepl("^xyz_", elem)){
@@ -1946,9 +2048,7 @@ server <- function(input, output, session) {
               )
             )
           } else if ( opt_line$option_class == 'color' ) {
-            #cat(DeparseOption(opts[[name]]), '\n') #@cat
             val = ifelse(DeparseOption(opts[[name]])=='NULL', 'white', DeparseOption(opts[[name]]))
-            #cat(val, '\n') #@cat
             insertUI(
               selector = paste0('#', anchor_elem), ##TODO: check style of anchor
               where = "afterEnd",
@@ -1991,6 +2091,44 @@ server <- function(input, output, session) {
       }
     }
     
+    # Track Colors ####
+    opts = unlist(seqNdisplayR_session[['colors']])
+    
+    prev_session_idx = CurrentSessionIdx() - 1
+    anchor_elem = 'track_colors'
+    
+    shiny_elems = grep(paste0(anchor_elem, '_XvalueX', prev_session_idx, '_'), names(input), value=TRUE)
+    
+    if ( length(shiny_elems) != 0 ) {
+      for ( elem in shiny_elems ) {
+        if (grepl("^xyz_", elem)){
+          elem = sub("^xyz_", "", elem)
+        }
+        removeUI(selector = paste0('#', elem))
+      }
+    }
+    
+    ##insert one text input per track name
+    for ( name in rev(names(opts)) ) {
+      alt_name = gsub('\\s+', 'YvalueY', name) #@ colourInput does not take whitespace names apparantly
+      alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name)
+      color_id = paste0('track_colors', '_XvalueX', CurrentSessionIdx(), '_', alt_name)
+      val = ifelse(DeparseOption(opts[[name]])=='NULL', 'black', DeparseOption(opts[[name]]))
+      insertUI(
+        selector = paste0('#', 'track_colors'), ##TODO: check style of anchor
+        where = "afterEnd",
+        ui = tags$div(id=color_id,
+                      colourpicker::colourInput(
+                        inputId = paste0('xyz_',color_id), 
+                        label = name,
+                        value = val,
+                        allowTransparent = TRUE,
+                        returnName = TRUE,
+                        closeOnClick = TRUE))
+      )
+    }
+    #remove the anchor
+    shinyjs::hide(id = anchor_elem)
   }
   
   
@@ -2229,12 +2367,11 @@ server <- function(input, output, session) {
     
   })
   
-  
-  
   # get dataset options from shiny ####
-  get_shiny_dataset_options <- reactive({
-    opts <- options_table$option_name[options_table$option_group == 'dataset_option']
-    datasets <- names(CurrentSession()$samples)
+  GetShinyDatasetOptions <- reactive({
+    opts = options_table$option_name[options_table$option_group == 'dataset_option']
+    opts = setdiff(opts, 'tracks_colors') #@ added 2023-05-29
+    datasets = names(CurrentSession()$samples)
     datasets_NSC = sapply(datasets, function(name) gsub('\\s+', 'YvalueY', name))
     datasets_NSC = sapply(datasets_NSC, function(name) gsub("[[:punct:]]", "ZvalueZ", name))
     l <- lapply(opts, function(opt) {
@@ -2303,7 +2440,6 @@ server <- function(input, output, session) {
   })
   
   
-  
   # get annotation options from shiny ####
   GetShinyAnnotationOptions <- reactive({
     opts <- options_table$option_name[options_table$option_group == 'annotation_option']
@@ -2363,6 +2499,41 @@ server <- function(input, output, session) {
   })
   
   
+  # Track Colors ####
+  # get Track Colors from shiny ####
+  GetShinyTrackColors <- reactive({
+    sample_names = names(CurrentSession()$samples)
+    datasets = rlist::list.flatten(CurrentSession()$samples, use.names = TRUE, classes = "ANY")
+    datasets_names = names(datasets)
+    datasets_unlisted = structure(unlist(datasets), names=paste(rep(datasets_names, lengths(datasets)), unlist(datasets), sep='.'))
+    datasets_NSC = sapply(names(datasets_unlisted), function(name) gsub('\\s+', 'YvalueY', name))
+    datasets_NSC = sapply(datasets_NSC, function(name) gsub("[[:punct:]]", "ZvalueZ", name))
+    datasets_NSC =  structure(paste0('xyz_track_colors', '_XvalueX', CurrentSessionIdx(), '_', datasets_NSC), names=names(datasets_unlisted))
+    res = sapply(as.character(datasets_NSC),
+                  function(dataset) {
+                    input[[dataset]]
+                  })
+    names(res) = names(datasets_unlisted)
+    sample_matrix = do.call('rbind', sapply(names(datasets_unlisted), function(sep) strsplit(sep, split='.', fixed=T)))
+    l = lapply(sample_names, function(sample_name){
+      sub_samps = grep(sample_name, names(datasets_unlisted), value=TRUE)
+      subsample_matrix = do.call('rbind', sapply(sub_samps, function(sep) strsplit(sep, split='.', fixed=T)))
+      subsample_matrix = as.data.frame(cbind(res[rownames(subsample_matrix)], subsample_matrix))
+      colnames(subsample_matrix) = c('color', 'dataset', paste0('subgroup_', 1:(ncol(subsample_matrix)-2)))
+      subsample_matrix
+    })
+    max_subgroups = max(sapply(l, function(df) ncol(df))) - 2
+    sample_matrix_list = lapply(l, function(df) if (ncol(df)-2 < max_subgroups){ extra_cols = max_subgroups - (ncol(df)-2); 
+                                                                                 extra_df = as.data.frame(matrix(NA, ncol=extra_cols, nrow=nrow(df)));
+                                                                                 df = cbind(df, extra_df); 
+                                                                                 colnames(df) = c('color', 'dataset', paste0('subgroup_', 1:(ncol(df)-2))); 
+                                                                                 df
+                                                                                }else{ df }  
+      )
+    sample_matrix = do.call("rbind", sample_matrix_list)
+    GetColors(sample_matrix)
+  })
+  
   
   # build session from shiny elements ####
   seqNdisplayR_session <- reactive({
@@ -2371,12 +2542,15 @@ server <- function(input, output, session) {
       template_session['annots'] <- list(NULL)
     }
     
+    track_colors = GetShinyTrackColors() ##@@
+    template_session[['colors']] = track_colors ##@@
+    
     shiny_session_global_options <- GetShinyGlobalOptions()
     
     op_names = names(shiny_session_global_options)
     template_session[op_names] = shiny_session_global_options[op_names]
     
-    shiny_session_dataset_options <- get_shiny_dataset_options()
+    shiny_session_dataset_options <- GetShinyDatasetOptions()
     for ( sample_name in names(template_session$parameters) ) {
       alt_name = gsub('\\s+', 'YvalueY', sample_name) #@
       alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name) #@
@@ -2546,7 +2720,7 @@ server <- function(input, output, session) {
   
   observeEvent(input$show_parameters, {
     template_session <- LoadTemplate()
-    shiny_session_dataset_options <- get_shiny_dataset_options()
+    shiny_session_dataset_options <- GetShinyDatasetOptions()
     
     textLog('dataset options:\n')
     for ( para in names(shiny_session_dataset_options) ) {
