@@ -692,7 +692,23 @@ seqNdisplayRSession = function(df=NULL, samples=NULL, colors=NULL, bigwig_dirs=N
   }
   
   if ( load_annotations & !is.null(annotations)) {
-    .annots = lapply(annotations, function(anno) GenomicRanges::GRanges(rtracklayer::import.bed(anno)))
+    #@ .annots = lapply(annotations, function(anno) GenomicRanges::GRanges(rtracklayer::import.bed(anno))) #@ 2023-05-30
+    .annots = lapply(annotations, function(anno) {
+      tryCatch(
+        {
+          GenomicRanges::GRanges(rtracklayer::import.bed(anno))
+        },
+        warning = function(w) { #@ error = function(e)
+          #warning(paste("Error importing annotation:", anno))
+          NULL
+        }
+      )
+    })
+    if ( any(sapply(.annots, function(x) is.null(x))) ){
+      not_founds = names(.annots)[sapply(.annots, function(x) is.null(x))]
+      cat(paste('WARNING: the annotation(s) named', paste(paste0('"', not_founds, '"'), collapse=', '), 'could not be found'), '\n')
+      .annots[sapply(.annots, function(x) is.null(x))] = NULL
+    }
   } else {
     .annots = annotations
   }
