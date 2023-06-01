@@ -706,8 +706,12 @@ seqNdisplayRSession = function(df=NULL, samples=NULL, colors=NULL, bigwig_dirs=N
     })
     if ( any(sapply(.annots, function(x) is.null(x))) ){
       not_founds = names(.annots)[sapply(.annots, function(x) is.null(x))]
+      founds = setdiff(names(.annots), not_founds)
       cat(paste('WARNING: the annotation(s) named', paste(paste0('"', not_founds, '"'), collapse=', '), 'could not be found'), '\n')
-      .annots[sapply(.annots, function(x) is.null(x))] = NULL
+      annotations[not_founds] = NULL
+      options[c('incl_feature_names', 'feature_names_above', 'incl_feature_brackets', 'incl_feature_shadings', 'annotation_packing', 'annot_cols')] = 
+        lapply(options[c('incl_feature_names', 'feature_names_above', 'incl_feature_brackets', 'incl_feature_shadings', 'annotation_packing', 'annot_cols')], function(x) if (length(founds) > 0) {x[founds]}else{NULL})
+      .annots[not_founds] = NULL
     }
   } else {
     .annots = annotations
@@ -4027,6 +4031,7 @@ EstimatePlotHeights = function(annot_info, incl_feature_names, annotation_packin
       }else{
         .min.annot.heights.combined = 0
         .max.annot.heights.combined = 0
+        .max.annot.heights.incl.text = 0
       }
     }else{
       .min.annot.heights.combined = 0
