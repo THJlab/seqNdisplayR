@@ -1045,6 +1045,11 @@ ui <- fluidPage(
             width = 540
           ),
           verbatimTextOutput("File_import_msg"),
+          #@ h4('Excel template import options'), #@ h4('Excel template and IGVsession import options'),
+          spsComps::bsTooltip(
+            checkboxInput("load_annotations", "Load annotations during import", value = TRUE),
+            title='Load annotations already during import. This can take some time during session loading, but will save time when plotting.',
+            placement ='right'),
           tags$br(),
           splitLayout(
             cellWidths = c('40%', '10%', '40%'), #@c(252,56, 252), #@ c('40%', '10%', '40%')
@@ -1060,35 +1065,35 @@ ui <- fluidPage(
           create_input_element('verbosity')
         ),
         
-        tabPanel(
-          "Template Load Options",
-          h4('Excel template and IGVsession import options'),
-          spsComps::bsTooltip(
-            checkboxInput("load_annotations", "Load annotations during import", value = TRUE),
-            title='Load annotations already during import. This can take some time during session loading, but will save time when plotting.',
-            placement ='right'),
-          tags$br(),
-          h4('IGVsession-specific import options'),
-          spsComps::bsTooltip(
-            radioButtons("igv_groupby", "Group igv-loaded samples to datasets using:",
-                         choices = list('Do not group'='dont_group',
-                                        'IGV autoscale groups'='autoscalegroups',
-                                        'Common prefix in names'='common_prefix'
-                         ),
-                         selected = 'dont_group'),
-            title='Not every igv session is fully compatible with seqNdisplayR, but you should be able to load the session and then export to then modify the downloaded Excel sheet to create meaningful sample divisions, reload the Excel template and plot. The default "Do not group" option should be most robust, in particular together with setting plus,minus strand identifiers below as NULL.',
-            placement ='right'),
-          spsComps::bsTooltip(
-            textInput("igv_strand_regex", "IGV-import: plus,minus strand identifiers",value = 'plus,minus'),
-            title="Substring in bigwig file names used for strand assignment. Bigwig file names for plus/minus strand MUST be direct replacement of plus vs minus regex. If setting this option as NULL, will not try to assign strand. Together with Do not group option above this should work for most IGV session files.",
-            placement ='right')
-        ),
-        
-        
+        # tabPanel(
+        #   "Template Load Options",
+        #   h4('Excel template import options'), #@ h4('Excel template and IGVsession import options'),
+        #   spsComps::bsTooltip(
+        #     checkboxInput("load_annotations", "Load annotations during import", value = TRUE),
+        #     title='Load annotations already during import. This can take some time during session loading, but will save time when plotting.',
+        #     placement ='right'),
+        #   tags$br(),
+        #   h4('IGVsession-specific import options'),
+        #   spsComps::bsTooltip(
+        #     radioButtons("igv_groupby", "Group igv-loaded samples to datasets using:",
+        #                  choices = list('Do not group'='dont_group',
+        #                                 'IGV autoscale groups'='autoscalegroups',
+        #                                 'Common prefix in names'='common_prefix'
+        #                  ),
+        #                  selected = 'dont_group'),
+        #     title='Not every igv session is fully compatible with seqNdisplayR, but you should be able to load the session and then export to then modify the downloaded Excel sheet to create meaningful sample divisions, reload the Excel template and plot. The default "Do not group" option should be most robust, in particular together with setting plus,minus strand identifiers below as NULL.',
+        #     placement ='right'),
+        #   spsComps::bsTooltip(
+        #     textInput("igv_strand_regex", "IGV-import: plus,minus strand identifiers",value = 'plus,minus'),
+        #     title="Substring in bigwig file names used for strand assignment. Bigwig file names for plus/minus strand MUST be direct replacement of plus vs minus regex. If setting this option as NULL, will not try to assign strand. Together with Do not group option above this should work for most IGV session files.",
+        #     placement ='right')
+        # ),
+        # 
+
         # Sample Selection ####
         tabPanel(
           "Tracks Overview and Selection",
-          p('You can reorder within each dataset, and select which samples to display. Reordering and selection are used for plotting by using the dataset-specific whichSamples parameter and this will also be saved in the Excel session like that. Reordering of datasets does not work for now. This has to be done in the Excel sheet. Note also that whichSamples is currently not respected when drawing the tree upon loading of an Excel template.'),
+          #@ p('You can reorder within each dataset, and select which samples to display. Reordering and selection are used for plotting by using the dataset-specific whichSamples parameter and this will also be saved in the Excel session like that. Reordering of datasets does not work for now. This has to be done in the Excel sheet. Note also that whichSamples is currently not respected when drawing the tree upon loading of an Excel template.'),
           h4('Tracks to plot:'),
           shinyTree::shinyTree("tree", checkbox=TRUE, dragAndDrop=TRUE, multiple = TRUE, animation = FALSE, themeIcons = FALSE)
         ),
