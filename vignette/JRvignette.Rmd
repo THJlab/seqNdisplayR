@@ -1,6 +1,6 @@
 ---
 title: "seqNdisplayR"
-author: "Søren Lykke Andersen"
+author: "Søren Lykke-Andersen"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >

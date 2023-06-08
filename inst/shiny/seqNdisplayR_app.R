@@ -1013,15 +1013,15 @@ ui <- fluidPage(
                  )
     ),
     mainPanel(
-      tags$p("1. choose a template and locus in the Input section"),
-      tags$p("2. modify any options in Input or Optional Arguments below"),
-      tags$p("3. select on the left whether to plot on screen, save as pdf or save current settings to excel"),
-      tags$p(em("A convenient website to easily design pleasing color palettes, with colorblind friendly options can be found "), a("here", href="https://coolors.co/"), em('or'), a("here", href="https://medialab.github.io/iwanthue/")),
-      tags$p(strong("Optional arguments marked with [*] should be used with caution - only recommended for experienced users! Consult the vignette for more details.")),
-      tags$br(),
       tags$head(
         tags$style(type="text/css", "#examples_sample_sheets_folder {background-color: #BD583735}")),
       tags$div(id="examples_sample_sheets_folder", tags$p("Example", strong(em("Sample Sheets")), "are in", seqNdisplayR::ExamplesSampleSheetsFolder())),
+      tags$p("1. choose a template and locus in the Input section"),
+      tags$p("2. modify any options in Input or Optional Arguments below"),
+      tags$p("3. select on the left whether to plot on screen, save as pdf or save current settings to excel"),
+      # tags$p(em("A convenient website to easily design pleasing color palettes, with colorblind friendly options can be found "), a("here", href="https://coolors.co/"), em('or'), a("here", href="https://medialab.github.io/iwanthue/")),
+      tags$p(strong("Optional arguments marked with [*] should be used with caution - only recommended for experienced users! Consult the vignette for more details.")),
+      tags$br(),
       #tags$p("Example", strong(em("Sample Sheets")), "are in", seqNdisplayR::ExamplesSampleSheetsFolder()),
       verbatimTextOutput("console"))
   ),
