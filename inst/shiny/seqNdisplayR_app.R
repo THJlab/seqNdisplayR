@@ -1016,7 +1016,7 @@ ui <- fluidPage(
       tags$head(
         tags$style(type="text/css", "#examples_sample_sheets_folder {background-color: #BD583735}")),
       tags$div(id="examples_sample_sheets_folder", tags$p("Example", strong(em("Sample Sheets")), "are in", seqNdisplayR::ExamplesSampleSheetsFolder())),
-      tags$p("1. choose a template and locus in the Input section"),
+      tags$p("1. load a template and choose a locus in the Input section"),
       tags$p("2. modify any options in Input or Optional Arguments below"),
       tags$p("3. select on the left whether to plot on screen, save as pdf or save current settings to excel"),
       # tags$p(em("A convenient website to easily design pleasing color palettes, with colorblind friendly options can be found "), a("here", href="https://coolors.co/"), em('or'), a("here", href="https://medialab.github.io/iwanthue/")),
@@ -1036,12 +1036,10 @@ ui <- fluidPage(
         "Input",
         tabPanel(
           "Select Template and Locus",
-          p(
-            "Filling out the boxes in the 'Input' window is the minimum requirement for plotting. Multiple accessory arguments can be adjusted below, but plotting can be performed merely from importing the template excel file, specifying a locus by name or coordinates and pressing the 'Draw Plot' button (locus name overwrites coordinates)."
-          ),
+          #@ p("Filling out the boxes in the 'Input' window is the minimum requirement for plotting. Multiple accessory arguments can be adjusted below, but plotting can be performed merely from importing the template excel file, specifying a locus by name or coordinates and pressing the 'Draw Plot' button (locus name overwrites coordinates)."),
           fileInput(
             "input_file",
-            "Load excel file (or IGV session xml file)",
+            "Load excel file", #@ "Load excel file (or IGV session xml file)"
             multiple = FALSE,
             accept = c(".xls", ".xlsx", ".xlsm", '.xml'),
             width = 540
