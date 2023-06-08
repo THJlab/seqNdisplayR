@@ -6668,11 +6668,13 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                   .thick.range = .feat.annotation$thick[.annot.line]
                   .thin.ranges = IRanges::setdiff(.exon.ranges, .thick.range)
                   .exon.ranges = IRanges::setdiff(.thick.range, .intron.ranges)
-                  for (.n.thin.exon in 1:length(.thin.ranges)){
-                    .thin.exon.range = .thin.ranges[.n.thin.exon]
-                    .thin.exon.start = IRanges::start(.thin.exon.range)
-                    .thin.exon.end = IRanges::end(.thin.exon.range)
-                    rect(xleft=.thin.exon.start, xright=.thin.exon.end, ybottom=.y.vals.thin[1], ytop=.y.vals.thin[2], col=.annot.col, border=NA  )
+                  if (length(.thin.ranges) > 0){
+                    for (.n.thin.exon in 1:length(.thin.ranges)){
+                      .thin.exon.range = .thin.ranges[.n.thin.exon]
+                      .thin.exon.start = IRanges::start(.thin.exon.range)
+                      .thin.exon.end = IRanges::end(.thin.exon.range)
+                      rect(xleft=.thin.exon.start, xright=.thin.exon.end, ybottom=.y.vals.thin[1], ytop=.y.vals.thin[2], col=.annot.col, border=NA  )
+                    }
                   }
                 }
                 if (length(.exon.ranges) > 0){
