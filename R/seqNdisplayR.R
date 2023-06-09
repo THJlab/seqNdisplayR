@@ -1459,7 +1459,7 @@ Session2Df = function(.samples, .colors, .bigwigs, .bigwig_dirs, .parameters, st
 #' @author MS (minor additions by SLA)
 #'
 #' @param session seqNdisplayRSession object
-#' @param path Excel file path
+#' @param path excel file name including full path
 #' @param ... 
 #'
 #' @return Write Excel template as described in \link{LoadExcel}.

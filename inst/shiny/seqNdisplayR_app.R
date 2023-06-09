@@ -1715,8 +1715,10 @@ server <- function(input, output, session) {
         } ##@@2 <-
         
         for ( name in rev(names(para)) ) {
-          alt_name = gsub('\\s+', 'YvalueY', name) #@
-          alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name)
+          #@ alt_name = gsub('\\s+', 'YvalueY', name) #@
+          alt_name = gsub('\\s+', paste0('Y', which(names(para)==name), 'Y'), name) #@
+          #@ alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name)
+          alt_name = gsub("[[:punct:]]", paste0('Z', which(names(para)==name), 'Z'), alt_name)
           dataset_id = paste0(anchor_elem, '_XvalueX', CurrentSessionIdx(), '_', alt_name)
           if ( opt_line$option_class == 'text' ) {
             insertUI(
@@ -1814,8 +1816,10 @@ server <- function(input, output, session) {
     }
     
     for ( name in rev(dataset_names) ) {
-      alt_name = gsub('\\s+', 'YvalueY', name) #@
-      alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name)
+      #@ alt_name = gsub('\\s+', 'YvalueY', name) #@
+      alt_name = gsub('\\s+', paste0('Y', which(dataset_names==name), 'Y'), name) #@
+      #@ alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name)
+      alt_name = gsub("[[:punct:]]", paste0('Z', which(dataset_names==name), 'Z'), alt_name)
       dataset_id = paste0('panel_horizontal_XvalueX', CurrentSessionIdx(), '_', alt_name)
       
       dataset_group_depth = ListDepth(seqNdisplayR_session$samples[[name]]) + 1
@@ -1925,7 +1929,7 @@ server <- function(input, output, session) {
     ## the individual rows of sliders
     ### remove from previous session
     if( CurrentSessionIdx() > 1){
-      for(i in 1:10){ #ups: rough since we at the moment don't keep track how many levels of divs there are to remove
+      for(i in 1:length(dataset_names)){ #@ 1:10 #ups: rough since we at the moment don't keep track how many levels of divs there are to remove
         removeUI(selector = paste0("#panel_font_boxes_container", CurrentSessionIdx()-1))
         shinyjs::runjs(paste0("Shiny.onInputChange(#panel_font_boxes_container", CurrentSessionIdx()-1, ", null)"))
       }
@@ -1966,7 +1970,7 @@ server <- function(input, output, session) {
     ## force scale special case of expandable option upon enable
     ### remove the old container
     if(CurrentSessionIdx() > 1){
-      for(i in 1:10){
+      for(i in 1:length(dataset_names)){ #@ (1:10)
         removeUI(selector = paste0('#manual_scales_boxes_container', CurrentSessionIdx()-1))
         shinyjs::runjs(paste0("Shiny.onInputChange(#manual_scales_boxes_container", CurrentSessionIdx()-1, " null)"))
       }
@@ -2061,8 +2065,10 @@ server <- function(input, output, session) {
         
         ##insert one text input per annotation name
         for ( name in rev(names(opts)) ) {
-          alt_name = gsub('\\s+', 'YvalueY', name) #@ colourInput does not take whitespace names apparantly
-          alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name)
+          #@ alt_name = gsub('\\s+', 'YvalueY', name) #@ colourInput does not take whitespace names apparantly
+          alt_name = gsub('\\s+', paste0('Y', which(names(opts)==name), 'Y'), name) #@ colourInput does not take whitespace names apparantly
+          #@ alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name)
+          alt_name = gsub("[[:punct:]]", paste0('Z', which(names(opts)==name), 'Z'), alt_name)
           annot_id = paste0(opt_line$shiny_varname, '_XvalueX', CurrentSessionIdx(), '_', alt_name)
           if ( opt_line$option_class == 'text' ) {
             insertUI(
@@ -2120,11 +2126,14 @@ server <- function(input, output, session) {
     
     # Track Colors ####
     opts = unlist(seqNdisplayR_session[['colors']])
+    #cat(length(opts), '\n') #@
     
     prev_session_idx = CurrentSessionIdx() - 1
     anchor_elem = 'track_colors'
     
     shiny_elems = grep(paste0(anchor_elem, '_XvalueX', prev_session_idx, '_'), names(input), value=TRUE)
+    #cat(length(shiny_elems), '\n') #@
+    #cat(paste(shiny_elems, collapse='\n'), '\n')
     
     if ( length(shiny_elems) != 0 ) {
       for ( elem in shiny_elems ) {
@@ -2134,11 +2143,13 @@ server <- function(input, output, session) {
         removeUI(selector = paste0('#', elem))
       }
     }
-    
+
     ##insert one text input per track name
     for ( name in rev(names(opts)) ) {
-      alt_name = gsub('\\s+', 'YvalueY', name) #@ colourInput does not take whitespace names apparantly
-      alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name)
+      #@ alt_name = gsub('\\s+', 'YvalueY', name) #@ colourInput does not take whitespace names apparantly
+      alt_name = gsub('\\s+', paste0('Y', which(names(opts)==name), 'Y'), name) #@ colourInput does not take whitespace names apparantly
+      #@ alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name)
+      alt_name = gsub("[[:punct:]]", paste0('Z', which(names(opts)==name), 'Z'), alt_name)
       color_id = paste0('track_colors', '_XvalueX', CurrentSessionIdx(), '_', alt_name)
       val = ifelse(DeparseOption(opts[[name]])=='NULL', 'black', DeparseOption(opts[[name]]))
       insertUI(
@@ -2167,7 +2178,7 @@ server <- function(input, output, session) {
       return(NULL)
     }
     if ( !(grepl('.xml$', filename) | grepl('.xls$', filename) | grepl('.xlsx$', filename))  ) {
-      output$console = renderText({'Please provide valid template file in .xls, .xlsx or igv session .xml file'})
+      output$console = renderText({'Please provide valid template file in .xls or .xlsx format'}) #@ 'Please provide valid template file in .xls, .xlsx or igv session .xml file'
       return(NULL)
     }
     if ( CurrentSessionFname() != filename ) {
@@ -2316,10 +2327,15 @@ server <- function(input, output, session) {
           if (opt=='panel_font_sizes'){
             if (value){
               var_names = grep(paste0('^panel_font_easy_boxes_XvalueX', CurrentSessionIdx(), '_subvar'), names(input), value=TRUE)
+              #cat(var_names, '\n') #@
               var_numbers = as.numeric(sapply(var_names, function(var_name) strsplit(var_name, split=paste0(shiny_varname, '_subvar'))[[1]][2]))
-              re_order = order(var_numbers)
-              var_names = var_names[re_order]
+              #cat(var_numbers, '\n') #@
+              #@ re_order = order(var_numbers) 
+              #@ var_names = var_names[re_order]
+              var_names = sort(var_names)
+              #cat(var_names, '\n') #@
               value <- unlist(lapply(var_names, function(var) input[[var]]))
+              #cat(value, '\n') #@
             }else{
               value = NULL
             }
@@ -2356,8 +2372,10 @@ server <- function(input, output, session) {
               for (dataset_name in names(CurrentSession()$samples)) {
                 dataset_group_depth = ListDepth(CurrentSession()$samples[[dataset_name]]) + 1
                 available_levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
-                alt_name = gsub('\\s+', 'YvalueY', dataset_name) #@
-                alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name) #@
+                #@ alt_name = gsub('\\s+', 'YvalueY', dataset_name)
+                alt_name = gsub('\\s+', paste0('Y', which(names(CurrentSession()$samples)==dataset_name), 'Y'), dataset_name)
+                #@ alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name)
+                alt_name = gsub("[[:punct:]]", paste0('Z', which(names(CurrentSession()$samples)==dataset_name), 'Z'), alt_name)
                 elem = paste0('panel_horizontal_XvalueX', CurrentSessionIdx(), '_', alt_name)
                 checked_levels = input[[elem]]
                 value[[dataset_name]] = (available_levels %in% checked_levels)
@@ -2399,8 +2417,10 @@ server <- function(input, output, session) {
     opts = options_table$option_name[options_table$option_group == 'dataset_option']
     opts = setdiff(opts, 'tracks_colors') #@ added 2023-05-29
     datasets = names(CurrentSession()$samples)
-    datasets_NSC = sapply(datasets, function(name) gsub('\\s+', 'YvalueY', name))
-    datasets_NSC = sapply(datasets_NSC, function(name) gsub("[[:punct:]]", "ZvalueZ", name))
+    #@ datasets_NSC = sapply(datasets, function(name) gsub('\\s+', 'YvalueY', name))
+    datasets_NSC = sapply(datasets, function(name) gsub('\\s+', paste0('Y', which(datasets==name), 'Y'), name))
+    #@ datasets_NSC = sapply(datasets_NSC, function(name) gsub("[[:punct:]]", "ZvalueZ", name))
+    datasets_NSC = sapply(datasets_NSC, function(name) gsub("[[:punct:]]", paste0('Z', which(datasets_NSC==name), 'Z'), name))
     l <- lapply(opts, function(opt) {
       opt_line <- options_table[options_table$option_name == opt,]
       shiny_varname <- opt_line$shiny_varname
@@ -2471,8 +2491,10 @@ server <- function(input, output, session) {
   GetShinyAnnotationOptions <- reactive({
     opts <- options_table$option_name[options_table$option_group == 'annotation_option']
     anno_names <- names(CurrentSession()$annots)
-    anno_names_NSC = sapply(anno_names, function(name) gsub('\\s+', 'YvalueY', name))
-    anno_names_NSC = sapply(anno_names_NSC, function(name) gsub("[[:punct:]]", "ZvalueZ", name))
+    #@ anno_names_NSC = sapply(anno_names, function(name) gsub('\\s+', 'YvalueY', name))
+    anno_names_NSC = sapply(anno_names, function(name) gsub('\\s+', paste0('Y', which(anno_names==name), 'Y'), name))
+    #@ anno_names_NSC = sapply(anno_names_NSC, function(name) gsub("[[:punct:]]", "ZvalueZ", name))
+    anno_names_NSC = sapply(anno_names_NSC, function(name) gsub("[[:punct:]]", paste0('Z', which(anno_names_NSC==name), 'Z'), name))
     if( length(CurrentSession()$annots) == 0 ){
       return(NULL)
     }
@@ -2533,8 +2555,10 @@ server <- function(input, output, session) {
     datasets = rlist::list.flatten(CurrentSession()$samples, use.names = TRUE, classes = "ANY")
     datasets_names = names(datasets)
     datasets_unlisted = structure(unlist(datasets), names=paste(rep(datasets_names, lengths(datasets)), unlist(datasets), sep='.'))
-    datasets_NSC = sapply(names(datasets_unlisted), function(name) gsub('\\s+', 'YvalueY', name))
-    datasets_NSC = sapply(datasets_NSC, function(name) gsub("[[:punct:]]", "ZvalueZ", name))
+    #@ datasets_NSC = sapply(names(datasets_unlisted), function(name) gsub('\\s+', 'YvalueY', name))
+    datasets_NSC = sapply(names(datasets_unlisted), function(name) gsub('\\s+', paste0('Y', which(names(datasets_unlisted)==name), 'Y'), name))
+    #@ datasets_NSC = sapply(datasets_NSC, function(name) gsub("[[:punct:]]", "ZvalueZ", name))
+    datasets_NSC = sapply(datasets_NSC, function(name) gsub("[[:punct:]]", paste0('Z', which(datasets_NSC==name), 'Z'), name))
     datasets_NSC =  structure(paste0('xyz_track_colors', '_XvalueX', CurrentSessionIdx(), '_', datasets_NSC), names=names(datasets_unlisted))
     res = sapply(as.character(datasets_NSC),
                   function(dataset) {
@@ -2579,8 +2603,10 @@ server <- function(input, output, session) {
     
     shiny_session_dataset_options <- GetShinyDatasetOptions()
     for ( sample_name in names(template_session$parameters) ) {
-      alt_name = gsub('\\s+', 'YvalueY', sample_name) #@
-      alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name) #@
+      #@ alt_name = gsub('\\s+', 'YvalueY', sample_name) #@
+      alt_name = gsub('\\s+', paste0('Y', which(names(template_session$parameters)==sample_name), 'Y'), sample_name) #@
+      #@ alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name) #@
+      alt_name = gsub("[[:punct:]]", paste0('Z', which(names(template_session$parameters)==sample_name), 'Z'), alt_name) #@
       for ( op in names(shiny_session_dataset_options) ) {
         opt = shiny_session_dataset_options[[op]]
         if ( sample_name %in% names(opt) ) {
@@ -2630,7 +2656,7 @@ server <- function(input, output, session) {
   observeEvent(input$plot,
                {
                  if (is.null(input$input_file)) {
-                   "Please load Excel or IGV template and provide locus name or coordinates."
+                   "Please load Excel template and provide locus name or coordinates." #@ "Please load Excel or IGV template and provide locus name or coordinates."
                  } else {
                    feature <- GetFeature()
                    locus <- GetLocus()
@@ -2674,7 +2700,7 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       if ( is.null(input$input_file) ) {
-        output$console = renderText({"Please load Excel or IGV template and provide locus name or coordinates."})
+        output$console = renderText({"Please load Excel template and provide locus name or coordinates."}) #@ "Please load Excel or IGV template and provide locus name or coordinates."
       } else {
         feature = GetFeature()
         locus = GetLocus()
@@ -2714,7 +2740,7 @@ server <- function(input, output, session) {
     content = function(file) {
       #cat(file, '\n') #@ 2022-10-10
       if ( is.null(input$input_file) ) {
-        output$console = renderText("Please first load Excel or IGV template")
+        output$console = renderText("Please first load Excel template") #@ "Please first load Excel or IGV template"
       } else {
         loaded_session = seqNdisplayR_session()
         seqNdisplayR::Session2xlsx(loaded_session, path = file)
