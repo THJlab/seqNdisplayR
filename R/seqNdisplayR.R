@@ -769,7 +769,7 @@ plot.seqNdisplayRSession = function(session, ...){
   session = c(session, default_args[only_default])
   # handle replicate_names (prefix)
   if (!is.null(session$replicate_names)){
-    if (session$replicate_names=='NA'){
+    if (is.na(session$replicate_names)){ #@ session$replicate_names=='NA'
       session$replicate_names = ''
     }
   }
