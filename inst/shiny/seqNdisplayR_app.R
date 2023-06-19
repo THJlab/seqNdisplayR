@@ -2693,9 +2693,9 @@ server <- function(input, output, session) {
       if ( feature == ''  & locus[1] == '' ) {
         output$console = renderText({"Please provide locus name or coordinates for region to be plotted."})
       }else if ( feature != '' ){
-        paste0("seqNdisplayR_", Sys.Date(), '_', feature)  
+        paste0("seqNdisplayR_", Sys.Date(), '_', feature, '.pdf')  #@ paste0("seqNdisplayR_", Sys.Date(), '_', feature)
       }else{
-        paste0("seqNdisplayR_", Sys.Date(), '_', locus_string)
+        paste0("seqNdisplayR_", Sys.Date(), '_', locus_string, '.pdf')  #@ paste0("seqNdisplayR_", Sys.Date(), '_', locus_string)
       }
     },
     content = function(file) {
@@ -2714,12 +2714,12 @@ server <- function(input, output, session) {
             if (feature != '') {
               x <- capture.output(plot(session_to_plot, feature=feature, interface='shiny',
                                        pdf = TRUE,
-                                       pdf_name = sub('.pdf', '', basename(file)), #@ 2022-10-11 #@ 2022-10-26 sub('.pdf', '', basename(file)) #@ 2023-05-22 basename(file)
+                                       pdf_name = basename(file), #@ 2022-10-11 #@ 2022-10-26 sub('.pdf', '', basename(file)) #@ 2023-05-22 basename(file)
                                        pdf_dir = dirname(file)))
             } else if (locus[1] != '') {
               x <- capture.output(plot(session_to_plot, locus=locus, interface='shiny',
                                        pdf = TRUE,
-                                       pdf_name = sub('.pdf', '', basename(file)), #@ 2022-10-11 #@ 2022-10-26 sub('.pdf', '', basename(file)) #@ 2023-05-22 basename(file)
+                                       pdf_name = basename(file), #@ 2022-10-11 #@ 2022-10-26 sub('.pdf', '', basename(file)) #@ 2023-05-22 basename(file)
                                        pdf_dir = dirname(file)))
             }
           }, position = 'top-center', blocking_level='none', prefix='Plotting error', shiny=TRUE)
@@ -2727,7 +2727,8 @@ server <- function(input, output, session) {
           remove_modal_spinner()
         }
       }
-    }
+    },
+    contentType = "application/pdf"
   )
   
   
