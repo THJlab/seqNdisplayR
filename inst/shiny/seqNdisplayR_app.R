@@ -1159,7 +1159,7 @@ ui <- fluidPage(
             create_input_element('tracks_height'),
             create_input_element('title_field_height_cm'),
             create_input_element('genomic_scale_height_cm'),
-            create_input_element('annotation_height_cm'),
+            create_input_element('annot_height_cm'), #@ 2023-06-19
             create_input_element('spacer_height'),
             create_input_element('tracks_width_in_cm'),
             create_input_element('margin_width_I'),
@@ -1485,7 +1485,7 @@ server <- function(input, output, session) {
   })
   
   observe({
-    toggle(id = "annotation_height_cm_div", condition = input$annotation_height_cm)
+    toggle(id = "annot_height_cm_div", condition = input$annot_height_cm) #@ 2023-06-19
   })
   
   observe({
@@ -2315,6 +2315,9 @@ server <- function(input, output, session) {
               value <- NULL
             }
           }
+          #@ ->
+          #cat(paste(shiny_varname, '****', ifelse(is.null(value), 'NULL', value)), '\n')
+          #@ <-
         }else if( opt_line$option_class == 'optional_text' ) {
           if (value){
             value <- input[[paste0(shiny_varname, '_box')]]
@@ -2599,8 +2602,27 @@ server <- function(input, output, session) {
     shiny_session_global_options <- GetShinyGlobalOptions()
     
     op_names = names(shiny_session_global_options)
-    template_session[op_names] = shiny_session_global_options[op_names]
-    
+    #@ template_session[op_names] = shiny_session_global_options[op_names]
+    #@ ->  2023-06-19
+    for (op_name in op_names){
+      if (shiny_session_global_options[op_name]=='NULL'){
+        template_session[op_name] = NULL
+        #cat(paste(op_name, '****', 'NULL*'), '\n')
+      }else if (shiny_session_global_options[op_name]=='FALSE'){
+        template_session[op_name] = FALSE
+        #cat(paste(op_name, '****', 'FALSE*'), '\n')
+      }else if (shiny_session_global_options[op_name]=='TRUE'){
+        template_session[op_name] = TRUE
+        #cat(paste(op_name, '****', 'TRUE*'), '\n')
+      }else if (shiny_session_global_options[op_name]=='NA'){
+        template_session[op_name] = NA
+        #cat(paste(op_name, '****', 'NA*'), '\n')
+      }else{
+        template_session[op_name] = shiny_session_global_options[op_name]
+        #cat(paste(op_name, '****', shiny_session_global_options[op_name]), '\n')
+      }
+    }
+    #@ <- 2023-06-19
     shiny_session_dataset_options <- GetShinyDatasetOptions()
     for ( sample_name in names(template_session$parameters) ) {
       #@ alt_name = gsub('\\s+', 'YvalueY', sample_name) #@
