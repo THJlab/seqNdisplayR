@@ -6735,6 +6735,8 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                       }
                     }
                   }
+                }else{
+                  .intron.ranges = IRanges::IRanges()
                 }
                 #@ --> ORF plotting if available 2023-06-05
                 if (.include.utrs){
