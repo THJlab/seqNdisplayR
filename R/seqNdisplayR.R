@@ -2137,20 +2137,21 @@ RegionGRanges = function(locus, tracks_width, feature=NULL, annotations=NULL, bi
     .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'the provided information about the locus of interest is incomplete - aborting')
   }
   if (length(.messages[['errors']]) == 0){
+    #@ if (is.null(bin_start)){}
+    .bin.start = ifelse(.strand=='+', .chrom.start, .chrom.end)
     .gene.width = .chrom.end - .chrom.start + 1
     if (.gene.width < 100){
-      .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', 'the supplied region is less than 100 bp wide (',  .gene.width, ') - adjusting to 100 bp (minimum width) based on start coordinate')
-      .chrom.end = .chrom.start + 100
-    }
-    if (is.null(bin_start)){
-      .bin.start = ifelse(.strand=='+', .chrom.start, .chrom.end)
+      .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', 'the supplied region is less than 100 bp wide (',  .gene.width, ') - adjusting to 100 bp (minimum width) based on center coordinate')
+      .chrom.center = .chrom.start + as.integer(.gene.width/2)
+      .chrom.start = .chrom.center - 49
+      .chrom.end = .chrom.center + 50
     }
     if(.strand=='-'){ extra_space = rev(extra_space) }
     .chrom.start = .chrom.start - as.integer(extra_space[1]*.gene.width)
     .chrom.end = .chrom.end + as.integer(extra_space[2]*.gene.width)
     if (!is.null(bin_start)){
       if (bin_start < .chrom.start | bin_start > .chrom.end){
-        .bin.start = ifelse(.strand=='+', .chrom.start, .chrom.end)
+        #.bin.start = ifelse(.strand=='+', .chrom.start, .chrom.end)
         .arg.name = ifelse(interface=='R', '"bin_start"', '"Bins Center"')
         .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', 'the set ',  .arg.name, ' is outside of the plotted region - setting to ', .bin.start)
       }else{
