@@ -7638,6 +7638,7 @@ EmptyDf = function(df) {
 #' Get samples from a data frame containing at a minimum columns dataset
 #'
 #' @keywords internal
+#' From chatGPT: the GetSamples function extracts and organizes sample information from the filled_df data frame based on specific column(s) and returns a character vector or a nested list containing the unique samples associated with the corresponding values in the data.
 #'
 #' @author MS
 #'
@@ -7676,6 +7677,7 @@ GetSamples = function(filled_df){
 #' Get colors from a data frame containing at a minimum columns color and dataset
 #'
 #' @keywords internal
+#' From chatGPT: the GetColors function extracts and organizes color information from the filled_df data frame based on specific column(s) and returns a vector or a nested list containing the colors associated with the corresponding values in the data.
 #'
 #' @author MS
 #'
@@ -7720,6 +7722,7 @@ GetColors = function(filled_df){
 #'
 #' @description Internal function: 
 #' Get bigwig dirs file names from a data frame containing at a minimum columns bigwig_file and dataset
+#' From chatGPT: the GetBigwigDirs function extracts the unique combinations of bigwig directories and datasets from the filled_df data frame, filters out rows with missing bigwig directories, and returns a named vector where each dataset is associated with its corresponding bigwig directory.
 #'
 #' @keywords internal
 #'
@@ -7752,6 +7755,7 @@ GetBigwigDirs = function(filled_df){
 #'
 #' @description Internal function: 
 #' Get bigwig file names from a data frame containing at a minimum columns bigwig_file, strand and dataset
+#' From chatGPT: the GetBigwigs function processes the filled_df data frame to extract and organize information based on the values in specific columns, with different extraction strategies depending on the conditions in the data. The extracted results are returned as a list with separate entries for '+' and '-'.
 #'
 #' @keywords internal
 #'
@@ -7806,6 +7810,7 @@ GetBigwigs = function(filled_df) {
 #'
 #' @description Internal function: 
 #' Helper used for parsing parameters$<dataset>$whichSamples
+#' From chatGPT: The purpose of this function is to convert empty elements within a list to NULL. If an element is not a list or has a length of 0, it remains unchanged. However, if an element is a non-empty list, the function recursively processes each nested element to convert empty elements to NULL.
 #'
 #' @keywords internal
 #'

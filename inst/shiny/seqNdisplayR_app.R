@@ -2715,9 +2715,17 @@ server <- function(input, output, session) {
       if ( feature == ''  & locus[1] == '' ) {
         output$console = renderText({"Please provide locus name or coordinates for region to be plotted."})
       }else if ( feature != '' ){
-        paste0("seqNdisplayR_", Sys.Date(), '_', feature, '.pdf')  #@ paste0("seqNdisplayR_", Sys.Date(), '_', feature)
+        if (FALSE){
+          paste0("seqNdisplayR_", Sys.Date(), '_', feature, '.pdf')
+        }else{
+          paste0("seqNdisplayR_", Sys.Date(), '_', feature) 
+        }
       }else{
-        paste0("seqNdisplayR_", Sys.Date(), '_', locus_string, '.pdf')  #@ paste0("seqNdisplayR_", Sys.Date(), '_', locus_string)
+        if (FALSE){
+          paste0("seqNdisplayR_", Sys.Date(), '_', locus_string, '.pdf')
+        }else{
+          paste0("seqNdisplayR_", Sys.Date(), '_', locus_string)
+        }
       }
     },
     content = function(file) {
