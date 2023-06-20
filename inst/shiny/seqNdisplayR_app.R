@@ -74,7 +74,7 @@ ParseOption = function(option_str) {
   }else if(option_str == 'FALSE' | option_str == 'F'){
     FALSE
   }else if(option_str == 'NULL'){
-    NULL
+    NULL #@ 
   }else if( option_str == 'NA' ){ #$ added 230519
     NA
   }else if( !is.na(suppressWarnings(as.numeric(option_str))) ){
@@ -2606,7 +2606,7 @@ server <- function(input, output, session) {
     #@ ->  2023-06-19
     for (op_name in op_names){
       if (shiny_session_global_options[op_name]=='NULL'){
-        template_session[op_name] = NULL
+        template_session[op_name] = list(NULL)
         #cat(paste(op_name, '****', 'NULL*'), '\n')
       }else if (shiny_session_global_options[op_name]=='FALSE'){
         template_session[op_name] = FALSE
