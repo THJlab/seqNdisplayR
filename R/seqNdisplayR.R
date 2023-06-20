@@ -430,6 +430,9 @@ seqNdisplay = function(
   if (!EvaluateNumericValue(.full.width.cm, positive_val=TRUE, min_val=5, max_val=50, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'full_width_cm', 'Full Plot Width'), .verbosity)){ return() }
   .scale.fontsize = .panel.info[[1]][['scale.fontsize']]
   if (!EvaluateNumericValue(.scale.fontsize, positive_val=TRUE, min_val=4, max_val=8, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'scale_font_size', 'Data Scale Font Size'), .verbosity)){ return() }
+  if (.scale.fontsize > .rec.font.sizes['signal_axis']){
+    if (.verbosity > 1) { cat(paste0('WARNING(s):\n - parts of numbers on the data scale axis may hidden, because the font size appears to be too big for the panel - consider adjusting'), '\n') }
+  }
   if (is.null(feature_names_font_size)){
     .feature.names.font.size = min(.feature.names.font.size, min(unlist(lapply(.panel.info[[1]][['panel.font.size.list']], min, na.rm=TRUE)), na.rm=TRUE))
   }
