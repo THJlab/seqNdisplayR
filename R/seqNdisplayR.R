@@ -6757,6 +6757,14 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                       .thin.exon.start = IRanges::start(.thin.exon.range)
                       .thin.exon.end = IRanges::end(.thin.exon.range)
                       rect(xleft=.thin.exon.start, xright=.thin.exon.end, ybottom=.y.vals.thin[1], ytop=.y.vals.thin[2], col=.annot.col, border=NA  )
+                      #@ -> add arrows to thin exons 2023-06-21
+                      .n.arrows = ifelse(round(diff(c(.thin.exon.start, .thin.exon.end+1))/(8*.length.arrows)) > 0, 1, 0)
+                      if (stranded & .n.arrows > 0){
+                        .pos.arrow = mean(c(.thin.exon.start, .thin.exon.end))
+                        segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=2) 
+                        segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=2) 
+                      }
+                      #@ <- add arrows to thin exons 2023-06-21
                     }
                   }
                 }
