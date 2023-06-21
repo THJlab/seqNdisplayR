@@ -2446,7 +2446,6 @@ AnnotatedFeaturesInRegion = function(plotted_region, annotations){
         IRanges::start(.red.collapsed.annot)[S4Vectors::mcols(.red.collapsed.annot)$on.from.start] = IRanges::start(plotted_region)
         IRanges::end(.red.collapsed.annot)[S4Vectors::mcols(.red.collapsed.annot)$on.from.end] = IRanges::end(plotted_region)
       }
-      #.feature.annotations = GenomicRanges::GRangesList()
       .feature.annotations = list()
       .annotation.lines = list()
       for (.feat.name in .feat.names){
@@ -2454,38 +2453,34 @@ AnnotatedFeaturesInRegion = function(plotted_region, annotations){
         .feat.annot = S4Vectors::subset(.subset.annotation, name==.feat.name)
         .annotation.lines[[.feat.name]] = OrganizeOverlappingIVs(.feat.annot, .gap)
         # are transcript models (exon-intron structure) interrupted
-        S4Vectors::mcols(.feat.annot)$on.from.start = FALSE #@ 2023-06-20 added this line
-        S4Vectors::mcols(.feat.annot)$on.from.end = FALSE #@ 2023-06-20 added this line
-        S4Vectors::mcols(.feat.annot)$intron.from.start = FALSE
-        S4Vectors::mcols(.feat.annot)$intron.from.end = FALSE
+        S4Vectors::mcols(.feat.annot)$on.from.start = IRanges::start(.feat.annot) < IRanges::start(plotted_region) #@ 2023-06-20 added this line
+        S4Vectors::mcols(.feat.annot)$on.from.end = IRanges::end(.feat.annot) > IRanges::end(plotted_region) #@ 2023-06-20 added this line
         if (!('blocks' %in% colnames((S4Vectors::mcols(.feat.annot))))){
           S4Vectors::mcols(.feat.annot)$blocks = IRanges::IRangesList(sapply(1:length(.feat.annot), function(x) IRanges::IRanges(start=1, end=IRanges::width(IRanges::ranges(.feat.annot[x])) + 1)))
         }
-        if (any(IRanges::start(.feat.annot) < IRanges::start(plotted_region)) | any(IRanges::end(.feat.annot) > IRanges::end(plotted_region))){
-          # subset of transcript models that either start or end outside of plotted region
-          .subset = which(IRanges::start(.feat.annot) < IRanges::start(plotted_region) | IRanges::end(.feat.annot) > IRanges::end(plotted_region))
-          # obtain the exons from those transcript models that are present within the plotted region
-          exons = S4Vectors::mcols(.feat.annot)$blocks
-          .exon.ranges = lapply(.subset, function(.n.trn) GenomicRanges::sort(IRanges::overlapsRanges(IRanges::IRanges(start=IRanges::start(.feat.annot)[.n.trn]-1 + IRanges::start(exons[[.n.trn]]), end=IRanges::start(.feat.annot)[.n.trn]-1 + (IRanges::end(exons[[.n.trn]]) - 1)), IRanges::ranges(plotted_region)), decreasing = FALSE) ) #@ 2023-06-20 (IRanges::end(exons[[.n.trn]]) - 1) <- IRanges::end(exons[[.n.trn]])
-          #@ 2023-06-20 -> added these lines
-          S4Vectors::mcols(.feat.annot)$on.from.start[.subset] = sapply( 1:length(.exon.ranges), function(.n.trn) ifelse(length(.exon.ranges[[.n.trn]]) > 0, (min(IRanges::start(.exon.ranges[[.n.trn]])) == IRanges::start(plotted_region)), FALSE)) 
-          S4Vectors::mcols(.feat.annot)$on.from.end[.subset] = sapply( 1:length(.exon.ranges), function(.n.trn) ifelse(length(.exon.ranges[[.n.trn]]) > 0, (max(IRanges::end(.exon.ranges[[.n.trn]])) == IRanges::end(plotted_region)), FALSE)) 
-          #@ 2023-06-20 <-
-          # truncated starts and ends
-          S4Vectors::mcols(.feat.annot)$intron.from.start[.subset] = S4Vectors::mcols(.feat.annot)$on.from.start[.subset]
-          S4Vectors::mcols(.feat.annot)$intron.from.end[.subset] = S4Vectors::mcols(.feat.annot)$on.from.end[.subset]
-          S4Vectors::mcols(.feat.annot)$intron.from.start[.subset] = sapply( 1:length(.exon.ranges), function(.n.trn)  ifelse( min(IRanges::start(.exon.ranges[[.n.trn]])) == IRanges::start(plotted_region), FALSE, S4Vectors::mcols(.feat.annot)$intron.from.start[.subset][.n.trn]) )
-          S4Vectors::mcols(.feat.annot)$intron.from.end[.subset] = sapply( 1:length(.exon.ranges), function(.n.trn) ifelse( max(IRanges::end(.exon.ranges[[.n.trn]])) == IRanges::end(plotted_region), FALSE, S4Vectors::mcols(.feat.annot)$intron.from.end[.subset][.n.trn]) )
-          #@ .trunc.starts = sapply(IRanges::start(.feat.annot)[.subset], function(.trn.start)  ifelse(.trn.start < IRanges::start(plotted_region), IRanges::start(plotted_region), .trn.start) )
-          #@ .trunc.ends = sapply(IRanges::end(.feat.annot)[.subset], function(.trn.end)  ifelse(.trn.end > IRanges::end(plotted_region), IRanges::end(plotted_region), .trn.end) )
-          #@ S4Vectors::mcols(.feat.annot)$intron.from.start[.subset] = sapply( 1:length(.exon.ranges), function(.n.trn) ifelse(length(.exon.ranges[[.n.trn]]) > 0, (min(IRanges::start(.exon.ranges[[.n.trn]])) != .trunc.starts[.n.trn]), TRUE))
-          #@ S4Vectors::mcols(.feat.annot)$intron.from.end[.subset] = sapply( 1:length(.exon.ranges), function(.n.trn) ifelse(length(.exon.ranges[[.n.trn]]) > 0, (max(IRanges::end(.exon.ranges[[.n.trn]])) != .trunc.ends[.n.trn]), TRUE))
-          IRanges::start(.feat.annot)[.subset] = sapply( 1:length(.exon.ranges), function(.n.trn) ifelse(length(.exon.ranges[[.n.trn]]) > 0, min(IRanges::start(.exon.ranges[[.n.trn]])), .trunc.starts[.n.trn]) )
-          IRanges::end(.feat.annot)[.subset] = sapply( 1:length(.exon.ranges), function(.n.trn) ifelse(length(.exon.ranges[[.n.trn]]) > 0, max(IRanges::end(.exon.ranges[[.n.trn]])), .trunc.ends[.n.trn]) )
-          .exon.ranges = lapply( 1:length(.exon.ranges), function(.n.trn) {if (length(.exon.ranges[[.n.trn]]) > 0){IRanges::shift(.exon.ranges[[.n.trn]], shift=-min(IRanges::start(.exon.ranges[[.n.trn]]))+1 )}else{IRanges::shift(IRanges::ranges(.feat.annot), -IRanges::start(.feat.annot)+1)}} )
-          S4Vectors::mcols(.feat.annot)$blocks[.subset] = as(.exon.ranges, 'IRangesList')
+        exons = S4Vectors::mcols(.feat.annot)$blocks
+        .exon.ranges = lapply(1:length(.feat.annot), function(.n.trn) GenomicRanges::sort(IRanges::overlapsRanges(IRanges::IRanges(start=IRanges::start(.feat.annot)[.n.trn]-1 + IRanges::start(exons[[.n.trn]]), end=IRanges::start(.feat.annot)[.n.trn]-1 + (IRanges::end(exons[[.n.trn]]) - 1)), IRanges::ranges(plotted_region)), decreasing = FALSE) ) #@ 2023-06-20 (IRanges::end(exons[[.n.trn]]) - 1) <- IRanges::end(exons[[.n.trn]])
+        S4Vectors::mcols(.feat.annot)$intron.from.start = sapply( 1:length(.exon.ranges), function(.n.trn)  if (length(.exon.ranges[[.n.trn]]) > 0){ ifelse( min(IRanges::start(.exon.ranges[[.n.trn]])) == IRanges::start(plotted_region), FALSE, S4Vectors::mcols(.feat.annot)$on.from.start[.n.trn]) }else{ TRUE } )
+        S4Vectors::mcols(.feat.annot)$intron.from.end = sapply( 1:length(.exon.ranges), function(.n.trn) if (length(.exon.ranges[[.n.trn]]) > 0){ ifelse( max(IRanges::end(.exon.ranges[[.n.trn]])) == IRanges::end(plotted_region), FALSE, S4Vectors::mcols(.feat.annot)$on.from.end[.n.trn]) }else{ TRUE } )
+        if (any(S4Vectors::mcols(.feat.annot)$on.from.start) | any(S4Vectors::mcols(.feat.annot)$on.from.end)){
+          .trunc.starts = sapply(IRanges::start(.feat.annot), function(.trn.start)  ifelse(.trn.start < IRanges::start(plotted_region), IRanges::start(plotted_region), .trn.start) )
+          .trunc.ends = sapply(IRanges::end(.feat.annot), function(.trn.end)  ifelse(.trn.end > IRanges::end(plotted_region), IRanges::end(plotted_region), .trn.end) )
+          IRanges::start(.feat.annot) = sapply( 1:length(.exon.ranges), function(.n.trn) ifelse(length(.exon.ranges[[.n.trn]]) > 0, min(IRanges::start(.exon.ranges[[.n.trn]])), .trunc.starts[.n.trn]) )
+          IRanges::end(.feat.annot) = sapply( 1:length(.exon.ranges), function(.n.trn) ifelse(length(.exon.ranges[[.n.trn]]) > 0, max(IRanges::end(.exon.ranges[[.n.trn]])), .trunc.ends[.n.trn]) )
+          .exon.ranges = lapply( 1:length(.exon.ranges), function(.n.trn) {if (length(.exon.ranges[[.n.trn]]) > 0){IRanges::shift(.exon.ranges[[.n.trn]], shift=-min(IRanges::start(.exon.ranges[[.n.trn]]))+1 )}else{IRanges::shift(IRanges::ranges(.feat.annot)[.n.trn], -IRanges::start(.feat.annot)[.n.trn]+1)}} )
+          S4Vectors::mcols(.feat.annot)$blocks = as(.exon.ranges, 'IRangesList')
           if ("thick" %in% names(S4Vectors::mcols(.feat.annot))){
-            S4Vectors::mcols(.feat.annot)$thick[.subset] = IRanges::IRanges(IRanges::start(.feat.annot)[.subset], width=0)
+            if (any(S4Vectors::mcols(.feat.annot)$thick %outside% ranges(plotted_region))){
+              S4Vectors::mcols(.feat.annot)$thick[S4Vectors::mcols(.feat.annot)$thick %outside% ranges(plotted_region)] = IRanges::IRanges(start(.feat.annot), width=0)[S4Vectors::mcols(.feat.annot)$thick %outside% ranges(plotted_region)]
+            }
+            if (any(width(S4Vectors::mcols(.feat.annot)$thick) == 0)){
+              S4Vectors::mcols(.feat.annot)$thick[width(S4Vectors::mcols(.feat.annot)$thick) == 0] = IRanges::IRanges(start(.feat.annot), width=0)[width(S4Vectors::mcols(.feat.annot)$thick) == 0]
+            }
+            if (any(width(S4Vectors::mcols(.feat.annot)$thick) > 0)){
+              S4Vectors::mcols(.feat.annot)$thick[width(S4Vectors::mcols(.feat.annot)$thick) > 0] = IRanges::overlapsRanges(S4Vectors::mcols(.feat.annot)$thick[width(S4Vectors::mcols(.feat.annot)$thick) > 0], ranges(plotted_region))
+            }
+            IRanges::start(S4Vectors::mcols(.feat.annot)$thick) = sapply( 1:length(.feat.annot), function(.n.trn) ifelse(IRanges::start(S4Vectors::mcols(.feat.annot)$thick)[.n.trn] < IRanges::start(.feat.annot)[.n.trn], IRanges::start(.feat.annot)[.n.trn], IRanges::start(S4Vectors::mcols(.feat.annot)$thick)[.n.trn] ))
+            IRanges::end(S4Vectors::mcols(.feat.annot)$thick) = sapply( 1:length(.feat.annot), function(.n.trn) ifelse(IRanges::end(S4Vectors::mcols(.feat.annot)$thick)[.n.trn] > IRanges::end(.feat.annot)[.n.trn], IRanges::end(.feat.annot)[.n.trn], IRanges::end(S4Vectors::mcols(.feat.annot)$thick)[.n.trn] ))
           }
         }
         .feature.annotations[[.feat.name]] = .feat.annot
@@ -6705,8 +6700,10 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                     }
                   }
                 }
+                .introns.to.plot = (length(.exon.ranges) > 1 | mcols(.feat.annotation[.annot.line])$intron.from.start |  mcols(.feat.annotation[.annot.line])$intron.from.end) #@ 2023-06-20
+              }else{
+                .introns.to.plot = length(.exon.ranges) > 1  #@ 2023-06-20
               }
-              .introns.to.plot = length(.exon.ranges) > 1 #@ 2023-06-20
               if (length(.exon.ranges) > 0){
                 if (bin_size > 1){
                   .exon.starts = sapply( IRanges::start(.exon.ranges), function(s) ifelse(s==IRanges::start(.overall.annot.range), s, .coords[which(abs(s - .coords)==min(abs(s - .coords)))] - bin_size/2 ))
@@ -6780,6 +6777,27 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                       .pos.arrow = mean(c(.exon.start, .exon.end))
                       segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=2) 
                       segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=2) 
+                    }
+                  }
+                }
+              }else{
+                if (.include.introns & .introns.to.plot){
+                  .intron.ranges = .overall.annot.range
+                  IRanges::start(.intron.ranges) = ifelse(S4Vectors::mcols(.feat.annotation)$intron.from.start[.annot.line], IRanges::start(plotted_region), IRanges::start(.intron.ranges))
+                  IRanges::end(.intron.ranges) = ifelse(S4Vectors::mcols(.feat.annotation)$intron.from.end[.annot.line], IRanges::end(plotted_region), IRanges::end(.intron.ranges))
+                  #@.intron.ranges = IRanges::setdiff(.intron.ranges, .exon.ranges)
+                  if (length(.intron.ranges) > 0){
+                    .global.intron.start = min(IRanges::start(.intron.ranges)) - 1
+                    .global.intron.end = max(IRanges::end(.intron.ranges)) + 1
+                    segments(x0=.global.intron.start, x1=.global.intron.end, y0=.y.center, lwd=.line.width/2, col=.annot.col, lend=1)
+                    .n.arrows = sapply(IRanges::width(.intron.ranges), function(i) ifelse(round(i/(4*.length.arrows)) > 1, 1, 0))
+                    if (stranded & any(.n.arrows==1)){
+                      .i.arrows = which(.n.arrows==1)
+                      for (.i.arrow in .i.arrows){
+                        .pos.arrow = mean(c(IRanges::start(.intron.ranges)[.i.arrow], IRanges::end(.intron.ranges)[.i.arrow]))
+                        segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/4, lend=1) #@ lwd=.line.width/2
+                        segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/4, lend=1) #@ lwd=.line.width/2
+                      }
                     }
                   }
                 }
