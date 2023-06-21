@@ -2706,7 +2706,7 @@ server <- function(input, output, session) {
     filename = function() {
       feature = GetFeature()
       locus = GetLocus()
-      if (locus != ''){
+      if (locus[1] != ''){ #@ 2023-06-21 locus[1] <- locus
         locus[2] = ifelse(locus[2]=='+', 'plus', 'minus')
         locus_string = paste(locus, collapse='_')
       }else{
