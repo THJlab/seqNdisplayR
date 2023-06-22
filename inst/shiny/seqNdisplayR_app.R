@@ -2702,7 +2702,7 @@ server <- function(input, output, session) {
                })
   
   
-  output$save_pdf <- downloadHandler(
+  output$save_pdf <- shiny::downloadHandler(
     filename = function() {
       feature = GetFeature()
       locus = GetLocus()
@@ -2764,7 +2764,7 @@ server <- function(input, output, session) {
   
   
   # save settings to excel file --> when hitting save button ####
-  output$save_settings <- downloadHandler(
+  output$save_settings <- shiny::downloadHandler(
     filename = function() {
       paste0("seqNdisplayRsession_", Sys.Date(), ".xlsx")
     },
