@@ -2316,7 +2316,7 @@ server <- function(input, output, session) {
             }
           }
           #@ ->
-          cat(paste(shiny_varname, '****', ifelse(is.null(value), 'NULL', value)), '\n')
+          #cat(paste(shiny_varname, '****', ifelse(is.null(value), 'NULL', value)), '\n')
           #@ <-
         }else if( opt_line$option_class == 'optional_text' ) {
           if (value){

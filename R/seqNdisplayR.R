@@ -5562,12 +5562,11 @@ AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands
       .basic.plot.parameters[['+-']][['annot.heights']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['+']][['annot.heights']][[.annot.name]] + ifelse(.annot.name %in% .unstranded.beds.names, 0, .basic.plot.parameters[['-']][['annot.heights']][[.annot.name]])), names=.annot.names)
       .full.height.cm = sum(.basic.plot.parameters[['+']][['track.height.cm']] * .track.vector)
       .basic.plot.parameters[['+-']][['weight']] = 1 #@ 2023-6-27 added 
+      .track.height.cm = .basic.plot.parameters[['+']][['track.height.cm']] #@ 2023-6-27 added 
       if (!is.null(full_height_cm)){ #@ -> 2023-6-27 added clumpsy
         if (.full.height.cm != full_height_cm){
           .track.height.cm = full_height_cm/sum(.track.vector)
           .full.height.cm = full_height_cm
-        }else{
-          .track.height.cm = .basic.plot.parameters[['+']][['track.height.cm']]
         }
       } #@ <- 2023-6-27 added clumpsy
       .basic.plot.parameters[['+-']][['plot.dim.in']] = c(.basic.plot.parameters[['+']][['plot.dim.in']][1], cm_to_in * .full.height.cm) #@ 2023-6-27 sum(.basic.plot.parameters[['+']][['track.height.cm']] * .track.vector)
