@@ -175,6 +175,9 @@ seqNdisplay = function(
   if (!is.null(spacer_height_cm)){ if (!EvaluateNumericValue(spacer_height_cm, positive_val=TRUE, min_val=0.01, max_val=0.2, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'spacer_height_cm', 'Spacer Height'), .verbosity)){ return() }}
   if (!is.null(panels_max_width_cm)){ if (panels_max_width_cm!='auto' & panels_max_width_cm!='automatic'){if (!EvaluateNumericValue(panels_max_width_cm, positive_val=TRUE, min_val=0, max_val=30, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'panels_max_width_cm', 'Panels Width'), .verbosity)){ return() }}}
   if (!is.null(scale_panel_width_cm)){ if (scale_panel_width_cm!='auto' & scale_panel_width_cm!='automatic'){if (!EvaluateNumericValue(scale_panel_width_cm, positive_val=TRUE, min_val=0, max_val=1, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'scale_panel_width_cm', 'Tracks Scale Width'), .verbosity)){ return() }}}
+  if (scale_panel_width_cm!='auto'){
+    if (.verbosity > 1) { cat(paste0('WARNING(s):\n - you are currently manually setting the width of the tracks scales, this can result in truncation of the scale that can go unnoticed. We strongly advise to leave this parameter as automatic setting or to control for absence of scale value truncation'), '\n') }
+  }
   if (!is.null(feature)) {if (!EvaluateNumericValue(extra_space, positive_val=TRUE, min_val=0, max_val=100, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'extra_space', 'Expand Plotted Region'), .verbosity)){ return() }}
   if (!EvaluateNumericValue(margin_width_cm, positive_val=TRUE, min_val=0, max_val=0.25, interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'margin_width_cm', 'Margins Width'), .verbosity)){ margin_width_cm=0.05; if (.verbosity>1){cat(margin_width_cm, '\n')} }
   if (!is.null(panel_font_sizes)){ if (!EvaluateNumericValue(panel_font_sizes, positive_val=TRUE, min_val=4, max_val=15, interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'panel_font_sizes', 'Panel Text Font Size(s)'), .verbosity)){ panel_font_sizes=NULL; if (.verbosity>1){cat('NULL', '\n')} }}
@@ -455,7 +458,11 @@ seqNdisplay = function(
   .bin.size = GetBinSize(bin_size, IRanges::width(.plotted.region[[.strand]]), .plot.width.parameters[['tracks.width.cm']], .bins.per.cm, .verbosity)
   if (!EvaluateNumericValue(.bin.size, positive_val=TRUE, min_val=1, max_val=1000000, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'bin_size', 'Bin Size'), .verbosity)){ return() }
   .fixed.plot.vertical.parameters = c('tracks'=!is.null(track_height_cm), 'header'=!is.null(.title.field.height.cm), 'scale'=!is.null(genomic_scale_height_cm), 'spacers'=!is.null(spacer_height_cm), 'annots'=!is.null(annotation_height_cm)) #@
-  .basic.plot.parameters = AlignBasicPlotParameters(structure(lapply(names(.plotted.region), function(.strand) BasicPlotParameters(.strand, .plotted.region, .feature.names.font.size, .plot.height.parameters, .plot.width.parameters, .full.width.cm, full_height_cm, track_height_cm, .plot.vertical.parameters, .bin.size, .bins.per.cm, .plotting.segment.order, .tracks.listed, .unstranded.beds)), names=names(.plotted.region)), both_strands, .strands.intermingled, .fixed.plot.vertical.parameters, full_height_cm)
+  .vertical.parameters = c('tracks'=ifelse(!is.null(track_height_cm), track_height_cm, NA), 'header'=ifelse(!is.null(.title.field.height.cm),.title.field.height.cm, NA) , 'scale'=ifelse(!is.null(genomic_scale_height_cm), genomic_scale_height_cm, NA), 'spacers'=ifelse(!is.null(spacer_height_cm), spacer_height_cm, NA), 'annots'=ifelse(!is.null(annotation_height_cm), annotation_height_cm, NA)) #@ 2023-06-27
+  .basic.plot.parameters = AlignBasicPlotParameters(structure(lapply(names(.plotted.region), function(.strand) BasicPlotParameters(.strand, .plotted.region, .feature.names.font.size, .plot.height.parameters, .plot.width.parameters, .full.width.cm, full_height_cm, track_height_cm, .plot.vertical.parameters, .bin.size, .bins.per.cm, .plotting.segment.order, .tracks.listed, .unstranded.beds)), names=names(.plotted.region)), both_strands, .strands.intermingled, .fixed.plot.vertical.parameters, .vertical.parameters, full_height_cm)
+  if (.strands.intermingled){
+    .plot.vertical.parameters = .basic.plot.parameters[['+-']][['plot.vertical.parameters']]
+  }
   .final.feature.text.org = lapply(.feature.text.org, FinalOrganizedAnnotationTextsInPlottedRegion, names(annots), .feature.names.font.size)
   if (is.null(genomic_scale_font_size)){
     .genomic.scale.font.size = .rec.font.sizes['genomic_axis']
@@ -536,7 +543,7 @@ seqNdisplay = function(
                                                                    '\n', '\t', '.) ', 'Tracks: ', round(.plot.width.parameters[['tracks.width.cm']], 3), ' cm')
     # Height of panels
     .track.height.cm = .basic.plot.parameters[[ifelse(.strands.intermingled, 3, 1)]][['track.height.cm']] #@ 2023-06-27 ifelse(.strands.intermingled, 3, 1) <- 1
-    .plot.height.parameters = .plot.vertical.parameters * .track.height.cm * .basic.plot.parameters[[ifelse(.strands.intermingled, 3, 1)]][['weight']] #@ 2023-06-27 added * .basic.plot.parameters[[ifelse(.strands.intermingled, 3, 1)]][['weight']] 
+    .plot.height.parameters = .plot.vertical.parameters * .track.height.cm #@ * .basic.plot.parameters[[ifelse(.strands.intermingled, 3, 1)]][['weight']] #@ 2023-06-27 added * .basic.plot.parameters[[ifelse(.strands.intermingled, 3, 1)]][['weight']] 
     .detailed.output[['"Height of panels (w/o scaling)"']] = paste0('\t', '.) ', 'All panels: ', round(.height.in/cm_to_in, 3), ' cm',
                                                                     '\n', '\t', '.) ', 'Header: ', round(.plot.height.parameters['header'], 3), ' cm/segment',
                                                                     '\n', '\t', '.) ', 'Genomic scale: ', round(.plot.height.parameters['scale'], 3), ' cm/segment',
@@ -5504,13 +5511,15 @@ BasicPlotParameters = function(plotted_strand, plotted_region, feature_names_fon
 #' @param basic_plot_parameters 
 #' @param both_strands 
 #' @param strands_intermingled 
-#' @param fixed_plot_vertical_parameters 
+#' @param fixed_plot_vertical_parameters
+#' @param vertical_parameters
+#' @param full_height_cm
 #'
 #' @return
 #'
 #' @examples
 #' 
-AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands_intermingled, fixed_plot_vertical_parameters, full_height_cm){ #@ 2023-06-27 added ,full_height_cm
+AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands_intermingled, fixed_plot_vertical_parameters, vertical_parameters, full_height_cm){ #@ 2023-06-27 added ,full_height_cm
   constants_defaults = ConstantsDefaults()
   cm_to_in = constants_defaults['cm_to_in'] #@ 2022-10-05
   .basic.plot.parameters = basic_plot_parameters
@@ -5535,49 +5544,88 @@ AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands
       .track.vector.minus = structure(sapply(.track.vector.names, function(.name) .basic.plot.parameters[['-']][['track.vector']][.name], USE.NAMES=FALSE), names=.track.vector.names)
       .track.vector.minus[is.na(.track.vector.minus)] = 0
       .track.vector = .track.vector.plus + .track.vector.minus
-      if (!fixed_plot_vertical_parameters[1]){ 
-        .unadjusted.track.vector.sum = sum(.track.vector)
-        .diff = sum(c(.basic.plot.parameters[['+']][['track.vector']], .basic.plot.parameters[['-']][['track.vector']])) - .unadjusted.track.vector.sum
-        .indices = list()
-        .weights = list()
-        .indices[['header']] = grep('^header$', names(.track.vector))
-        .weights[['header']] = 1
-        .indices[['scale']] = grep('^scale$', names(.track.vector))
-        .weights[['scale']] = 1
-        .indices[['spacers']] = grep('-spacer', names(.track.vector))
-        .weights[['spacers']] = .track.vector[.indices[['spacers']]]/min(.track.vector[.indices[['spacers']]])
-        .indices[['annots']] = sort(unlist(lapply(c(.annot.names, .unstranded.beds.names), function(a) grep(paste0('^', a), names(.track.vector)))))
-        .weights[['annots']] = .track.vector[.indices[['annots']]]/min(.track.vector[.indices[['annots']]])
-        .indices[['tracks']] = setdiff(1:length(.track.vector), unlist(.indices[1:4]))
-        .weights[['tracks']] = .track.vector[.indices[['tracks']]]/min(.track.vector[.indices[['tracks']]])
+      .full.height.cm = sum(.basic.plot.parameters[['+']][['track.height.cm']] * .track.vector) #@ 2023-06-27 added 
+      if (!is.null(full_height_cm)){ #@ -> 2023-6-27 added clumpsy
+        if (.full.height.cm != full_height_cm){
+          #@.track.height.cm = full_height_cm/sum(.track.vector)
+          .full.height.cm = full_height_cm
+        }
+      } #@ <- 2023-6-27 added clumpsy
+      #@ if (any(!fixed_plot_vertical_parameters)){ #@ 2023-06-27 !fixed_plot_vertical_parameters[1]
+      .unadjusted.track.vector.sum = sum(.track.vector)
+      #@ .diff = sum(c(.basic.plot.parameters[['+']][['track.vector']], .basic.plot.parameters[['-']][['track.vector']])) - .unadjusted.track.vector.sum #@ 2023-06-27 removed 
+      .unadjusted.track.vector.height.cm = .basic.plot.parameters[['+']][['track.height.cm']] * .track.vector #@ 2023-06-27 added 
+      .indices = list()
+      .weights = list()
+      .indices[['header']] = grep('^header$', names(.track.vector))
+      .weights[['header']] = 1
+      .indices[['scale']] = grep('^scale$', names(.track.vector))
+      .weights[['scale']] = 1
+      .indices[['spacers']] = grep('-spacer', names(.track.vector))
+      .weights[['spacers']] = .track.vector[.indices[['spacers']]]/min(.track.vector[.indices[['spacers']]])
+      .indices[['annots']] = sort(unlist(lapply(c(.annot.names, .unstranded.beds.names), function(a) grep(paste0('^', a), names(.track.vector)))))
+      .weights[['annots']] = .track.vector[.indices[['annots']]]/min(.track.vector[.indices[['annots']]])
+      .indices[['tracks']] = setdiff(1:length(.track.vector), unlist(.indices[1:4]))
+      .weights[['tracks']] = .track.vector[.indices[['tracks']]]/min(.track.vector[.indices[['tracks']]])
+      if (!is.na(vertical_parameters['tracks'])){
+        .unadjusted.track.vector.height.cm[.indices[['tracks']]] = .weights[['tracks']] * vertical_parameters['tracks']
+      }
+      if (!is.na(vertical_parameters['header'])){
+        .unadjusted.track.vector.height.cm[.indices[['header']]] = .weights[['header']] * vertical_parameters['header']
+      }
+      if (!is.na(vertical_parameters['scale'])){
+        .unadjusted.track.vector.height.cm[.indices[['scale']]] = .weights[['scale']] * vertical_parameters['scale']
+      }
+      if (!is.na(vertical_parameters['spacers'])){
+        .unadjusted.track.vector.height.cm[.indices[['spacers']]] = .weights[['spacers']] * vertical_parameters['spacers']
+      }
+      if (!is.na(vertical_parameters['annots'])){
+        .unadjusted.track.vector.height.cm[.indices[['annots']]] = .weights[['annots']] * vertical_parameters['annots']
+      }
+      if (any(!fixed_plot_vertical_parameters)){ #@ 2023-06-27
         .diff.indices = unlist(.indices[names(fixed_plot_vertical_parameters)[!fixed_plot_vertical_parameters]])
         .diff.weights = unlist(.weights[names(fixed_plot_vertical_parameters)[!fixed_plot_vertical_parameters]])
-        .track.vector[.diff.indices] = .track.vector[.diff.indices] + .diff*.diff.weights/sum(.diff.weights)
-        .basic.plot.parameters[['+-']][['weight']] = unique(.track.vector[.indices[['tracks']]]/as.integer(.track.vector[.indices[['tracks']]])) #@ 2023-6-27 added 
-      } 
+        .adjustable.tracks.cm = .unadjusted.track.vector.height.cm[.diff.indices]
+        .fixed.heights.cm = .unadjusted.track.vector.height.cm[-.diff.indices]
+        if (sum(.adjustable.tracks.cm) + sum(.fixed.heights.cm) != .full.height.cm){
+          if (.full.height.cm > sum(.fixed.heights.cm)){
+            .leftover.height.cm = .full.height.cm - sum(.fixed.heights.cm)
+            .adjusted.tracks.cm = .leftover.height.cm * .adjustable.tracks.cm/sum(.adjustable.tracks.cm)
+            .unadjusted.track.vector.height.cm[.diff.indices] = .adjusted.tracks.cm
+          }else if (.full.height.cm < sum(.fixed.heights.cm)){
+            .unadjusted.track.vector.height.cm = .full.height.cm * .unadjusted.track.vector.height.cm/sum(.unadjusted.track.vector.height.cm)
+          }
+        }
+        #@ .track.vector[.diff.indices] = .track.vector[.diff.indices] + .diff*.diff.weights/sum(.diff.weights)
+        #@ .basic.plot.parameters[['+-']][['weight']] = unique(.track.vector[.indices[['tracks']]]/as.integer(.track.vector[.indices[['tracks']]])) #@ 2023-6-27 added 
+      }
+      .track.height.cm = unique(.unadjusted.track.vector.height.cm[.indices[['tracks']]]/.weights[['tracks']])
+      .track.vector = .unadjusted.track.vector.height.cm / .track.height.cm 
       .windows.height = c('top'=1, 1-cumsum(.track.vector)/sum(.track.vector)); .windows.height[length(.windows.height)] = 0
       .basic.plot.parameters[['+-']] = list('track.vector'=.track.vector, 'windows.height'=.windows.height)
       .annot.names = names(.basic.plot.parameters[['+']][['max.annot.lines']])
       .basic.plot.parameters[['+-']][['max.annot.lines']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['+']][['max.annot.lines']][[.annot.name]] + ifelse(.annot.name %in% .unstranded.beds.names, 0, .basic.plot.parameters[['-']][['max.annot.lines']][[.annot.name]])), names=.annot.names)
       .basic.plot.parameters[['+-']][['annot.heights']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['+']][['annot.heights']][[.annot.name]] + ifelse(.annot.name %in% .unstranded.beds.names, 0, .basic.plot.parameters[['-']][['annot.heights']][[.annot.name]])), names=.annot.names)
-      .full.height.cm = sum(.basic.plot.parameters[['+']][['track.height.cm']] * .track.vector)
-      .basic.plot.parameters[['+-']][['weight']] = 1 #@ 2023-6-27 added 
-      .track.height.cm = .basic.plot.parameters[['+']][['track.height.cm']] #@ 2023-6-27 added 
-      if (!is.null(full_height_cm)){ #@ -> 2023-6-27 added clumpsy
-        if (.full.height.cm != full_height_cm){
-          .track.height.cm = full_height_cm/sum(.track.vector)
-          .full.height.cm = full_height_cm
-        }
-      } #@ <- 2023-6-27 added clumpsy
+      #@ .basic.plot.parameters[['+-']][['weight']] = 1 #@ 2023-06-27 added 
+      #@ .track.height.cm = .basic.plot.parameters[['+']][['track.height.cm']] #@ 2023-06-27 added 
       .basic.plot.parameters[['+-']][['plot.dim.in']] = c(.basic.plot.parameters[['+']][['plot.dim.in']][1], cm_to_in * .full.height.cm) #@ 2023-6-27 sum(.basic.plot.parameters[['+']][['track.height.cm']] * .track.vector)
       .basic.plot.parameters[['+-']][['track.height.cm']] = .track.height.cm #@ 2023-6-27 .basic.plot.parameters[['+']][['track.height.cm']]  
       .basic.plot.parameters[['+-']][['bin.info']] = .basic.plot.parameters[['+']][['bin.info']]
+      .basic.plot.parameters[['+-']][['plot.vertical.parameters']] = c( 'header'=as.numeric(.track.vector[.indices[['header']]]),             
+                                                                        'seq'=1,                  
+                                                                        'scale'=as.numeric(.track.vector[.indices[['scale']]]),              
+                                                                        'line-spacer'=as.numeric(unique(.track.vector[.indices[['spacers']]] / .weights[['spacers']])[1]),        
+                                                                        'empty-spacer'=as.numeric(unique(.track.vector[.indices[['spacers']]] / .weights[['spacers']])[1]),       
+                                                                        'thickline-spacer'=2*as.numeric(unique(.track.vector[.indices[['spacers']]] / .weights[['spacers']])[1]),   
+                                                                        'annot'=as.numeric(unique(.track.vector[.indices[['annots']]] / .weights[['annots']])[1]),              
+                                                                        'annot_squished'=0.5*as.numeric(unique(.track.vector[.indices[['annots']]] / .weights[['annots']])[1]),     
+                                                                        'annot_text_segment'=as.numeric(unique(.track.vector[.indices[['annots']]] / .weights[['annots']])[1]))
     }else{
       .windows.height.adjusted = .basic.plot.parameters[['+']][['windows.height']]*.basic.plot.parameters[['+']][['plot.dim.in']][2] + .basic.plot.parameters[['-']][['plot.dim.in']][2]
       .basic.plot.parameters[['+']][['windows.height']] = .windows.height.adjusted/max(.windows.height.adjusted)
       .basic.plot.parameters[['-']][['windows.height']] = (.basic.plot.parameters[['-']][['windows.height']]*.basic.plot.parameters[['-']][['plot.dim.in']][2])/max(.windows.height.adjusted)
-      .basic.plot.parameters[['+']][['weight']] = 1 #@ 2023-6-27 added
-      .basic.plot.parameters[['-']][['weight']] = 1 #@ 2023-6-27 added
+      #@ .basic.plot.parameters[['+']][['weight']] = 1 #@ 2023-6-27 added
+      #@ .basic.plot.parameters[['-']][['weight']] = 1 #@ 2023-6-27 added
     }
     .basic.plot.parameters[['+']][['plot.dim.in']][2] = .height.in
     .basic.plot.parameters[['-']][['plot.dim.in']][2] = .height.in
@@ -5587,7 +5635,7 @@ AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands
     .spacer.names = NumberingSpacers(.temp.basic.plot.parameters)
     names(.basic.plot.parameters[[.only.strand]][['track.vector']]) = .spacer.names[[.only.strand]]
     names(.basic.plot.parameters[[.only.strand]][['windows.height']])[1+1:length(.spacer.names[[.only.strand]])] = .spacer.names[[.only.strand]]
-    .basic.plot.parameters[[.only.strand]][['weight']] = 1 #@ 2023-6-27 added
+    #@ .basic.plot.parameters[[.only.strand]][['weight']] = 1 #@ 2023-6-27 added
   }
   return(.basic.plot.parameters)
 }
