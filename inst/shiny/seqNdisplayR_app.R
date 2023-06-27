@@ -2316,7 +2316,7 @@ server <- function(input, output, session) {
             }
           }
           #@ ->
-          #cat(paste(shiny_varname, '****', ifelse(is.null(value), 'NULL', value)), '\n')
+          cat(paste(shiny_varname, '****', ifelse(is.null(value), 'NULL', value)), '\n')
           #@ <-
         }else if( opt_line$option_class == 'optional_text' ) {
           if (value){
@@ -2599,9 +2599,10 @@ server <- function(input, output, session) {
     track_colors = GetShinyTrackColors() ##@@
     template_session[['colors']] = track_colors ##@@
     
-    shiny_session_global_options <- GetShinyGlobalOptions()
+    shiny_session_global_options = GetShinyGlobalOptions()
     
     op_names = names(shiny_session_global_options)
+    
     #@ template_session[op_names] = shiny_session_global_options[op_names]
     #@ ->  2023-06-19
     for (op_name in op_names){
