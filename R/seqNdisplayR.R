@@ -2150,11 +2150,15 @@ RegionGRanges = function(locus, tracks_width, feature=NULL, annotations=NULL, bi
     #@ if (is.null(bin_start)){}
     .bin.start = ifelse(.strand=='+', .chrom.start, .chrom.end)
     .gene.width = .chrom.end - .chrom.start + 1
-    if (.gene.width < 100){
+    if (.gene.width > 0 & .gene.width < 100){
       .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', 'the supplied region is less than 100 bp wide (',  .gene.width, ') - adjusting to 100 bp (minimum width) based on center coordinate')
       .chrom.center = .chrom.start + as.integer(.gene.width/2)
       .chrom.start = .chrom.center - 49
       .chrom.end = .chrom.center + 50
+    }else if (.gene.width <= 0){
+      .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'the supplied region is equal to or less than 0 bp wide (',  .gene.width, ') - aborting')
+      PrintOutput(.messages, verbosity)
+      return()
     }
     if(.strand=='-'){ extra_space = rev(extra_space) }
     .chrom.start = .chrom.start - as.integer(extra_space[1]*.gene.width)
@@ -2176,68 +2180,6 @@ RegionGRanges = function(locus, tracks_width, feature=NULL, annotations=NULL, bi
   }
 }
 
-
-RegionGRanges_obs = function(locus, tracks_width, feature=NULL, annotations=NULL, bin_start=NULL, extra_space=c(0.1,0.1), verbosity, interface){
-  .messages = list('output'=list(), 'errors'=list(), 'warnings'=list())
-  if (!is.null(feature) & !is.null(annotations)){
-    .first.annot = which(sapply(names(annotations), function(x) feature %in% S4Vectors::mcols(annotations[[x]])$name))[1]
-    if (is.na(.first.annot)){
-      .first.annot = which(sapply(names(annotations), function(x) ifelse(length(which(grepl(paste0('^',feature,','), S4Vectors::mcols(annotations[[x]])$name) | grepl(paste0(',',feature, '$'), S4Vectors::mcols(annotations[[x]])$name) | grepl(paste0(',',feature, ','), S4Vectors::mcols(annotations[[x]])$name)))>0, T, F)))[1]
-      if (is.na(.first.annot)){
-        .arg.name = ifelse(interface=='R', '"feature"', '"locus"')
-        .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'can\'t find your ', .arg.name, ' name in the annotation - aborting')
-      }else{
-        .first.half.statement = paste('couldn\'t exactly find', feature)
-        feature = S4Vectors::mcols(annotations[[names(.first.annot)]])$name[which(grepl(paste0('^',feature,','), S4Vectors::mcols(annotations[[names(.first.annot)]])$name) | grepl(paste0(',',feature, '$'), S4Vectors::mcols(annotations[[names(.first.annot)]])$name) | grepl(paste0(',',feature, ','), S4Vectors::mcols(annotations[[names(.first.annot)]])$name))]
-        .second.half.statement = paste(', but instead found', feature)
-        .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', .first.half.statement, .second.half.statement)
-      }
-    }
-    if (length(.messages[['errors']]) == 0){
-      .feature.annot = annotations[[.first.annot]][which(S4Vectors::mcols(annotations[[.first.annot]])$name==feature)]
-      .chrom = unique(as.character(GenomeInfoDb::seqnames(.feature.annot)))
-      .strand = unique(as.character(BiocGenerics::strand(.feature.annot)))
-      if (length(.chrom) > 1 | length(.strand) > 1){
-        .arg.name = ifelse(interface=='R', '"feature"', '"locus"')
-        .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'the ', .arg.name, ' name is ambiguous - aborting')
-      }
-      .chrom.start = min(IRanges::start(IRanges::ranges(.feature.annot)))
-      .chrom.end = max(IRanges::end(IRanges::ranges(.feature.annot)))
-    }
-  }else if (!is.null(locus)){
-    .chrom = locus[1]
-    .strand = locus[2]
-    .chrom.start = as.integer(locus[3])
-    .chrom.end = as.integer(locus[4])
-    extra_space=c(0,0)
-  }else{
-    .messages[['errors']][[length(.messages[['errors']])+1]] = paste0(' - ', 'the provided information about the locus of interest is incomplete - aborting')
-  }
-  if (length(.messages[['errors']]) == 0){
-    .gene.width = .chrom.end - .chrom.start + 1
-    if (.gene.width < 100){
-      .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', 'the supplied region is less than 100 bp wide (',  .gene.width, ') - adjusting to 100 bp (minimum width) based on start coordinate')
-      .chrom.end = .chrom.start + 100
-    }
-    if (is.null(bin_start)){
-      .bin.start = ifelse(.strand=='+', .chrom.start, .chrom.end)
-    }else{
-      if (bin_start < .chrom.start | bin_start > .chrom.end){
-        .bin.start = ifelse(.strand=='+', .chrom.start, .chrom.end)
-        .arg.name = ifelse(interface=='R', '"bin_start"', '"Bins Center"')
-        .messages[['warnings']][[length(.messages[['warnings']])+1]] = paste0(' - ', 'the set ',  .arg.name, ' is outside of the plotted region - setting to ', .bin.start)
-      }
-    }
-    if(.strand=='-'){ extra_space = rev(extra_space) }
-    .chrom.start = .chrom.start - as.integer(extra_space[1]*.gene.width)
-    .chrom.end = .chrom.end + as.integer(extra_space[2]*.gene.width)
-    PrintOutput(.messages, verbosity)
-    return(GenomicRanges::GRanges(.chrom, .strand, ranges=IRanges::IRanges(.chrom.start, .chrom.end), bin.start=.bin.start, tracks.width=tracks_width))
-  }else{
-    PrintOutput(.messages, verbosity)
-    return()
-  }
-}
 
 
 #' Find Nonoverlapping Intervals
@@ -5582,6 +5524,7 @@ AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands
       if (!is.na(vertical_parameters['annots'])){
         .unadjusted.track.vector.height.cm[.indices[['annots']]] = .weights[['annots']] * vertical_parameters['annots']
       }
+      .full.height.cm = sum(.unadjusted.track.vector.height.cm) #@ 2023-06-28
       if (any(!fixed_plot_vertical_parameters)){ #@ 2023-06-27
         .diff.indices = unlist(.indices[names(fixed_plot_vertical_parameters)[!fixed_plot_vertical_parameters]])
         .diff.weights = unlist(.weights[names(fixed_plot_vertical_parameters)[!fixed_plot_vertical_parameters]])
