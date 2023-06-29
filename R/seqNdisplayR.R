@@ -5497,6 +5497,8 @@ AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands
       .unadjusted.track.vector.sum = sum(.track.vector)
       #@ .diff = sum(c(.basic.plot.parameters[['+']][['track.vector']], .basic.plot.parameters[['-']][['track.vector']])) - .unadjusted.track.vector.sum #@ 2023-06-27 removed 
       .unadjusted.track.vector.height.cm = .basic.plot.parameters[['+']][['track.height.cm']] * .track.vector #@ 2023-06-27 added 
+      .minimal.units = vertical_parameters/vertical_parameters['tracks']
+      .thick.spacers.only = all(grepl('thickline-spacer', grep('-spacer', .track.vector.names, value=TRUE)))
       .indices = list()
       .weights = list()
       .indices[['header']] = grep('^header$', names(.track.vector))
@@ -5504,11 +5506,11 @@ AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands
       .indices[['scale']] = grep('^scale$', names(.track.vector))
       .weights[['scale']] = 1
       .indices[['spacers']] = grep('-spacer', names(.track.vector))
-      .weights[['spacers']] = .track.vector[.indices[['spacers']]]/min(.track.vector[.indices[['spacers']]])
+      .weights[['spacers']] = .track.vector[.indices[['spacers']]]/ifelse(.thick.spacers.only, min(.track.vector[.indices[['spacers']]])/2, min(.track.vector[.indices[['spacers']]]))
       .indices[['annots']] = sort(unlist(lapply(c(.annot.names, .unstranded.beds.names), function(a) grep(paste0('^', a), names(.track.vector)))))
-      .weights[['annots']] = .track.vector[.indices[['annots']]]/min(.track.vector[.indices[['annots']]])
+      .weights[['annots']] = .track.vector[.indices[['annots']]]/.minimal.units['annots']
       .indices[['tracks']] = setdiff(1:length(.track.vector), unlist(.indices[1:4]))
-      .weights[['tracks']] = .track.vector[.indices[['tracks']]]/min(.track.vector[.indices[['tracks']]])
+      .weights[['tracks']] = .track.vector[.indices[['tracks']]]/.minimal.units['tracks']
       if (!is.na(vertical_parameters['tracks'])){
         .unadjusted.track.vector.height.cm[.indices[['tracks']]] = .weights[['tracks']] * vertical_parameters['tracks']
       }
