@@ -5523,7 +5523,7 @@ AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands
         .weights[['annots']] = .track.vector[.indices[['annots']]]/(min(.track.vector[.indices[['annots']]])/minimal_units['annots'])
       }
       .indices[['tracks']] = setdiff(1:length(.track.vector), unlist(.indices[1:4]))
-      .weights[['tracks']] = .track.vector[.indices[['tracks']]]/minimal_units['tracks']
+      .weights[['tracks']] = .track.vector[.indices[['tracks']]]/(min(.track.vector[.indices[['tracks']]])/minimal_units['tracks'])
       if (!is.na(vertical_parameters['tracks'])){
         .unadjusted.track.vector.height.cm[.indices[['tracks']]] = .weights[['tracks']] * vertical_parameters['tracks']
       }
