@@ -6760,8 +6760,11 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                       .i.arrows = which(.n.arrows==1)
                       for (.i.arrow in .i.arrows){
                         .pos.arrow = mean(c(IRanges::start(.intron.ranges)[.i.arrow], IRanges::end(.intron.ranges)[.i.arrow]))
-                        segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/4, lend=1) #@ lwd=.line.width/2
-                        segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/4, lend=1) #@ lwd=.line.width/2
+                        .arrow.x = c(.pos.arrow+(.direction.arrows*.arrow.scaling), .pos.arrow-(.direction.arrows*.arrow.scaling), .pos.arrow+(.direction.arrows*.arrow.scaling))
+                        .arrow.y = c(.y.vals[2], .y.center, .y.vals[1])
+                        lines(.arrow.x, .arrow.y, col=.annot.col, lwd=.line.width/4, lend=1)
+                        # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/4, lend=1) #@ lwd=.line.width/2
+                        # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/4, lend=1) #@ lwd=.line.width/2
                       }
                     }
                   }
@@ -6772,20 +6775,28 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                 if (.include.utrs){
                   .y.vals.thin = sort(ifelse(feature_names_above[[.strand]][.annotation], -1, 1)*c(.annot.steps*((-.pack.line+0.5)-0.15), .annot.steps*((-.pack.line+0.5)+0.15)))
                   .thick.range = .feat.annotation$thick[.annot.line]
-                  .thin.ranges = IRanges::setdiff(.exon.ranges, .thick.range)
+                  if (width(.thick.range) > 2){
+                    .thick.range2 = resize(.thick.range, width=width(.thick.range)-2, fix='center')
+                  }else{
+                    .thick.range2 = IRanges::IRanges()
+                  }
+                  .thin.ranges = IRanges::setdiff(.exon.ranges, .thick.range2)
                   .exon.ranges = IRanges::setdiff(.thick.range, .intron.ranges)
                   if (length(.thin.ranges) > 0){
                     for (.n.thin.exon in 1:length(.thin.ranges)){
                       .thin.exon.range = .thin.ranges[.n.thin.exon]
                       .thin.exon.start = IRanges::start(.thin.exon.range)
                       .thin.exon.end = IRanges::end(.thin.exon.range)
-                      rect(xleft=.thin.exon.start, xright=.thin.exon.end, ybottom=.y.vals.thin[1], ytop=.y.vals.thin[2], col=.annot.col, border=NA  )
+                      rect(xleft=.thin.exon.start, xright=.thin.exon.end, ybottom=.y.vals.thin[1], ytop=.y.vals.thin[2], col=.annot.col, border=NA)
                       #@ -> add arrows to thin exons 2023-06-21
                       .n.arrows = ifelse(round(diff(c(.thin.exon.start, .thin.exon.end+1))/(8*.length.arrows)) > 0, 1, 0)
                       if (stranded & .n.arrows > 0){
                         .pos.arrow = mean(c(.thin.exon.start, .thin.exon.end))
-                        segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=2) 
-                        segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=2) 
+                        .arrow.x = c(.pos.arrow+(.direction.arrows*.arrow.scaling), .pos.arrow-(.direction.arrows*.arrow.scaling), .pos.arrow+(.direction.arrows*.arrow.scaling))
+                        .arrow.y = c(.y.vals[2], .y.center, .y.vals[1])
+                        lines(.arrow.x, .arrow.y, col='white', lwd=.line.width/3, lend=2) #@ .line.width/2
+                        # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=0) #@ lend=2
+                        # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=0) #@ lend=2
                       }
                       #@ <- add arrows to thin exons 2023-06-21
                     }
@@ -6797,12 +6808,15 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                     .exon.range = .exon.ranges[.n.exon]
                     .exon.start = IRanges::start(.exon.range)
                     .exon.end = IRanges::end(.exon.range)
-                    rect(xleft=.exon.start, xright=.exon.end, ybottom=.y.vals[1], ytop=.y.vals[2], col=.annot.col, border=NA  )
+                    rect(xleft=.exon.start, xright=.exon.end, ybottom=.y.vals[1], ytop=.y.vals[2], col=.annot.col, border=NA)
                     .n.arrows = ifelse(round(diff(c(.exon.start, .exon.end+1))/(8*.length.arrows)) > 0, 1, 0)
                     if (stranded & .n.arrows > 0){
                       .pos.arrow = mean(c(.exon.start, .exon.end))
-                      segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=2) 
-                      segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=2) 
+                      .arrow.x = c(.pos.arrow+(.direction.arrows*.arrow.scaling), .pos.arrow-(.direction.arrows*.arrow.scaling), .pos.arrow+(.direction.arrows*.arrow.scaling))
+                      .arrow.y = c(.y.vals[2], .y.center, .y.vals[1])
+                      lines(.arrow.x, .arrow.y, col='white', lwd=.line.width/2, lend=2)
+                      # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=0) #@ lend=2
+                      # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=0) #@ lend=2
                     }
                   }
                 }
@@ -6821,8 +6835,11 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                       .i.arrows = which(.n.arrows==1)
                       for (.i.arrow in .i.arrows){
                         .pos.arrow = mean(c(IRanges::start(.intron.ranges)[.i.arrow], IRanges::end(.intron.ranges)[.i.arrow]))
-                        segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/4, lend=1) #@ lwd=.line.width/2
-                        segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/4, lend=1) #@ lwd=.line.width/2
+                        .arrow.x = c(.pos.arrow+(.direction.arrows*.arrow.scaling), .pos.arrow-(.direction.arrows*.arrow.scaling), .pos.arrow+(.direction.arrows*.arrow.scaling))
+                        .arrow.y = c(.y.vals[2], .y.center, .y.vals[1])
+                        lines(.arrow.x, .arrow.y, col=.annot.col, lwd=.line.width/4, lend=1)
+                        # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/4, lend=0) #@ lwd=.line.width/2 #@ lend=1
+                        # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/4, lend=0) #@ lwd=.line.width/2 #@ lend=1
                       }
                     }
                   }
@@ -7028,12 +7045,15 @@ PlotAnnotation_obs = function(annot_info, stranded, annot_cols, annotation_packi
                       .exon.end = .exon.end + .add.x
                     }
                   }
-                  rect(xleft=.exon.start, xright=.exon.end, ybottom=.y.vals[1], ytop=.y.vals[2], col=.annot.col, border=NA  )
+                  rect(xleft=.exon.start, xright=.exon.end, ybottom=.y.vals[1], ytop=.y.vals[2], col=.annot.col, border=NA)
                   .n.arrows = ifelse(round(diff(c(.exon.start, .exon.end+1))/(8*.length.arrows)) > 0, 1, 0)
                   if (stranded & .n.arrows > 0){
                     .pos.arrow = mean(c(.exon.start, .exon.end))
-                    segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=2) 
-                    segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=2) 
+                    .arrow.x = c(.pos.arrow+(.direction.arrows*.arrow.scaling), .pos.arrow-(.direction.arrows*.arrow.scaling), .pos.arrow+(.direction.arrows*.arrow.scaling))
+                    .arrow.y = c(.y.vals[2], .y.center, .y.vals[1])
+                    lines(.arrow.x, .arrow.y, col='white', lwd=.line.width/2, lend=2)
+                    # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=2) 
+                    # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=2) 
                   }
                 }
               }
@@ -7057,6 +7077,9 @@ PlotAnnotation_obs = function(annot_info, stranded, annot_cols, annotation_packi
                     .n.arrows = ifelse(round(diff(c(.intron.start, .intron.end+1))/(4*.length.arrows)) > 1, 1, 0)
                     if (stranded & .n.arrows > 0){
                       .pos.arrow = mean(c(.intron.start, .intron.end))
+                      .arrow.x = c(.pos.arrow+(.direction.arrows*.arrow.scaling), .pos.arrow-(.direction.arrows*.arrow.scaling), .pos.arrow+(.direction.arrows*.arrow.scaling))
+                      .arrow.y = c(.y.vals[2], .y.center, .y.vals[1])
+                      lines(.arrow.x, .arrow.y, col=.annot.col, lwd=.line.width/4, lend=1)
                       segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/4, lend=1) #@ lwd=.line.width/2
                       segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/4, lend=1) #@ lwd=.line.width/2
                     }
