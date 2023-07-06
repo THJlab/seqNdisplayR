@@ -353,6 +353,14 @@ seqNdisplay = function(
   }
   .estimated.plot.heights = AdjustEstimatedPlotHeights(structure(lapply(names(.plotted.region), function(.strand) EstimatePlotHeights(.annot.info[[.strand]], .incl.feature.names, .annotation.packing, .incl.feature.brackets, .plotting.segment.order[[.strand]], .tracks.listed[[.strand]], track_height_cm, full_height_cm, .stranded.beds[[.strand]], .plot.vertical.parameters, .verbosity, .interface)), names=names(.plotted.region)), .plot.vertical.parameters, full_height_cm, track_height_cm, .title.field.height.cm, genomic_scale_height_cm, annotation_height_cm, spacer_height_cm)
   .est.track.height.cm.range = as.numeric(c(.estimated.plot.heights[[.strand]][['min.track.height.cm.est']], .estimated.plot.heights[[.strand]][['max.track.height.cm.est']]))
+  if (any(.est.track.height.cm.range < 0.1)){
+    if (.verbosity > 0){
+      .height.pars = c(ifelse(interface=='R', 'track_height_cm', 'Tracks Height'), ifelse(interface=='R', 'title_field_height_cm', 'Title Field Height'), ifelse(interface=='R', 'genomic_scale_height_cm', 'Genomic Scale Height'), ifelse(interface=='R', 'annotation_height_cm', 'Annotation Height'), ifelse(interface=='R', 'spacer_height_cm', 'Spacer Height'), ifelse(interface=='R', 'full_height_cm', 'Full Plot Height'))
+      .error.message = paste0('ERROR(s):\n - ', 'the Plot Display Parameters related to height are incompatible (', paste(.height.pars, collapse=', '), ') - aborting')
+      cat(.error.message, '\n')
+    }
+    return()
+  }
   .est.min.annot.height = min(unlist(lapply(names(.plotted.region), function(.strand) unlist(.estimated.plot.heights[[.strand]][['annot.heights.incl.text']]))))
   if (!is.null(annotation_height_cm) & is.null(track_height_cm)){
     .est.min.annot.height = annotation_height_cm*as.numeric(.est.min.annot.height/.plot.vertical.parameters['annot'])/min(.est.track.height.cm.range)
@@ -4002,8 +4010,8 @@ EstimatePlotHeights = function(annot_info, incl_feature_names, annotation_packin
   if (is.null(track_height_cm) & is.null(full_height_cm)){
     .error.message = paste0(' - ', 'both ', ifelse(interface=='R', '"track_height_cm"', '"Tracks Height"'), ' and ', ifelse(interface=='R', '"full_height_cm"', '"Full Plot Height"'), ' are NULL - one of them has to be defined')
   }else if (is.null(full_height_cm)){
-    .error.message = paste0(' - ', ifelse(interface=='R', '"track_height_cm"', '"Tracks Height"'), ' = ', track_height_cm, ' - it should be set to a positive numeric value (recommended 0.25-1 cm)')
-    .warning.message = paste0(' - ', ifelse(interface=='R', '"track_height_cm"', '"Tracks Height"'), ' = ', track_height_cm, ' cm - the recommended value is 0.25-1 cm')
+    .error.message = paste0(' - ', ifelse(interface=='R', '"track_height_cm"', '"Tracks Height"'), ' = ', track_height_cm, ' - it should be set to a positive numeric value (recommended 0.2-1 cm)')
+    .warning.message = paste0(' - ', ifelse(interface=='R', '"track_height_cm"', '"Tracks Height"'), ' = ', track_height_cm, ' cm - the recommended value is 0.2-1 cm')
     if (is.numeric(track_height_cm)){
       if (sign(track_height_cm) > 0){
         .error.message = NULL
@@ -6949,245 +6957,6 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
     }
   }
 }
-
-PlotAnnotation_obs = function(annot_info, stranded, annot_cols, annotation_packing, plotted_region, plotted_strand, substrand, basic_plot_parameters, plot_start, plot_end, plot_width, bin_size, reverse_strand_direction, incl_feature_names, feature_names_above, incl_feature_brackets, incl_feature_shadings, feature_shading_colors, feature_shading_alpha, plot_width_parameters, plot_vertical_parameters, final_feature_text_org, windows_height, feature_font_size, annotation_panel_font_size, annot_panel_dist=0.4, coords_tracks, font_colors, font_family, first_plot, scaling_factor, verbosity){
-  constants_defaults = ConstantsDefaults()
-  line_width_scaling_factor = constants_defaults['line_width_scaling_factor'] #@ 2022-10-05
-  arrow_constant = constants_defaults['arrow_constant'] #@ 2022-10-05
-  std_letter_width = constants_defaults['std_letter_width'] #@ 2022-10-05
-  annot_panel_dist = constants_defaults['annot_panel_dist'] #@ 2022-10-05
-  .strand = substrand # ifelse(plotted_strand == '+' | plotted_strand == '+-', '+', '-')
-  .bin.start = S4Vectors::mcols(plotted_region)$bin.start
-  .bin.width = basic_plot_parameters[[plotted_strand]]$bin.info[2]
-  .n.bins.before = as.integer(abs(.bin.start - plot_start)/bin_size)
-  .n.bins.after = as.integer(abs(plot_end - .bin.start)/bin_size)
-  .coords = sapply((-.n.bins.before+1):.n.bins.after, function(.n.bin) mean(.bin.start + ifelse(.strand=='+' | !reverse_strand_direction, 1, -1)*c((.n.bin-1)*bin_size, .n.bin*bin_size-1)))
-  .coords.per.mm = IRanges::width(plotted_region)/(plot_width_parameters$tracks.width.cm*10)
-  .length.arrows = 0.363*.coords.per.mm/arrow_constant
-  .direction.arrows = ifelse(.strand=='+', -1, +1)*.length.arrows
-  .line.width = 4*scaling_factor*line_width_scaling_factor
-  .y.scaling = as.numeric(plot_vertical_parameters['annot']/0.8) 
-  for (.annotation in names(annot_info[[.strand]])){
-    if (stranded){
-      .stranded.annotation = paste0(.annotation, .strand)
-    }else{
-      .stranded.annotation = .annotation
-    }
-    if (verbosity > 0){ cat(paste('plotting', .stranded.annotation, 'annotation'), '\n') }
-    .n.segment = which(names(windows_height)==.stranded.annotation)-1
-    par(fig=c(coords_tracks[1],coords_tracks[2],windows_height[.n.segment+1],windows_height[.n.segment]), mai=scaling_factor*c(0, 0, 0, 0), new=ifelse(.n.segment==1 & first_plot, F, T))
-    if (length(annot_info[[.strand]][[.annotation]]) > 0){
-      if (annotation_packing[.annotation] == 'expanded' | annotation_packing[.annotation] == 'squished'){
-        .subset.annotation = annot_info[[.strand]][[.annotation]][['expanded']]
-        .packing = annot_info[[.strand]][[.annotation]][['packing']]
-        .include.introns = TRUE
-      }else if (annotation_packing[.annotation] == 'collapsed'){
-        .subset.annotation = annot_info[[.strand]][[.annotation]][['collapsed']]
-        .packing = structure(lapply(rep(1, length(.subset.annotation)), list), names=names(.subset.annotation))
-        .include.introns = FALSE
-      }else if (annotation_packing[.annotation] == 'collapsed2'){
-        .subset.annotation = annot_info[[.strand]][[.annotation]][['collapsed2']]
-        .packing = annot_info[[.strand]][[.annotation]][['packing2']]
-        .include.introns = FALSE
-      }
-      .annot.steps = as.numeric(ifelse(annotation_packing[.annotation] == 'squished', plot_vertical_parameters['annot_squished'], plot_vertical_parameters['annot']))
-      .annot.text.steps = as.numeric(plot_vertical_parameters['annot_text_segment'])
-      .y.span = basic_plot_parameters[[plotted_strand]][['track.vector']][.stranded.annotation]
-      .y.limits = sort(ifelse(feature_names_above[[.strand]][.annotation], 1, -1)*c(0, .y.span))
-      plot(0, 0, type='n', xlim=c(plot_start, plot_end), ylim=.y.limits, ann=FALSE, axes=FALSE, bg='transparent', bty='n', xaxs='i', yaxs ='i')
-      for (.feat.name in names(.subset.annotation)){
-        .feat.annotation = .subset.annotation[[.feat.name]]
-        if (!('blocks' %in% names(S4Vectors::mcols(.feat.annotation)))){
-          S4Vectors::mcols(.feat.annotation)$blocks = split(IRanges::shift(IRanges::ranges(.feat.annotation), -IRanges::start(.feat.annotation)+1), as.factor(1:length(.feat.annotation)))
-        }
-        if (length(.feat.annotation) > 0){
-          for (.pack.line in 1:length(.packing[[.feat.name]])){
-            for (.annot.line in .packing[[.feat.name]][[.pack.line]]){
-              .overall.annot.range = IRanges::ranges(.feat.annotation)[.annot.line]
-              .y.vals = sort(ifelse(feature_names_above[[.strand]][.annotation], -1, 1)*c(.annot.steps*((-.pack.line+0.5)-0.25), .annot.steps*((-.pack.line+0.5)+0.25)))
-              .arrow.scaling = abs(diff(.y.vals))/.y.scaling  
-              .y.center = mean(.y.vals)
-              if (is.null(annot_cols[[.annotation]])){
-                if ('itemRgb' %in% colnames(S4Vectors::mcols(.feat.annotation))){
-                  .annot.col = S4Vectors::mcols(.feat.annotation)$itemRgb[.annot.line]
-                }else{
-                  .annot.col = 'black'
-                }
-              }else{
-                if (class(annot_cols[[.annotation]])=='list'){
-                  .annot.col = annot_cols[[.annotation]][[S4Vectors::mcols(.feat.annotation)$score[.annot.line]]]
-                }else{
-                  .annot.col = annot_cols[[.annotation]]
-                }
-              }
-              .exon.ranges = IRanges::shift(S4Vectors::mcols(.feat.annotation)$blocks[[.annot.line]], IRanges::start(.feat.annotation[.annot.line])-1)
-              if (annotation_packing[.annotation] == 'expanded' | annotation_packing[.annotation] == 'squished'){
-                if (length(.exon.ranges)==1){
-                  if (IRanges::width(.exon.ranges)==IRanges::width(.overall.annot.range)){
-                    if (S4Vectors::mcols(.feat.annotation)$intron.from.start[.annot.line] & S4Vectors::mcols(.feat.annotation)$intron.from.end[.annot.line]){
-                      .exon.ranges = IRanges::IRanges()
-                    }
-                  }
-                }
-              }
-              if (length(.exon.ranges) > 0){
-                for (.n.exon in 1:length(.exon.ranges)){
-                  .exon.range = .exon.ranges[.n.exon]
-                  .exon.start = IRanges::start(.exon.range)
-                  .exon.end = IRanges::end(.exon.range)
-                  if (bin_size > 1){
-                    #snap to nearest bin
-                    .exon.start = ifelse(.exon.start==IRanges::start(.overall.annot.range), .exon.start, .coords[which(abs(IRanges::start(.exon.range)-.coords)==min(abs(IRanges::start(.exon.range)-.coords)))] - bin_size/2)
-                    .exon.end = ifelse(.exon.end==IRanges::end(.overall.annot.range), .exon.end, .coords[which(abs(IRanges::end(.exon.range)-.coords)==min(abs(IRanges::end(.exon.range)-.coords)))] + bin_size/2)
-                    while((.exon.end-.exon.start)/plot_width < 0.001){   ### make sure that annotation can be seen
-                      .add.x = (as.integer(0.001*plot_width+.exon.start-.exon.end) + 1)/2
-                      .exon.start = .exon.start - .add.x
-                      .exon.end = .exon.end + .add.x
-                    }
-                  }
-                  rect(xleft=.exon.start, xright=.exon.end, ybottom=.y.vals[1], ytop=.y.vals[2], col=.annot.col, border=NA)
-                  .n.arrows = ifelse(round(diff(c(.exon.start, .exon.end+1))/(8*.length.arrows)) > 0, 1, 0)
-                  if (stranded & .n.arrows > 0){
-                    .pos.arrow = mean(c(.exon.start, .exon.end))
-                    .arrow.x = c(.pos.arrow+(.direction.arrows*.arrow.scaling), .pos.arrow-(.direction.arrows*.arrow.scaling), .pos.arrow+(.direction.arrows*.arrow.scaling))
-                    .arrow.y = c(.y.vals[2], .y.center, .y.vals[1])
-                    lines(.arrow.x, .arrow.y, col='white', lwd=.line.width/2, lend=2)
-                    # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=2) 
-                    # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=2) 
-                  }
-                }
-              }
-              if (.include.introns){
-                .intron.ranges = .overall.annot.range
-                IRanges::start(.intron.ranges) = ifelse(S4Vectors::mcols(.feat.annotation)$intron.from.start[.annot.line], IRanges::start(plotted_region), IRanges::start(.intron.ranges))
-                IRanges::end(.intron.ranges) = ifelse(S4Vectors::mcols(.feat.annotation)$intron.from.end[.annot.line], IRanges::end(plotted_region), IRanges::end(.intron.ranges))
-                .intron.ranges = IRanges::setdiff(.intron.ranges, .exon.ranges)
-                if (length(.intron.ranges) > 0){
-                  for (.n.intron in 1:length(.intron.ranges)){
-                    .intron.range = .intron.ranges[.n.intron]
-                    #snap to nearest bin
-                    .intron.start = .coords[which(abs(IRanges::start(.intron.range)-.coords)==min(abs(IRanges::start(.intron.range)-.coords)))] - bin_size/2
-                    .intron.end = .coords[which(abs(IRanges::end(.intron.range)-.coords)==min(abs(IRanges::end(.intron.range)-.coords)))] + bin_size/2
-                    while((.intron.end-.intron.start)/plot_width < 0.001){   ### make sure that annotation can be seen
-                      .add.x = (as.integer(0.001*plot_width+.intron.start-.intron.end) + 1)/2
-                      .intron.start = .intron.start - .add.x
-                      .intron.end = .intron.end + .add.x
-                    }
-                    segments(x0=.intron.start, x1=.intron.end, y0=.y.center, lwd=.line.width/2, col=.annot.col, lend=1)
-                    .n.arrows = ifelse(round(diff(c(.intron.start, .intron.end+1))/(4*.length.arrows)) > 1, 1, 0)
-                    if (stranded & .n.arrows > 0){
-                      .pos.arrow = mean(c(.intron.start, .intron.end))
-                      .arrow.x = c(.pos.arrow+(.direction.arrows*.arrow.scaling), .pos.arrow-(.direction.arrows*.arrow.scaling), .pos.arrow+(.direction.arrows*.arrow.scaling))
-                      .arrow.y = c(.y.vals[2], .y.center, .y.vals[1])
-                      lines(.arrow.x, .arrow.y, col=.annot.col, lwd=.line.width/4, lend=1)
-                      segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/4, lend=1) #@ lwd=.line.width/2
-                      segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/4, lend=1) #@ lwd=.line.width/2
-                    }
-                  }
-                }
-              }else{
-                if (S4Vectors::mcols(.feat.annotation[.annot.line])$on.from.start){
-                  .pos.arrow = IRanges::start(plotted_region)
-                  if (sign(.direction.arrows)==-1){
-                    triangle_xs = c(.pos.arrow, .pos.arrow, .pos.arrow-2*(.direction.arrows*.arrow.scaling))
-                  }else{
-                    triangle_xs = c(.pos.arrow+2*(.direction.arrows*.arrow.scaling), .pos.arrow+2*(.direction.arrows*.arrow.scaling), .pos.arrow)
-                  }
-                  polygon(x=triangle_xs, y=c(rev(.y.vals), .y.center), col ='yellow', border=NA)
-                }
-                if (S4Vectors::mcols(.feat.annotation[.annot.line])$on.from.end){
-                  .pos.arrow = IRanges::end(plotted_region)
-                  if (sign(.direction.arrows)==-1){
-                    triangle_xs = c(.pos.arrow+2*(.direction.arrows*.arrow.scaling), .pos.arrow+2*(.direction.arrows*.arrow.scaling), .pos.arrow)
-                  }else{
-                    triangle_xs = c(.pos.arrow, .pos.arrow, .pos.arrow-2*(.direction.arrows*.arrow.scaling))
-                  }
-                  polygon(x=triangle_xs, y=c(rev(.y.vals), .y.center), col ='yellow', border=NA)
-                }
-              }
-            }
-          }
-        }
-      }
-      if (incl_feature_names[.annotation]){
-        .y0.text = basic_plot_parameters[[.strand]][['annot.heights']][[.annotation]]
-        .feat.text.gr = final_feature_text_org[[.strand]][['names.gr.list']][[.annotation]]
-        .text.packing.list = final_feature_text_org[[.strand]][['names.packing.list']][[.annotation]]
-        if (incl_feature_brackets[.annotation]){
-          if (annotation_packing[.annotation]=='collapsed'){
-            .feat.bracket.gr = unlist(as(annot_info[[.strand]][[.annotation]][['collapsed']], 'GRangesList'))
-            .bracket.packing.list = list(names(.feat.bracket.gr))
-          }else{
-            .feat.bracket.gr = .feat.text.gr
-            IRanges::start(.feat.bracket.gr) = S4Vectors::mcols(.feat.text.gr)$feat.start
-            IRanges::end(.feat.bracket.gr) = S4Vectors::mcols(.feat.text.gr)$feat.end
-            .collapsed2.gr = unlist(annot_info[[.strand]][[.annotation]][['collapsed2']])
-            names(.collapsed2.gr) = S4Vectors::mcols(.collapsed2.gr)$name
-            .collapsed2.gr = .collapsed2.gr[names(.feat.bracket.gr)]
-            .feat.bracket.gr$on.from.start =  S4Vectors::mcols(.collapsed2.gr)$on.from.start
-            .feat.bracket.gr$on.from.end =  S4Vectors::mcols(.collapsed2.gr)$on.from.end
-            .bracket.packing.list = .text.packing.list
-          }
-        }
-        for (.n.text.line in 1:length(.text.packing.list)){
-          for (.feature.name in .text.packing.list[[.n.text.line]]){
-            .n.line = .n.text.line
-            if (incl_feature_brackets[.annotation]){
-              .n.line = 2*(.n.line-1) + 1
-              .feature.gr = .feat.bracket.gr[.feature.name]
-              .feat.start = IRanges::start(.feature.gr)
-              .feat.end = IRanges::end(.feature.gr)
-              .y.vals = sort(ifelse(feature_names_above[[.strand]][.annotation], -1, 1)*c(-.y0.text-.annot.text.steps*(.n.line-0.5-0.25), -.y0.text-.annot.text.steps*(.n.line-0.5+0.25)))
-              .y.center = mean(.y.vals)
-              segments(x0=.feat.start, x1=.feat.end, y0=.y.center, lwd=.line.width/4, col='gray30', lend=1)
-              # arrow left-pointing start-of-annotation
-              if (!S4Vectors::mcols(.feature.gr)$on.from.start){
-                segments(x0=.feat.start, y0=.y.center, x1=.feat.start-ifelse(.strand=='-', -1, 1)*2*(.direction.arrows*.arrow.scaling), y1=.y.vals[2], col='gray30', lwd=.line.width/4, lend=1)
-                segments(x0=.feat.start, y0=.y.center, x1=.feat.start-ifelse(.strand=='-', -1, 1)*2*(.direction.arrows*.arrow.scaling), y1=.y.vals[1], col='gray30', lwd=.line.width/4, lend=1)
-              }
-              # arrow right-pointing start-of-annotation
-              if (!S4Vectors::mcols(.feature.gr)$on.from.end){
-                segments(x0=.feat.end, y0=.y.center, x1=.feat.end+ifelse(.strand=='-', -1, 1)*2*(.direction.arrows*.arrow.scaling), y1=.y.vals[2], col='gray30', lwd=.line.width/4, lend=1)
-                segments(x0=.feat.end, y0=.y.center, x1=.feat.end+ifelse(.strand=='-', -1, 1)*2*(.direction.arrows*.arrow.scaling), y1=.y.vals[1], col='gray30', lwd=.line.width/4, lend=1)
-              }
-              .n.line = .n.line + 1
-            }
-            .y.vals = sort(ifelse(feature_names_above[[.strand]][.annotation], -1, 1)*c(-.y0.text-.annot.text.steps*(.n.line-0.5-0.25), -.y0.text-.annot.text.steps*(.n.line-0.5+0.25)))
-            .y.center = mean(.y.vals)
-            text(x=S4Vectors::mcols(.feat.text.gr[.feature.name])$coord, y=.y.center, labels=.feature.name, adj=abs(ifelse(((!reverse_strand_direction & .strand=='-') | .strand=='+') , 0, 1) - S4Vectors::mcols(.feat.text.gr[.feature.name])$adj), col=font_colors['features'], cex=scaling_factor*feature_font_size/12, family=font_family)
-          }
-        }
-      }
-      if (incl_feature_shadings[.annotation]){
-        .feature.shading.colors = c(adjustcolor(feature_shading_colors[1], alpha.f=feature_shading_alpha), adjustcolor(feature_shading_colors[2], alpha.f=feature_shading_alpha))
-        if (annotation_packing[.annotation]=='collapsed'){
-          .feat.shading.gr = annot_info[[.strand]][[.annotation]][['collapsed']]
-        }else{
-          .feat.shading.gr = annot_info[[.strand]][[.annotation]][['collapsed2']]
-        }
-        .n.feat = 0
-        for (.feature.name in names(.feat.shading.gr)){
-          for (.n.sub.feature in 1:length(.feat.shading.gr[[.feature.name]])){
-            .n.feat = .n.feat+1
-            .feature.gr = .feat.shading.gr[[.feature.name]][.n.sub.feature]
-            .feat.start = IRanges::start(.feature.gr)
-            .feat.end = IRanges::end(.feature.gr)
-            .y.limits = sort(ifelse(feature_names_above[[.strand]][.annotation], 1, -1)*c(.annot.steps*0.25, .y.span))
-            rect(xleft=.feat.start, xright=.feat.end, ybottom=.y.limits[1], ytop=.y.limits[2], col=.feature.shading.colors[.n.feat%%2+1], border=NA  )
-          }
-        }
-      }
-    }
-    .x.min = -coords_tracks[1]*plot_width_parameters[['full.width.cm']]
-    par(fig=c(0,coords_tracks[1],windows_height[.n.segment+1],windows_height[.n.segment]), mai=scaling_factor*c(0, 0, 0, 0), new=ifelse(.n.segment==1 & first_plot, F, T))
-    plot(0, 0, type='n', xlim=c(.x.min,0), ylim=c(-1, 1), ann=FALSE, axes=FALSE, bg='transparent', bty='n', xaxs='i', yaxs ='i')
-    text(x=-annot_panel_dist - 1.2*std_letter_width*annotation_panel_font_size, y=0, labels=.annotation, adj=1, col=font_colors['annotation'], cex=scaling_factor*annotation_panel_font_size/12, family=font_family, font=2)
-    if (stranded){
-      text(x=-annot_panel_dist, y=0, labels=.strand, adj=0.5, col=font_colors['annotation'], cex=scaling_factor*annotation_panel_font_size/12, family=font_family, font=2)
-    }
-  }
-}
-
 
 
 
