@@ -363,7 +363,8 @@ seqNdisplay = function(
   }
   .est.min.annot.height = min(unlist(lapply(names(.plotted.region), function(.strand) unlist(.estimated.plot.heights[[.strand]][['annot.heights.incl.text']]))))
   if (!is.null(annotation_height_cm) & is.null(track_height_cm)){
-    .est.min.annot.height = annotation_height_cm*as.numeric(.est.min.annot.height/.plot.vertical.parameters['annot'])/min(.est.track.height.cm.range)
+    #@.est.min.annot.height = annotation_height_cm*as.numeric(.est.min.annot.height/.plot.vertical.parameters['annot'])/min(.est.track.height.cm.range)
+    .est.min.annot.height = annotation_height_cm*as.numeric(.est.min.annot.height/.plot.vertical.parameters['annot'])/max(.est.track.height.cm.range)
   }
   .prev.annot.height = .plot.vertical.parameters['annot']
   if (is.null(track_height_cm)){ #@ ->
@@ -378,7 +379,8 @@ seqNdisplay = function(
     .estimated.plot.heights[[s]][['min.combined.track.vector']] = .min.combined.track.vector
     .estimated.plot.heights[[s]][['track.vector']] = UpdateTrackVector(.estimated.plot.heights[[s]][['track.vector']], .plot.vertical.parameters)
   }
-  .rec.font.sizes = RecommendedFontSizes(max(.est.track.height.cm.range), .est.min.annot.height, .plot.vertical.parameters)
+  #@ .rec.font.sizes = RecommendedFontSizes(max(.est.track.height.cm.range), .est.min.annot.height, .plot.vertical.parameters)
+  .rec.font.sizes = RecommendedFontSizes(max(.est.track.height.cm.range), .est.min.annot.height, mean(.est.track.height.cm.range)*.plot.vertical.parameters)
   if (any(.rec.font.sizes < min_font_size)){
     .rec.font.sizes[which(.rec.font.sizes < min_font_size)] = min_font_size
   }
@@ -4213,7 +4215,31 @@ AdjustEstimatedPlotHeights = function(estimated_plot_heights, plot_vertical_para
 #'
 #' @examples
 #' 
-RecommendedFontSizes = function(est_track_height_cm, est_min_annot_height, plot_vertical_parameters){
+RecommendedFontSizes = function(est_track_height_cm, est_min_annot_height, plot_vertical_parameters_cm){
+  constants_defaults = ConstantsDefaults()
+  std_letter_height = constants_defaults['std_letter_height'] #@ 2022-10-05
+  min_font_size = constants_defaults['min_font_size'] #@ 2022-10-05
+  .max.font.size.std.tracks = round( est_track_height_cm / std_letter_height, 0)
+  .est.min.annot.height.cm = est_track_height_cm * est_min_annot_height
+  .max.font.size.std.annot = round( .est.min.annot.height.cm / std_letter_height, 0) + 2
+  .max.font.size.std = min(.max.font.size.std.tracks, .max.font.size.std.annot)
+  #c('std', 'main', 'sub', 'scale', 'genomic_axis', 'signal_axis', 'annotation_features')
+  #.plot.vertical.parameters.cm = est_track_height_cm * plot_vertical_parameters
+  .main = round(as.numeric(9*plot_vertical_parameters_cm['header']/0.66), 0)
+  .sub = round(as.numeric(6*plot_vertical_parameters_cm['header']/0.66), 0)
+  .scale = round(as.numeric(6*plot_vertical_parameters_cm['header']/0.66), 0)
+  .genomic.axis = round(as.numeric(5*plot_vertical_parameters_cm['scale']/0.24), 0)
+  .signal.axis = round(as.numeric(0.7*.max.font.size.std), 0)
+  .annotation.features = round(as.numeric(6*plot_vertical_parameters_cm['annot_text_segment']/0.24), 0)
+  .recommended.font.sizes = structure(c(.max.font.size.std, .main, .sub, .scale, .genomic.axis, .signal.axis, .annotation.features), names=c('std', 'main', 'sub', 'scale', 'genomic_axis', 'signal_axis', 'annotation_features'))
+  if (.recommended.font.sizes['std'] >= .recommended.font.sizes['main']){
+    .recommended.font.sizes['std'] = max(.recommended.font.sizes['main']-1, min_font_size)
+    .recommended.font.sizes['signal_axis'] = round(.recommended.font.sizes['std'] * 0.7, 0)
+  }
+  return(.recommended.font.sizes)
+}
+
+RecommendedFontSizes_obs = function(est_track_height_cm, est_min_annot_height, plot_vertical_parameters){
   constants_defaults = ConstantsDefaults()
   std_letter_height = constants_defaults['std_letter_height'] #@ 2022-10-05
   min_font_size = constants_defaults['min_font_size'] #@ 2022-10-05
@@ -5574,6 +5600,11 @@ AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands
       .basic.plot.parameters[['+-']] = list('track.vector'=.track.vector, 'windows.height'=.windows.height)
       .annot.names = names(.basic.plot.parameters[['+']][['max.annot.lines']])
       .basic.plot.parameters[['+-']][['max.annot.lines']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['+']][['max.annot.lines']][[.annot.name]] + ifelse(.annot.name %in% .unstranded.beds.names, 0, .basic.plot.parameters[['-']][['max.annot.lines']][[.annot.name]])), names=.annot.names)
+      .rel.annot.height = as.numeric(unique(.track.vector[.indices[['annots']]] / .weights[['annots']])[1])
+      #@ -> 2023-07-11
+      .basic.plot.parameters[['+']][['annot.heights']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['+']][['max.annot.lines']][[.annot.name]] * .rel.annot.height ), names=.annot.names)
+      .basic.plot.parameters[['-']][['annot.heights']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['-']][['max.annot.lines']][[.annot.name]] * .rel.annot.height ), names=.annot.names)
+      #@ <-
       .basic.plot.parameters[['+-']][['annot.heights']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['+']][['annot.heights']][[.annot.name]] + ifelse(.annot.name %in% .unstranded.beds.names, 0, .basic.plot.parameters[['-']][['annot.heights']][[.annot.name]])), names=.annot.names)
       #@ .basic.plot.parameters[['+-']][['weight']] = 1 #@ 2023-06-27 added 
       #@ .track.height.cm = .basic.plot.parameters[['+']][['track.height.cm']] #@ 2023-06-27 added 
@@ -5586,9 +5617,9 @@ AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands
                                                                         'line-spacer'=as.numeric(unique(.track.vector[.indices[['spacers']]] / .weights[['spacers']])[1]),        
                                                                         'empty-spacer'=as.numeric(unique(.track.vector[.indices[['spacers']]] / .weights[['spacers']])[1]),       
                                                                         'thickline-spacer'=2*as.numeric(unique(.track.vector[.indices[['spacers']]] / .weights[['spacers']])[1]),   
-                                                                        'annot'=as.numeric(unique(.track.vector[.indices[['annots']]] / .weights[['annots']])[1]),              
-                                                                        'annot_squished'=0.5*as.numeric(unique(.track.vector[.indices[['annots']]] / .weights[['annots']])[1]),     
-                                                                        'annot_text_segment'=as.numeric(unique(.track.vector[.indices[['annots']]] / .weights[['annots']])[1]))
+                                                                        'annot'=.rel.annot.height,              
+                                                                        'annot_squished'=0.5*.rel.annot.height,     
+                                                                        'annot_text_segment'=.rel.annot.height)
     }else{
       .windows.height.adjusted = .basic.plot.parameters[['+']][['windows.height']]*.basic.plot.parameters[['+']][['plot.dim.in']][2] + .basic.plot.parameters[['-']][['plot.dim.in']][2]
       .basic.plot.parameters[['+']][['windows.height']] = .windows.height.adjusted/max(.windows.height.adjusted)
