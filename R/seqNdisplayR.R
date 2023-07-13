@@ -474,7 +474,8 @@ seqNdisplay = function(
   }else{
     .minimal.units = c('annots'=NA, 'tracks'=ifelse(all(.stranded.datasets) & strands_intermingled, 2, 1))
   }
-  .basic.plot.parameters = AlignBasicPlotParameters(structure(lapply(names(.plotted.region), function(.strand) BasicPlotParameters(.strand, .plotted.region, .feature.names.font.size, .plot.height.parameters, .plot.width.parameters, .full.width.cm, full_height_cm, track_height_cm, .plot.vertical.parameters, .bin.size, .bins.per.cm, .plotting.segment.order, .tracks.listed, .unstranded.beds)), names=names(.plotted.region)), both_strands, .strands.intermingled, .fixed.plot.vertical.parameters, .vertical.parameters, .minimal.units, full_height_cm)
+  #@.basic.plot.parameters = AlignBasicPlotParameters(structure(lapply(names(.plotted.region), function(.strand) BasicPlotParameters(.strand, .plotted.region, .feature.names.font.size, .plot.height.parameters, .plot.width.parameters, .full.width.cm, full_height_cm, track_height_cm, .plot.vertical.parameters, .bin.size, .bins.per.cm, .plotting.segment.order, .tracks.listed, .unstranded.beds)), names=names(.plotted.region)), both_strands, .strands.intermingled, .fixed.plot.vertical.parameters, .vertical.parameters, .minimal.units, full_height_cm) 
+  .basic.plot.parameters = AlignBasicPlotParameters(structure(lapply(names(.plotted.region), function(.strand) BasicPlotParameters(.strand, .plotted.region, .feature.names.font.size, .plot.height.parameters, .plot.width.parameters, .full.width.cm, full_height_cm, track_height_cm, .plot.vertical.parameters, .bin.size, .bins.per.cm, .plotting.segment.order, .tracks.listed, .unstranded.beds)), names=names(.plotted.region)), both_strands, .strands.intermingled, .fixed.plot.vertical.parameters, .vertical.parameters, .minimal.units, full_height_cm, .annotation.packing)
   if (both_strands){
     if (.strands.intermingled){
       .plot.vertical.parameters = .basic.plot.parameters[['+-']][['plot.vertical.parameters']]
@@ -5506,7 +5507,7 @@ BasicPlotParameters = function(plotted_strand, plotted_region, feature_names_fon
 #'
 #' @examples
 #' 
-AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands_intermingled, fixed_plot_vertical_parameters, vertical_parameters, minimal_units, full_height_cm){ #@ 2023-06-27 added ,full_height_cm
+AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands_intermingled, fixed_plot_vertical_parameters, vertical_parameters, minimal_units, full_height_cm, annotation_packing){ #@ 2023-06-27 added ,full_height_cm 2023-07-13 added, annotation_packing
   constants_defaults = ConstantsDefaults()
   cm_to_in = constants_defaults['cm_to_in'] #@ 2022-10-05
   .basic.plot.parameters = basic_plot_parameters
@@ -5607,9 +5608,9 @@ AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands
       .annot.names = names(.basic.plot.parameters[['+']][['max.annot.lines']])
       .basic.plot.parameters[['+-']][['max.annot.lines']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['+']][['max.annot.lines']][[.annot.name]] + ifelse(.annot.name %in% .unstranded.beds.names, 0, .basic.plot.parameters[['-']][['max.annot.lines']][[.annot.name]])), names=.annot.names)
       .rel.annot.height = as.numeric(unique(.track.vector[.indices[['annots']]] / .weights[['annots']])[1])
-      #@ -> 2023-07-11
-      .basic.plot.parameters[['+']][['annot.heights']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['+']][['max.annot.lines']][[.annot.name]] * .rel.annot.height ), names=.annot.names)
-      .basic.plot.parameters[['-']][['annot.heights']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['-']][['max.annot.lines']][[.annot.name]] * .rel.annot.height ), names=.annot.names)
+      #@ -> 2023-07-11  #@ add expanded/squished here
+      .basic.plot.parameters[['+']][['annot.heights']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['+']][['max.annot.lines']][[.annot.name]] * .rel.annot.height * as.numeric(ifelse(annotation_packing[.annot.name] == 'squished', 0.5, 1)) ), names=.annot.names)
+      .basic.plot.parameters[['-']][['annot.heights']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['-']][['max.annot.lines']][[.annot.name]] * .rel.annot.height * as.numeric(ifelse(annotation_packing[.annot.name] == 'squished', 0.5, 1)) ), names=.annot.names)
       #@ <-
       .basic.plot.parameters[['+-']][['annot.heights']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['+']][['annot.heights']][[.annot.name]] + ifelse(.annot.name %in% .unstranded.beds.names, 0, .basic.plot.parameters[['-']][['annot.heights']][[.annot.name]])), names=.annot.names)
       #@ .basic.plot.parameters[['+-']][['weight']] = 1 #@ 2023-06-27 added 
@@ -5720,8 +5721,8 @@ AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands
       .annot.names = names(.basic.plot.parameters[['+']][['max.annot.lines']])
       .rel.annot.height = as.numeric(unique(.track.vector[.indices[['annots']]] / .weights[['annots']])[1])
       #@ -> 2023-07-11
-      .basic.plot.parameters[['+']][['annot.heights']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['+']][['max.annot.lines']][[.annot.name]] * .rel.annot.height ), names=.annot.names)
-      .basic.plot.parameters[['-']][['annot.heights']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['-']][['max.annot.lines']][[.annot.name]] * .rel.annot.height ), names=.annot.names)
+      .basic.plot.parameters[['+']][['annot.heights']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['+']][['max.annot.lines']][[.annot.name]] * .rel.annot.height * as.numeric(ifelse(annotation_packing[.annot.name] == 'squished', 0.5, 1)) ), names=.annot.names)
+      .basic.plot.parameters[['-']][['annot.heights']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[['-']][['max.annot.lines']][[.annot.name]] * .rel.annot.height * as.numeric(ifelse(annotation_packing[.annot.name] == 'squished', 0.5, 1)) ), names=.annot.names)
       #@ <-
       .basic.plot.parameters[['+']][['plot.dim.in']] = c(.basic.plot.parameters[['+']][['plot.dim.in']][1], cm_to_in * .track.height.cm * sum(.basic.plot.parameters[['+']][['track.vector']])) 
       .basic.plot.parameters[['-']][['plot.dim.in']] = c(.basic.plot.parameters[['+']][['plot.dim.in']][1], cm_to_in * .track.height.cm * sum(.basic.plot.parameters[['-']][['track.vector']]))
@@ -5841,8 +5842,7 @@ AlignBasicPlotParameters = function(basic_plot_parameters, both_strands, strands
     .annot.names = names(.basic.plot.parameters[[.only.strand]][['max.annot.lines']])
     .rel.annot.height = as.numeric(unique(.track.vector[.indices[['annots']]] / .weights[['annots']])[1])
     #@ -> 2023-07-11
-    .basic.plot.parameters[[.only.strand]][['annot.heights']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[[.only.strand]][['max.annot.lines']][[.annot.name]] * .rel.annot.height ), names=.annot.names)
-
+    .basic.plot.parameters[[.only.strand]][['annot.heights']] = structure(lapply(.annot.names, function(.annot.name) .basic.plot.parameters[[.only.strand]][['max.annot.lines']][[.annot.name]] * .rel.annot.height * as.numeric(ifelse(annotation_packing[.annot.name] == 'squished', 0.5, 1)) ), names=.annot.names)
     #@ <-
     .basic.plot.parameters[[.only.strand]][['plot.dim.in']] = c(.basic.plot.parameters[[.only.strand]][['plot.dim.in']][1], cm_to_in * .track.height.cm * sum(.basic.plot.parameters[[.only.strand]][['track.vector']])) 
     .basic.plot.parameters[[.only.strand]][['track.height.cm']] = .track.height.cm 
@@ -7014,7 +7014,7 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                   if (length(.intron.ranges) > 0){
                     .global.intron.start = min(IRanges::start(.intron.ranges)) - 1
                     .global.intron.end = max(IRanges::end(.intron.ranges)) + 1
-                    segments(x0=.global.intron.start, x1=.global.intron.end, y0=.y.center, lwd=.line.width/2, col=.annot.col, lend=1)
+                    segments(x0=.global.intron.start, x1=.global.intron.end, y0=.y.center, lwd=.line.width/ifelse(annotation_packing[.annotation] == 'squished', 4, 2), col=.annot.col, lend=1)
                     .n.arrows = sapply(IRanges::width(.intron.ranges), function(i) ifelse(round(i/(4*.length.arrows)) > 1, 1, 0))
                     if (stranded & any(.n.arrows==1)){
                       .i.arrows = which(.n.arrows==1)
@@ -7022,7 +7022,7 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                         .pos.arrow = mean(c(IRanges::start(.intron.ranges)[.i.arrow], IRanges::end(.intron.ranges)[.i.arrow]))
                         .arrow.x = c(.pos.arrow+(.direction.arrows*.arrow.scaling), .pos.arrow-(.direction.arrows*.arrow.scaling), .pos.arrow+(.direction.arrows*.arrow.scaling))
                         .arrow.y = c(.y.vals[2], .y.center, .y.vals[1])
-                        lines(.arrow.x, .arrow.y, col=.annot.col, lwd=.line.width/4, lend=1)
+                        lines(.arrow.x, .arrow.y, col=.annot.col, lwd=.line.width/ifelse(annotation_packing[.annotation] == 'squished', 6, 4), lend=1)
                         # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/4, lend=1) #@ lwd=.line.width/2
                         # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/4, lend=1) #@ lwd=.line.width/2
                       }
@@ -7053,8 +7053,9 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                       if (stranded & .n.arrows > 0){
                         .pos.arrow = mean(c(.thin.exon.start, .thin.exon.end))
                         .arrow.x = c(.pos.arrow+(.direction.arrows*.arrow.scaling), .pos.arrow-(.direction.arrows*.arrow.scaling), .pos.arrow+(.direction.arrows*.arrow.scaling))
-                        .arrow.y = c(.y.vals[2], .y.center, .y.vals[1])
-                        lines(.arrow.x, .arrow.y, col='white', lwd=.line.width/3, lend=2) #@ .line.width/2
+                        .arrow.y = c(.y.vals.thin[2], .y.center, .y.vals.thin[1])
+                        #@lines(.arrow.x, .arrow.y, col='white', lwd=.line.width/3, lend=2) #@ .line.width/2
+                        lines(.arrow.x, .arrow.y, col='white', lwd=.line.width/ifelse(annotation_packing[.annotation] == 'squished', 6, 3), lend=2)
                         # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=0) #@ lend=2
                         # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=0) #@ lend=2
                       }
@@ -7074,7 +7075,8 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                       .pos.arrow = mean(c(.exon.start, .exon.end))
                       .arrow.x = c(.pos.arrow+(.direction.arrows*.arrow.scaling), .pos.arrow-(.direction.arrows*.arrow.scaling), .pos.arrow+(.direction.arrows*.arrow.scaling))
                       .arrow.y = c(.y.vals[2], .y.center, .y.vals[1])
-                      lines(.arrow.x, .arrow.y, col='white', lwd=.line.width/2, lend=2)
+                      #@lines(.arrow.x, .arrow.y, col='white', lwd=.line.width/2, lend=2)
+                      lines(.arrow.x, .arrow.y, col='white', lwd=.line.width/ifelse(annotation_packing[.annotation] == 'squished', 4, 2), lend=2)
                       # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=0) #@ lend=2
                       # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col='white', lwd=.line.width/2, lend=0) #@ lend=2
                     }
@@ -7089,7 +7091,7 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                   if (length(.intron.ranges) > 0){
                     .global.intron.start = min(IRanges::start(.intron.ranges)) - 1
                     .global.intron.end = max(IRanges::end(.intron.ranges)) + 1
-                    segments(x0=.global.intron.start, x1=.global.intron.end, y0=.y.center, lwd=.line.width/2, col=.annot.col, lend=1)
+                    segments(x0=.global.intron.start, x1=.global.intron.end, y0=.y.center, lwd=.line.width/ifelse(annotation_packing[.annotation] == 'squished', 4, 2), col=.annot.col, lend=1)
                     .n.arrows = sapply(IRanges::width(.intron.ranges), function(i) ifelse(round(i/(4*.length.arrows)) > 1, 1, 0))
                     if (stranded & any(.n.arrows==1)){
                       .i.arrows = which(.n.arrows==1)
@@ -7097,7 +7099,7 @@ PlotAnnotation = function(annot_info, stranded, annot_cols, annotation_packing, 
                         .pos.arrow = mean(c(IRanges::start(.intron.ranges)[.i.arrow], IRanges::end(.intron.ranges)[.i.arrow]))
                         .arrow.x = c(.pos.arrow+(.direction.arrows*.arrow.scaling), .pos.arrow-(.direction.arrows*.arrow.scaling), .pos.arrow+(.direction.arrows*.arrow.scaling))
                         .arrow.y = c(.y.vals[2], .y.center, .y.vals[1])
-                        lines(.arrow.x, .arrow.y, col=.annot.col, lwd=.line.width/4, lend=1)
+                        lines(.arrow.x, .arrow.y, col=.annot.col, lwd=.line.width/ifelse(annotation_packing[.annotation] == 'squished', 6, 4), lend=1)
                         # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[2], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/4, lend=0) #@ lwd=.line.width/2 #@ lend=1
                         # segments(x0=.pos.arrow+(.direction.arrows*.arrow.scaling), y0=.y.vals[1], x1=.pos.arrow-(.direction.arrows*.arrow.scaling), y1=.y.center, col=.annot.col, lwd=.line.width/4, lend=0) #@ lwd=.line.width/2 #@ lend=1
                       }
