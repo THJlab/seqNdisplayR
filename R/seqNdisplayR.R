@@ -920,7 +920,7 @@ LoadExcel = function(xl_fname, load_annotations=FALSE) {
     return()
   }
   
-  cat('Parsing Excel Template File\n')
+  cat('Parsing sNdR sample file\n')
   
   samples_df = NULL
   tryCatch(

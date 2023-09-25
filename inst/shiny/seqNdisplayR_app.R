@@ -984,7 +984,7 @@ ui <- fluidPage(
                      shinyBS::bsTooltip(id = "save_pdf", title = "The plot will be saved as pdf. </br> </br> The process can take some time depending on the number of tracks and annotations plotted as well as the arguments used.",
                                         placement = "right", trigger = "hover"),
                      suppressWarnings(downloadButton("save_settings", "Save Settings")),
-                     shinyBS::bsTooltip(id = "save_settings", title = "Save current settings in an Excel template for reuse.",
+                     shinyBS::bsTooltip(id = "save_settings", title = "Save current settings in an sNdR sample (Excel) file for reuse.",
                                         placement = "right", trigger = "hover"),
                      ## TODO: remove debugging buttons
                      # actionButton("show_settings", "Show Settings"),
@@ -1018,7 +1018,7 @@ ui <- fluidPage(
       tags$div(id="examples_sample_sheets_folder", tags$p("Example", strong(em("Sample Sheets")), "are in", seqNdisplayR::ExamplesSampleSheetsFolder())),
       tags$p("1. load a template and choose a locus in the Input section"),
       tags$p("2. modify any options in Input or Optional Arguments below"),
-      tags$p("3. select on the left whether to plot on screen, save as PDF or save current settings to Excel"),
+      tags$p("3. select on the left whether to plot on screen, save as PDF or save current settings to sNdR sample (Excel) file"),
       # tags$p(em("A convenient website to easily design pleasing color palettes, with colorblind friendly options can be found "), a("here", href="https://coolors.co/"), em('or'), a("here", href="https://medialab.github.io/iwanthue/")),
       tags$p(strong("Optional arguments marked with [*] should be used with caution - only recommended for experienced users! Consult the associated paper or R help for more details.")),
       tags$br(),
