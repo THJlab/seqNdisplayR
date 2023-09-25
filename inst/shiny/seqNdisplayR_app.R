@@ -1584,7 +1584,7 @@ server <- function(input, output, session) {
           }
           if( !automatic ){
             updateCheckboxInput(session, opt_line$shiny_varname, value = TRUE)
-            updateSliderInput(session, paste0(opt_line$shiny_varname,'_slider'), value = seqNdisplayR_session[[opt]])
+            updateSliderInput(session, paste0(opt_line$shiny_varname, '_box'), value = seqNdisplayR_session[[opt]]) #@ 2023-09-25 '_box' <- '_slider'
           } else {
             updateCheckboxInput(session, opt_line$shiny_varname, value = FALSE)
           }
