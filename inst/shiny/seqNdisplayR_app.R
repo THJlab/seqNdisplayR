@@ -1015,7 +1015,7 @@ ui <- fluidPage(
     mainPanel(
       tags$head(
         tags$style(type="text/css", "#examples_sample_sheets_folder {background-color: #BD583735}")),
-      tags$div(id="examples_sample_sheets_folder", tags$p("Example", strong(em("Sample Sheets")), "are in", seqNdisplayR::ExamplesSampleSheetsFolder())),
+      tags$div(id="examples_sample_sheets_folder", tags$p("Example", strong(em("sNdR sample files")), "are in", seqNdisplayR::ExamplesSampleSheetsFolder())),
       tags$p("1. load a template and choose a locus in the Input section"),
       tags$p("2. modify any options in Input or Optional Arguments below"),
       tags$p("3. select on the left whether to plot on screen, save as PDF or save current settings to sNdR sample (Excel) file"),
