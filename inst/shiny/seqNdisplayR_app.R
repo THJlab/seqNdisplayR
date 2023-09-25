@@ -1,5 +1,5 @@
 share <- list(title = "{seqNdisplayR} package",
-              description = "A Tool for Customizable and Reproducible Plotting of Sequencing Coverage Data")
+              description = "Customizable and Reproducible Plotting of Sequencing Coverage Data")
 
 options(shinyTree.setState = TRUE)
 options(shinyTree.refresh  = TRUE)
@@ -2568,7 +2568,8 @@ server <- function(input, output, session) {
                     input[[dataset]]
                   })
     names(res) = names(datasets_unlisted)
-    sample_matrix = do.call('rbind', sapply(names(datasets_unlisted), function(sep) strsplit(sep, split='.', fixed=T)))
+    #cat(paste0('c("', paste(names(datasets_unlisted), collapse='", "'), '")'), '\n') #@ 2023-09-25 test
+    #sample_matrix = do.call('rbind', sapply(names(datasets_unlisted), function(sep) strsplit(sep, split='.', fixed=T))) #@ 2023-09-25 no use
     l = lapply(sample_names, function(sample_name){
       sub_samps = grep(sample_name, names(datasets_unlisted), value=TRUE)
       subsample_matrix = do.call('rbind', sapply(sub_samps, function(sep) strsplit(sep, split='.', fixed=T)))
