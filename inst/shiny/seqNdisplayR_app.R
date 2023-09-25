@@ -980,7 +980,7 @@ ui <- fluidPage(
                      #note the tooltop, clean-up of space only visible upon mouse-over
                      shinyBS::bsTooltip(id = "plot", title = "The plot will appear in an independent window. </br> </br> The process can take some time depending on the number of tracks and annotations plotted as well as the arguments used.",
                                         placement = "right", trigger = "hover",),
-                     suppressWarnings(downloadButton("save_pdf", "Save as Pdf")),
+                     suppressWarnings(downloadButton("save_pdf", "Save as PDF")),
                      shinyBS::bsTooltip(id = "save_pdf", title = "The plot will be saved as pdf. </br> </br> The process can take some time depending on the number of tracks and annotations plotted as well as the arguments used.",
                                         placement = "right", trigger = "hover"),
                      suppressWarnings(downloadButton("save_settings", "Save Settings")),
@@ -1005,7 +1005,7 @@ ui <- fluidPage(
                      #                    placement = "right", trigger = "hover"),
                      
                      actionButton("reset", "Reset Session"),
-                     actionButton("reload_app", "Reload Page"),
+                     actionButton("reload_app", "Reset App"), #@ 2023-09-18 Reload Page
                      #actionButton("debug", "Custom Debug Info"),
                      shinyBS::bsTooltip(id = "reset", title = "Reset all options to values from the currently loaded template",
                                         placement = "right", trigger = "hover")
@@ -1018,7 +1018,7 @@ ui <- fluidPage(
       tags$div(id="examples_sample_sheets_folder", tags$p("Example", strong(em("Sample Sheets")), "are in", seqNdisplayR::ExamplesSampleSheetsFolder())),
       tags$p("1. load a template and choose a locus in the Input section"),
       tags$p("2. modify any options in Input or Optional Arguments below"),
-      tags$p("3. select on the left whether to plot on screen, save as pdf or save current settings to excel"),
+      tags$p("3. select on the left whether to plot on screen, save as PDF or save current settings to Excel"),
       # tags$p(em("A convenient website to easily design pleasing color palettes, with colorblind friendly options can be found "), a("here", href="https://coolors.co/"), em('or'), a("here", href="https://medialab.github.io/iwanthue/")),
       tags$p(strong("Optional arguments marked with [*] should be used with caution - only recommended for experienced users! Consult the associated paper or R help for more details.")),
       tags$br(),
@@ -1039,7 +1039,7 @@ ui <- fluidPage(
           #@ p("Filling out the boxes in the 'Input' window is the minimum requirement for plotting. Multiple accessory arguments can be adjusted below, but plotting can be performed merely from importing the template excel file, specifying a locus by name or coordinates and pressing the 'Draw Plot' button (locus name overwrites coordinates)."),
           fileInput(
             "input_file",
-            "Load excel file", #@ "Load excel file (or IGV session xml file)"
+            "Load sNdR sample file", #@ "Load excel file (or IGV session xml file)"
             multiple = FALSE,
             accept = c(".xls", ".xlsx", ".xlsm", '.xml'),
             width = 540
@@ -1092,7 +1092,7 @@ ui <- fluidPage(
 
         # Sample Selection ####
         tabPanel(
-          "Tracks Overview and Selection",
+          "Data Overview and Selection",
           #@ p('You can reorder within each dataset, and select which samples to display. Reordering and selection are used for plotting by using the dataset-specific whichSamples parameter and this will also be saved in the Excel session like that. Reordering of datasets does not work for now. This has to be done in the Excel sheet. Note also that whichSamples is currently not respected when drawing the tree upon loading of an Excel template.'),
           h4('Tracks to plot:'),
           shinyTree::shinyTree("tree", checkbox=TRUE, dragAndDrop=TRUE, multiple = TRUE, animation = FALSE, themeIcons = FALSE)
@@ -1189,7 +1189,7 @@ ui <- fluidPage(
         ),
         
         tabPanel(
-          "Panels Display",
+          "Panel Display",
           tags$br(),
           column(
             10,
@@ -1243,7 +1243,7 @@ ui <- fluidPage(
         ),
         
         tabPanel(
-          "Tracks Binning",
+          "Track Binning",
           tags$br(),
           column(
             10,
@@ -1278,7 +1278,7 @@ ui <- fluidPage(
         ),
         
         tabPanel(
-          "Data Scales Display",
+          "Data Scale Display",
           tags$br(),
           column(
             10,
@@ -1551,7 +1551,7 @@ server <- function(input, output, session) {
   
   
   # update session UI to loaded template ####
-  # set all values in ui elements to the ones from a seqNdisplayR session (imported excel)
+  # set all values in ui elements to the ones from a seqNdisplayR session (imported Excel)
   update_ui_to_session = function(seqNdisplayR_session) {
     prev_session_idx <- CurrentSessionIdx() - 1
     dataset_names = names(seqNdisplayR_session$samples)
@@ -2171,7 +2171,7 @@ server <- function(input, output, session) {
   
   
   
-  # reactive excel or igv template load ####
+  # reactive Excel or igv template load ####
   LoadTemplate = reactive({
     filename = input$input_file$name
     if ( is.null(filename) ) {
@@ -2679,7 +2679,7 @@ server <- function(input, output, session) {
   observeEvent(input$plot,
                {
                  if (is.null(input$input_file)) {
-                   "Please load Excel template and provide locus name or coordinates." #@ "Please load Excel or IGV template and provide locus name or coordinates."
+                   "Please load sNdR sample file and provide locus name or coordinates." #@ "Please load Excel or IGV template and provide locus name or coordinates."
                  } else {
                    feature <- GetFeature()
                    locus <- GetLocus()
@@ -2726,7 +2726,7 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       if ( is.null(input$input_file) ) {
-        output$console = renderText({"Please load Excel template and provide locus name or coordinates."}) #@ "Please load Excel or IGV template and provide locus name or coordinates."
+        output$console = renderText({"Please load sNdR sample file and provide locus name or coordinates."}) #@ "Please load Excel or IGV template and provide locus name or coordinates."
       } else {
         feature = GetFeature()
         locus = GetLocus()
@@ -2749,7 +2749,7 @@ server <- function(input, output, session) {
                                        pdf_dir = dirname(file)))
             }
           }, position = 'top-center', blocking_level='none', prefix='Plotting error', shiny=TRUE)
-          output$console = renderText({paste0('pdf creation log:\n', paste(x, collapse  = "\n"))}) #@ 2022-10-10 pdfdir, pdfname <- file  #@ 2022-10-26 basename(file), '.pdf' <- pdfname
+          output$console = renderText({paste0('PDF creation log:\n', paste(x, collapse  = "\n"))}) #@ 2022-10-10 pdfdir, pdfname <- file  #@ 2022-10-26 basename(file), '.pdf' <- pdfname
           remove_modal_spinner()
         }
       }
@@ -2765,7 +2765,7 @@ server <- function(input, output, session) {
     content = function(file) {
       #cat(file, '\n') #@ 2022-10-10
       if ( is.null(input$input_file) ) {
-        output$console = renderText("Please first load Excel template") #@ "Please first load Excel or IGV template"
+        output$console = renderText("Please first load sNdR sample file") #@ "Please first load Excel or IGV template"
       } else {
         loaded_session = seqNdisplayR_session()
         seqNdisplayR::Session2xlsx(loaded_session, path = file)
