@@ -801,7 +801,7 @@ create_input_element = function(option) {
                             placement ='left')),
                  tags$p(tags$style(type="text/css", paste0("#", div_id, " {padding-left: 15px}"))),
                  tags$div(id = div_id,
-                          numericInput(paste0(option_par$shiny_varname,'_box'),
+                          numericInput(paste0(option_par$shiny_varname,'_box'), #@ 2023-10-07
                                        label=NULL,
                                        value=start_val,
                                        min=min_val,
@@ -1437,8 +1437,11 @@ server <- function(input, output, session) {
     #ups the tree cannot be selected without first being shown
     # a decision made in shinyTree package we use for the tree
     if ( is.null(tree) ) {
-      CurrentSession()$samples
+      #cat('** NULL', '\n') #@ 2023-10-07
+      #@CurrentSession()$samples #@ 2023-10-07
+      NULL
     } else {
+      #cat('** not NULL', '\n') #@ 2023-10-07
       get_selected_tree(tree)
     }
   }
@@ -1584,10 +1587,21 @@ server <- function(input, output, session) {
           }
           if( !automatic ){
             updateCheckboxInput(session, opt_line$shiny_varname, value = TRUE)
-            updateSliderInput(session, paste0(opt_line$shiny_varname, '_box'), value = seqNdisplayR_session[[opt]]) #@ 2023-09-25 '_box' <- '_slider'
+            if (opt != 'bin_size' & opt != 'bin_start'){
+              updateSliderInput(session, paste0(opt_line$shiny_varname, '_slider'), value = seqNdisplayR_session[[opt]]) #@ 2023-10-07
+            }else{
+              updateSliderInput(session, paste0(opt_line$shiny_varname, '_box'), value = seqNdisplayR_session[[opt]]) #@ 2023-09-25 '_box' <- '_slider'  
+            }
           } else {
             updateCheckboxInput(session, opt_line$shiny_varname, value = FALSE)
           }
+        }else if ( opt_line$option_class == 'optional_text' ) { #@ -> 2023-10-07
+          if( !is.null(seqNdisplayR_session[[opt]]) ){
+            updateCheckboxInput(session, opt_line$shiny_varname, value = TRUE)
+            updateTextInput(session, paste0(opt_line$shiny_varname, '_box'), value = seqNdisplayR_session[[opt]] ) #@ 2023-10-07
+          } else {
+            updateCheckboxInput(session, opt_line$shiny_varname, value = FALSE)
+          } #@ <- 2023-10-07
         }else if ( opt_line$option_class == 'split_numeric' ) {
           suboptions = strsplit(opt_line$option_options, ';', fixed=TRUE)[[1]]
           for (n in seq_along(suboptions)){
@@ -2288,7 +2302,9 @@ server <- function(input, output, session) {
       shiny_varname <- opt_line$shiny_varname
       if ( any(grepl(paste0('^', shiny_varname), names(input))) ) {
         if (shiny_varname %in% names(input)){
+          #cat(shiny_varname, '\n') #@ 2023-10-07
           value <- input[[shiny_varname]]
+          #if (shiny_varname == "tracks_height"){ cat(value, '\n')} #@ 2023-10-07
         }else{
           var_names = grep(paste0('^', shiny_varname), names(input), value=TRUE)
           if (any(grepl('_subvar', var_names))){
@@ -2305,8 +2321,8 @@ server <- function(input, output, session) {
             if (shiny_varname != 'binning_size' & shiny_varname != 'binning_start'){
               value <- input[[paste0(shiny_varname, '_slider')]]
             }else{
-              value <- as.numeric(input[[paste0(shiny_varname, '_box')]])
-              #cat(paste0(shiny_varname, ': ', value, '(', class(value), ')'), '\n') #@cat
+              value <- as.numeric(input[[paste0(shiny_varname, '_box')]]) #@ 2023-10-07
+              #value <- as.numeric(input[[paste0(shiny_varname, '_slider')]])
             }
           }else{
             if (opt=="panels_max_width_cm" | opt=="scale_panel_width_cm" | opt=="bin_size"){
@@ -2319,6 +2335,7 @@ server <- function(input, output, session) {
           #cat(paste(shiny_varname, '****', ifelse(is.null(value), 'NULL', value)), '\n')
           #@ <-
         }else if( opt_line$option_class == 'optional_text' ) {
+          #cat(paste(shiny_varname, '****', input[[paste0(shiny_varname, '_box')]]), '\n') #@ 2023-10-07
           if (value){
             value <- input[[paste0(shiny_varname, '_box')]]
           }else{
@@ -2620,6 +2637,8 @@ server <- function(input, output, session) {
         template_session[op_name] = NA
         #cat(paste(op_name, '****', 'NA*'), '\n')
       }else{
+        #cat(op_name, '\n') #@ 2023-10-07
+        #cat(shiny_session_global_options$track_height_cm, '\n') #@ 2023-10-07
         template_session[op_name] = shiny_session_global_options[op_name]
         #cat(paste(op_name, '****', shiny_session_global_options[op_name]), '\n')
       }
@@ -2656,16 +2675,23 @@ server <- function(input, output, session) {
     
     ## which samples from tree
     which_samples <- GetSelectedSamples()
+    #@ -> 2023-10-07
+    if (is.null(which_samples)){
+      which_samples = lapply(template_session$parameters, function(p) p$whichSamples)
+      names(which_samples) <- names(template_session$parameters)
+    }
+    #@ <- 2023-10-07
     for ( sample_name in names(template_session$parameters) ) {
+      #cat(paste('***', sample_name, '-', paste(which_samples[sample_name], collapse=', ')), '\n') #@ 2023-10-07
       if ( !(sample_name %in% names(which_samples)) ) {
         #exclude all
-        template_session$parameters[[sample_name]][['whichSamples']] <- NA
+        template_session$parameters[[sample_name]][['whichSamples']] = NA
       } else if (identical(which_samples[[sample_name]], template_session$samples[[sample_name]])){
         #include all
-        template_session$parameters[[sample_name]]['whichSamples'] <- list(NULL)
+        template_session$parameters[[sample_name]]['whichSamples'] = list(NULL)
       } else { #@
         #include specific cases
-        template_session$parameters[[sample_name]][['whichSamples']] <- which_samples[[sample_name]]
+        template_session$parameters[[sample_name]][['whichSamples']] = which_samples[[sample_name]]
       }
     }
     
