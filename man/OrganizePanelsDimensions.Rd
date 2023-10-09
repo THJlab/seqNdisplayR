@@ -71,18 +71,12 @@ OrganizePanelsDimensions(
 
 \item{verbosity}{}
 }
-\value{
-
-}
 \description{
 Internal function: 
 The overall panel dimensions can be fixed upfront or it can be left open for the function to determine the dimension - with some initial parameters defined
 }
 \note{
 .penalties.0hor.list obsolete? (#%)
-}
-\examples{
-
 }
 \author{
 SLA

@@ -32,14 +32,8 @@ RelativeAnnotationHeight(
 
 \item{stranded_beds}{}
 }
-\value{
-
-}
 \description{
 Internal function:
-}
-\examples{
-
 }
 \author{
 SLA

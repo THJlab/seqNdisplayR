@@ -26,15 +26,9 @@ OrganizeAnnotationText(
 
 \item{verbosity}{}
 }
-\value{
-
-}
 \description{
 Internal function: 
 Given a set of possible font sizes (e.g. helvetica 4-8 given by letter_widths), where should the feature names within the region be plotted
-}
-\examples{
-
 }
 \author{
 SLA

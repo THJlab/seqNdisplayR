@@ -11,14 +11,8 @@ FinalizePanelsDimensions(panel_info, both_strands)
 
 \item{both_strands}{}
 }
-\value{
-
-}
 \description{
 Internal function:
-}
-\examples{
-
 }
 \author{
 SLA

@@ -17,15 +17,9 @@ OrganizeAllAnnotationTextsInPlottedRegion(
 
 \item{letter_widths}{}
 }
-\value{
-
-}
 \description{
 Internal function: 
 Determine the y-axis organization of names of annotated features within plotted region depending on font size
-}
-\examples{
-
 }
 \author{
 SLA

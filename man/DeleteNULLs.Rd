@@ -9,15 +9,9 @@ DeleteNULLs(x_list)
 \arguments{
 \item{x_list}{}
 }
-\value{
-
-}
 \description{
 Internal function: 
 Delele null/empty entries in a list
-}
-\examples{
-
 }
 \author{
 SLA

@@ -50,14 +50,8 @@ PlotHeightParameters(
 
 \item{plot_vertical_parameters}{}
 }
-\value{
-
-}
 \description{
 Internal function:
-}
-\examples{
-
 }
 \author{
 SLA

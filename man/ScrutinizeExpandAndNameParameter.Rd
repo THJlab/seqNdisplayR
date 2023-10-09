@@ -35,15 +35,9 @@ ScrutinizeExpandAndNameParameter(
 
 \item{verbosity}{}
 }
-\value{
-
-}
 \description{
 Internal function: 
 Helper function that will expand a common "one-dimensional" parameter to fit all the names of a named object
-}
-\examples{
-
 }
 \author{
 SLA

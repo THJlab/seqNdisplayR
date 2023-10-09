@@ -9,9 +9,6 @@ ListDepth(query_list)
 \arguments{
 \item{query_list}{}
 }
-\value{
-
-}
 \description{
 Internal function: 
 Max number of nested levels in a nested list of lists

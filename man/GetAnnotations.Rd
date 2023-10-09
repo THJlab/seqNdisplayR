@@ -20,9 +20,6 @@ Reads Annotations (paths and options) from Excel template
 annotations is a data.frame with at least 2 columns *annotation_file* and *annotation_name*, both
   case-sensitive and the space is required.
 }
-\examples{
-
-}
 \author{
 MS (minor additions by SLA)
 }

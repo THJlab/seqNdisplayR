@@ -55,7 +55,7 @@ seqNdisplayR session object holding above slots identical to parameters
   OBS: Currently only bed files are used correctly by seqNdisplayR.
 }
 \examples{
-xl_fname = system.file('extdata', 'seqNdisplayR_sample_sheet_elaborate2.xlsx', package='seqNdisplayR')
+xl_fname = system.file('extdata', 'sNdR_sample_example_elaborate.xlsx', package='seqNdisplayR')
 session <- LoadExcel(xl_fname, load_annotations = T) # takes some time, since annotations are loaded...
 feat = 'LMO4'
 plot(session, feature=feat)

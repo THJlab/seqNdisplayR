@@ -11,9 +11,6 @@ AdjustColorPhi(c_hsl, phi = 180)
 
 \item{phi}{}
 }
-\value{
-
-}
 \description{
 Internal function:
 }

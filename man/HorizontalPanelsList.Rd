@@ -26,15 +26,9 @@ HorizontalPanelsList(
 
 \item{interface}{}
 }
-\value{
-
-}
 \description{
 Internal function: 
 Checks/constructs a horizontal_panels_list
-}
-\examples{
-
 }
 \author{
 SLA

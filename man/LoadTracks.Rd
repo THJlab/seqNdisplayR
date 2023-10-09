@@ -26,14 +26,8 @@ LoadTracks(
 
 \item{verbosity}{}
 }
-\value{
-
-}
 \description{
 Internal function:
-}
-\examples{
-
 }
 \author{
 SLA

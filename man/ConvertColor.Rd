@@ -11,9 +11,6 @@ ConvertColor(c, phi = 180)
 
 \item{phi}{}
 }
-\value{
-
-}
 \description{
 Internal function:
 }

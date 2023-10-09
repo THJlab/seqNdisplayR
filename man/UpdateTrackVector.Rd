@@ -11,14 +11,8 @@ UpdateTrackVector(track_vector, plot_vertical_parameters)
 
 \item{plot_vertical_parameters}{}
 }
-\value{
-
-}
 \description{
 Internal function:
-}
-\examples{
-
 }
 \author{
 SLA

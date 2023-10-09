@@ -42,9 +42,6 @@ Converts session information to data frame as in Excel import sheet.
 Converts session information to dataframe as specified in Excel
   import sheet but using all-filled mode. Batch information is obtained from parameters.
 }
-\examples{
-
-}
 \author{
 MS
 }

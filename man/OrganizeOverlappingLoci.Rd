@@ -9,16 +9,10 @@ OrganizeOverlappingLoci(annot_info)
 \arguments{
 \item{annot_info}{}
 }
-\value{
-
-}
 \description{
 Internal function: 
 This function is the second step in organizing the annotated features in the plotted region into various formats
 Used after AnnotatedFeaturesInRegion and before ConvertCollapsedFormat to create a final organized version of the annotated features
-}
-\examples{
-
 }
 \author{
 SLA

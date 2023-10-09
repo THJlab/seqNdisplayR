@@ -7,7 +7,7 @@
 RecommendedFontSizes(
   est_track_height_cm,
   est_min_annot_height,
-  plot_vertical_parameters
+  plot_vertical_parameters_cm
 )
 }
 \arguments{
@@ -17,14 +17,8 @@ RecommendedFontSizes(
 
 \item{plot_vertical_parameters}{}
 }
-\value{
-
-}
 \description{
 Internal function:
-}
-\examples{
-
 }
 \author{
 SLA

@@ -17,15 +17,9 @@ SortUnlistedSampleNames(
 
 \item{incl_rep}{}
 }
-\value{
-
-}
 \description{
 Internal function: 
 Sort Unlisted Sample Names
-}
-\examples{
-
 }
 \author{
 SLA

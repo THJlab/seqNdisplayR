@@ -38,14 +38,8 @@ FinalizePlottingSegmentOrder(
 
 \item{interface}{}
 }
-\value{
-
-}
 \description{
 Internal function:
-}
-\examples{
-
 }
 \author{
 SLA

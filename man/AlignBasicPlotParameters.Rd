@@ -8,7 +8,11 @@ AlignBasicPlotParameters(
   basic_plot_parameters,
   both_strands,
   strands_intermingled,
-  fixed_plot_vertical_parameters
+  fixed_plot_vertical_parameters,
+  vertical_parameters,
+  minimal_units,
+  full_height_cm,
+  annotation_packing
 )
 }
 \arguments{
@@ -18,16 +22,10 @@ AlignBasicPlotParameters(
 
 \item{strands_intermingled}{}
 
-\item{fixed_plot_vertical_parameters}{}
-}
-\value{
-
+\item{full_height_cm}{}
 }
 \description{
 Internal function:
-}
-\examples{
-
 }
 \author{
 SLA

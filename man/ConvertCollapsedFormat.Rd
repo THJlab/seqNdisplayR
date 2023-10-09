@@ -9,17 +9,11 @@ ConvertCollapsedFormat(annot_info)
 \arguments{
 \item{annot_info}{}
 }
-\value{
-
-}
 \description{
 Internal function: 
 This function is the third step in organizing the annotated features in the plotted region into various formats
 Used after AnnotatedFeaturesInRegion and OrganizeOverlappingLoci to create a final organized version of the annotated features
 Converts the format of "collapsed" and "collapsed2" from GRanges to GRangesLists to make the overall formatting uniform; one GRanges object per 'feature name' (e.g. "TAF1D" and "RP11-178H8.7")
-}
-\examples{
-
 }
 \author{
 SLA

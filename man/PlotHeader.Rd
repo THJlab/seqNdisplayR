@@ -56,14 +56,8 @@ PlotHeader(
 
 \item{scaling_factor}{}
 }
-\value{
-
-}
 \description{
 Internal function:
-}
-\examples{
-
 }
 \author{
 SLA

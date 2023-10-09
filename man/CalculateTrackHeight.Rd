@@ -29,14 +29,8 @@ CalculateTrackHeight(
 
 \item{spacer_height_cm}{}
 }
-\value{
-
-}
 \description{
 Internal function:
-}
-\examples{
-
 }
 \author{
 SLA

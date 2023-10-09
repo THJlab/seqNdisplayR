@@ -9,14 +9,8 @@ NumberingSpacers(stranded_list)
 \arguments{
 \item{stranded_list}{}
 }
-\value{
-
-}
 \description{
 Internal function:
-}
-\examples{
-
 }
 \author{
 SLA

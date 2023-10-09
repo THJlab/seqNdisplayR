@@ -17,15 +17,9 @@ ForceScaleList(samples, force_scale, strands, verbosity, interface)
 
 \item{interface}{}
 }
-\value{
-
-}
 \description{
 Internal function: 
 Checks/constructs a force_scale_list
-}
-\examples{
-
 }
 \author{
 SLA

@@ -9,9 +9,6 @@ ParseOption(option_str)
 \arguments{
 \item{option_str}{string representation of the option}
 }
-\value{
-
-}
 \description{
 Internal function: 
 Parse string into relevant R object class

@@ -29,14 +29,8 @@ CoordsOfGenomicScale(
 
 \item{plot_end}{}
 }
-\value{
-
-}
 \description{
 Internal function:
-}
-\examples{
-
 }
 \author{
 SLA

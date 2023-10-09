@@ -9,15 +9,10 @@ Empty2Null(x)
 \arguments{
 \item{x}{}
 }
-\value{
-
-}
 \description{
 Internal function: 
 Helper used for parsing parameters$<dataset>$whichSamples
-}
-\examples{
-
+From chatGPT: The purpose of this function is to convert empty elements within a list to NULL. If an element is not a list or has a length of 0, it remains unchanged. However, if an element is a non-empty list, the function recursively processes each nested element to convert empty elements to NULL.
 }
 \author{
 MS

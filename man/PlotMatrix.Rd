@@ -44,14 +44,8 @@ PlotMatrix(
 
 \item{bin_stats}{}
 }
-\value{
-
-}
 \description{
 Internal function:
-}
-\examples{
-
 }
 \author{
 SLA

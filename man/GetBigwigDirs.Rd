@@ -15,6 +15,7 @@ Named vector
 \description{
 Internal function: 
 Get bigwig dirs file names from a data frame containing at a minimum columns bigwig_file and dataset
+From chatGPT: the GetBigwigDirs function extracts the unique combinations of bigwig directories and datasets from the filled_df data frame, filters out rows with missing bigwig directories, and returns a named vector where each dataset is associated with its corresponding bigwig directory.
 }
 \details{
 Get bigwig dirs file names from a data frame containing at a minimum columns

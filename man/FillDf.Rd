@@ -23,9 +23,6 @@ Empty rows in dataframe from loaded XL sheet are filled with values
   See Excel template sheet in \code{inst/extdata/example_excel_template.xls}
   for more information.
 }
-\examples{
-
-}
 \author{
 MS/SLA
 }

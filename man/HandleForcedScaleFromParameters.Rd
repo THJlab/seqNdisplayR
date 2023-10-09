@@ -9,16 +9,10 @@ HandleForcedScaleFromParameters(pars)
 \arguments{
 \item{pars}{}
 }
-\value{
-
-}
 \description{
 Internal function: 
 Checks/constructs a force_scale_list
 Handle force_scale which is part of "parameters" argument but needs to passed differently to plot function
-}
-\examples{
-
 }
 \author{
 MS/SLA

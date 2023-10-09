@@ -29,15 +29,9 @@ CoordsOfFeatName(
 
 \item{plotted_region}{}
 }
-\value{
-
-}
 \description{
 Internal function: 
 Given a chromosomal coordinate (for the center of the annotated feature name) the parameters necessary for plotting the word such that it fits inside the plotted region are calculated
-}
-\examples{
-
 }
 \author{
 SLA

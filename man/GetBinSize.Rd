@@ -17,14 +17,8 @@ GetBinSize(bin_size, plot_width, tracks_width_cm, bins_per_cm, verbosity)
 
 \item{verbosity}{}
 }
-\value{
-
-}
 \description{
 Internal function:
-}
-\examples{
-
 }
 \author{
 SLA

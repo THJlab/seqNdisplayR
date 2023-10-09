@@ -6,14 +6,8 @@
 \usage{
 OpenOptionsTable()
 }
-\value{
-
-}
 \description{
 Open the Options table (Excel sheet with info for app)
-}
-\examples{
-
 }
 \author{
 SLA

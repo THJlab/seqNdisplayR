@@ -17,14 +17,8 @@ FinalOrganizedAnnotationTextsInPlottedRegion(
 
 \item{font_size}{}
 }
-\value{
-
-}
 \description{
 Internal function:
-}
-\examples{
-
 }
 \author{
 SLA

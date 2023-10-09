@@ -15,14 +15,8 @@ YParameters(plot_mat, plotting_segment, force_scale_list, group_autoscale)
 
 \item{group_autoscale}{}
 }
-\value{
-
-}
 \description{
 Internal function:
-}
-\examples{
-
 }
 \author{
 SLA

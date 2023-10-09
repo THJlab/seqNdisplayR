@@ -11,15 +11,9 @@ OrganizeOverlappingIVs(annotation_gr, gap = -1L)
 
 \item{gap}{}
 }
-\value{
-
-}
 \description{
 Internal function: 
 Overlapping feature intervals (transcripts/genes/transcription units) are organized in separate lines to allow "non-overlapping" plotting
-}
-\examples{
-
 }
 \author{
 SLA

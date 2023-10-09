@@ -9,7 +9,7 @@ Session2xlsx(session, path, ...)
 \arguments{
 \item{session}{seqNdisplayRSession object}
 
-\item{path}{Excel file path}
+\item{path}{excel file name including full path}
 
 \item{...}{}
 }
@@ -18,9 +18,6 @@ Write Excel template as described in \link{LoadExcel}.
 }
 \description{
 Save session object to Excel xlsx-file
-}
-\examples{
-
 }
 \author{
 MS (minor additions by SLA)

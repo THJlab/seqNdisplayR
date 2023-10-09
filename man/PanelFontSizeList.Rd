@@ -29,15 +29,9 @@ PanelFontSizeList(
 
 \item{interface}{}
 }
-\value{
-
-}
 \description{
 Internal function: 
 Constructs a panel_font_size_list (a font size provided to each panel)
-}
-\examples{
-
 }
 \author{
 SLA

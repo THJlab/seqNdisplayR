@@ -15,6 +15,7 @@ Named lists or nested lists of named lists
 \description{
 Internal function: 
 Get bigwig file names from a data frame containing at a minimum columns bigwig_file, strand and dataset
+From chatGPT: the GetBigwigs function processes the filled_df data frame to extract and organize information based on the values in specific columns, with different extraction strategies depending on the conditions in the data. The extracted results are returned as a list with separate entries for '+' and '-'.
 }
 \details{
 Get bigwig file names from a data frame containing at a minimum columns
