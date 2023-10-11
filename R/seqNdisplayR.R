@@ -23,11 +23,11 @@
 #'
 #' @author SLA
 #'
-#' @param datasets A nested list of character vectors containing dataset names, subgroup names and corresponding sample names. This nested list contains the 'tree' structure of the data to be plotted. See examples.
-#' @param colors Nested list of colors corresponding to the bigwigs nested list. Pick colors for the individual sample tracks (replicates for a given sample will get the same color). See examples.
-#' @param bigwig_dirs Named character vector. For each dataset in datasets a directory where the bigwig files associated with each dataset is located. See examples.
-#' @param bigwigs A nested list of bigwig files under each dataset. See examples.
-#' @param parameters A list of parameters for customizing data transformation and processing.
+#' @param datasets A nested list of character vectors containing dataset names, subgroup names and corresponding sample names. This nested list contains the 'tree' structure of the data to be plotted. See example below.
+#' @param colors Nested list of colors corresponding to the bigwigs nested list. Pick colors for the individual sample tracks (replicates for a given sample will get the same color). See example below.
+#' @param bigwig_dirs Named character vector. For each dataset in datasets a directory where the bigwig files associated with each dataset is located. See example below.
+#' @param bigwigs A nested list of bigwig files under each dataset. See example below.
+#' @param parameters A list of parameters for customizing data transformation and processing. See example below.
 #'
 #' This argument allows you to customize various aspects of data processing and transformation
 #' for different 'datasets' data. The 'parameters' list should have named elements where each
@@ -73,7 +73,7 @@
 #' @param feature The feature/locus name has to be present in one of the supplied annotations and match case. When entering feature/locus name and coordinates simultaneously, only the locus name will be considered.
 #' @param locus The locus coordinates (e.g. chr1:+:87325400:87351991). When entering feature/locus name and coordinates simultaneously, only the locus name will be considered.
 #' @param extra_space Extra space up- and downstream of and relative to the selected genomic feature (0.1 = 10 percent). Only taken into account when locus/feature name is entered - ignored when genomic coordinates are entered.  Default c(1.5,1.5).
-#' @param annots Represents annotations related to genomic data. It is a crucial input for the function and is used to customize the visualization of genomic features. It can either be a 'pre-loaded' annotation in GRanges format by use of the ReadInAnnotations function or a named character vector providing the full paths to indidual annotations that will then be loaded by the function. If using the same set of annotations for creating multiple plots the 'pre-loaded' format is recommended.
+#' @param annots Represents annotations related to genomic data. It is a crucial input for the function and is used to customize the visualization of genomic features. It can either be a 'pre-loaded' annotation in GRanges format by use of the ReadInAnnotations function or a named character vector providing the full paths to indidual annotations that will then be loaded by the function. If using the same set of annotations for creating multiple plots the 'pre-loaded' format is recommended. See example below.
 #' @param annotation_packing Set the annotation packing for each annotation. Options are: ‘expanded’, ‘squished’, ‘collapsed’ and ‘collapsed2’. 'expanded' and 'squished' display the detailed structures of transcripts under a given feature either as fully expanded or squished. ’collapsed’ collapses all overlapping features into one 'super-exon' feature whereas 'collapsed2’ only collapses features belonging to the same locus into one 'super-exon' feature.
 #' @param annot_cols Specify the color(s) used to visualize the annotated features (by color name or hex code). If set to NULL, the colors specified in the bed file will be used.
 #' @param annot_panel_color Color of the titles of the annotation(s) depicted in the left panel (as color name or hex code).

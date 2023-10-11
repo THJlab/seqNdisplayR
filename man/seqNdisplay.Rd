@@ -93,15 +93,15 @@ seqNdisplay(
 )
 }
 \arguments{
-\item{datasets}{A nested list of character vectors containing dataset names, subgroup names and corresponding sample names. This nested list contains the 'tree' structure of the data to be plotted. See examples.}
+\item{datasets}{A nested list of character vectors containing dataset names, subgroup names and corresponding sample names. This nested list contains the 'tree' structure of the data to be plotted. See example below.}
 
-\item{colors}{Nested list of colors corresponding to the bigwigs nested list. Pick colors for the individual sample tracks (replicates for a given sample will get the same color). See examples.}
+\item{colors}{Nested list of colors corresponding to the bigwigs nested list. Pick colors for the individual sample tracks (replicates for a given sample will get the same color). See example below.}
 
-\item{bigwig_dirs}{Named character vector. For each dataset in datasets a directory where the bigwig files associated with each dataset is located. See examples.}
+\item{bigwig_dirs}{Named character vector. For each dataset in datasets a directory where the bigwig files associated with each dataset is located. See example below.}
 
-\item{bigwigs}{A nested list of bigwig files under each dataset. See examples.}
+\item{bigwigs}{A nested list of bigwig files under each dataset. See example below.}
 
-\item{parameters}{A list of parameters for customizing data transformation and processing.
+\item{parameters}{A list of parameters for customizing data transformation and processing. See example below.
 
 This argument allows you to customize various aspects of data processing and transformation
 for different 'datasets' data. The 'parameters' list should have named elements where each
@@ -165,7 +165,7 @@ the function uses default settings.}
 
 \item{extra_space}{Extra space up- and downstream of and relative to the selected genomic feature (0.1 = 10 percent). Only taken into account when locus/feature name is entered - ignored when genomic coordinates are entered.  Default c(1.5,1.5).}
 
-\item{annots}{Represents annotations related to genomic data. It is a crucial input for the function and is used to customize the visualization of genomic features. It can either be a 'pre-loaded' annotation in GRanges format by use of the ReadInAnnotations function or a named character vector providing the full paths to indidual annotations that will then be loaded by the function. If using the same set of annotations for creating multiple plots the 'pre-loaded' format is recommended.}
+\item{annots}{Represents annotations related to genomic data. It is a crucial input for the function and is used to customize the visualization of genomic features. It can either be a 'pre-loaded' annotation in GRanges format by use of the ReadInAnnotations function or a named character vector providing the full paths to indidual annotations that will then be loaded by the function. If using the same set of annotations for creating multiple plots the 'pre-loaded' format is recommended. See example below.}
 
 \item{annotation_packing}{Set the annotation packing for each annotation. Options are: ‘expanded’, ‘squished’, ‘collapsed’ and ‘collapsed2’. 'expanded' and 'squished' display the detailed structures of transcripts under a given feature either as fully expanded or squished. ’collapsed’ collapses all overlapping features into one 'super-exon' feature whereas 'collapsed2’ only collapses features belonging to the same locus into one 'super-exon' feature.}
 
