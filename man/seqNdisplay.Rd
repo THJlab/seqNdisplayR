@@ -76,8 +76,8 @@ seqNdisplay(
   feature_names_above = FALSE,
   feature_names_alternating = TRUE,
   feature_names_font_size = NULL,
-  incl_feature_brackets = TRUE,
-  incl_feature_shadings = TRUE,
+  incl_feature_brackets = FALSE,
+  incl_feature_shadings = FALSE,
   feature_shading_colors = c("steelblue", "hotpink"),
   feature_shading_alpha = 0.05,
   center_of_mass = FALSE,
@@ -93,59 +93,42 @@ seqNdisplay(
 )
 }
 \arguments{
-\item{datasets}{A nested list of character vectors containing dataset names, subgroup names and corresponding sample names. This nested list contains the 'tree' structure of the data to be plotted.}
+\item{datasets}{A nested list of character vectors containing dataset names, subgroup names and corresponding sample names. This nested list contains the 'tree' structure of the data to be plotted. See examples.}
 
-\item{colors}{Nested list of colors corresponding to the bigwigs nested list. Pick colors for the individual sample tracks (replicates for a given sample will get the same color).}
+\item{colors}{Nested list of colors corresponding to the bigwigs nested list. Pick colors for the individual sample tracks (replicates for a given sample will get the same color). See examples.}
 
-\item{bigwig_dirs}{Named character vector. For each dataset in datasets a directory where the bigwig files associated with each dataset is located.}
+\item{bigwig_dirs}{Named character vector. For each dataset in datasets a directory where the bigwig files associated with each dataset is located. See examples.}
 
-\item{bigwigs}{A nested list of bigwig files under each dataset as defined by the datasets.
-This argument should be a list that contains information about the bigwig files or data sources
-to be used in the data loading and transformation process. The list should be structured as follows:
-
-- Each element of the list represents a different strand (e.g., '+' or '-').
-- Within each strand element, you should provide a named list where the names correspond to the 'datasets' vector.
-
-The structure of the 'bigwigs' argument should look like this:
-
-\code{bigwigs <- list(}
-\code{  '+' = list(}
-\code{    dataset1 = "path/to/bigwig1",}
-\code{    dataset2 = "path/to/bigwig2",}
-\code{    ...}
-\code{  ),}
-\code{  '-' = list(}
-\code{    dataset1 = "path/to/bigwig1",}
-\code{    dataset2 = "path/to/bigwig2",}
-\code{    ...}
-\code{  )}
-\code{)}
-
-You can provide the paths to the bigwig files as character strings. Each 'dataset' within a strand
-should have a corresponding path provided by 'bigwig_dirs' to the bigwig file that contains the data for that 'dataset'.
-
-The 'bigwigs' argument is essential for loading and processing the data for various 'dataset' values.}
+\item{bigwigs}{A nested list of bigwig files under each dataset. See examples.}
 
 \item{parameters}{A list of parameters for customizing data transformation and processing.
 
 This argument allows you to customize various aspects of data processing and transformation
-for different 'seqtype' data. The 'parameters' list should have named elements where each
-name corresponds to a 'seqtype' and contains sub-elements for customization.
+for different 'datasets' data. The 'parameters' list should have named elements where each
+name corresponds to a 'dataset' and contains sub-elements for customization.
 
 The possible sub-elements within the 'parameters' list include:
 
 - \code{whichSamples}: A vector or list specifying which samples to include in the analysis.
+
 - \code{whichReps}: A vector or list specifying which replicates to include in the analysis.
+
 - \code{log2transform}: A logical value (TRUE/FALSE) indicating whether to perform log2 transformation on the data.
+
 - \code{pseudoCount}: A numeric value specifying the pseudo-count to be added to the data before transformation.
+
 - \code{batchCorrect}: A logical value (TRUE/FALSE) indicating whether batch correction should be applied.
+
 - \code{batch}: A vector or list specifying batch information for samples.
+
 - \code{negative_valued_bw}: A logical value (TRUE/FALSE) indicating whether negative-valued bigwig data should be considered as positive data.
+
 - \code{calcMean}: A logical value (TRUE/FALSE) indicating whether the mean of replicated samples should be calculated.
+
 - \code{negValsSet0}: A logical value (TRUE/FALSE) indicating whether negative values should be set to 0.
 
-The 'parameters' argument allows you to fine-tune the data processing for specific 'seqtype'
-data by providing custom settings for each 'seqtype'. If 'parameters' is NULL (default),
+The 'parameters' argument allows you to fine-tune the data processing for a specific 'dataset'
+by providing custom settings for each 'dataset'. If 'parameters' is NULL (default),
 the function uses default settings.}
 
 \item{plotting_segment_order}{Specify the order of displayed vertical segments in the plot using the following segment-labels: 'header', 'scale', names of individual datasets, 'annotations', unstranded-beds, 'thickline-spacer', 'line-spacer' and 'empty-spacer'\. There should be perfect correspondance between datasets to display and the listed datasets. Default NULL which leads to a pre-determined order.}
@@ -158,15 +141,15 @@ the function uses default settings.}
 
 \item{input_parameters}{Void.}
 
-\item{both_strands}{TRUE/FALSE. Specify whether data should be displayed for both strands (when available). Default TRUE.}
+\item{both_strands}{A logical value (TRUE/FALSE) . Specify whether data should be displayed for both strands (when available). Default TRUE.}
 
-\item{strands_intermingled}{TRUE/FALSE. Specify if both strand should be displayed as intermingled. Default TRUE. Ignored if both_strands=FALSE.}
+\item{strands_intermingled}{A logical value (TRUE/FALSE) . Specify if both strand should be displayed as intermingled. Default TRUE. Ignored if both_strands=FALSE.}
 
-\item{neg_vals_neg_strand}{TRUE/FALSE. Specify if reverse strand data should be represented as negative values. Automatically the case with 'strands_intermingled' display.}
+\item{neg_vals_neg_strand}{A logical value (TRUE/FALSE) . Specify if reverse strand data should be represented as negative values. Automatically the case with 'strands_intermingled' display.}
 
-\item{reverse_strand_direction}{TRUE/FALSE. If data is only plotted for the strand of interest (i.e. both_strands=FALSE), reverse strand loci can be horizontally mirrored (5'-left to 3'-right). This option substantially extends the plotting time. Default=FALSE.}
+\item{reverse_strand_direction}{A logical value (TRUE/FALSE) . If data is only plotted for the strand of interest (i.e. both_strands=FALSE), reverse strand loci can be horizontally mirrored (5'-left to 3'-right). This option substantially extends the plotting time. Default=FALSE.}
 
-\item{alternating_background}{TRUE/FALSE. Should the background of the tracks alternate between datasets for easier discrimination? Colors to use can be specified by setting bgr_colors and bgr_alpha.}
+\item{alternating_background}{A logical value (TRUE/FALSE) . Should the background of the tracks alternate between datasets for easier discrimination? Colors to use can be specified by setting bgr_colors and bgr_alpha.}
 
 \item{bgr_colors}{Provide a vector of two colors. Accepts colors by name and hex code, e.g. c('green','yellow') or c('#FF0000','#FF0042') or c('green','#FF0000').}
 
@@ -180,7 +163,7 @@ the function uses default settings.}
 
 \item{locus}{The locus coordinates (e.g. chr1:+:87325400:87351991). When entering feature/locus name and coordinates simultaneously, only the locus name will be considered.}
 
-\item{extra_space}{Extra space up- and downstream of and relative to the selected genomic feature (0.1 = 10%). Only taken into account when locus/feature name is entered - ignored when genomic coordinates are entered.  Default c(1.5,1.5).}
+\item{extra_space}{Extra space up- and downstream of and relative to the selected genomic feature (0.1 = 10 percent). Only taken into account when locus/feature name is entered - ignored when genomic coordinates are entered.  Default c(1.5,1.5).}
 
 \item{annots}{Represents annotations related to genomic data. It is a crucial input for the function and is used to customize the visualization of genomic features. It can either be a 'pre-loaded' annotation in GRanges format by use of the ReadInAnnotations function or a named character vector providing the full paths to indidual annotations that will then be loaded by the function. If using the same set of annotations for creating multiple plots the 'pre-loaded' format is recommended.}
 
@@ -218,7 +201,7 @@ the function uses default settings.}
 
 \item{margin_width_cm}{Specify the size in centimeters of the margins on each side of the sequencing tracks. 0.05 cm per default.}
 
-\item{fixed_panel_width}{TRUE/FALSE. Specify if the tracks labels should mandatorily occupy all the space provided in panels_max_width_cm or if they can use less should it be possible. Ignored if panels_max_width_cm='auto'.}
+\item{fixed_panel_width}{A logical value (TRUE/FALSE) . Specify if the tracks labels should mandatorily occupy all the space provided in panels_max_width_cm or if they can use less should it be possible. Ignored if panels_max_width_cm='auto'.}
 
 \item{horizontal_panels_list}{List of boolean vectors indicating whether text in the individual subpanels in the 'sample overview panel' should be displayed horizontally (TRUE) or vertically (FALSE). The list should be provided in the following format: list('dataset1'=c(TRUE,FALSE,FALSE,TRUE), 'dataset2'=c(TRUE,TRUE), ...). If NULL, an automatic assignment based on available space will be performed.}
 
@@ -228,7 +211,7 @@ the function uses default settings.}
 
 \item{panel_text_colors}{Color(s) of the panel text (as name or hex code). Provide either one color (for all) or two comma-separated colors (for datasets and subgroups).}
 
-\item{horizontal_spacers}{TRUE/FALSE. Specify if a white space (horizontal) should be left between sequencing datasets tracks.}
+\item{horizontal_spacers}{A logical value (TRUE/FALSE) . Specify if a white space (horizontal) should be left between sequencing datasets tracks.}
 
 \item{panel_separators}{Specify if horizontal,vertical line-separators should be displayed in order to clearly separate panels. c(FALSE,TRUE) by default for horizontal and vertical, respectively. If one logical value is supplied it will automatically be applied to both. Horizontal line-separators will only be displayed if horizontal_spacers=TRUE.}
 
@@ -236,7 +219,7 @@ the function uses default settings.}
 
 \item{separators_colors}{Color(s) of the line-separators (as name or hex code). Provide either one color or three comma-separated colors to designate individual colors for 'line-spacer', 'thickline-spacer', 'vertical-spacer', where the first two are horizontal spacers.}
 
-\item{incl_first_panel}{TRUE/FALSE. Should the left-most panels, which displays dataset names, be displayed? Can be omitted if all datasets consist of only one sample or if all samples are contained within one dataset.}
+\item{incl_first_panel}{A logical value (TRUE/FALSE) . Should the left-most panels, which displays dataset names, be displayed? Can be omitted if all datasets consist of only one sample or if all samples are contained within one dataset.}
 
 \item{print_one_line_sample_names}{Combine all sample 'subgroup' information in one panel - separated by points (.)  - instead of setting up multiple panels.}
 
@@ -244,7 +227,7 @@ the function uses default settings.}
 
 \item{group_autoscale}{For each dataset, specify whether to 'group' auto-scale or just auto-scale for each individual track. Named boolean vector.}
 
-\item{incl_track_scales}{TRUE/FALSE. Should tracks scales be displayed (to the left of tracks).}
+\item{incl_track_scales}{A logical value (TRUE/FALSE) . Should tracks scales be displayed (to the left of tracks).}
 
 \item{scientific_scale}{Should scientific number format be used for the tracks scale. Options: allow, all, none. Allow is the default.}
 
@@ -264,7 +247,7 @@ the function uses default settings.}
 
 \item{header_font_colors}{Text colors of the header region. One color or three comma-separated colors for 'main title', 'genomic range (subtitle)' and 'scale', respectively  (use color names or hex codes). Default: black,darkgray,black.}
 
-\item{include_genomic_scale}{TRUE/FALSE. Should genomic scale be displayed.}
+\item{include_genomic_scale}{A logical value (TRUE/FALSE) . Should genomic scale be displayed.}
 
 \item{genomic_scale_on_top}{Display genomic scale above tracks (otherwise it will be displayed below).}
 
@@ -272,29 +255,29 @@ the function uses default settings.}
 
 \item{genomic_scale_font_color}{Color of the genomic scale.}
 
-\item{incl_feature_names}{TRUE/FALSE. Display feature/locus names in the annotation panel.}
+\item{incl_feature_names}{A logical value (TRUE/FALSE) . Display feature/locus names in the annotation panel.}
 
-\item{feature_names_above}{TRUE/FALSE. If TRUE, feature names are displayed above features. If FALSE, feature names are displayed below features.}
+\item{feature_names_above}{A logical value (TRUE/FALSE) . If TRUE, feature names are displayed above features. If FALSE, feature names are displayed below features.}
 
-\item{feature_names_alternating}{TRUE/FALSE. Display reverse strand features as a miror of the forward strand. Will be ignored with 'Intermingled strands display'}
+\item{feature_names_alternating}{A logical value (TRUE/FALSE) . Display reverse strand features as a miror of the forward strand. Will be ignored with 'Intermingled strands display'}
 
 \item{feature_names_font_size}{Font size of the annotated feature name. Will be determined automatically by default.}
 
-\item{incl_feature_brackets}{TRUE/FALSE. Indicate with a bracket (a double-headed arrow) the full range of each locus within the plotted region. Makes most sense when displaying expanded or squished annotations.}
+\item{incl_feature_brackets}{A logical value (TRUE/FALSE) . Indicate with a bracket (a double-headed arrow) the full range of each locus within the plotted region. Makes most sense when displaying expanded or squished annotations.}
 
-\item{incl_feature_shadings}{TRUE/FALSE. Individual loci within the plotted region can be highlighted with a shaded box of alternating colors. This may help distinguish the different loci within the plotted region. Shading colors and opacity can be specified below.}
+\item{incl_feature_shadings}{A logical value (TRUE/FALSE) . Individual loci within the plotted region can be highlighted with a shaded box of alternating colors. This may help distinguish the different loci within the plotted region. Shading colors and opacity can be specified below.}
 
 \item{feature_shading_colors}{Shading colors. Provide two comma-separated colors (as color name or hex code).}
 
 \item{feature_shading_alpha}{Shading opacity. Provide numeric value between 0 and 1. However, using a value  <0.2 is recommended.}
 
-\item{center_of_mass}{TRUE/FALSE. Feature names will be centered based on the the transcript density within a given locus rather than the center. Probably only makes sense if there is a very long outlier transcript that moves the center away from the major transcript variants.}
+\item{center_of_mass}{A logical value (TRUE/FALSE) . Feature names will be centered based on the the transcript density within a given locus rather than the center. Probably only makes sense if there is a very long outlier transcript that moves the center away from the major transcript variants.}
 
 \item{feature_names_font_color}{Text color of the annotated feature name (as color name or hex code).}
 
-\item{dummy_plot}{TRUE/FALSE. Should a dummy plot (without sequencing data, for aestethic trials) be generated? This allows fast debugging of the Plot display parameters. Default FALSE.}
+\item{dummy_plot}{A logical value (TRUE/FALSE) . Should a dummy plot (without sequencing data, for aestethic trials) be generated? This allows fast debugging of the Plot display parameters. Default FALSE.}
 
-\item{pdf}{TRUE/FALSE. Whether to plot to pdf (TRUE) or on-screen (FALSE). Default FALSE}
+\item{pdf}{A logical value (TRUE/FALSE) . Whether to plot to pdf (TRUE) or on-screen (FALSE). Default FALSE}
 
 \item{pdf_name}{Name of pdf file. Default NULL will lead to autogeneration of file name, which will include the bin size and header or feature name. If none of those are defined the file name will include the date.}
 
@@ -578,9 +561,9 @@ annotation_files <- c(
 
 annots = ReadInAnnotations(annotation_files)
 
-seqNdisplay(datasets, colors, bigwig_dirs, bigwigs, parameters, feature='LMO4', annots=annotation_files)
+seqNdisplay(datasets, colors, bigwig_dirs, bigwigs, parameters, feature='LMO4', annots=annotation_files, incl_feature_names=c('ChIP-peaks'=FALSE, 'gencode v38'=TRUE, 'in-house'=TRUE), annot_cols=list('ChIP-peaks'='black', 'gencode v38'='black', 'in-house'=NULL))
 
-seqNdisplay(datasets, colors, bigwig_dirs, bigwigs, parameters, feature='LMO4', annots=annots)
+seqNdisplay(datasets, colors, bigwig_dirs, bigwigs, parameters, feature='LMO4', annots=annots, incl_feature_names=c('ChIP-peaks'=FALSE, 'gencode v38'=TRUE, 'in-house'=TRUE), annot_cols=list('ChIP-peaks'='black', 'gencode v38'='black', 'in-house'=NULL))
 
 }
 \author{

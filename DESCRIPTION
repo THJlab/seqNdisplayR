@@ -41,6 +41,6 @@ Depends:
     shinyTree,
     shinybusy,
     colourpicker,
-Suggests:
+    jsonlite,
     xml2
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3

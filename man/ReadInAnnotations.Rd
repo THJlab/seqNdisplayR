@@ -4,7 +4,7 @@
 \alias{ReadInAnnotations}
 \title{Read In Annotations}
 \usage{
-ReadInAnnotations(annots, verbosity)
+ReadInAnnotations(annots, verbosity = 3)
 }
 \arguments{
 \item{annots}{named list of bed file names (incl. full path; can be stored both locally and on http)}

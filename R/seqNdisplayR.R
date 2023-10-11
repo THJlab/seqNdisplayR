@@ -23,73 +23,56 @@
 #'
 #' @author SLA
 #'
-#' @param datasets A nested list of character vectors containing dataset names, subgroup names and corresponding sample names. This nested list contains the 'tree' structure of the data to be plotted.
-#' @param colors Nested list of colors corresponding to the bigwigs nested list. Pick colors for the individual sample tracks (replicates for a given sample will get the same color).
-#' @param bigwig_dirs Named character vector. For each dataset in datasets a directory where the bigwig files associated with each dataset is located.
-#' @param bigwigs A nested list of bigwig files under each dataset as defined by the datasets.
-#' This argument should be a list that contains information about the bigwig files or data sources
-#' to be used in the data loading and transformation process. The list should be structured as follows:
-#'
-#' - Each element of the list represents a different strand (e.g., '+' or '-').
-#' - Within each strand element, you should provide a named list where the names correspond to the 'datasets' vector.
-#'
-#' The structure of the 'bigwigs' argument should look like this:
-#'
-#' \code{bigwigs <- list(}
-#' \code{  '+' = list(}
-#' \code{    dataset1 = "path/to/bigwig1",}
-#' \code{    dataset2 = "path/to/bigwig2",}
-#' \code{    ...}
-#' \code{  ),}
-#' \code{  '-' = list(}
-#' \code{    dataset1 = "path/to/bigwig1",}
-#' \code{    dataset2 = "path/to/bigwig2",}
-#' \code{    ...}
-#' \code{  )}
-#' \code{)}
-#'
-#' You can provide the paths to the bigwig files as character strings. Each 'dataset' within a strand
-#' should have a corresponding path provided by 'bigwig_dirs' to the bigwig file that contains the data for that 'dataset'.
-#'
-#' The 'bigwigs' argument is essential for loading and processing the data for various 'dataset' values.
+#' @param datasets A nested list of character vectors containing dataset names, subgroup names and corresponding sample names. This nested list contains the 'tree' structure of the data to be plotted. See examples.
+#' @param colors Nested list of colors corresponding to the bigwigs nested list. Pick colors for the individual sample tracks (replicates for a given sample will get the same color). See examples.
+#' @param bigwig_dirs Named character vector. For each dataset in datasets a directory where the bigwig files associated with each dataset is located. See examples.
+#' @param bigwigs A nested list of bigwig files under each dataset. See examples.
 #' @param parameters A list of parameters for customizing data transformation and processing.
 #'
 #' This argument allows you to customize various aspects of data processing and transformation
-#' for different 'seqtype' data. The 'parameters' list should have named elements where each
-#' name corresponds to a 'seqtype' and contains sub-elements for customization.
+#' for different 'datasets' data. The 'parameters' list should have named elements where each
+#' name corresponds to a 'dataset' and contains sub-elements for customization.
 #'
 #' The possible sub-elements within the 'parameters' list include:
 #'
 #' - \code{whichSamples}: A vector or list specifying which samples to include in the analysis.
+#'
 #' - \code{whichReps}: A vector or list specifying which replicates to include in the analysis.
+#'
 #' - \code{log2transform}: A logical value (TRUE/FALSE) indicating whether to perform log2 transformation on the data.
+#'
 #' - \code{pseudoCount}: A numeric value specifying the pseudo-count to be added to the data before transformation.
+#'
 #' - \code{batchCorrect}: A logical value (TRUE/FALSE) indicating whether batch correction should be applied.
+#'
 #' - \code{batch}: A vector or list specifying batch information for samples.
+#'
 #' - \code{negative_valued_bw}: A logical value (TRUE/FALSE) indicating whether negative-valued bigwig data should be considered as positive data.
+#'
 #' - \code{calcMean}: A logical value (TRUE/FALSE) indicating whether the mean of replicated samples should be calculated.
+#'
 #' - \code{negValsSet0}: A logical value (TRUE/FALSE) indicating whether negative values should be set to 0.
 #'
-#' The 'parameters' argument allows you to fine-tune the data processing for specific 'seqtype'
-#' data by providing custom settings for each 'seqtype'. If 'parameters' is NULL (default),
+#' The 'parameters' argument allows you to fine-tune the data processing for a specific 'dataset'
+#' by providing custom settings for each 'dataset'. If 'parameters' is NULL (default),
 #' the function uses default settings.
 #' @param plotting_segment_order Specify the order of displayed vertical segments in the plot using the following segment-labels: 'header', 'scale', names of individual datasets, 'annotations', unstranded-beds, 'thickline-spacer', 'line-spacer' and 'empty-spacer'\. There should be perfect correspondance between datasets to display and the listed datasets. Default NULL which leads to a pre-determined order.
 #' @param preloaded_tracks Void.
 #' @param output_tracks Void.
 #' @param output_parameters Void.
 #' @param input_parameters Void.
-#' @param both_strands TRUE/FALSE. Specify whether data should be displayed for both strands (when available). Default TRUE.
-#' @param strands_intermingled TRUE/FALSE. Specify if both strand should be displayed as intermingled. Default TRUE. Ignored if both_strands=FALSE.
-#' @param neg_vals_neg_strand TRUE/FALSE. Specify if reverse strand data should be represented as negative values. Automatically the case with 'strands_intermingled' display.
-#' @param reverse_strand_direction TRUE/FALSE. If data is only plotted for the strand of interest (i.e. both_strands=FALSE), reverse strand loci can be horizontally mirrored (5'-left to 3'-right). This option substantially extends the plotting time. Default=FALSE.
-#' @param alternating_background TRUE/FALSE. Should the background of the tracks alternate between datasets for easier discrimination? Colors to use can be specified by setting bgr_colors and bgr_alpha.
+#' @param both_strands A logical value (TRUE/FALSE) . Specify whether data should be displayed for both strands (when available). Default TRUE.
+#' @param strands_intermingled A logical value (TRUE/FALSE) . Specify if both strand should be displayed as intermingled. Default TRUE. Ignored if both_strands=FALSE.
+#' @param neg_vals_neg_strand A logical value (TRUE/FALSE) . Specify if reverse strand data should be represented as negative values. Automatically the case with 'strands_intermingled' display.
+#' @param reverse_strand_direction A logical value (TRUE/FALSE) . If data is only plotted for the strand of interest (i.e. both_strands=FALSE), reverse strand loci can be horizontally mirrored (5'-left to 3'-right). This option substantially extends the plotting time. Default=FALSE.
+#' @param alternating_background A logical value (TRUE/FALSE) . Should the background of the tracks alternate between datasets for easier discrimination? Colors to use can be specified by setting bgr_colors and bgr_alpha.
 #' @param bgr_colors Provide a vector of two colors. Accepts colors by name and hex code, e.g. c('green','yellow') or c('#FF0000','#FF0042') or c('green','#FF0000').
 #' @param bgr_alpha Opacity of background shading.
 #' @param strands_alpha Percent opacity of the forward,reverse strand (100=full;0=blank). Default is c(100,100). If one number is provided, this will be used for both forward and reverse strand. Ignored if signals are enhanced (specified for individual datasets in parameters).
 #' @param intermingled_color When the strands_Intermingled=TRUE, it may be beneficial to display data from the two strands with different colors. This can be done by changing the opacity and/or by choosing one of the options complementary, analogous_right and analogous_left.
 #' @param feature The feature/locus name has to be present in one of the supplied annotations and match case. When entering feature/locus name and coordinates simultaneously, only the locus name will be considered.
 #' @param locus The locus coordinates (e.g. chr1:+:87325400:87351991). When entering feature/locus name and coordinates simultaneously, only the locus name will be considered.
-#' @param extra_space Extra space up- and downstream of and relative to the selected genomic feature (0.1 = 10%). Only taken into account when locus/feature name is entered - ignored when genomic coordinates are entered.  Default c(1.5,1.5).
+#' @param extra_space Extra space up- and downstream of and relative to the selected genomic feature (0.1 = 10 percent). Only taken into account when locus/feature name is entered - ignored when genomic coordinates are entered.  Default c(1.5,1.5).
 #' @param annots Represents annotations related to genomic data. It is a crucial input for the function and is used to customize the visualization of genomic features. It can either be a 'pre-loaded' annotation in GRanges format by use of the ReadInAnnotations function or a named character vector providing the full paths to indidual annotations that will then be loaded by the function. If using the same set of annotations for creating multiple plots the 'pre-loaded' format is recommended.
 #' @param annotation_packing Set the annotation packing for each annotation. Options are: ‘expanded’, ‘squished’, ‘collapsed’ and ‘collapsed2’. 'expanded' and 'squished' display the detailed structures of transcripts under a given feature either as fully expanded or squished. ’collapsed’ collapses all overlapping features into one 'super-exon' feature whereas 'collapsed2’ only collapses features belonging to the same locus into one 'super-exon' feature.
 #' @param annot_cols Specify the color(s) used to visualize the annotated features (by color name or hex code). If set to NULL, the colors specified in the bed file will be used.
@@ -108,20 +91,20 @@
 #' @param spacer_height_cm Height in centimeters of each spacer line used in the plot (full plot height will be influenced based on this value).Positive numeric value. Default 0.06 cm.
 #' @param panels_max_width_cm Maximum width in cm that can be occupied by the sample labels panel (to the left of tracks; 'auto' or a positive numeric value). Text truncation may occur if the value makes the panel too narrow.
 #' @param margin_width_cm Specify the size in centimeters of the margins on each side of the sequencing tracks. 0.05 cm per default.
-#' @param fixed_panel_width TRUE/FALSE. Specify if the tracks labels should mandatorily occupy all the space provided in panels_max_width_cm or if they can use less should it be possible. Ignored if panels_max_width_cm='auto'.
+#' @param fixed_panel_width A logical value (TRUE/FALSE) . Specify if the tracks labels should mandatorily occupy all the space provided in panels_max_width_cm or if they can use less should it be possible. Ignored if panels_max_width_cm='auto'.
 #' @param horizontal_panels_list List of boolean vectors indicating whether text in the individual subpanels in the 'sample overview panel' should be displayed horizontally (TRUE) or vertically (FALSE). The list should be provided in the following format: list('dataset1'=c(TRUE,FALSE,FALSE,TRUE), 'dataset2'=c(TRUE,TRUE), ...). If NULL, an automatic assignment based on available space will be performed. 
 #' @param panel_font_sizes Font size(s) for panel text. Provide either one integer (applied to all panel text), two comma-separated integers (the first for the left-most panel, the second one for all subsequent panels), or X comma-separated integer where X corresponds to the largest number of subgroups (incl. dataset). Will be automatically assigned if argument is set to NULL.
 #' @param panel_font_size_list List of font sizes for each dataset and subgroup in the following format: list('dataset1'=c(12,8,6,4), 'dataset2'=c(12,6,4), ...).
 #' @param panel_text_colors Color(s) of the panel text (as name or hex code). Provide either one color (for all) or two comma-separated colors (for datasets and subgroups).
-#' @param horizontal_spacers TRUE/FALSE. Specify if a white space (horizontal) should be left between sequencing datasets tracks.
+#' @param horizontal_spacers A logical value (TRUE/FALSE) . Specify if a white space (horizontal) should be left between sequencing datasets tracks.
 #' @param panel_separators Specify if horizontal,vertical line-separators should be displayed in order to clearly separate panels. c(FALSE,TRUE) by default for horizontal and vertical, respectively. If one logical value is supplied it will automatically be applied to both. Horizontal line-separators will only be displayed if horizontal_spacers=TRUE. 
 #' @param separators_lwds Weight of the line-separators. Provide either one weight or three comma-separated weight(s) to designate individual  weights for 'line-spacer', 'thickline-spacer', 'vertical-spacer', where the first two are horizontal spacers.
 #' @param separators_colors Color(s) of the line-separators (as name or hex code). Provide either one color or three comma-separated colors to designate individual colors for 'line-spacer', 'thickline-spacer', 'vertical-spacer', where the first two are horizontal spacers.
-#' @param incl_first_panel TRUE/FALSE. Should the left-most panels, which displays dataset names, be displayed? Can be omitted if all datasets consist of only one sample or if all samples are contained within one dataset.
+#' @param incl_first_panel A logical value (TRUE/FALSE) . Should the left-most panels, which displays dataset names, be displayed? Can be omitted if all datasets consist of only one sample or if all samples are contained within one dataset.
 #' @param print_one_line_sample_names Combine all sample 'subgroup' information in one panel - separated by points (.)  - instead of setting up multiple panels. 
 #' @param replicate_names Prefix added before replicate numbers (e.g. rep, r). NULL will lead to display of individual replicates without separate naming. NA will lead to display of replicate numbers without a prefix. Ignored when the mean of replicates is calculated.
 #' @param group_autoscale For each dataset, specify whether to 'group' auto-scale or just auto-scale for each individual track. Named boolean vector.
-#' @param incl_track_scales TRUE/FALSE. Should tracks scales be displayed (to the left of tracks).
+#' @param incl_track_scales A logical value (TRUE/FALSE) . Should tracks scales be displayed (to the left of tracks).
 #' @param scientific_scale Should scientific number format be used for the tracks scale. Options: allow, all, none. Allow is the default.
 #' @param force_scale Provide the maximum value for the data scale (y-axis) for each dataset. Either single or two comma-separated positive numeric values. If a single value is supplied, this scaling will be applied to both strands. NULL leads to auto-scaling. Will per default be determined based on maximum value within the dataset.
 #' @param scale_font_size Font size of the data scales.
@@ -131,22 +114,22 @@
 #' @param suppress_header Exclude the 'Header Panel' at the top of the produced plot? This argument is ignored if a header is provided manually.
 #' @param header_font_sizes Font size(s) in the header region (integer value(s) >4). One integer or three comma-separated integers for 'main title', 'genomic range (subtitle)' and 'scale', respectively. Will be determined automatically by default.
 #' @param header_font_colors Text colors of the header region. One color or three comma-separated colors for 'main title', 'genomic range (subtitle)' and 'scale', respectively  (use color names or hex codes). Default: black,darkgray,black.
-#' @param include_genomic_scale TRUE/FALSE. Should genomic scale be displayed.
+#' @param include_genomic_scale A logical value (TRUE/FALSE) . Should genomic scale be displayed.
 #' @param genomic_scale_on_top Display genomic scale above tracks (otherwise it will be displayed below).
 #' @param genomic_scale_font_size Font size of the genomic scale (integer value >4). NULL will lead to automatic determination. 
 #' @param genomic_scale_font_color Color of the genomic scale.
-#' @param incl_feature_names TRUE/FALSE. Display feature/locus names in the annotation panel.
-#' @param feature_names_above TRUE/FALSE. If TRUE, feature names are displayed above features. If FALSE, feature names are displayed below features.
-#' @param feature_names_alternating TRUE/FALSE. Display reverse strand features as a miror of the forward strand. Will be ignored with 'Intermingled strands display'
+#' @param incl_feature_names A logical value (TRUE/FALSE) . Display feature/locus names in the annotation panel.
+#' @param feature_names_above A logical value (TRUE/FALSE) . If TRUE, feature names are displayed above features. If FALSE, feature names are displayed below features.
+#' @param feature_names_alternating A logical value (TRUE/FALSE) . Display reverse strand features as a miror of the forward strand. Will be ignored with 'Intermingled strands display'
 #' @param feature_names_font_size Font size of the annotated feature name. Will be determined automatically by default.
-#' @param incl_feature_brackets TRUE/FALSE. Indicate with a bracket (a double-headed arrow) the full range of each locus within the plotted region. Makes most sense when displaying expanded or squished annotations.
-#' @param incl_feature_shadings TRUE/FALSE. Individual loci within the plotted region can be highlighted with a shaded box of alternating colors. This may help distinguish the different loci within the plotted region. Shading colors and opacity can be specified below.
+#' @param incl_feature_brackets A logical value (TRUE/FALSE) . Indicate with a bracket (a double-headed arrow) the full range of each locus within the plotted region. Makes most sense when displaying expanded or squished annotations.
+#' @param incl_feature_shadings A logical value (TRUE/FALSE) . Individual loci within the plotted region can be highlighted with a shaded box of alternating colors. This may help distinguish the different loci within the plotted region. Shading colors and opacity can be specified below.
 #' @param feature_shading_colors Shading colors. Provide two comma-separated colors (as color name or hex code).
 #' @param feature_shading_alpha Shading opacity. Provide numeric value between 0 and 1. However, using a value  <0.2 is recommended.
-#' @param center_of_mass TRUE/FALSE. Feature names will be centered based on the the transcript density within a given locus rather than the center. Probably only makes sense if there is a very long outlier transcript that moves the center away from the major transcript variants.
+#' @param center_of_mass A logical value (TRUE/FALSE) . Feature names will be centered based on the the transcript density within a given locus rather than the center. Probably only makes sense if there is a very long outlier transcript that moves the center away from the major transcript variants.
 #' @param feature_names_font_color Text color of the annotated feature name (as color name or hex code).
-#' @param dummy_plot TRUE/FALSE. Should a dummy plot (without sequencing data, for aestethic trials) be generated? This allows fast debugging of the Plot display parameters. Default FALSE.
-#' @param pdf TRUE/FALSE. Whether to plot to pdf (TRUE) or on-screen (FALSE). Default FALSE
+#' @param dummy_plot A logical value (TRUE/FALSE) . Should a dummy plot (without sequencing data, for aestethic trials) be generated? This allows fast debugging of the Plot display parameters. Default FALSE.
+#' @param pdf A logical value (TRUE/FALSE) . Whether to plot to pdf (TRUE) or on-screen (FALSE). Default FALSE
 #' @param pdf_name Name of pdf file. Default NULL will lead to autogeneration of file name, which will include the bin size and header or feature name. If none of those are defined the file name will include the date.
 #' @param pdf_dir Directory where the pdf file should be stored. Default './testplotting'.
 #' @param scaling_factor Specify a scaling factor to apply for on-screen display - ignored when exporting to pdf (pdf=TRUE).
@@ -427,9 +410,9 @@
 #' 
 #' annots = ReadInAnnotations(annotation_files)
 #' 
-#' seqNdisplay(datasets, colors, bigwig_dirs, bigwigs, parameters, feature='LMO4', annots=annotation_files)
+#' seqNdisplay(datasets, colors, bigwig_dirs, bigwigs, parameters, feature='LMO4', annots=annotation_files, incl_feature_names=c('ChIP-peaks'=FALSE, 'gencode v38'=TRUE, 'in-house'=TRUE), annot_cols=list('ChIP-peaks'='black', 'gencode v38'='black', 'in-house'=NULL))
 #' 
-#' seqNdisplay(datasets, colors, bigwig_dirs, bigwigs, parameters, feature='LMO4', annots=annots)
+#' seqNdisplay(datasets, colors, bigwig_dirs, bigwigs, parameters, feature='LMO4', annots=annots, incl_feature_names=c('ChIP-peaks'=FALSE, 'gencode v38'=TRUE, 'in-house'=TRUE), annot_cols=list('ChIP-peaks'='black', 'gencode v38'='black', 'in-house'=NULL))
 #' 
 seqNdisplay = function(
     datasets, colors, bigwig_dirs, bigwigs, parameters, plotting_segment_order=NULL, preloaded_tracks=NULL, output_tracks=FALSE, output_parameters=FALSE, input_parameters=NULL,
@@ -442,7 +425,7 @@ seqNdisplay = function(
     group_autoscale=TRUE, incl_track_scales=TRUE, scientific_scale=c('allow', 'all', 'none')[1], force_scale=NULL, scale_font_size=NULL, scale_panel_width_cm='auto', scale_font_color='darkred',
     header=NULL, suppress_header=FALSE, header_font_sizes=NULL, header_font_colors=c('black', 'darkgray', 'black'),
     include_genomic_scale=TRUE, genomic_scale_on_top=TRUE, genomic_scale_font_size=NULL, genomic_scale_font_color='black',
-    incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=TRUE, incl_feature_shadings=TRUE, feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
+    incl_feature_names=TRUE, feature_names_above=FALSE, feature_names_alternating=TRUE, feature_names_font_size=NULL, incl_feature_brackets=FALSE, incl_feature_shadings=FALSE, feature_shading_colors=c('steelblue', 'hotpink'), feature_shading_alpha=0.05, center_of_mass=FALSE, feature_names_font_color='black',
     dummy_plot=FALSE, pdf=FALSE, pdf_name=NULL, pdf_dir='./testplotting', scaling_factor=1, verbosity='normal', interface='R', ...){
   
   t1 = Sys.time()
@@ -539,6 +522,9 @@ seqNdisplay = function(
         .annot.cols = ScrutinizeExpandAndNameParameter(annot_cols, .annotations, use_names=TRUE, default_value='black', expect_standard='color', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'annot_cols', 'Feature Colors'), verbosity=.verbosity)
         .annot.cols = as.list(.annot.cols)
       }
+    }else{
+      .annot.cols = ScrutinizeExpandAndNameParameter(annot_cols, .annotations, use_names=TRUE, default_value='black', expect_standard='color', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'annot_cols', 'Feature Colors'), verbosity=.verbosity)
+      .annot.cols = as.list(.annot.cols)
     }
     #### -> check parameters part 2 - abort and return NULL if any of the crucial parameters are NULL
     if ( any(sapply(list(.annotations,.incl.feature.names,.feature.names.above,.annot.cols,.incl.feature.brackets,.incl.feature.shadings,.annotation.packing), function(parameter) is.null(parameter))) ){ return() }
@@ -2395,7 +2381,7 @@ PlotWidths = function(panels_max_width_cm, scale_panel_width_cm, margin_width_cm
 #'                      'in-house'='http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/annotations/HeLa_major_isoform_hg38_gc34.bed')
 #' annots_listedGR = ReadInAnnotations(annots=annots_fnames, verbosity=3)               
 #' 
-ReadInAnnotations = function(annots, verbosity){
+ReadInAnnotations = function(annots, verbosity=3){
   if (verbosity > 0){ 
     cat('reading annotations', '\n') 
     cat(paste(names(annots), collapse='\t'), '\n')
