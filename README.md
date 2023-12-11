@@ -57,5 +57,11 @@ The problem is likely arising from an error in populating the 'Color' column in 
 
 
 ## Report bugs
-seqndisplayr@gmail.com
+Before submitting a bug report, please ensure that the issue is reproducible and that you have followed all the guidelines outlined in the accompanying article and instruction videos (https://www.youtube.com/channel/UCxgoRhACK-1gavmUWIXd-eQ).
+
+When reporting a bug, be sure to provide a detailed description of the problem, including relevant files and screenshots if necessary.
+
+Submit your bug report to seqndisplayr@gmail.com, and it will be periodically reviewed.
+
+
 
