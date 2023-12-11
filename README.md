@@ -4,33 +4,33 @@
 
 see https://rdrr.io/github/THJlab/seqNdisplayR/
 
-### Requirements:
+## Requirements:
 Depends:
-    R (>= 4.0),  
-    rtracklayer,
-    RCurl,
-    dplyr (>= 0.7),
-    GenomicRanges,
-    BiocGenerics, 
-    GenomeInfoDb, 
-    S4Vectors,
-    IRanges,
-    rlist,
-    limma,
-    readxl,
-    writexl,
-    shiny,
-    fastmap,
-    shinyBS,
-    shinyjs,
-    spsComps,
-    shinyTree,
-    shinybusy,
-    colourpicker,
-    jsonlite,
+    R (>= 4.0)  
+    rtracklayer
+    RCurl
+    dplyr (>= 0.7)
+    GenomicRanges
+    BiocGenerics 
+    GenomeInfoDb 
+    S4Vectors
+    IRanges
+    rlist
+    limma
+    readxl
+    writexl
+    shiny
+    fastmap
+    shinyBS
+    shinyjs
+    spsComps
+    shinyTree
+    shinybusy
+    colourpicker
+    jsonlite
     xml2
 
-#### Troubleshooting:
+## Troubleshooting:
 
 Following is a list of potential errors or unexpected behaviors from seqNdisplayR and how to fix them.
 
@@ -55,4 +55,6 @@ If all requirements are met, double-check for any white spaces within your segme
 The problem is likely arising from an error in populating the 'Color' column in the 'Samples' sheet. It's crucial that the colors align with the sample structure, and only one color per subset should be specified. To resolve this issue, you might want to consider leaving the 'Color' column blank and filling it from within the Shiny app.
 ![image](https://github.com/THJlab/seqNdisplayR/assets/95024722/6277d188-c582-4a4d-b3bd-9a84ba55074e)
 
+## Report bugs
+seqndisplayr@gmail.com
 
