@@ -53,7 +53,9 @@ If all requirements are met, double-check for any white spaces within your segme
 4/ The Excel sheet import encounters repeated failures and continuously resets, accompanied by a warning stating, "argument 'replacement' has length > 1, and only the first element will be used."
 
 The problem is likely arising from an error in populating the 'Color' column in the 'Samples' sheet. It's crucial that the colors align with the sample structure, and only one color per subset should be specified. To resolve this issue, you might want to consider leaving the 'Color' column blank and filling it from within the Shiny app.
-![image](https://github.com/THJlab/seqNdisplayR/assets/95024722/6277d188-c582-4a4d-b3bd-9a84ba55074e)
+
+<img width="452" alt="image" src="https://github.com/THJlab/seqNdisplayR/assets/95024722/0cde9772-8cdd-4f8a-94aa-e7bdba4f3b6f">
+
 
 ## Report bugs
 seqndisplayr@gmail.com
