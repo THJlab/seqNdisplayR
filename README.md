@@ -6,11 +6,7 @@ see https://rdrr.io/github/THJlab/seqNdisplayR/
 
 ## Requirements:
 Depends:
-    R (>= 4.0)  
-    rtracklayer
-    RCurl
-    dplyr (>= 0.7)
-    GenomicRanges
+R (>= 4.0), rtracklayer, RCurl, dplyr (>= 0.7), GenomicRanges
     BiocGenerics 
     GenomeInfoDb 
     S4Vectors
