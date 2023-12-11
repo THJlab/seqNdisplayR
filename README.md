@@ -5,26 +5,29 @@
 see https://rdrr.io/github/THJlab/seqNdisplayR/
 
 ## Requirements:
-Depends:
-R (>= 4.0), rtracklayer, RCurl, dplyr (>= 0.7), GenomicRanges
-    BiocGenerics 
-    GenomeInfoDb 
-    S4Vectors
-    IRanges
-    rlist
-    limma
-    readxl
-    writexl
-    shiny
-    fastmap
-    shinyBS
-    shinyjs
-    spsComps
-    shinyTree
-    shinybusy
-    colourpicker
-    jsonlite
-    xml2
+R (>= 4.0), 
+rtracklayer, 
+RCurl, 
+dplyr (>= 0.7), 
+GenomicRanges, 
+BiocGenerics,
+GenomeInfoDb,
+S4Vectors,
+IRanges,
+rlist,
+limma,
+readxl,
+writexl,
+shiny,
+fastmap,
+shinyBS,
+shinyjs,
+spsComps,
+shinyTree,
+shinybusy,
+colourpicker,
+jsonlite,
+xml2
 
 ## Troubleshooting:
 
