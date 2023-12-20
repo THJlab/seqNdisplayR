@@ -85,7 +85,6 @@ ParseOption = function(option_str) {
 }
 
 
-
 #' Deparse Option
 #'
 #' @description Internal function: 
@@ -114,6 +113,8 @@ DeparseOption = function(option) {
     }
   } else if( is.null(option) ) {
     "NULL"
+  } else if( is.na(option) ) { #@ 2023-09-20 added this; don't know why it was needed all of a sudden - shouldn't interfere with other stuffs
+    "NA"
   } else if( option == '' ) {
     "NULL"
   } else if( is.character(option) ) {
@@ -128,6 +129,34 @@ DeparseOption = function(option) {
     option
   }
 }
+
+
+DeparseOption_obs = function(option) {
+  if( length(option) > 1 ){
+    if ( is.list(option) ) {
+      elems = lapply(option, DeparseOption)
+      paste(paste(names(elems), elems, sep=':'), collapse=';')
+    } else {
+      paste(sapply(option, DeparseOption), collapse=',')
+    }
+  } else if( is.null(option) ) {
+    "NULL"
+  } else if( option == '' ) {
+    "NULL"
+  } else if( is.character(option) ) {
+    option
+  } else if( is.numeric(option) ) {
+    as.character(option)
+  } else if( option == TRUE ){
+    "TRUE"
+  }else if( option == FALSE ){
+    "FALSE"
+  }else  {
+    option
+  }
+}
+
+
 
 #' List Depth
 #'
@@ -1841,7 +1870,7 @@ server <- function(input, output, session) {
       if (is.null(seqNdisplayR_session[['horizontal_panels_list']][[name]])){
         vals = levels
       }else{
-        vals = levels[seqNdisplayR_session[['horizontal_panels_list']][[name]]]
+        vals = levels[seqNdisplayR_session[['horizontal_panels_list']][[name]]] 
       }
       
       insertUI(
@@ -2399,17 +2428,8 @@ server <- function(input, output, session) {
                 elem = paste0('panel_horizontal_XvalueX', CurrentSessionIdx(), '_', alt_name)
                 checked_levels = input[[elem]]
                 value[[dataset_name]] = (available_levels %in% checked_levels)
-                #cat(paste0(dataset_name, ':', value[[dataset_name]]), '\n') #@cat
+                #cat(paste0(dataset_name, ':', paste(value[[dataset_name]]), collapse=';'), '\n') #@cat
               }
-              # for (elem in shiny_chkbxgrps) {
-              #   dataset_name = sub(paste0('panel_horizontal_XvalueX', CurrentSessionIdx(), '_'), '', elem)
-              #   dataset_group_depth = ListDepth(CurrentSession()$samples[[dataset_name]]) + 1
-              #   available_levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
-              #   checked_levels = input[[elem]]
-              #   value[[dataset_name]] = (available_levels %in% checked_levels)
-              #   cat(paste0(dataset_name, ':', value[[dataset_name]]), '\n') #@cat
-              # }
-              #cat('\n') #@cat
             }else{
               value = NULL #@ list(NULL)
             }
@@ -2494,15 +2514,6 @@ server <- function(input, output, session) {
     })
     
     names(l) <- opts
-    #@ ->
-    # cat('dataset options', '\n')
-    # for (lname in names(l)){
-    #   cat(lname, '\n')
-    #   v = l[[lname]]
-    #   cat(paste0(names(v), ':', v), '\n')
-    # }
-    # cat('\n')
-    #@ <-
     l
   })
   
@@ -2640,16 +2651,19 @@ server <- function(input, output, session) {
         #cat(op_name, '\n') #@ 2023-10-07
         #cat(shiny_session_global_options$track_height_cm, '\n') #@ 2023-10-07
         template_session[op_name] = shiny_session_global_options[op_name]
-        #cat(paste(op_name, '****', shiny_session_global_options[op_name]), '\n')
+        #cat(paste(op_name, '****', template_session[op_name]), '\n')
+        if (op_name == 'horizontal_panels_list'){
+          template_session[op_name] = shiny_session_global_options[op_name]
+          cat(paste(op_name, '****'), '\n') #@ 2023-12-18
+          cat(paste0(names(template_session[[op_name]]), ': ', template_session[[op_name]]), '\n') #@ 2023-12-18
+        }
       }
     }
     #@ <- 2023-06-19
     shiny_session_dataset_options <- GetShinyDatasetOptions()
     for ( sample_name in names(template_session$parameters) ) {
-      #@ alt_name = gsub('\\s+', 'YvalueY', sample_name) #@
-      alt_name = gsub('\\s+', paste0('Y', which(names(template_session$parameters)==sample_name), 'Y'), sample_name) #@
-      #@ alt_name = gsub("[[:punct:]]", "ZvalueZ", alt_name) #@
-      alt_name = gsub("[[:punct:]]", paste0('Z', which(names(template_session$parameters)==sample_name), 'Z'), alt_name) #@
+      alt_name = gsub('\\s+', paste0('Y', which(names(template_session$parameters)==sample_name), 'Y'), sample_name)
+      alt_name = gsub("[[:punct:]]", paste0('Z', which(names(template_session$parameters)==sample_name), 'Z'), alt_name)
       for ( op in names(shiny_session_dataset_options) ) {
         opt = shiny_session_dataset_options[[op]]
         if ( sample_name %in% names(opt) ) {
@@ -2661,8 +2675,8 @@ server <- function(input, output, session) {
         }
       }
       for (op in c('horizontal_panels_list', 'panel_font_size_list')){
-        if ( alt_name %in% names(template_session[[op]]) ) {
-          template_session[[op]][[sample_name]] = template_session[[op]][[alt_name]]
+        if ( alt_name %in% names(template_session[[op]]) & alt_name != sample_name) { #@ 2023-12-18
+          template_session[[op]][[sample_name]] = template_session[[op]][[alt_name]] 
           template_session[[op]][[alt_name]] = NULL
         }
       }
@@ -2714,6 +2728,7 @@ server <- function(input, output, session) {
                      output$console <- renderText({"Please provide locus name or coordinates for region to be plotted."})
                    } else {
                      session_to_plot <- seqNdisplayR_session()
+                     cat(paste0(names(session_to_plot[['horizontal_panels_list']]), ': ', session_to_plot[['horizontal_panels_list']]), '\n') #@ 2023-12-18
                      show_modal_spinner(spin='circle', text='Creating plot, please be patient. The plot will appear in a separate window')
                      x <- 'Plotting failed, please check your settings'
                      spsComps::shinyCatch({

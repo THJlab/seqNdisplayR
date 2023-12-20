@@ -7073,7 +7073,7 @@ PlotPanels = function(plotting_segment, plotted_strand, panel_info, panels_list,
         .font.size.first.panel = .panel.font.size.list[[plotting_segment]][.panel]
         .trackname.cex = .font.size.first.panel*scaling_factor/12
         .horizontal.panels.list = panel_info[[plotted_strand]]$horizontal.panels.list
-        .horizontal = .horizontal.panels.list[[plotting_segment]][.panel]
+        .horizontal = as.logical(.horizontal.panels.list[[plotting_segment]][.panel]) #@ 2023-12-18
         if (print_one_line_sample_names){ 
           .horizontal = TRUE
         } 
@@ -8313,6 +8313,15 @@ FillDf = function(df) {
   }else{
     dateset_end_rows = structure(c(dateset_start_rows-1, nrow(df))[2:(length(datasets)+1)], names=datasets) 
   }
+  #@ -->> bigwig_directory 2023-12-18
+  for (j in 2:length(dateset_start_rows)){
+    k1 = dateset_start_rows[j]
+    k0 = dateset_start_rows[j-1]
+    if ( IsEmpty(df[['bigwig_directory']][k1]) & !IsEmpty(df[['bigwig_directory']][k0]) ){
+      df[['bigwig_directory']][k1] = df[['bigwig_directory']][k0]
+    }
+  }
+  #@ <<-- bigwig_directory 2023-12-18
   for (dataset in datasets){
     sub_df = df[dateset_start_rows[dataset]:dateset_end_rows[dataset], , drop=FALSE]
     allowed_cols = intersect(colnames(sub_df)[which(!is.na(sub_df[1,]))], c('color', 'bigwig_directory', 'dataset', grep('subgroup_', colnames(df), value=TRUE)))
@@ -8351,6 +8360,40 @@ FillDf = function(df) {
 #' @examples
 #' 
 EmptyDf = function(df) {
+  emptied_df = data.frame()
+  cols = c('bigwig_directory', 'dataset', colnames(df)[grepl('^subgroup_', colnames(df))])
+  if ( nrow(df) > 1 ) {
+    datasets_rle = Rle(df$dataset[!is.na(df$dataset)])
+    datasets = runValue(datasets_rle)
+    dataset_start_rows = structure(cumsum((c(1, runLength(datasets_rle))))[1:length(datasets)], names=datasets)
+    if (length(datasets) == 1){
+      dataset_end_rows = structure(nrow(df), names=datasets)  
+    }else{
+      dataset_end_rows = structure(c(dataset_start_rows-1, nrow(df))[2:(length(datasets)+1)], names=datasets) 
+    }
+    for (dataset in datasets){
+      sub_df = df[dataset_start_rows[dataset]:dataset_end_rows[dataset], , drop=FALSE]
+      empty_sub_df = sub_df
+      for ( i in 2:nrow(sub_df) ) {
+        for ( col in cols ) {
+          if ( is.na(sub_df[[col]][[i]]) ) {
+            empty_sub_df[[col]][[i]] = ''
+          } else if ( !is.na(sub_df[[col]][[i - 1]]) & empty_sub_df[[col]][[i]] == sub_df[[col]][[i-1]] ) {
+            empty_sub_df[[col]][[i]] = ''
+          }
+        }
+      }
+      emptied_df = rbind(emptied_df, empty_sub_df)
+    }
+  }else{
+    emptied_df = df
+  }
+  emptied_df
+}
+    
+    
+
+EmptyDf_obs = function(df) {
   emptied_df = df
   if ( nrow(df) > 1 ) {
     cols = c('bigwig_directory', 'dataset', colnames(df)[grepl('^subgroup_', colnames(df))])
