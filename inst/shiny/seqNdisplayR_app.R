@@ -2654,8 +2654,8 @@ server <- function(input, output, session) {
         #cat(paste(op_name, '****', template_session[op_name]), '\n')
         if (op_name == 'horizontal_panels_list'){
           template_session[op_name] = shiny_session_global_options[op_name]
-          cat(paste(op_name, '****'), '\n') #@ 2023-12-18
-          cat(paste0(names(template_session[[op_name]]), ': ', template_session[[op_name]]), '\n') #@ 2023-12-18
+          #cat(paste(op_name, '****'), '\n') #@ 2023-12-18
+          #cat(paste0(names(template_session[[op_name]]), ': ', template_session[[op_name]]), '\n') #@ 2023-12-18
         }
       }
     }
@@ -2728,7 +2728,7 @@ server <- function(input, output, session) {
                      output$console <- renderText({"Please provide locus name or coordinates for region to be plotted."})
                    } else {
                      session_to_plot <- seqNdisplayR_session()
-                     cat(paste0(names(session_to_plot[['horizontal_panels_list']]), ': ', session_to_plot[['horizontal_panels_list']]), '\n') #@ 2023-12-18
+                     #cat(paste0(names(session_to_plot[['horizontal_panels_list']]), ': ', session_to_plot[['horizontal_panels_list']]), '\n') #@ 2023-12-18
                      show_modal_spinner(spin='circle', text='Creating plot, please be patient. The plot will appear in a separate window')
                      x <- 'Plotting failed, please check your settings'
                      spsComps::shinyCatch({
