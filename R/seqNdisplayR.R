@@ -8313,15 +8313,19 @@ FillDf = function(df) {
   }else{
     dateset_end_rows = structure(c(dateset_start_rows-1, nrow(df))[2:(length(datasets)+1)], names=datasets) 
   }
-  #@ -->> bigwig_directory 2023-12-18
-  for (j in 2:length(dateset_start_rows)){
-    k1 = dateset_start_rows[j]
-    k0 = dateset_start_rows[j-1]
-    if ( IsEmpty(df[['bigwig_directory']][k1]) & !IsEmpty(df[['bigwig_directory']][k0]) ){
-      df[['bigwig_directory']][k1] = df[['bigwig_directory']][k0]
+  #@ -->> bigwig_directory 2024-02-05
+  if (length(datasets) > 1){
+    #@ -->> bigwig_directory 2023-12-18
+    for (j in 2:length(dateset_start_rows)){
+      k1 = dateset_start_rows[j]
+      k0 = dateset_start_rows[j-1]
+      if ( IsEmpty(df[['bigwig_directory']][k1]) & !IsEmpty(df[['bigwig_directory']][k0]) ){
+        df[['bigwig_directory']][k1] = df[['bigwig_directory']][k0]
+      }
     }
+    #@ <<-- bigwig_directory 2023-12-18
   }
-  #@ <<-- bigwig_directory 2023-12-18
+  #@ <<-- bigwig_directory 2024-02-05
   for (dataset in datasets){
     sub_df = df[dateset_start_rows[dataset]:dateset_end_rows[dataset], , drop=FALSE]
     allowed_cols = intersect(colnames(sub_df)[which(!is.na(sub_df[1,]))], c('color', 'bigwig_directory', 'dataset', grep('subgroup_', colnames(df), value=TRUE)))
