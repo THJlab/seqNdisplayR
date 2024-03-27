@@ -31,7 +31,13 @@ xml2
 
 ## Troubleshooting:
 
-Following is a list of potential errors or unexpected behaviors from seqNdisplayR and how to fix them.
+_Warning:_
+
+Some MacOS Sonoma users might experience display issues with their preview plots (see video below). However, this issue appears to be independent of the seqNdisplayR package itself and should be resolved over time through OS and sub-package updates. Importantly, this display problem does not affect the generation of PDF displays. To benefit from the preview display, users can simply enlarge the preview window slightly, which will make the plot appear (see video below). We recommend not enlarging the plot too much, as this may alter the positioning of various elements in the display. Alternatively, users with multiple monitors can simply drag the preview window to another monitor, which will also update the display.
+
+![fixing_plot_preview](https://github.com/THJlab/seqNdisplayR/blob/master/fixing_plot_preview.gif)
+
+Below is a list of potential errors or unexpected behaviors from seqNdisplayR and how to fix them.
 
 1/ A dummy plot is generated without ticking the corresponding option or some tracks are not displayed
 
