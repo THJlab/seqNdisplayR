@@ -7253,25 +7253,26 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, interming
       .y.exp[.plotted.strand] = as.integer(ifelse((group_autoscale[plotting_segment] | 'forced' %in% names(y_par[[.plotted.strand]][['exp']])), y_par[[.plotted.strand]][['exp']], y_par[[.plotted.strand]][['exp']][.seq.sample])) 
       .plot.mat = plot_mat[[.plotted.strand]] / .y.val[.plotted.strand]
     }
-    if (any(.plot.mat > 1.5)){ .plot.mat[which(.plot.mat > 1.5)] = 1.5 }
+    .max.val.abs = 1.2 #@ 2024-03-26 The adjusted scale goes from 0 to 1.5, where do you want the absolute max to be. With autoscale it is at 1.
+    if (any(.plot.mat > .max.val.abs)){ .plot.mat[which(.plot.mat > .max.val.abs)] = .max.val.abs } #@ 2024-03-26
     plot(0, 0, type='n', xlim=c(plot_start, plot_end), ylim=.y.limits, ann=FALSE, axes=FALSE, bg='transparent', bty='n', xaxs='i', yaxs ='i')
     .adj.colors = structure(unlist(lapply(c('+', '-'), function(.strand) {.adj.rgb = (255 - (ifelse(!.enhance, strands_alpha[.strand], 100)/100)*(255 - as.vector(col2rgb(.base.cols[.base.seq.sample]))))/255; .adj.color = rgb(.adj.rgb[1], .adj.rgb[2], .adj.rgb[3]); return(.adj.color)})), names=c('+', '-'))
     if (.plotted.strand=='+-'){
       lines(as.integer(rownames(.plot.mat)), ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*.plot.mat[,.seq.sample], type='h', lend=1,
             lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors['+']) 
-      if (any(.plot.mat[,.seq.sample] == 1.5)){ 
-        saturated_indices = which(.plot.mat[,.seq.sample] == 1.5)
+      if (any(.plot.mat[,.seq.sample] == .max.val.abs)){ #@ 2024-03-26 1.5 -> .max.val.abs
+        saturated_indices = which(.plot.mat[,.seq.sample] == .max.val.abs) #@ 2024-03-26 1.5 -> .max.val.abs
         .samp.color = .adj.colors['+']
         .sat.color = ChangeColorLightness(.samp.color, 0.25)
-        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.40, length(saturated_indices)), 
-                 as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.50, length(saturated_indices)), 
+        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(.max.val.abs - 0.1, length(saturated_indices)), #@ 2024-03-26 1.4 -> .max.val.abs - 0.1
+                 as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(.max.val.abs, length(saturated_indices)), #@ 2024-03-26 1.5 -> .max.val.abs
                  lend=1, lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.sat.color)
-        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.35, length(saturated_indices)), 
-                 as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.40, length(saturated_indices)), 
+        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(.max.val.abs - 0.15, length(saturated_indices)), #@ 2024-03-26 1.35 -> .max.val.abs - 0.15
+                 as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(.max.val.abs - 0.1, length(saturated_indices)), #@ 2024-03-26 1.4 -> .max.val.abs - 0.1
                  lend=1, lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col='white')
       }
       .plot.mat = plot_mat[['-']] / .y.val['-']
-      if (any(.plot.mat > 1.5)){ .plot.mat[which(.plot.mat > 1.5)] = 1.5 }
+      if (any(.plot.mat > .max.val.abs)){ .plot.mat[which(.plot.mat > .max.val.abs)] = .max.val.abs } #@ 2024-03-26 1.5 -> .max.val.abs
       if (intermingled_color!='same'){
         if (intermingled_color=='complementary'){
           .adj.colors['-'] = sapply(.adj.colors['-'], function(c) ConvertColor(c, phi=180))
@@ -7283,30 +7284,30 @@ PlotData = function(plotting_segment, plot_mat, colors, strands_alpha, interming
       }
       lines(as.integer(rownames(.plot.mat)), -1*.plot.mat[,.seq.sample], type='h', lend=1,
             lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors['-'])
-      if (any(.plot.mat[,.seq.sample] == 1.5)){ 
-        saturated_indices = which(.plot.mat[,.seq.sample] == 1.5)
+      if (any(.plot.mat[,.seq.sample] == .max.val.abs)){ #@ 2024-03-26 1.5 -> .max.val.abs
+        saturated_indices = which(.plot.mat[,.seq.sample] == .max.val.abs) #@ 2024-03-26 1.5 -> .max.val.abs
         .samp.color = .adj.colors['-']
         .sat.color = ChangeColorLightness(.samp.color, 0.25)
-        segments(as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(1.40, length(saturated_indices)), 
-                 as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(1.50, length(saturated_indices)), 
+        segments(as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(.max.val.abs - 0.1, length(saturated_indices)), #@ 2024-03-26 1.4 -> .max.val.abs - 0.1
+                 as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(.max.val.abs, length(saturated_indices)), #@ 2024-03-26 1.5 -> .max.val.abs - 0.1
                  lend=1, lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.sat.color)  
-        segments(as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(1.35, length(saturated_indices)), 
-                 as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(1.40, length(saturated_indices)), 
+        segments(as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(.max.val.abs - 0.15, length(saturated_indices)), #@ 2024-03-26 1.35 -> .max.val.abs - 0.15
+                 as.integer(rownames(.plot.mat))[saturated_indices], -1*rep(.max.val.abs - 0.1, length(saturated_indices)), #@ 2024-03-26 1.4 -> .max.val.abs - 0.1
                  lend=1, lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col='white')
       }
       abline(h=0, col='whitesmoke', lwd=scaling_factor*line_width_scaling_factor*0.5, lend=1) 
     }else{
       lines(as.integer(rownames(.plot.mat)), ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*.plot.mat[,.seq.sample], type='h', lend=1,
             lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.adj.colors[.plotted.strand])
-      if (any(.plot.mat[,.seq.sample] == 1.5)){ 
-        saturated_indices = which(.plot.mat[,.seq.sample] == 1.5)
+      if (any(.plot.mat[,.seq.sample] == .max.val.abs)){ #@ 2024-03-26 1.5 -> .max.val.abs
+        saturated_indices = which(.plot.mat[,.seq.sample] == .max.val.abs) #@ 2024-03-26 1.5 -> .max.val.abs
         .samp.color = .adj.colors[.plotted.strand]
         .sat.color = ChangeColorLightness(.samp.color, 0.25)
-        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.40, length(saturated_indices)),
-                 as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.50, length(saturated_indices)),
+        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(.max.val.abs - 0.1, length(saturated_indices)), #@ 2024-03-26 1.4 -> .max.val.abs - 0.1
+                 as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(.max.val.abs, length(saturated_indices)), #@ 2024-03-26 1.5 -> .max.val.abs
                  lend=1, lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col=.sat.color) 
-        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.35, length(saturated_indices)),
-                 as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(1.40, length(saturated_indices)),
+        segments(as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(.max.val.abs - 0.15, length(saturated_indices)), #@ 2024-03-26 1.35 -> .max.val.abs - 0.15
+                 as.integer(rownames(.plot.mat))[saturated_indices], ifelse(neg_vals_neg_strand & .plotted.strand=='-', -1, 1)*rep(.max.val.abs - 0.1, length(saturated_indices)), #@ 2024-03-26 1.4 -> .max.val.abs - 0.1
                  lend=1, lwd=ifelse(.enhance, 5, 1)*scaling_factor*bin_width, col='white') 
       }
     }
