@@ -6052,15 +6052,17 @@ BasicPlotParameters = function(plotted_strand, plotted_region, feature_names_fon
   points_per_cm = constants_defaults['points_per_cm'] #@ 2022-10-05
   cm_to_in = constants_defaults['cm_to_in'] #@ 2022-10-05
   # binning
-  .plot.width = IRanges::width(plotted_region[[plotted_strand]])
+  .plot.width = IRanges::width(plotted_region[[plotted_strand]]) + 1 #@ 2024-07-31 added +1
   .tracks.width.cm = plot_width_parameters[['tracks.width.cm']]
   .bases.per.cm = .plot.width/.tracks.width.cm
   .bins.per.cm = .bases.per.cm/bin_size
   .points.per.bin = points_per_cm/.bins.per.cm
   .bin.width = 2*line_width_scaling_factor*.points.per.bin # 2*line_width_scaling_factor ~ 1pt in pdf
-  if (.bases.per.cm < bins_per_cm){
-    .bin.width = .bin.width * bins_per_cm/.bases.per.cm  # to ensure same density of colors
-  }
+  #@ 2024-07-31 -->
+  # if (.bases.per.cm < bins_per_cm){
+  #   .bin.width = .bin.width * bins_per_cm/.bases.per.cm  # to ensure same density of colors
+  # }
+  #@ 2024-07-31 <--
   .bin.start = S4Vectors::mcols(plotted_region[[plotted_strand]])$bin.start
   .bin.info = c(bin_size, .bin.width)
   if (length(plot_height_parameters[[plotted_strand]][['annot.heights.incl.text']]) > 0){
