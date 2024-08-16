@@ -74,7 +74,7 @@ ParseOption = function(option_str) {
   }else if(option_str == 'FALSE' | option_str == 'F'){
     FALSE
   }else if(option_str == 'NULL'){
-    NULL #@ 
+    NULL
   }else if( option_str == 'NA' ){ #$ added 230519
     NA
   }else if( !is.na(suppressWarnings(as.numeric(option_str))) ){
@@ -102,7 +102,7 @@ ParseOption = function(option_str) {
 #' DeparseOption(c(1.2,3))
 #' DeparseOption(list('RNA-seq' = c(1.2,3), 'TT-seq' = c(2,4)))
 #' DeparseOption(list('RNA-seq' = c(TRUE,FALSE), 'TT-seq' = c(TRUE,FALSE)))
-#' @note change throughout from deparse_option to DeparseOption - done? #% 2022-10-04
+#' 
 DeparseOption = function(option) {
   if( length(option) > 1 ){
     if ( is.list(option) ) {
@@ -111,6 +111,10 @@ DeparseOption = function(option) {
     } else {
       paste(sapply(option, DeparseOption), collapse=',')
     }
+  } else if ( is.list(option)) { #@ 2024-08-16 -->
+    elems = lapply(option, DeparseOption)
+    paste(paste(names(elems), elems, sep=':'), collapse=';')
+    #@ 2024-08-16 <--
   } else if( is.null(option) ) {
     "NULL"
   } else if( is.na(option) ) { #@ 2023-09-20 added this; don't know why it was needed all of a sudden - shouldn't interfere with other stuffs
@@ -129,34 +133,6 @@ DeparseOption = function(option) {
     option
   }
 }
-
-
-DeparseOption_obs = function(option) {
-  if( length(option) > 1 ){
-    if ( is.list(option) ) {
-      elems = lapply(option, DeparseOption)
-      paste(paste(names(elems), elems, sep=':'), collapse=';')
-    } else {
-      paste(sapply(option, DeparseOption), collapse=',')
-    }
-  } else if( is.null(option) ) {
-    "NULL"
-  } else if( option == '' ) {
-    "NULL"
-  } else if( is.character(option) ) {
-    option
-  } else if( is.numeric(option) ) {
-    as.character(option)
-  } else if( option == TRUE ){
-    "TRUE"
-  }else if( option == FALSE ){
-    "FALSE"
-  }else  {
-    option
-  }
-}
-
-
 
 #' List Depth
 #'

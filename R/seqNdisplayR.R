@@ -1858,6 +1858,14 @@ Session2xlsx = function(session, path, ...) {
   
   session_options = session[!names(session) %in% c('samples', 'colors', 'bigwigs', 'bigwig_dirs', 'parameters', 'annotation_files', 'annots', anno_display_option_names)]
   
+  #@ 2024-08-16
+  if (length(intersect(para_df$dataset, names(session_options[['horizontal_panels_list']]))) > 0){
+    session_options[['horizontal_panels_list']] = session_options[['horizontal_panels_list']][intersect(para_df$dataset, names(session_options[['horizontal_panels_list']]))]  
+  }else{
+    session_options[['horizontal_panels_list']] = NULL
+  }
+  
+  
   options = data.frame('Option' = names(session_options),
                        'Value' = as.character(
                          sapply(session_options, DeparseOption, USE.NAMES = FALSE)
@@ -8197,6 +8205,10 @@ DeparseOption = function(option) {
     } else {
       paste(sapply(option, DeparseOption), collapse=',')
     }
+  } else if ( is.list(option)) { #@ 2024-08-16 -->
+    elems = lapply(option, DeparseOption)
+    paste(paste(names(elems), elems, sep=':'), collapse=';')
+    #@ 2024-08-16 <--
   } else if( is.null(option) ) {
     "NULL"
   } else if( is.na(option) ) { #@ 2023-09-20 added this; don't know why it was needed all of a sudden - shouldn't interfere with other stuffs
