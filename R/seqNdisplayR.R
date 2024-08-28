@@ -7164,12 +7164,13 @@ PlotMatrix = function(plotted_region, basic_plot_parameters, plot_start, plot_en
             .plot.mat[,.seq.sample] = sapply((-.n.bins.before+1):.n.bins.after, function(.n.bin) max(.score[abs(.bin.start - plot_start) + ((.n.bin-1)*bin_size+1):(.n.bin*bin_size)]))
           }
         }else{
+          .rev.score = rev(.score)
           if (bin_stats[plotting_segment]=='mean'){
-            .plot.mat[,.seq.sample] = sapply((-.n.bins.before+1):.n.bins.after, function(.n.bin) mean(rev(.score)[abs(.bin.start - plot_start) + ((.n.bin-1)*bin_size+1):(.n.bin*bin_size)]))
+            .plot.mat[,.seq.sample] = sapply((-.n.bins.before+1):.n.bins.after, function(.n.bin) mean(.rev.score [abs(.bin.start - plot_start) + ((.n.bin-1)*bin_size+1):(.n.bin*bin_size)]))
           }else if (bin_stats[plotting_segment]=='median'){
-            .plot.mat[,.seq.sample] = sapply((-.n.bins.before+1):.n.bins.after, function(.n.bin) median(rev(.score)[abs(.bin.start - plot_start) + ((.n.bin-1)*bin_size+1):(.n.bin*bin_size)]))
+            .plot.mat[,.seq.sample] = sapply((-.n.bins.before+1):.n.bins.after, function(.n.bin) median(.rev.score [abs(.bin.start - plot_start) + ((.n.bin-1)*bin_size+1):(.n.bin*bin_size)]))
           }else if (bin_stats[plotting_segment]=='max'){
-            .plot.mat[,.seq.sample] = sapply((-.n.bins.before+1):.n.bins.after, function(.n.bin) max(rev(.score)[abs(.bin.start - plot_start) + ((.n.bin-1)*bin_size+1):(.n.bin*bin_size)]))
+            .plot.mat[,.seq.sample] = sapply((-.n.bins.before+1):.n.bins.after, function(.n.bin) max(.rev.score [abs(.bin.start - plot_start) + ((.n.bin-1)*bin_size+1):(.n.bin*bin_size)]))
           }
         }
       }
