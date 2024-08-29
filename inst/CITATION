@@ -1,0 +1,22 @@
+citHeader("Please cite the following paper when using the seqNdisplayR package:")
+
+citEntry(
+  entry = "Article",
+  title = "Protocol for generating customizable and reproducible plots of sequencing coverage data using the seqNdisplayR package",
+  author = c(
+    person("Søren", "Lykke-Andersen", email = "sla@mbg.au.dk", role = c("cre", "aut"), comment = c(ORCID = "0000-0001-9357-2910")),
+    person("Jerome", "Rouviere", email = "rouviere@mbg.au.dk", role = "aut"),
+    person("Manfred", "Schmid", email = "ms@mbg.au.dk", role = "aut"),
+    person("Maria", "Gockert", email = "gockert@mbg.au.dk", role = "aut"),
+    person("Torben", "Heick Jensen", email = "thj@mbg.au.dk", role = "aut")
+  ),
+  journal = "STAR protocols",
+  year = 2024,
+  volume = 5,
+  number = 2,
+  pages = "102960",
+  doi = "10.1016/j.xpro.2024.102960",
+  textVersion = "Lykke-Andersen, S., Rouviere, J., Schmid, M., Gockert, M., & Jensen, T. H. (2024). Protocol for generating customizable and reproducible plots of sequencing coverage data using the seqNdisplayR package. STAR protocols, 5(2), 102960. https://doi.org/10.1016/j.xpro.2024.102960"
+)
+
+citFooter("Thank you for citing seqNdisplayR!")
