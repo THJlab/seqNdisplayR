@@ -7429,7 +7429,7 @@ YParameters = function(plot_mat, plotting_segment, force_scale_list, group_autos
   if (any(abs(.exponent) > 2)){
     .scientific[which(abs(.exponent) > 2)] = TRUE
   }
-  .y.val = round(.y.val, .n.decimals)
+  .y.val = round(.y.val, .n.decimals+1)  #@ 2024-11-12 trying to change rounding 
   .final.exponent = as.integer(log10(.y.val)) + ifelse(.y.val < 1, -1, 0)
   .y.max = 1.5*.y.val
   return(list('max'=.y.max, 'val'=.y.val, 'dec'=.n.decimals, 'sci'=.scientific, 'exp'=.final.exponent))
