@@ -1,3 +1,10 @@
+#' @import shiny
+#' @import shinyBS
+#' @import shinyjs
+#' @import shinyTree
+#' @import shinybusy
+#' @import spsComps
+
 share <- list(title = "{seqNdisplayR} package",
               description = "Customizable and Reproducible Plotting of Sequencing Coverage Data")
 
