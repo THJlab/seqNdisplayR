@@ -11,10 +11,17 @@ AnnotatedFeaturesInRegion(plotted_region, annotations)
 
 \item{annotations}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function: 
 This function is the first step in organizing the annotated features in the plotted region into various formats
 Used together with "OrganizeOverlappingLoci" and "ConvertCollapsedFormat" to create a final organized version of the annotated features
+}
+\examples{
+NULL
+
 }
 \author{
 SLA

@@ -161,13 +161,13 @@ the function uses default settings.}
 
 \item{feature}{The feature/locus name has to be present in one of the supplied annotations and match case. When entering feature/locus name and coordinates simultaneously, only the locus name will be considered.}
 
-\item{locus}{The locus coordinates (e.g. chr1:+:87325400:87351991). When entering feature/locus name and coordinates simultaneously, only the locus name will be considered.}
+\item{locus}{The locus coordinates (e.g. c('chr1', '+', 87325400, 87351991). When entering feature/locus name and coordinates simultaneously, only the locus name will be considered.}
 
 \item{extra_space}{Extra space up- and downstream of and relative to the selected genomic feature (0.1 = 10 percent). Only taken into account when locus/feature name is entered - ignored when genomic coordinates are entered.  Default c(1.5,1.5).}
 
 \item{annots}{Represents annotations related to genomic data. It is a crucial input for the function and is used to customize the visualization of genomic features. It can either be a 'pre-loaded' annotation in GRanges format by use of the ReadInAnnotations function or a named character vector providing the full paths to indidual annotations that will then be loaded by the function. If using the same set of annotations for creating multiple plots the 'pre-loaded' format is recommended. See example below.}
 
-\item{annotation_packing}{Set the annotation packing for each annotation. Options are: ‘expanded’, ‘squished’, ‘collapsed’ and ‘collapsed2’. 'expanded' and 'squished' display the detailed structures of transcripts under a given feature either as fully expanded or squished. ’collapsed’ collapses all overlapping features into one 'super-exon' feature whereas 'collapsed2’ only collapses features belonging to the same locus into one 'super-exon' feature.}
+\item{annotation_packing}{Set the annotation packing for each annotation. Options are: 'expanded', 'squished', 'collapsed' and 'collapsed2'. 'expanded' and 'squished' display the detailed structures of transcripts under a given feature either as fully expanded or squished. 'collapsed' collapses all overlapping features into one 'super exon' feature whereas 'collapsed2' only collapses features belonging to the same locus into one 'super exon' feature.}
 
 \item{annot_cols}{Specify the color(s) used to visualize the annotated features (by color name or hex code). If set to NULL, the colors specified in the bed file will be used.}
 

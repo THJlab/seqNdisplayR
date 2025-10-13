@@ -9,9 +9,16 @@ DeleteNULLs(x_list)
 \arguments{
 \item{x_list}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function: 
 Delele null/empty entries in a list
+}
+\examples{
+NULL
+
 }
 \author{
 SLA

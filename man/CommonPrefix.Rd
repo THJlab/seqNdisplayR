@@ -16,6 +16,10 @@ A single string which is a common prefix in all strings
 Internal function: 
 Find common prefix
 }
+\examples{
+NULL
+
+}
 \author{
 MS
 }

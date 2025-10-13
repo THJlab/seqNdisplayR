@@ -32,9 +32,16 @@ EvaluateNumericValue(
 
 \item{verbosity}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function: 
 Evaluate whether a vector/value is numeric and falls within recommmended range
+}
+\examples{
+NULL
+
 }
 \author{
 SLA

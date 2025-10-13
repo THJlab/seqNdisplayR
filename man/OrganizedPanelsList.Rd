@@ -9,9 +9,16 @@ OrganizedPanelsList(tracks_listed)
 \arguments{
 \item{tracks_listed}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function: 
 Organize the panels with track-names to be plotted on the left side of the tracks
+}
+\examples{
+NULL
+
 }
 \author{
 SLA

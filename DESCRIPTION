@@ -1,32 +1,26 @@
 Package: seqNdisplayR
 Type: Package
-Title: A Tool for Customizable and Reproducible Plotting of Sequencing Coverage Data
-Date: 2022-05-24
-Version: 1.0.0
+Title: Customizable and Reproducible Plotting of Sequencing Coverage Data
+Version: 1.1.0
+Date: 2025-10-09
 Authors@R: c(
     person("Søren", "Lykke-Andersen", email = "sla@mbg.au.dk", role = c("cre", "aut"), comment = c(ORCID = "0000-0001-9357-2910")),
     person("Jerome", "Rouviere", email = "rouviere@mbg.au.dk", role = "aut"),
     person("Manfred", "Schmid", email = "ms@mbg.au.dk", role = "aut"),
     person("Maria", "Gockert", email = "gockert@mbg.au.dk", role = "aut"),
     person("Torben", "Heick Jensen", email = "thj@mbg.au.dk", role = "aut"))
-Description: Produce pretty and reproducible genome coverage plots using highly customizable layout.
+Description: Generates customizable and reproducible genome coverage plots
+    with flexible layouts and annotation options, suitable for comparative
+    visualization of sequencing data.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
-biocViews: 
-    DataRepresentation, 
-    Sequencing,
-	  Annotation, 
-	  GenomeAnnotation, 
-	  Coverage
-Depends:
-    R (>= 4.0),  
-    rtracklayer,
-    RCurl,
-    dplyr (>= 0.7),
+Depends: R (>= 4.0)
+Imports:
+    bwimport (>= 0.1.0),
+    Rcpp (>= 1.0.10),
     GenomicRanges,
-    BiocGenerics, 
-    GenomeInfoDb, 
+    BiocGenerics,
+    GenomeInfoDb,
     S4Vectors,
     IRanges,
     rlist,
@@ -42,5 +36,16 @@ Depends:
     shinybusy,
     colourpicker,
     jsonlite,
-    xml2
-RoxygenNote: 7.2.3
+    xml2,
+    dplyr (>= 0.7),
+    RCurl,
+    rtracklayer
+LinkingTo: Rcpp
+SystemRequirements: libBigWig (headers and library), C++11
+biocViews:
+    DataRepresentation,
+    Sequencing,
+    Annotation,
+    GenomeAnnotation,
+    Coverage
+RoxygenNote: 7.3.3

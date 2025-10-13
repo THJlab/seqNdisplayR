@@ -13,10 +13,17 @@ OrderedSplit(x, f, drop = TRUE)
 
 \item{drop}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function: 
 Split data frame by values in a column but maintain order as order of appearance. 
 Different to base R split.data.frame where order of split objects are ordered as default factors.
+}
+\examples{
+NULL
+
 }
 \author{
 MS

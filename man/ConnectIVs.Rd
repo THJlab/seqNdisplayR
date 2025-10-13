@@ -13,10 +13,17 @@ ConnectIVs(n_IV, nonoverlapping_IVs, remaining_IVs)
 
 \item{remaining_IVs}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function: 
 Connect non-overlapping intervals, such that the number of "lines" used in the annotation track is minimized
 - used together with "FindNonoverlappingIVs" IVs to organize the individual feature annotations, such that they take up as little space as possible
+}
+\examples{
+NULL
+
 }
 \author{
 SLA

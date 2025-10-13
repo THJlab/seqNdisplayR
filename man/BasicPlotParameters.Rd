@@ -50,8 +50,15 @@ BasicPlotParameters(
 
 \item{unstranded_beds}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function:
+}
+\examples{
+NULL
+
 }
 \author{
 SLA

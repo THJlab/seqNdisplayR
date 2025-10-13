@@ -71,9 +71,16 @@ PlotPanels(
 
 \item{scaling_factor}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function: 
 Sample info at the left side of the plots
+}
+\examples{
+NULL
+
 }
 \author{
 SLA

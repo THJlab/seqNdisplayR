@@ -9,6 +9,9 @@ IsColor(put_color_vector)
 \arguments{
 \item{put_color_vector}{putative vector of colors}
 }
+\value{
+placeholder
+}
 \description{
 Internal function: 
 Helper function that determines whether input (vector) is a color

@@ -11,8 +11,15 @@ FinalizePanelsDimensions(panel_info, both_strands)
 
 \item{both_strands}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function:
+}
+\examples{
+NULL
+
 }
 \author{
 SLA

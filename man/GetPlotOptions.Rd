@@ -21,6 +21,10 @@ options is a data.frame with columns named *Option* and *Value*,
   both case-sensitive. Several entries are vectors of character, numeric or
   boolean. This function tries to parse this correctly.
 }
+\examples{
+NULL
+
+}
 \author{
 MS
 }

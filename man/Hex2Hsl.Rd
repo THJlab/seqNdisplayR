@@ -9,6 +9,9 @@ Hex2Hsl(c)
 \arguments{
 \item{c}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function:
 }

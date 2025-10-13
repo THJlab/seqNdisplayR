@@ -23,6 +23,10 @@ Empty rows in data frame from a session data frame such that cells
   prefix 'subgroup_'. Output should look similar to the Samples sheet in the
   Excel template in \code{inst/extdata/example_excel_template.xls}.
 }
+\examples{
+NULL
+
+}
 \author{
 MS
 }

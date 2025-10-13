@@ -9,6 +9,9 @@ ChangeColorLightness(hex_color, factor)
 \arguments{
 \item{c}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function: 
 if the lightness value is <0.5 the color is considered dark

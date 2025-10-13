@@ -2,7 +2,7 @@
 % Please edit documentation in R/seqNdisplayR.R
 \name{LoadAndTransformDataForTrack}
 \alias{LoadAndTransformDataForTrack}
-\title{Load And Transform Data For Track}
+\title{Load And Transform Data For Track (new as of 25-10-09)}
 \usage{
 LoadAndTransformDataForTrack(
   seqtype,
@@ -13,32 +13,38 @@ LoadAndTransformDataForTrack(
   parameters = NULL,
   get_subsamples = FALSE,
   print_order = FALSE,
-  verbosity
+  verbosity = 0
 )
 }
 \arguments{
-\item{seqtype}{}
+\item{seqtype}{Character; type of sequence (e.g., "ChIP", "ATAC")}
 
-\item{plotted_region}{}
+\item{plotted_region}{GRanges object specifying the region to extract}
 
-\item{samples}{}
+\item{samples}{List of sample metadata}
 
-\item{bigwigs}{}
+\item{bigwigs}{Nested list of BigWig file paths organized by strand}
 
-\item{bigwig_dirs}{}
+\item{bigwig_dirs}{List of directories containing BigWig files}
 
-\item{parameters}{}
+\item{parameters}{Optional list of parameters per seqtype (log2 transform, pseudo count, batch info, etc.)}
 
-\item{get_subsamples}{}
+\item{get_subsamples}{Logical; if TRUE, returns only the subset of sample names}
 
-\item{print_order}{}
+\item{print_order}{Logical; if TRUE, prints the order of samples}
 
-\item{verbosity}{}
+\item{verbosity}{Integer; level of verbosity for warnings/messages (default: 0)}
+
+\item{envname}{Reticulate environment name for bw_import (default: "r-reticulate")}
+}
+\value{
+A list of numeric vectors representing the signal for each sample,
+  with optional mean computation across replicates
 }
 \description{
-Internal function:
-}
-\author{
-SLA
+Internal function for extracting BigWig signal
+  from a given genomic region for multiple samples, with options
+  for log2-transformation, batch correction, negative-value handling,
+  and mean computation across replicates.
 }
 \keyword{internal}

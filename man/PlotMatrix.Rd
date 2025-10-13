@@ -44,8 +44,15 @@ PlotMatrix(
 
 \item{bin_stats}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function:
+}
+\examples{
+NULL
+
 }
 \author{
 SLA

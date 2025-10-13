@@ -22,10 +22,21 @@ AlignBasicPlotParameters(
 
 \item{strands_intermingled}{}
 
+\item{fixed_plot_vertical_parameters}{}
+
+\item{vertical_parameters}{}
+
 \item{full_height_cm}{}
+}
+\value{
+placeholder
 }
 \description{
 Internal function:
+}
+\examples{
+NULL
+
 }
 \author{
 SLA

@@ -26,8 +26,15 @@ UpdatePlotVerticalParameters(
 
 \item{spacer_height_cm}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function:
+}
+\examples{
+NULL
+
 }
 \author{
 SLA

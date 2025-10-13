@@ -6,6 +6,9 @@
 \usage{
 run_seqNdisplayR_app(...)
 }
+\value{
+placeholder
+}
 \description{
 Run the shiny app
 }

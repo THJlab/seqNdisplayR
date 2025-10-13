@@ -17,8 +17,15 @@ FinalOrganizedAnnotationTextsInPlottedRegion(
 
 \item{font_size}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function:
+}
+\examples{
+NULL
+
 }
 \author{
 SLA

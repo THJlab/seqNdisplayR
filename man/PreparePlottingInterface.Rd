@@ -32,8 +32,15 @@ PreparePlottingInterface(
 
 \item{scaling_factor}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function:
+}
+\examples{
+NULL
+
 }
 \author{
 SLA

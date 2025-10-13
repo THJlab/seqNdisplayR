@@ -26,9 +26,16 @@ HorizontalPanelsList(
 
 \item{interface}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function: 
 Checks/constructs a horizontal_panels_list
+}
+\examples{
+NULL
+
 }
 \author{
 SLA

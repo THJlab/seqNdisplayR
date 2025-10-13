@@ -17,8 +17,15 @@ RecommendedFontSizes(
 
 \item{plot_vertical_parameters}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function:
+}
+\examples{
+NULL
+
 }
 \author{
 SLA

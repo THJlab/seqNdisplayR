@@ -19,6 +19,10 @@ Write Excel template as described in \link{LoadExcel}.
 \description{
 Save session object to Excel xlsx-file
 }
+\examples{
+NULL
+
+}
 \author{
 MS (minor additions by SLA)
 }

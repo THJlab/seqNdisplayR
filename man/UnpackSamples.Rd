@@ -29,8 +29,15 @@ UnpackSamples(
 
 \item{verbosity}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function:
+}
+\examples{
+NULL
+
 }
 \author{
 SLA

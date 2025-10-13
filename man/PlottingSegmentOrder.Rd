@@ -29,8 +29,15 @@ PlottingSegmentOrder(
 
 \item{horizontal_spacers}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function:
+}
+\examples{
+NULL
+
 }
 \author{
 SLA

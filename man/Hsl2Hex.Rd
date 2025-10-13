@@ -9,6 +9,9 @@ Hsl2Hex(c_hsl)
 \arguments{
 \item{c_hsl}{}
 }
+\value{
+placeholder
+}
 \description{
 Internal function:
 }
