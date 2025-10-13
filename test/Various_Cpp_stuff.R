@@ -79,5 +79,6 @@ devtools::document()
 devtools::build()
 devtools::install()
 
-
-
+remove.packages("seqNdisplayR")
+remotes::install_github("THJlab/seqNdisplayR@v1.1.0")
+packageVersion("seqNdisplayR")
