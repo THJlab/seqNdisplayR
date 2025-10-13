@@ -4,3 +4,5 @@
 .Ruserdata
 **/.DS_Store
 test/test_output/*.*
+*.Rproj
+^test$

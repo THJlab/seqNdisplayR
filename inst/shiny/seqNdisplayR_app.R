@@ -959,7 +959,7 @@ create_input_element = function(option) {
 
 # UI ####
 ui <- fluidPage(
-  useShinyjs(),
+  shinyjs::useShinyjs(),
   shinybusy::use_busy_spinner(spin = "fading-circle"),
   tags$style(HTML(".shiny-split-layout>div {overflow: visible}")),  #@ this line allows the color widgets to be displayed "in front"
   # HEADER ####
@@ -1453,107 +1453,107 @@ server <- function(input, output, session) {
   
   # responsive elements show/hide behavior ####
   observe({
-    toggle(id = "pdf_output_folder_div", condition = input$pdf_output_folder)
+    shinyjs::toggle(id = "pdf_output_folder_div", condition = input$pdf_output_folder)
   })
   
   observe({
-    toggle(id = "pdf_name_div", condition = input$pdf_name)
+    shinyjs::toggle(id = "pdf_name_div", condition = input$pdf_name)
   })
   
   observe({
-    toggle(id = "header_name_div", condition = input$header_name)
+    shinyjs::toggle(id = "header_name_div", condition = input$header_name)
   })
   
   observe({
-    toggle(id = "intermingled_div", condition = input$intermingled)
+    shinyjs::toggle(id = "intermingled_div", condition = input$intermingled)
   })
   
   observe({
-    toggle(id = "panel_horizontal_div", condition = input$panel_horizontal)
+    shinyjs::toggle(id = "panel_horizontal_div", condition = input$panel_horizontal)
   })
   
   observe({
-    toggle(id = "panel_font_easy_div", condition = input$panel_font_easy)
+    shinyjs::toggle(id = "panel_font_easy_div", condition = input$panel_font_easy)
   })
   
   observe({
-    toggle(id = "panel_font_div", condition = input$panel_font)
+    shinyjs::toggle(id = "panel_font_div", condition = input$panel_font)
   })
   
   observe({
-    toggle(id = "tracks_height_div", condition = input$tracks_height)
+    shinyjs::toggle(id = "tracks_height_div", condition = input$tracks_height)
   })
   
   observe({
-    toggle(id = "title_field_height_cm_div", condition = input$title_field_height_cm)
+    shinyjs::toggle(id = "title_field_height_cm_div", condition = input$title_field_height_cm)
   })
   
   observe({
-    toggle(id = "genomic_scale_height_cm_div", condition = input$genomic_scale_height_cm)
+    shinyjs::toggle(id = "genomic_scale_height_cm_div", condition = input$genomic_scale_height_cm)
   })
   
   observe({
-    toggle(id = "annot_height_cm_div", condition = input$annot_height_cm) #@ 2023-06-19
+    shinyjs::toggle(id = "annot_height_cm_div", condition = input$annot_height_cm) #@ 2023-06-19
   })
   
   observe({
-    toggle(id = "spacer_height_div", condition = input$spacer_height)
+    shinyjs::toggle(id = "spacer_height_div", condition = input$spacer_height)
   })
   
   observe({
-    toggle(id = "tracks_width_in_cm_div", condition = input$tracks_width_in_cm)
+    shinyjs::toggle(id = "tracks_width_in_cm_div", condition = input$tracks_width_in_cm)
   })
   
   observe({
-    toggle(id = "tracks_name_width_div", condition = input$tracks_name_width)
+    shinyjs::toggle(id = "tracks_name_width_div", condition = input$tracks_name_width)
   })
   
   observe({
-    toggle(id = "scale_per_space_div", condition = input$scale_per_space)
+    shinyjs::toggle(id = "scale_per_space_div", condition = input$scale_per_space)
   })
   
   observe({
-    toggle(id = "plot_height_div", condition = input$plot_height)
+    shinyjs::toggle(id = "plot_height_div", condition = input$plot_height)
   })
   
   observe({
-    toggle(id = "plot_width_div", condition = input$plot_width)
+    shinyjs::toggle(id = "plot_width_div", condition = input$plot_width)
   })
   
   observe({
-    toggle(id = "alternating_background_usage_div", condition = input$alternating_background_usage)
+    shinyjs::toggle(id = "alternating_background_usage_div", condition = input$alternating_background_usage)
   })
   
   observe({
-    toggle(id = "annotation_character_size_div", condition = input$annotation_character_size)
+    shinyjs::toggle(id = "annotation_character_size_div", condition = input$annotation_character_size)
   })
   
   observe({
-    toggle(id = "annot_font_div", condition = input$annot_font)
+    shinyjs::toggle(id = "annot_font_div", condition = input$annot_font)
   })
   
   observe({
-    toggle(id = "header_font_div", condition = input$header_font)
+    shinyjs::toggle(id = "header_font_div", condition = input$header_font)
   })
   
   observe({
-    toggle(id = "gen_scal_font_div", condition = input$gen_scal_font)
+    shinyjs::toggle(id = "gen_scal_font_div", condition = input$gen_scal_font)
   })
   
   observe({
-    toggle(id = "binning_size_div", condition = input$binning_size)
+    shinyjs::toggle(id = "binning_size_div", condition = input$binning_size)
   })
   
   observe({
-    toggle(id = "binning_start_div", condition = input$binning_start)
+    shinyjs::toggle(id = "binning_start_div", condition = input$binning_start)
   })
   
   observe({
-    toggle(id = "scale_character_size_div", condition = input$scale_character_size)
+    shinyjs::toggle(id = "scale_character_size_div", condition = input$scale_character_size)
   })
   
   observe({
-    toggle(id = "manual_scales_div", condition = input$manual_scales) ##@@0b <->
+    shinyjs::toggle(id = "manual_scales_div", condition = input$manual_scales) ##@@0b <->
   })
   
   
