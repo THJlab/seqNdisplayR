@@ -41,7 +41,6 @@ Imports:
     RCurl,
     rtracklayer
 LinkingTo: Rcpp
-SystemRequirements: libBigWig (headers and library), C++11
 biocViews:
     DataRepresentation,
     Sequencing,
