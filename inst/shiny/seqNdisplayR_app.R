@@ -2202,10 +2202,10 @@ server <- function(input, output, session) {
     }
     if ( CurrentSessionFname() != filename ) {
       fname = input$input_file$datapath[1]
-      show_modal_spinner(spin='circle', text='Loading and parsing template')
+      shinybusy::show_modal_spinner(spin='circle', text='Loading and parsing template')
       loaded_session = NULL
       
-      shinyCatch({
+      spsComps::shinyCatch({
         if ( grepl('.xml$', fname)  ) {
           if ( is.null(input$igv_strand_regex) ) {
             igv_strand_regex = NULL
@@ -2233,7 +2233,7 @@ server <- function(input, output, session) {
         }
       }, position ='top-center', blocking_level ='message', shiny=T)
       
-      remove_modal_spinner()
+      shinybusy::remove_modal_spinner()
       
       #remember to return the session
       loaded_session
@@ -2705,7 +2705,7 @@ server <- function(input, output, session) {
                    } else {
                      session_to_plot <- seqNdisplayR_session()
                      #cat(paste0(names(session_to_plot[['horizontal_panels_list']]), ': ', session_to_plot[['horizontal_panels_list']]), '\n') #@ 2023-12-18
-                     show_modal_spinner(spin='circle', text='Creating plot, please be patient. The plot will appear in a separate window')
+                     shinybusy::show_modal_spinner(spin='circle', text='Creating plot, please be patient. The plot will appear in a separate window')
                      x <- 'Plotting failed, please check your settings'
                      spsComps::shinyCatch({
                        if (feature != '') {
@@ -2715,7 +2715,7 @@ server <- function(input, output, session) {
                        }
                      },position = 'top-center',blocking_level='none', prefix='Plotting error', shiny=TRUE)
                      output$console <- renderText({paste(x, collapse  = "\n")})
-                     remove_modal_spinner()
+                     shinybusy::remove_modal_spinner()
                    }
                  }
                })
@@ -2752,7 +2752,7 @@ server <- function(input, output, session) {
           output$console = renderText({"Please provide locus name or coordinates for region to be plotted."})
         } else {
           session_to_plot = seqNdisplayR_session()
-          show_modal_spinner(spin='circle', text=paste('Plotting to pdf, please be patient'))
+          shinybusy::show_modal_spinner(spin='circle', text=paste('Plotting to pdf, please be patient'))
           x = 'plotting failed, please check your settings'
           spsComps::shinyCatch({
             if (feature != '') {
@@ -2768,7 +2768,7 @@ server <- function(input, output, session) {
             }
           }, position = 'top-center', blocking_level='none', prefix='Plotting error', shiny=TRUE)
           output$console = renderText({paste0('PDF creation log:\n', paste(x, collapse  = "\n"))}) #@ 2022-10-10 pdfdir, pdfname <- file  #@ 2022-10-26 basename(file), '.pdf' <- pdfname
-          remove_modal_spinner()
+          shinybusy::remove_modal_spinner()
         }
       }
     },
