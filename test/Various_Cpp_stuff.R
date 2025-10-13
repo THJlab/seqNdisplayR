@@ -54,3 +54,30 @@ git add .
 git commit -m 'Update README with new info'
 git push origin main
 """
+
+## seqNdisplayR testing
+
+setwd("/Users/au103725/Dropbox/Lab_stuff/Bioinformatics/R_packages/seqNdisplayR")
+remove.packages("seqNdisplayR")
+# bash
+R CMD build .
+R CMD INSTALL seqNdisplayR_1.1.0.tar.gz
+
+library(seqNdisplayR)
+packageVersion("seqNdisplayR")
+
+
+remove.packages("seqNdisplayR")
+remotes::install_github("slaish/seqNdisplayR")
+library(seqNdisplayR)
+packageVersion("seqNdisplayR")
+
+roxygen2::roxygenise("/Users/au103725/Dropbox/Lab_stuff/Bioinformatics/R_packages/seqNdisplayR")
+
+devtools::clean_dll()
+devtools::document()
+devtools::build()
+devtools::install()
+
+
+

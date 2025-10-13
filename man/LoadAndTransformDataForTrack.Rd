@@ -34,8 +34,6 @@ LoadAndTransformDataForTrack(
 \item{print_order}{Logical; if TRUE, prints the order of samples}
 
 \item{verbosity}{Integer; level of verbosity for warnings/messages (default: 0)}
-
-\item{envname}{Reticulate environment name for bw_import (default: "r-reticulate")}
 }
 \value{
 A list of numeric vectors representing the signal for each sample,

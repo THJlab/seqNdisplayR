@@ -17,7 +17,6 @@ Encoding: UTF-8
 Depends: R (>= 4.0)
 Imports:
     bwimport (>= 0.1.0),
-    Rcpp (>= 1.0.10),
     GenomicRanges,
     BiocGenerics,
     GenomeInfoDb,
@@ -40,7 +39,6 @@ Imports:
     dplyr (>= 0.7),
     RCurl,
     rtracklayer
-LinkingTo: Rcpp
 biocViews:
     DataRepresentation,
     Sequencing,
