@@ -301,7 +301,7 @@ GetColors = function(filled_df){
 #' 
 split_sliders = function(n, varname, suboptions, vals, optima, step){
   if (n%%2==1){
-    sliderInput(paste0(varname, '_subvar', 1+(n-1)/2),
+    shiny::sliderInput(paste0(varname, '_subvar', 1+(n-1)/2),
                 label=suboptions[1+(n-1)/2],
                 value=vals[1+(n-1)/2],
                 min=optima[1],
@@ -309,7 +309,7 @@ split_sliders = function(n, varname, suboptions, vals, optima, step){
                 step=step)
     
   }else{
-    p("")
+    shiny::p("")
   }
 }
 
@@ -337,14 +337,14 @@ split_sliders = function(n, varname, suboptions, vals, optima, step){
 #' 
 split_sliders_panels = function(n, varname, slider_cells, dataset_name, vals, optima, step){
   if (n %in% slider_cells){
-    sliderInput(paste0(varname, '_subvar', which(slider_cells==n)),
+    shiny::sliderInput(paste0(varname, '_subvar', which(slider_cells==n)),
                 label=ifelse(n==1, dataset_name, ''),
                 value=vals[which(slider_cells==n)],
                 min=optima[1],
                 max=optima[2],
                 step=step)
   }else{
-    p("")
+    shiny::p("")
   }
 }
 
@@ -368,9 +368,9 @@ split_sliders_panels = function(n, varname, slider_cells, dataset_name, vals, op
 #' 
 split_headers = function(n, slider_cells, levels){
   if (n %in% slider_cells){
-    p(em(strong(levels[[1+(n-1)/2]])))
+    shiny::p(shiny::em(shiny::strong(levels[[1+(n-1)/2]])))
   }else{
-    p('')
+    shiny::p('')
   }
 }
 
@@ -397,14 +397,14 @@ split_headers = function(n, slider_cells, levels){
 #' 
 split_numeric_input = function(n, varname, suboptions, vals, optima, step){
   if (n%%2==1){
-    numericInput(paste0(varname, '_subvar', 1+(n-1)/2),
+    shiny::numericInput(paste0(varname, '_subvar', 1+(n-1)/2),
                  label=suboptions[1+(n-1)/2],
                  value=vals[1+(n-1)/2],
                  min=optima[1],
                  max=optima[2],
                  step=step)
   }else{
-    p("")
+    shiny::p("")
   }
 }
 
@@ -433,14 +433,14 @@ split_numeric_input = function(n, varname, suboptions, vals, optima, step){
 split_numeric_input2 = function(n, varname, input_cells, suboptions, vals, optima, step){
   if (n %in% input_cells){
     #cat(paste0('sni2: ', varname, '_subvar', which(input_cells==n)), '\n') #@cat
-    numericInput(paste0(varname, '_subvar', which(input_cells==n)),
+    shiny::numericInput(paste0(varname, '_subvar', which(input_cells==n)),
                  label=suboptions[which(input_cells==n)],
                  value=vals[which(input_cells==n)],
                  min=optima[1],
                  max=optima[2],
                  step=step)
   }else{
-    p("")
+    shiny::p("")
   }
 }
 
@@ -467,14 +467,14 @@ split_numeric_input2 = function(n, varname, input_cells, suboptions, vals, optim
 #' 
 split_numeric_panels = function(n, varname, slider_cells, dataset_name, vals, optima, step){
   if (n %in% slider_cells){
-    numericInput(paste0(varname, '_subvar', which(slider_cells==n)),
+    shiny::numericInput(paste0(varname, '_subvar', which(slider_cells==n)),
                  label=ifelse(n==1, dataset_name, ''),
                  value=vals[which(slider_cells==n)],
                  min=optima[1],
                  max=optima[2],
                  step=step)
   }else{
-    p("")
+    shiny::p("")
   }
 }
 
@@ -499,12 +499,12 @@ split_numeric_panels = function(n, varname, slider_cells, dataset_name, vals, op
 #' 
 split_text_input = function(n, varname, suboptions, vals){
   if (n%%2==1){
-    textInput(paste0(varname, '_subvar', 1+(n-1)/2),
+    shiny::textInput(paste0(varname, '_subvar', 1+(n-1)/2),
               label=suboptions[1+(n-1)/2],
               placeholder=suboptions[1+(n-1)/2],
               value=vals[1+(n-1)/2])
   }else{
-    p("")
+    shiny::p("")
   }
 }
 
@@ -538,7 +538,7 @@ split_color_input = function(n, varname, suboptions, vals, allowTransparent){
                               returnName = TRUE,
                               closeOnClick = TRUE)
   }else{
-    p("")
+    shiny::p("")
   }
 }
 
@@ -563,11 +563,11 @@ split_color_input = function(n, varname, suboptions, vals, allowTransparent){
 #' 
 split_bool_input = function(n, varname, suboptions, vals){
   if (n%%2==1){
-    checkboxInput(paste0(varname, '_subvar', 1+(n-1)/2),
+    shiny::checkboxInput(paste0(varname, '_subvar', 1+(n-1)/2),
                   label=suboptions[1+(n-1)/2],
                   value=vals[1+(n-1)/2])
   }else{
-    p("")
+    shiny::p("")
   }
 }
 
@@ -598,7 +598,7 @@ create_input_element = function(option) {
   if ( option_par$option_group == 'dataset_option' | option_par$option_group == 'annotation_option' ) {
     if ( option_par$option_class == 'bool' ) {
       spsComps::bsTooltip(
-        checkboxGroupInput(option_par$shiny_varname,
+        shiny::checkboxGroupInput(option_par$shiny_varname,
                            option_par$shiny_label,
                            choices = c('all samples'),
                            selected = option_par$option_default == 'TRUE'),
@@ -606,56 +606,56 @@ create_input_element = function(option) {
         placement ='left')
     } else if ( option_par$option_class == 'text_choices' ) {
       opt_choices  <- strsplit(option_par$option_options,',')[[1]]
-      fluidRow(
-        tags$head(
-          tags$style(type="text/css", "#title {padding-left: 15px} #radios .shiny-input-radiogroup{padding-left: 25px}")
+      shiny::fluidRow(
+        shiny::tags$head(
+          shiny::tags$style(type="text/css", "#title {padding-left: 15px} #radios .shiny-input-radiogroup{padding-left: 25px}")
         ),
-        tags$div(id = "title",spsComps::bsTooltip(p(option_par$shiny_label, style= 'font-weight: bold'),
+        shiny::tags$div(id = "title",spsComps::bsTooltip(shiny::p(option_par$shiny_label, style= 'font-weight: bold'),
                                                   title=option_par$shiny_tooltip,
                                                   placement ='left')),
-        tags$div(id = "radios",radioButtons(option_par$shiny_varname,
+        shiny::tags$div(id = "radios",shiny::radioButtons(option_par$shiny_varname,
                                             label = 'all samples',
                                             choices = opt_choices,
                                             selected = option_par$option_default,
                                             inline = TRUE)),
-        tags$br())
+        shiny::tags$br())
     } else if ( option_par$option_class == 'text' ) {
       div_id=paste0(option_par$shiny_varname, '_outer')
-      fluidRow(
-        tags$head(tags$style("#title {padding-left: 15px}")),
-        tags$div(id = "title",spsComps::bsTooltip(p(option_par$shiny_label, style= 'font-weight: bold'),
+      shiny::fluidRow(
+        shiny::tags$head(shiny::tags$style("#title {padding-left: 15px}")),
+        shiny::tags$div(id = "title",spsComps::bsTooltip(shiny::p(option_par$shiny_label, style= 'font-weight: bold'),
                                                   title=option_par$shiny_tooltip,
                                                   placement ='left')),
-        tags$head(
-          tags$style(type="text/css", paste0("#", div_id, " {padding-left: 25px}; #", option_par$shiny_varname, " {padding-left: 25px}"))
+        shiny::tags$head(
+          shiny::tags$style(type="text/css", paste0("#", div_id, " {padding-left: 25px}; #", option_par$shiny_varname, " {padding-left: 25px}"))
         ),
-        tags$div(id = div_id,
-                 tags$div(id=option_par$shiny_varname,
-                          textInput(option_par$shiny_varname,  #@ paste0(option_par$shiny_varname,'XvalueX')
+        shiny::tags$div(id = div_id,
+                 shiny::tags$div(id=option_par$shiny_varname,
+                          shiny::textInput(option_par$shiny_varname,  #@ paste0(option_par$shiny_varname,'XvalueX')
                                     label='all samples',
                                     placeholder = option_par$option_default,
                                     value = option_par$option_default))),
-        tags$br()
+        shiny::tags$br()
       )
     } else if ( option_par$option_class == 'color' ) {
       div_id=paste0(option_par$shiny_varname, '_outer')
-      fluidRow(
-        tags$head(tags$style("#title {padding-left: 15px}")),
-        tags$div(id = "title",spsComps::bsTooltip(p(option_par$shiny_label, style= 'font-weight: bold'),
+      shiny::fluidRow(
+        shiny::tags$head(shiny::tags$style("#title {padding-left: 15px}")),
+        shiny::tags$div(id = "title",spsComps::bsTooltip(shiny::p(option_par$shiny_label, style= 'font-weight: bold'),
                                                   title=option_par$shiny_tooltip,
                                                   placement ='left')),
-        tags$head(
-          tags$style(type="text/css", paste0("#", div_id, " {padding-left: 25px}; #", option_par$shiny_varname, " {padding-left: 25px}"))
+        shiny::tags$head(
+          shiny::tags$style(type="text/css", paste0("#", div_id, " {padding-left: 25px}; #", option_par$shiny_varname, " {padding-left: 25px}"))
         ),
-        tags$div(id = div_id,
-                 tags$div(id=option_par$shiny_varname,
+        shiny::tags$div(id = div_id,
+                 shiny::tags$div(id=option_par$shiny_varname,
                           colourpicker::colourInput(inputId=paste0('xyz_', option_par$shiny_varname), #@ option_par$shiny_varname
                                                     label='all samples',
                                                     value = ifelse(option_par$option_default=='NULL', 'white', option_par$option_default), #@ option_par$option_default
                                                     allowTransparent = TRUE,
                                                     returnName = TRUE,
                                                     closeOnClick = TRUE))),
-        tags$br()
+        shiny::tags$br()
       )
     }else if ( option_par$option_class == 'numeric' ) {
       div_id=paste0(option_par$shiny_varname, '_outer')
@@ -666,54 +666,54 @@ create_input_element = function(option) {
       start_val = ifelse(length(vals)==3, vals[3], mean(c(min_val, max_val)))
       if(is.na(max_val)){max_val=start_val*2}
       if (option_par$shiny_varname != 'pseudoCount'){
-        fluidRow(
-          tags$head(tags$style("#title {padding-left: 15px}")),
-          tags$div(id = "title",spsComps::bsTooltip(p(option_par$shiny_label, style= 'font-weight: bold'),
+        shiny::fluidRow(
+          shiny::tags$head(shiny::tags$style("#title {padding-left: 15px}")),
+          shiny::tags$div(id = "title",spsComps::bsTooltip(shiny::p(option_par$shiny_label, style= 'font-weight: bold'),
                                                     title=option_par$shiny_tooltip,
                                                     placement ='left')),
-          tags$head(
-            tags$style(type="text/css", paste0("#", div_id, " {padding-left: 25px}; #", option_par$shiny_varname, " {padding-left: 25px}"))
+          shiny::tags$head(
+            shiny::tags$style(type="text/css", paste0("#", div_id, " {padding-left: 25px}; #", option_par$shiny_varname, " {padding-left: 25px}"))
           ),
-          tags$div(id = div_id,
-                   tags$div(id=option_par$shiny_varname,
-                            sliderInput(option_par$shiny_varname,
+          shiny::tags$div(id = div_id,
+                   shiny::tags$div(id=option_par$shiny_varname,
+                            shiny::sliderInput(option_par$shiny_varname,
                                         label='all samples',
                                         value = start_val,
                                         min = min_val,
                                         max = max_val,
                                         step=0.001))),  #@ , width = '495px'
-          tags$br()
+          shiny::tags$br()
         )
       }else{
-        fluidRow(
-          tags$head(tags$style("#title {padding-left: 15px}")),
-          tags$div(id = "title",spsComps::bsTooltip(p(option_par$shiny_label, style= 'font-weight: bold'),
+        shiny::fluidRow(
+          shiny::tags$head(shiny::tags$style("#title {padding-left: 15px}")),
+          shiny::tags$div(id = "title",spsComps::bsTooltip(shiny::p(option_par$shiny_label, style= 'font-weight: bold'),
                                                     title=option_par$shiny_tooltip,
                                                     placement ='left')),
-          tags$head(
-            tags$style(type="text/css", paste0("#", div_id, " {padding-left: 25px}; #", option_par$shiny_varname, " {padding-left: 25px}"))
+          shiny::tags$head(
+            shiny::tags$style(type="text/css", paste0("#", div_id, " {padding-left: 25px}; #", option_par$shiny_varname, " {padding-left: 25px}"))
           ),
-          tags$div(id = div_id,
-                   tags$div(id=option_par$shiny_varname,
-                            numericInput(option_par$shiny_varname, 
+          shiny::tags$div(id = div_id,
+                   shiny::tags$div(id=option_par$shiny_varname,
+                            shiny::numericInput(option_par$shiny_varname, 
                                          label='all samples',
                                          value = start_val,
                                          min = min_val,
                                          max = max_val,
                                          step=0.001))),  #@ , width = '495px'
-          tags$br()
+          shiny::tags$br()
         )
       }
     } else if ( option_par$option_class == 'special_argument' ) { ##@@1 -> ONLY manual_scales/force_scale at the moment
       spsComps::bsTooltip(
-        checkboxInput(option_par$shiny_varname, option_par$shiny_label, value =ifelse(option_par$option_default=='NULL', FALSE, TRUE)),
+        shiny::checkboxInput(option_par$shiny_varname, option_par$shiny_label, value =ifelse(option_par$option_default=='NULL', FALSE, TRUE)),
         title=option_par$shiny_tooltip,
         placement ='left')
     } ##@@1 <-
   } else {
     if ( option_par$option_class == 'bool' ) {
       spsComps::bsTooltip(
-        checkboxInput(option_par$shiny_varname, option_par$shiny_label, value = option_par$option_default == 'TRUE'),
+        shiny::checkboxInput(option_par$shiny_varname, option_par$shiny_label, value = option_par$option_default == 'TRUE'),
         title=option_par$shiny_tooltip,
         placement ='left')
     }else if ( option_par$option_class == 'text' ) {
@@ -723,7 +723,7 @@ create_input_element = function(option) {
         w = NULL
       }
       spsComps::bsTooltip(
-        textInput(option_par$shiny_varname,
+        shiny::textInput(option_par$shiny_varname,
                   label =  option_par$shiny_label,
                   placeholder = option_par$option_default,
                   value = option_par$option_default,
@@ -743,7 +743,7 @@ create_input_element = function(option) {
     } else if ( option_par$option_class == 'text_choices' ) {
       opt_choices  <- strsplit(option_par$option_options,',')[[1]]
       spsComps::bsTooltip(
-        radioButtons(option_par$shiny_varname,
+        shiny::radioButtons(option_par$shiny_varname,
                      label = option_par$shiny_label,
                      choices = opt_choices,
                      selected = option_par$option_default,
@@ -758,7 +758,7 @@ create_input_element = function(option) {
       start_val = ifelse(length(vals)==3, vals[3], mean(c(min_val, max_val)))
       if(is.na(max_val)){max_val=start_val*2}
       spsComps::bsTooltip(
-        sliderInput(option_par$shiny_varname,
+        shiny::sliderInput(option_par$shiny_varname,
                     label=option_par$shiny_label,
                     value=start_val,
                     min=min_val,
@@ -779,34 +779,34 @@ create_input_element = function(option) {
       if(is.na(max_val)){max_val=1}
       start_val = ifelse(length(vals)==3, vals[3], mean(c(min_val, max_val)))
       if (option_par$shiny_varname != 'binning_size' & option_par$shiny_varname != 'binning_start'){
-        fluidRow(tags$p(tags$style(type="text/css", paste0("#checkbox {padding-left: 15px}"))),
-                 tags$div(id = "checkbox",
+        shiny::fluidRow(shiny::tags$p(shiny::tags$style(type="text/css", paste0("#checkbox {padding-left: 15px}"))),
+                 shiny::tags$div(id = "checkbox",
                           spsComps::bsTooltip(
-                            checkboxInput(option_par$shiny_varname,
+                            shiny::checkboxInput(option_par$shiny_varname,
                                           option_par$shiny_label,
                                           value = !automatic),
                             title=option_par$shiny_tooltip,
                             placement ='left')),
-                 tags$p(tags$style(type="text/css", paste0("#", div_id, " {padding-left: 15px}"))),
-                 tags$div(id = div_id,
-                          sliderInput(paste0(option_par$shiny_varname,'_slider'),
+                 shiny::tags$p(shiny::tags$style(type="text/css", paste0("#", div_id, " {padding-left: 15px}"))),
+                 shiny::tags$div(id = div_id,
+                          shiny::sliderInput(paste0(option_par$shiny_varname,'_slider'),
                                       label=NULL,
                                       value=start_val,
                                       min=min_val,
-                                      max=max_val))  #@ , width='500px', tags$br()
+                                      max=max_val))  #@ , width='500px', shiny::tags$br()
         )
       }else{
-        fluidRow(tags$p(tags$style(type="text/css", paste0("#checkbox {padding-left: 15px}"))),
-                 tags$div(id = "checkbox",
+        shiny::fluidRow(shiny::tags$p(shiny::tags$style(type="text/css", paste0("#checkbox {padding-left: 15px}"))),
+                 shiny::tags$div(id = "checkbox",
                           spsComps::bsTooltip(
-                            checkboxInput(option_par$shiny_varname,
+                            shiny::checkboxInput(option_par$shiny_varname,
                                           option_par$shiny_label,
                                           value = !automatic),
                             title=option_par$shiny_tooltip,
                             placement ='left')),
-                 tags$p(tags$style(type="text/css", paste0("#", div_id, " {padding-left: 15px}"))),
-                 tags$div(id = div_id,
-                          numericInput(paste0(option_par$shiny_varname,'_box'), #@ 2023-10-07
+                 shiny::tags$p(shiny::tags$style(type="text/css", paste0("#", div_id, " {padding-left: 15px}"))),
+                 shiny::tags$div(id = div_id,
+                          shiny::numericInput(paste0(option_par$shiny_varname,'_box'), #@ 2023-10-07
                                        label=NULL,
                                        value=start_val,
                                        min=min_val,
@@ -816,17 +816,17 @@ create_input_element = function(option) {
       }
     }else if ( option_par$option_class == 'optional_text' ) {
       div_id = paste0(option_par$shiny_varname,"_div")
-      fluidRow(tags$p(tags$style(type="text/css", paste0("#checkbox {padding-left: 15px}"))),
-               tags$div(id = "checkbox",
+      shiny::fluidRow(shiny::tags$p(shiny::tags$style(type="text/css", paste0("#checkbox {padding-left: 15px}"))),
+               shiny::tags$div(id = "checkbox",
                         spsComps::bsTooltip(
-                          checkboxInput(option_par$shiny_varname,
+                          shiny::checkboxInput(option_par$shiny_varname,
                                         option_par$shiny_label,
                                         value = ifelse(option_par$option_default=='NULL', FALSE, TRUE)),
                           title=option_par$shiny_tooltip,
                           placement ='left')),
-               tags$p(tags$style(type="text/css", paste0("#", div_id, " {padding-left: 15px}"))),
-               tags$div(id = div_id,
-                        textInput(paste0(option_par$shiny_varname,'_box'),
+               shiny::tags$p(shiny::tags$style(type="text/css", paste0("#", div_id, " {padding-left: 15px}"))),
+               shiny::tags$div(id = div_id,
+                        shiny::textInput(paste0(option_par$shiny_varname,'_box'),
                                   label=NULL,
                                   placeholder = option_par$option_options) )
       )
@@ -849,14 +849,14 @@ create_input_element = function(option) {
       cellwidths[boxes] = paste0(400*width_unit, '%')
       if (option_par$shiny_varname!='feat_extend'){
         spsComps::bsTooltip(
-          do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_sliders, option_par$shiny_varname, suboptions, vals, optima, step),
+          do.call(what=shiny::splitLayout, args = c(lapply(seq(1,nCells), split_sliders, option_par$shiny_varname, suboptions, vals, optima, step),
                                              list(cellWidths=as.list(cellwidths)),
                                              list(width=list('500px')))),
           title=option_par$shiny_tooltip,
           placement ='left')
       }else{
         spsComps::bsTooltip(
-          do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_numeric_input, option_par$shiny_varname, suboptions, vals, optima, step),
+          do.call(what=shiny::splitLayout, args = c(lapply(seq(1,nCells), split_numeric_input, option_par$shiny_varname, suboptions, vals, optima, step),
                                              list(cellWidths=as.list(cellwidths)),
                                              list(width=list('500px')))),
           title=option_par$shiny_tooltip,
@@ -881,14 +881,14 @@ create_input_element = function(option) {
       cellwidths[boxes] = paste0(400*width_unit, '%')
       if (!is.logical(vals)){
         spsComps::bsTooltip(
-          do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_text_input, option_par$shiny_varname, suboptions, vals),
+          do.call(what=shiny::splitLayout, args = c(lapply(seq(1,nCells), split_text_input, option_par$shiny_varname, suboptions, vals),
                                              list(cellWidths=as.list(cellwidths)),
                                              list(width=list('500px')))),
           title=option_par$shiny_tooltip,
           placement ='left')
       }else{
         spsComps::bsTooltip(
-          do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_bool_input, option_par$shiny_varname, suboptions, vals),
+          do.call(what=shiny::splitLayout, args = c(lapply(seq(1,nCells), split_bool_input, option_par$shiny_varname, suboptions, vals),
                                              list(cellWidths=as.list(cellwidths)),
                                              list(width=list('500px')))),
           title=option_par$shiny_tooltip,
@@ -910,7 +910,7 @@ create_input_element = function(option) {
       cellwidths[boxes] = paste0(400*width_unit, '%')
       transparancy = ifelse(option_par$shiny_varname=='feature_color' | option_par$shiny_varname=='background_colors', FALSE, TRUE)
       spsComps::bsTooltip(
-        do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_color_input, option_par$shiny_varname, suboptions, vals, transparancy),
+        do.call(what=shiny::splitLayout, args = c(lapply(seq(1,nCells), split_color_input, option_par$shiny_varname, suboptions, vals, transparancy),
                                            list(cellWidths=as.list(cellwidths)),
                                            list(width=list('500px')))
         ),
@@ -919,7 +919,7 @@ create_input_element = function(option) {
     }else if ( option_par$option_class == 'special_argument' ) {
       if ( option=='panel_font_easy' | option=='panel_font'  | option=='panel_horizontal'){
         spsComps::bsTooltip(
-          checkboxInput(option_par$shiny_varname, option_par$shiny_label, value =ifelse(option_par$option_default=='NULL', FALSE, TRUE)),
+          shiny::checkboxInput(option_par$shiny_varname, option_par$shiny_label, value =ifelse(option_par$option_default=='NULL', FALSE, TRUE)),
           title=option_par$shiny_tooltip,
           placement ='left')
       }else if (option=='header_font'){
@@ -936,16 +936,16 @@ create_input_element = function(option) {
         optima = optimaNvals[1:2]
         vals = optimaNvals[3:5]
         step = 1
-        fluidRow(
-          tags$head(tags$style(type="text/css", paste0("#checkbox"))), #@ {padding-left: 15px}
-          tags$div(id = "checkbox",
+        shiny::fluidRow(
+          shiny::tags$head(shiny::tags$style(type="text/css", paste0("#checkbox"))), #@ {padding-left: 15px}
+          shiny::tags$div(id = "checkbox",
                    spsComps::bsTooltip(
-                     checkboxInput(option_par$shiny_varname, option_par$shiny_label, value = ifelse(option_par$option_default=='NULL', FALSE, TRUE)),
+                     shiny::checkboxInput(option_par$shiny_varname, option_par$shiny_label, value = ifelse(option_par$option_default=='NULL', FALSE, TRUE)),
                      title=option_par$shiny_tooltip,
                      placement ='left')),
-          tags$head(tags$style(type="text/css", paste0("#header_font_div", " {padding-left: 15px}"))),
-          tags$div(id = 'header_font_div',
-                   do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_sliders, 'header_font', levels, vals, optima, step),
+          shiny::tags$head(shiny::tags$style(type="text/css", paste0("#header_font_div", " {padding-left: 15px}"))),
+          shiny::tags$div(id = 'header_font_div',
+                   do.call(what=shiny::splitLayout, args = c(lapply(seq(1,nCells), split_sliders, 'header_font', levels, vals, optima, step),
                                                       list(cellWidths=as.list(cellwidths)),
                                                       list(width=list('500px'))))
           )
@@ -958,19 +958,19 @@ create_input_element = function(option) {
 
 
 # UI ####
-ui <- fluidPage(
+ui <- shiny::fluidPage(
   shinyjs::useShinyjs(),
   shinybusy::use_busy_spinner(spin = "fading-circle"),
-  tags$style(HTML(".shiny-split-layout>div {overflow: visible}")),  #@ this line allows the color widgets to be displayed "in front"
+  shiny::tags$style(HTML(".shiny-split-layout>div {overflow: visible}")),  #@ this line allows the color widgets to be displayed "in front"
   # HEADER ####
   titlePanel( h1("seq'N'display'R", align = "left") ),
   h3( "Customizable and Reproducible Plotting of Sequencing Coverage Data", align='left' ),  #@ A Tool for 
-  tags$br(),
+  shiny::tags$br(),
   
   
   # TOP BUTTONS ####
-  tags$head(
-    tags$style(
+  shiny::tags$head(
+    shiny::tags$style(
       HTML(
         "#buttons_div .tooltip-inner{width: 200px; background-color:gray}"
       )
@@ -980,17 +980,28 @@ ui <- fluidPage(
   
   sidebarLayout(
     sidebarPanel(width=3,
-                 div(id='buttons_div',
-                     actionButton("plot", "Draw Plot"),
-                     #note the tooltop, clean-up of space only visible upon mouse-over
-                     shinyBS::bsTooltip(id = "plot", title = "The plot will appear in an independent window. </br> </br> The process can take some time depending on the number of tracks and annotations plotted as well as the arguments used.",
-                                        placement = "right", trigger = "hover",),
-                     suppressWarnings(downloadButton("save_pdf", "Save as PDF")),
-                     shinyBS::bsTooltip(id = "save_pdf", title = "The plot will be saved as pdf. </br> </br> The process can take some time depending on the number of tracks and annotations plotted as well as the arguments used.",
-                                        placement = "right", trigger = "hover"),
-                     suppressWarnings(downloadButton("save_settings", "Save Settings")),
-                     shinyBS::bsTooltip(id = "save_settings", title = "Save current settings in an sNdR sample (Excel) file for reuse.",
-                                        placement = "right", trigger = "hover"),
+                 shiny::div(id='buttons_div',
+                            spsComps::bsTooltip(
+                              shiny::actionButton("plot", "Draw Plot"),
+                              title = "The plot will appear in an independent window.<br><br> The process can take some time depending on the number of tracks and annotations plotted as well as the arguments used.",
+                              placement = "right",
+                              trigger = "hover",
+                              html = TRUE
+                            ),
+                            spsComps::bsTooltip(
+                              suppressWarnings(shiny::downloadButton("save_pdf", "Save as PDF")),
+                              title = "The plot will be saved as a PDF.<br><br> The process can take some time depending on the number of tracks and annotations plotted as well as the arguments used.",
+                              placement = "right",
+                              trigger = "hover",
+                              html = TRUE
+                            ),
+                            spsComps::bsTooltip(
+                              suppressWarnings(shiny::downloadButton("save_settings", "Save Settings")),
+                              title = "Save current settings in an sNdR sample (Excel) file for reuse.",
+                              placement = "right",
+                              trigger = "hover",
+                              html = TRUE
+                            ),
                      ## TODO: remove debugging buttons
                      # actionButton("show_settings", "Show Settings"),
                      # shinyBS::bsTooltip(id = "show_settings", title = "Show settings of active session in console.",
@@ -1008,32 +1019,34 @@ ui <- fluidPage(
                      # actionButton("clean_console", "Clean Console"),
                      # shinyBS::bsTooltip(id = "clean_console", title = "Clean the text output displayed to the right",
                      #                    placement = "right", trigger = "hover"),
-                     
-                     actionButton("reset", "Reset Session"),
-                     actionButton("reload_app", "Reset App"), #@ 2023-09-18 Reload Page
+                     spsComps::bsTooltip(
+                       shiny::actionButton("reset", "Reset Session"),
+                       title = "Reset all options to values from the currently loaded template.",
+                       placement = "right",
+                       trigger = "hover",
+                       html = TRUE
+                     ),
+                     shiny::actionButton("reload_app", "Reset App"), #@ 2023-09-18 Reload Page
                      #actionButton("debug", "Custom Debug Info"),
-                     shinyBS::bsTooltip(id = "reset", title = "Reset all options to values from the currently loaded template",
-                                        placement = "right", trigger = "hover")
-                     
                  )
     ),
     mainPanel(
-      tags$head(
-        tags$style(type="text/css", "#examples_sample_sheets_folder {background-color: #BD583735}")),
-      tags$div(id="examples_sample_sheets_folder", tags$p("Example", strong(em("sNdR sample files")), "are in", seqNdisplayR::ExamplesSampleSheetsFolder())),
-      tags$p("1. load a template and choose a locus in the Input section"),
-      tags$p("2. modify any options in Input or Optional Arguments below"),
-      tags$p("3. select on the left whether to plot on screen, save as PDF or save current settings to sNdR sample (Excel) file"),
-      # tags$p(em("A convenient website to easily design pleasing color palettes, with colorblind friendly options can be found "), a("here", href="https://coolors.co/"), em('or'), a("here", href="https://medialab.github.io/iwanthue/")),
-      tags$p(strong("Optional arguments marked with [*] should be used with caution - only recommended for experienced users! Consult the associated paper or R help for more details.")),
-      tags$br(),
-      #tags$p("Example", strong(em("Sample Sheets")), "are in", seqNdisplayR::ExamplesSampleSheetsFolder()),
+      shiny::tags$head(
+        shiny::tags$style(type="text/css", "#examples_sample_sheets_folder {background-color: #BD583735}")),
+      shiny::tags$div(id="examples_sample_sheets_folder", shiny::tags$p("Example", shiny::strong(shiny::em("sNdR sample files")), "are in", seqNdisplayR::ExamplesSampleSheetsFolder())),
+      shiny::tags$p("1. load a template and choose a locus in the Input section"),
+      shiny::tags$p("2. modify any options in Input or Optional Arguments below"),
+      shiny::tags$p("3. select on the left whether to plot on screen, save as PDF or save current settings to sNdR sample (Excel) file"),
+      # shiny::tags$p(shiny::em("A convenient website to easily design pleasing color palettes, with colorblind friendly options can be found "), a("here", href="https://coolors.co/"), shiny::em('or'), a("here", href="https://medialab.github.io/iwanthue/")),
+      shiny::tags$p(shiny::strong("Optional arguments marked with [*] should be used with caution - only recommended for experienced users! Consult the associated paper or R help for more details.")),
+      shiny::tags$br(),
+      #shiny::tags$p("Example", shiny::strong(shiny::em("Sample Sheets")), "are in", seqNdisplayR::ExamplesSampleSheetsFolder()),
       verbatimTextOutput("console"))
   ),
-  tags$br(),
+  shiny::tags$br(),
   
   # BODY SECTION ####
-  fluidRow(
+  shiny::fluidRow(
     column(
       12,
       offset = 0,
@@ -1041,7 +1054,7 @@ ui <- fluidPage(
         "Input",
         tabPanel(
           "Select Template and Locus",
-          #@ p("Filling out the boxes in the 'Input' window is the minimum requirement for plotting. Multiple accessory arguments can be adjusted below, but plotting can be performed merely from importing the template excel file, specifying a locus by name or coordinates and pressing the 'Draw Plot' button (locus name overwrites coordinates)."),
+          #@ shiny::p("Filling out the boxes in the 'Input' window is the minimum requirement for plotting. Multiple accessory arguments can be adjusted below, but plotting can be performed merely from importing the template excel file, specifying a locus by name or coordinates and pressing the 'Draw Plot' button (locus name overwrites coordinates)."),
           fileInput(
             "input_file",
             "Load sNdR sample file", #@ "Load excel file (or IGV session xml file)"
@@ -1052,21 +1065,27 @@ ui <- fluidPage(
           verbatimTextOutput("File_import_msg"),
           #@ h4('Excel template import options'), #@ h4('Excel template and IGVsession import options'),
           spsComps::bsTooltip(
-            checkboxInput("load_annotations", "Load annotations during import", value = TRUE),
-            title='Load annotations already during import. This can take some time during session loading, but will save time when plotting.',
-            placement ='right'),
-          tags$br(),
-          splitLayout(
+            shiny::checkboxInput(
+              "load_annotations",
+              "Load annotations during import",
+              value = TRUE
+            ),
+            title = "Load annotations already during import. This can take some time during session loading, but will save time when plotting.",
+            placement = "right",
+            html = TRUE
+          ),
+          shiny::tags$br(),
+          shiny::splitLayout(
             cellWidths = c('40%', '10%', '40%'), #@c(252,56, 252), #@ c('40%', '10%', '40%')
-            textInput("gene", label ='Enter locus name', placeholder='e.g. LMO4'),
-            p("or", align='center'),
-            textInput("coordinates", label='Enter locus coordinates', placeholder='e.g. chr1:+:87325400:87351991'),
+            shiny::textInput("gene", label ='Enter locus name', placeholder='e.g. LMO4'),
+            shiny::p("or", align='center'),
+            shiny::textInput("coordinates", label='Enter locus coordinates', placeholder='e.g. chr1:+:87325400:87351991'),
             width=560
           ),
-          tags$p(em(
+          shiny::tags$p(shiny::em(
             "The locus name has to be present in one of the supplied annotations and match case. When entering locus name and coordinates simultaneously, only the locus name will be considered."
           )),
-          tags$br(),
+          shiny::tags$br(),
           create_input_element('verbosity')
         ),
         
@@ -1074,13 +1093,13 @@ ui <- fluidPage(
         #   "Template Load Options",
         #   h4('Excel template import options'), #@ h4('Excel template and IGVsession import options'),
         #   spsComps::bsTooltip(
-        #     checkboxInput("load_annotations", "Load annotations during import", value = TRUE),
+        #     shiny::checkboxInput("load_annotations", "Load annotations during import", value = TRUE),
         #     title='Load annotations already during import. This can take some time during session loading, but will save time when plotting.',
         #     placement ='right'),
-        #   tags$br(),
+        #   shiny::tags$br(),
         #   h4('IGVsession-specific import options'),
         #   spsComps::bsTooltip(
-        #     radioButtons("igv_groupby", "Group igv-loaded samples to datasets using:",
+        #     shiny::radioButtons("igv_groupby", "Group igv-loaded samples to datasets using:",
         #                  choices = list('Do not group'='dont_group',
         #                                 'IGV autoscale groups'='autoscalegroups',
         #                                 'Common prefix in names'='common_prefix'
@@ -1089,7 +1108,7 @@ ui <- fluidPage(
         #     title='Not every igv session is fully compatible with seqNdisplayR, but you should be able to load the session and then export to then modify the downloaded Excel sheet to create meaningful sample divisions, reload the Excel template and plot. The default "Do not group" option should be most robust, in particular together with setting plus,minus strand identifiers below as NULL.',
         #     placement ='right'),
         #   spsComps::bsTooltip(
-        #     textInput("igv_strand_regex", "IGV-import: plus,minus strand identifiers",value = 'plus,minus'),
+        #     shiny::textInput("igv_strand_regex", "IGV-import: plus,minus strand identifiers",value = 'plus,minus'),
         #     title="Substring in bigwig file names used for strand assignment. Bigwig file names for plus/minus strand MUST be direct replacement of plus vs minus regex. If setting this option as NULL, will not try to assign strand. Together with Do not group option above this should work for most IGV session files.",
         #     placement ='right')
         # ),
@@ -1098,7 +1117,7 @@ ui <- fluidPage(
         # Sample Selection ####
         tabPanel(
           "Data Overview and Selection",
-          #@ p('You can reorder within each dataset, and select which samples to display. Reordering and selection are used for plotting by using the dataset-specific whichSamples parameter and this will also be saved in the Excel session like that. Reordering of datasets does not work for now. This has to be done in the Excel sheet. Note also that whichSamples is currently not respected when drawing the tree upon loading of an Excel template.'),
+          #@ shiny::p('You can reorder within each dataset, and select which samples to display. Reordering and selection are used for plotting by using the dataset-specific whichSamples parameter and this will also be saved in the Excel session like that. Reordering of datasets does not work for now. This has to be done in the Excel sheet. Note also that whichSamples is currently not respected when drawing the tree upon loading of an Excel template.'),
           h4('Tracks to plot:'),
           shinyTree::shinyTree("tree", checkbox=TRUE, dragAndDrop=TRUE, multiple = TRUE, animation = FALSE, themeIcons = FALSE)
         ),
@@ -1108,7 +1127,7 @@ ui <- fluidPage(
         tabPanel(
           "Track Colors",
           #h4('Track colors:'),
-          tags$br(),
+          shiny::tags$br(),
           column(
           10,
           offset = 0,
@@ -1120,7 +1139,7 @@ ui <- fluidPage(
         "Optional Arguments",
         tabPanel(
           "Plot Layout",
-          tags$br(),
+          shiny::tags$br(),
           column(
             10,
             offset = 0,
@@ -1128,22 +1147,22 @@ ui <- fluidPage(
             create_input_element('dummy'),
             create_input_element('header_display'),
             create_input_element('header_name'),
-            tags$head(
-              tags$style(type="text/css", "#header_name_div {padding-left: 15px}")
+            shiny::tags$head(
+              shiny::tags$style(type="text/css", "#header_name_div {padding-left: 15px}")
             ),
-            div(id = "header_name_div",
-                div(id = "header_name_box")
+            shiny::div(id = "header_name_div",
+                shiny::div(id = "header_name_box")
             ),
             create_input_element('include_genomic_scale'),
             create_input_element('genomic_scale_on_top'),
             create_input_element('for_op'),
             create_input_element('bothstrands'),
             create_input_element('intermingled'),
-            tags$head(
-              tags$style(type="text/css", "#intermingled_div") #@ {padding-left: 15px}
+            shiny::tags$head(
+              shiny::tags$style(type="text/css", "#intermingled_div") #@ {padding-left: 15px}
             ),
-            div(id = "intermingled_div",
-                div(id = "intermingled_colors",
+            shiny::div(id = "intermingled_div",
+                shiny::div(id = "intermingled_colors",
                     create_input_element('intrmngld_col')
                 )
             ),
@@ -1156,7 +1175,7 @@ ui <- fluidPage(
         
         tabPanel(
           "Plot Display Parameters",
-          tags$br(),
+          shiny::tags$br(),
           column(
             10,
             offset = 0,
@@ -1178,7 +1197,7 @@ ui <- fluidPage(
         
         tabPanel(
           "Dataset-Specific Options",
-          tags$br(),
+          shiny::tags$br(),
           column(
             10,
             offset = 0,
@@ -1195,39 +1214,39 @@ ui <- fluidPage(
         
         tabPanel(
           "Panel Display",
-          tags$br(),
+          shiny::tags$br(),
           column(
             10,
             offset = 0,
             h4('Panel Text Display:'),
             create_input_element('panels_width_fixed'),
             create_input_element('panel_horizontal'),
-            tags$head(
-              tags$style(type="text/css", "#panel_horizontal_div {padding-left: 15px}")
+            shiny::tags$head(
+              shiny::tags$style(type="text/css", "#panel_horizontal_div {padding-left: 15px}")
             ),
-            div(id = "panel_horizontal_div",
-                p("Display panel text horizontally:", style= 'font-weight: bold'),
-                div(id = "panel_horizontal_checkboxes")
+            shiny::div(id = "panel_horizontal_div",
+                shiny::p("Display panel text horizontally:", style= 'font-weight: bold'),
+                shiny::div(id = "panel_horizontal_checkboxes")
             ),
             create_input_element('print_one_line_sample_names'),
             create_input_element('replicate_names'),
             create_input_element('pan_col'),
             create_input_element('panel_font_easy'),
-            tags$head(
-              tags$style(type="text/css", "#panel_font_easy_div {padding-left: 15px}")
+            shiny::tags$head(
+              shiny::tags$style(type="text/css", "#panel_font_easy_div {padding-left: 15px}")
             ),
-            div(id = "panel_font_easy_div",
-                div(id = 'panel_font_easy_boxes')
+            shiny::div(id = "panel_font_easy_div",
+                shiny::div(id = 'panel_font_easy_boxes')
             ),
             create_input_element('panel_font'),
-            tags$head(
-              tags$style(type="text/css", "#panel_font_div {padding-left: 15px}")
+            shiny::tags$head(
+              shiny::tags$style(type="text/css", "#panel_font_div {padding-left: 15px}")
             ),
-            div(id = "panel_font_div",
-                div(id = "panel_font_boxes_headers"),
-                div(id = "panel_font_boxes")
+            shiny::div(id = "panel_font_div",
+                shiny::div(id = "panel_font_boxes_headers"),
+                shiny::div(id = "panel_font_boxes")
             ),
-            tags$br(),
+            shiny::tags$br(),
             h4('Spacing, Background and Separators'),
             create_input_element('incl_first_panel'),
             create_input_element('horizon_space'),
@@ -1235,11 +1254,11 @@ ui <- fluidPage(
             create_input_element('sep_col'),
             create_input_element('sep_thick'),
             create_input_element('alternating_background_usage'),
-            tags$head(
-              tags$style(type="text/css", "#alternating_background_usage_div") #@  {padding-left: 15px}
+            shiny::tags$head(
+              shiny::tags$style(type="text/css", "#alternating_background_usage_div") #@  {padding-left: 15px}
             ),
-            div(id = "alternating_background_usage_div",
-                div(id = "alternating_background_usage_choices",
+            shiny::div(id = "alternating_background_usage_div",
+                shiny::div(id = "alternating_background_usage_choices",
                     create_input_element('background_colors'),
                     create_input_element('background_opacity')
                 )
@@ -1249,12 +1268,12 @@ ui <- fluidPage(
         
         tabPanel(
           "Track Binning",
-          tags$br(),
+          shiny::tags$br(),
           column(
             10,
             offset = 0,
-            p("Data binning concerns how coverage data is summarized into bins before plotting. By default optimal binning conditions are determined based on locus size but the individual binning settings can be changed below."),
-            tags$br(),
+            shiny::p("Data binning concerns how coverage data is summarized into bins before plotting. By default optimal binning conditions are determined based on locus size but the individual binning settings can be changed below."),
+            shiny::tags$br(),
             create_input_element('binning_size'),
             create_input_element('binning_start'),
             create_input_element('bins_cm')
@@ -1263,17 +1282,17 @@ ui <- fluidPage(
         
         tabPanel(
           "Header and Genomic Region",
-          tags$br(),
+          shiny::tags$br(),
           column(
             10,
             offset = 0,
             h4('Header'),
             create_input_element('header_font'),
-            tags$head(
-              tags$style(type="text/css", "#header_font_div {padding-left: 15px}")
+            shiny::tags$head(
+              shiny::tags$style(type="text/css", "#header_font_div {padding-left: 15px}")
             ),
-            div(id = "header_font_div",
-                div(id = "header_font_boxes")
+            shiny::div(id = "header_font_div",
+                shiny::div(id = "header_font_boxes")
             ),
             create_input_element('header_color'),
             h4('Genomic region'),
@@ -1284,17 +1303,17 @@ ui <- fluidPage(
         
         tabPanel(
           "Data Scale Display",
-          tags$br(),
+          shiny::tags$br(),
           column(
             10,
             offset = 0,
             create_input_element('group_autoscale'),
             create_input_element('manual_scales'), ##@@0a ->
-            tags$head(
-              tags$style(type="text/css", "#manual_scales_div {padding-left: 15px}")
+            shiny::tags$head(
+              shiny::tags$style(type="text/css", "#manual_scales_div {padding-left: 15px}")
             ),
-            div(id = "manual_scales_div",
-                div(id = "manual_scales_boxes"
+            shiny::div(id = "manual_scales_div",
+                shiny::div(id = "manual_scales_boxes"
                 )
             ),  ##@@0a <-
             create_input_element('scale_scientific_format'),
@@ -1305,7 +1324,7 @@ ui <- fluidPage(
         
         tabPanel(
           "Annotation Display",
-          tags$br(),
+          shiny::tags$br(),
           column(
             10,
             offset = 0,
@@ -1318,11 +1337,11 @@ ui <- fluidPage(
             create_input_element('which_annot_colors'),
             create_input_element('annotation_character_size'),
             create_input_element('annotation_character_color'),
-            tags$br(),
+            shiny::tags$br(),
             h4('Annotation Titles'),
             create_input_element('annot_font'),
             create_input_element('annot_col_name'),
-            tags$br(),
+            shiny::tags$br(),
             h4('Loci Shading'),
             create_input_element('incl_locus_colors'),
             create_input_element('feature_color'),
@@ -1452,107 +1471,107 @@ server <- function(input, output, session) {
   }
   
   # responsive elements show/hide behavior ####
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "pdf_output_folder_div", condition = input$pdf_output_folder)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "pdf_name_div", condition = input$pdf_name)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "header_name_div", condition = input$header_name)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "intermingled_div", condition = input$intermingled)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "panel_horizontal_div", condition = input$panel_horizontal)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "panel_font_easy_div", condition = input$panel_font_easy)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "panel_font_div", condition = input$panel_font)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "tracks_height_div", condition = input$tracks_height)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "title_field_height_cm_div", condition = input$title_field_height_cm)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "genomic_scale_height_cm_div", condition = input$genomic_scale_height_cm)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "annot_height_cm_div", condition = input$annot_height_cm) #@ 2023-06-19
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "spacer_height_div", condition = input$spacer_height)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "tracks_width_in_cm_div", condition = input$tracks_width_in_cm)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "tracks_name_width_div", condition = input$tracks_name_width)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "scale_per_space_div", condition = input$scale_per_space)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "plot_height_div", condition = input$plot_height)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "plot_width_div", condition = input$plot_width)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "alternating_background_usage_div", condition = input$alternating_background_usage)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "annotation_character_size_div", condition = input$annotation_character_size)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "annot_font_div", condition = input$annot_font)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "header_font_div", condition = input$header_font)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "gen_scal_font_div", condition = input$gen_scal_font)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "binning_size_div", condition = input$binning_size)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "binning_start_div", condition = input$binning_start)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "scale_character_size_div", condition = input$scale_character_size)
   })
   
-  observe({
+  shiny::observe({
     shinyjs::toggle(id = "manual_scales_div", condition = input$manual_scales) ##@@0b <->
   })
   
@@ -1572,16 +1591,16 @@ server <- function(input, output, session) {
       
       if ( opt %in% names(seqNdisplayR_session) ) {
         if ( opt_line$option_class == 'bool' ) {
-          updateCheckboxInput(session, opt_line$shiny_varname, value = seqNdisplayR_session[[opt]])
+          shiny::updateCheckboxInput(session, opt_line$shiny_varname, value = seqNdisplayR_session[[opt]])
         } else if ( opt_line$option_class == 'text' ) {
-          updateTextInput(session, opt_line$shiny_varname, value = DeparseOption(seqNdisplayR_session[[opt]])) #@ 2022-10-07 seqNdisplayR::DeparseOption
+          shiny::updateTextInput(session, opt_line$shiny_varname, value = DeparseOption(seqNdisplayR_session[[opt]])) #@ 2022-10-07 seqNdisplayR::DeparseOption
         } else if ( opt_line$option_class == 'text_choices' ) { #@ ->
           options = strsplit(opt_line$option_options, split=',', fixed=TRUE)[[1]]
-          updateRadioButtons(session, opt_line$shiny_varname, selected=DeparseOption(seqNdisplayR_session[[opt]])) #@ 2022-10-07 seqNdisplayR::DeparseOption
+          shiny::updateRadioButtons(session, opt_line$shiny_varname, selected=DeparseOption(seqNdisplayR_session[[opt]])) #@ 2022-10-07 seqNdisplayR::DeparseOption
         } else if ( opt_line$option_class == 'color' ) {
           colourpicker::updateColourInput(session, opt_line$shiny_varname, value = DeparseOption(seqNdisplayR_session[[opt]])) #@ 2022-10-07 seqNdisplayR::DeparseOption
         } else if ( opt_line$option_class == 'numeric' ) {
-          updateSliderInput(session, opt_line$shiny_varname, value = seqNdisplayR_session[[opt]])
+          shiny::updateSliderInput(session, opt_line$shiny_varname, value = seqNdisplayR_session[[opt]])
         } else if ( opt_line$option_class == 'optional_numeric' ) {
           if (is.null(seqNdisplayR_session[[opt]])){
             automatic = TRUE
@@ -1591,29 +1610,29 @@ server <- function(input, output, session) {
             automatic = !as.logical(as.numeric(seqNdisplayR_session[[opt]]))
           }
           if( !automatic ){
-            updateCheckboxInput(session, opt_line$shiny_varname, value = TRUE)
+            shiny::updateCheckboxInput(session, opt_line$shiny_varname, value = TRUE)
             if (opt != 'bin_size' & opt != 'bin_start'){
-              updateSliderInput(session, paste0(opt_line$shiny_varname, '_slider'), value = seqNdisplayR_session[[opt]]) #@ 2023-10-07
+              shiny::updateSliderInput(session, paste0(opt_line$shiny_varname, '_slider'), value = seqNdisplayR_session[[opt]]) #@ 2023-10-07
             }else{
-              updateSliderInput(session, paste0(opt_line$shiny_varname, '_box'), value = seqNdisplayR_session[[opt]]) #@ 2023-09-25 '_box' <- '_slider'  
+              shiny::updateSliderInput(session, paste0(opt_line$shiny_varname, '_box'), value = seqNdisplayR_session[[opt]]) #@ 2023-09-25 '_box' <- '_slider'  
             }
           } else {
-            updateCheckboxInput(session, opt_line$shiny_varname, value = FALSE)
+            shiny::updateCheckboxInput(session, opt_line$shiny_varname, value = FALSE)
           }
         }else if ( opt_line$option_class == 'optional_text' ) { #@ -> 2023-10-07
           if( !is.null(seqNdisplayR_session[[opt]]) ){
-            updateCheckboxInput(session, opt_line$shiny_varname, value = TRUE)
-            updateTextInput(session, paste0(opt_line$shiny_varname, '_box'), value = seqNdisplayR_session[[opt]] ) #@ 2023-10-07
+            shiny::updateCheckboxInput(session, opt_line$shiny_varname, value = TRUE)
+            shiny::updateTextInput(session, paste0(opt_line$shiny_varname, '_box'), value = seqNdisplayR_session[[opt]] ) #@ 2023-10-07
           } else {
-            updateCheckboxInput(session, opt_line$shiny_varname, value = FALSE)
+            shiny::updateCheckboxInput(session, opt_line$shiny_varname, value = FALSE)
           } #@ <- 2023-10-07
         }else if ( opt_line$option_class == 'split_numeric' ) {
           suboptions = strsplit(opt_line$option_options, ';', fixed=TRUE)[[1]]
           for (n in seq_along(suboptions)){
             if (opt_line$shiny_varname!='feat_extend'){
-              updateSliderInput(session, paste0(opt_line$shiny_varname, '_subvar', n), value = seqNdisplayR_session[[opt]][n])
+              shiny::updateSliderInput(session, paste0(opt_line$shiny_varname, '_subvar', n), value = seqNdisplayR_session[[opt]][n])
             }else{
-              updateNumericInput(session, paste0(opt_line$shiny_varname, '_subvar', n), value = seqNdisplayR_session[[opt]][n])
+              shiny::updateNumericInput(session, paste0(opt_line$shiny_varname, '_subvar', n), value = seqNdisplayR_session[[opt]][n])
             }
           }
         }else if ( opt_line$option_class == 'split_text' ){
@@ -1624,9 +1643,9 @@ server <- function(input, output, session) {
           }
           for (n in seq_along(suboptions)){
             if (opt_line$shiny_varname!='panel_separator'){
-              updateTextInput(session, paste0(opt_line$shiny_varname, '_subvar', n), value = vals[n])
+              shiny::updateTextInput(session, paste0(opt_line$shiny_varname, '_subvar', n), value = vals[n])
             }else{
-              updateCheckboxInput(session, paste0(opt_line$shiny_varname, '_subvar', n), value = vals[n])
+              shiny::updateCheckboxInput(session, paste0(opt_line$shiny_varname, '_subvar', n), value = vals[n])
             }
           }
         }else if ( opt_line$option_class == 'split_color' ){
@@ -1641,7 +1660,7 @@ server <- function(input, output, session) {
         }else if ( opt_line$option_class == 'special_argument' ){
           if ( opt=='panel_font_sizes' | opt=='panel_font_size_list' | opt=='horizontal_panels_list'){
             if ( !is.null(seqNdisplayR_session[[opt]]) ){
-              updateCheckboxInput(session, opt_line$shiny_varname, value = TRUE)
+              shiny::updateCheckboxInput(session, opt_line$shiny_varname, value = TRUE)
               
               ##TO DO: Insert elements for new datasets using inserUI and delete elements from old datasets
               dataset_group_depths = sapply(rev(dataset_names), function(name) ListDepth(seqNdisplayR_session$samples[[name]]) + 1)
@@ -1649,7 +1668,7 @@ server <- function(input, output, session) {
                 dataset_group_depth = max(dataset_group_depths)
                 levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
                 for (n in seq_along(levels)){
-                  updateSliderInput(session, paste0('panel_font_easy', '_subvar', n), value = seqNdisplayR_session[[opt]][n])
+                  shiny::updateSliderInput(session, paste0('panel_font_easy', '_subvar', n), value = seqNdisplayR_session[[opt]][n])
                 }
               }else{
                 for ( name in rev(dataset_names) ) {
@@ -1657,9 +1676,9 @@ server <- function(input, output, session) {
                   levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
                   for (n in seq_along(levels)){
                     if (opt=='panel_font_size_list'){
-                      updateSliderInput(session, paste0('panel_font_', name, '_subvar', n), value = seqNdisplayR_session[[opt]][[name]][n])
+                      shiny::updateSliderInput(session, paste0('panel_font_', name, '_subvar', n), value = seqNdisplayR_session[[opt]][[name]][n])
                     }else{
-                      updateCheckboxGroupInput(session, paste0(opt_line$shiny_varname, '_', name), choices=levels, selected=levels[seqNdisplayR_session[[opt]][[name]]]) #@
+                      shiny::updateCheckboxGroupInput(session, paste0(opt_line$shiny_varname, '_', name), choices=levels, selected=levels[seqNdisplayR_session[[opt]][[name]]]) #@
                     }
                   }
                 }
@@ -1667,9 +1686,9 @@ server <- function(input, output, session) {
             }
           }else if (opt=='header_font_sizes'){
             if ( !is.null(seqNdisplayR_session[[opt]]) ){
-              updateCheckboxInput(session, opt_line$shiny_varname, value = TRUE)
+              shiny::updateCheckboxInput(session, opt_line$shiny_varname, value = TRUE)
               for (n in 1:3){
-                updateSliderInput(session, paste0('header_font', '_subvar', n), value = seqNdisplayR_session[[opt]][n])
+                shiny::updateSliderInput(session, paste0('header_font', '_subvar', n), value = seqNdisplayR_session[[opt]][n])
               }
             }
           }
@@ -1696,12 +1715,12 @@ server <- function(input, output, session) {
       para = lapply(dataset_names, function(d) seqNdisplayR_session$parameters[[d]][[opt]])
       names(para) = dataset_names
       if ( opt_line$option_class == 'bool' ) {
-        updateCheckboxGroupInput(session,
+        shiny::updateCheckboxGroupInput(session,
                                  opt_line$shiny_varname,
                                  choices = character(0),
                                  selected = character(0))
         
-        updateCheckboxGroupInput(session,
+        shiny::updateCheckboxGroupInput(session,
                                  opt_line$shiny_varname,
                                  choices = names(para),
                                  selected = names(para)[unlist(para)])
@@ -1724,7 +1743,7 @@ server <- function(input, output, session) {
         
         if ( opt_line$option_class == 'special_argument' ) { ##@@2 ->
           if ( !is.null(seqNdisplayR_session[[opt]]) | any(!is.na(unlist(para))) ){ #$ condition added 230519
-            updateCheckboxInput(session, opt_line$shiny_varname, value=TRUE ) 
+            shiny::updateCheckboxInput(session, opt_line$shiny_varname, value=TRUE ) 
             # cat("input manual scales:", '\n')
             # cat(class(input), '\n')
             # cat(paste(names(input$manual_scales), collapse='\n'), '\n')
@@ -1740,11 +1759,11 @@ server <- function(input, output, session) {
           alt_name = gsub("[[:punct:]]", paste0('Z', which(names(para)==name), 'Z'), alt_name)
           dataset_id = paste0(anchor_elem, '_XvalueX', CurrentSessionIdx(), '_', alt_name)
           if ( opt_line$option_class == 'text' ) {
-            insertUI(
+            shiny::insertUI(
               selector = paste0('#', anchor_elem),
               where = "afterEnd",
-              ui = tags$div(id=dataset_id,
-                            textInput(inputId = dataset_id,
+              ui = shiny::tags$div(id=dataset_id,
+                            shiny::textInput(inputId = dataset_id,
                                       label = name,
                                       value = DeparseOption(para[[name]])
                             ))
@@ -1757,11 +1776,11 @@ server <- function(input, output, session) {
             start_val = ifelse(length(vals)==3, vals[3], mean(c(min_val, max_val)))
             if(is.na(max_val)){max_val=start_val*2}
             if (opt_line$shiny_varname != 'pseudoCount'){
-              insertUI(
+              shiny::insertUI(
                 selector = paste0('#', anchor_elem),
                 where = "afterEnd",
-                ui = tags$div(id=dataset_id,
-                              sliderInput(inputId = dataset_id,
+                ui = shiny::tags$div(id=dataset_id,
+                              shiny::sliderInput(inputId = dataset_id,
                                           label = name,
                                           min=min_val,
                                           max=max_val,
@@ -1770,11 +1789,11 @@ server <- function(input, output, session) {
                 )
               )
             }else{
-              insertUI(
+              shiny::insertUI(
                 selector = paste0('#', anchor_elem),
                 where = "afterEnd",
-                ui = tags$div(id=dataset_id,
-                              numericInput(inputId = dataset_id,
+                ui = shiny::tags$div(id=dataset_id,
+                              shiny::numericInput(inputId = dataset_id,
                                            label = name,
                                            min=min_val,
                                            max=max_val,
@@ -1785,10 +1804,10 @@ server <- function(input, output, session) {
             }
           } else if ( opt_line$option_class == 'text_choices' ) {
             opt_choices = strsplit(opt_line$option_options,',')[[1]]
-            insertUI(selector = paste0('#', anchor_elem),
+            shiny::insertUI(selector = paste0('#', anchor_elem),
                      where = "afterEnd",
-                     ui = tags$div(id=dataset_id,
-                                   radioButtons(inputId = dataset_id,
+                     ui = shiny::tags$div(id=dataset_id,
+                                   shiny::radioButtons(inputId = dataset_id,
                                                 label = name,
                                                 choices = opt_choices,
                                                 selected = DeparseOption(para[[name]]),
@@ -1800,7 +1819,7 @@ server <- function(input, output, session) {
                 levels = para[[name]]
                 for (n in seq_along(levels)){
                   if (!is.na(para[[name]][n])){
-                    updateNumericInput(session, paste0(dataset_id, '_subvar', n), value = para[[name]][n])
+                    shiny::updateNumericInput(session, paste0(dataset_id, '_subvar', n), value = para[[name]][n])
                   }
                 }
               }
@@ -1808,7 +1827,7 @@ server <- function(input, output, session) {
               if (!is.null(seqNdisplayR_session[[opt]][[name]])){
                 levels = length(seqNdisplayR_session[[opt]][[name]])
                 for (n in seq_along(levels)){
-                  updateNumericInput(session, paste0(dataset_id, '_subvar', n), value = seqNdisplayR_session[[opt]][[name]][n])
+                  shiny::updateNumericInput(session, paste0(dataset_id, '_subvar', n), value = seqNdisplayR_session[[opt]][[name]][n])
                 }
               }
             }
@@ -1849,10 +1868,10 @@ server <- function(input, output, session) {
         vals = levels[seqNdisplayR_session[['horizontal_panels_list']][[name]]] 
       }
       
-      insertUI(
+      shiny::insertUI(
         selector = '#panel_horizontal_checkboxes',
         where = "afterEnd",
-        ui = checkboxGroupInput(
+        ui = shiny::checkboxGroupInput(
           inputId = dataset_id,
           label = name,
           choices = levels,
@@ -1898,13 +1917,13 @@ server <- function(input, output, session) {
       vals = seqNdisplayR_session$panel_font_sizes
     }
     step = 1
-    dataset_id = paste0('panel_font_easy_boxes_XvalueX', CurrentSessionIdx()) #@ tags$div(id = dataset_id,
+    dataset_id = paste0('panel_font_easy_boxes_XvalueX', CurrentSessionIdx()) #@ shiny::tags$div(id = dataset_id,
     
     ##@ <- Latest fix for panel_font_easy UI element insertion:
-    insertUI(selector = '#panel_font_easy_boxes',
+    shiny::insertUI(selector = '#panel_font_easy_boxes',
              where = "afterEnd",
-             ui = tags$div(id=paste0('panel_font_easy_boxes_container',CurrentSessionIdx()),
-                           do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_sliders, dataset_id, levels, vals, optima, step),  #@ 'panel_font_easy'
+             ui = shiny::tags$div(id=paste0('panel_font_easy_boxes_container',CurrentSessionIdx()),
+                           do.call(what=shiny::splitLayout, args = c(lapply(seq(1,nCells), split_sliders, dataset_id, levels, vals, optima, step),  #@ 'panel_font_easy'
                                                               list(cellWidths=as.list(cellwidths)),
                                                               list(width=list('500px')))))
     )
@@ -1936,11 +1955,11 @@ server <- function(input, output, session) {
     dataset_group_depth = max(dataset_group_depths)
     levels=c('First Panel', paste0('Inner Panel ', dataset_group_depth:1))
     slider_cells = which(seq_along(cellwidths) %% 2==1)
-    insertUI(
+    shiny::insertUI(
       selector = '#panel_font_boxes_headers',
       where = "afterEnd",
-      ui = tags$div(id=paste0('panel_font_boxes_header_container',CurrentSessionIdx()),
-                    do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_headers, slider_cells, levels),
+      ui = shiny::tags$div(id=paste0('panel_font_boxes_header_container',CurrentSessionIdx()),
+                    do.call(what=shiny::splitLayout, args = c(lapply(seq(1,nCells), split_headers, slider_cells, levels),
                                                        list(cellWidths=as.list(cellwidths)),
                                                        list(width=list('500px')))))
     )
@@ -1975,10 +1994,10 @@ server <- function(input, output, session) {
       }
       step = 1 #@
       
-      insertUI(selector = '#panel_font_boxes',
+      shiny::insertUI(selector = '#panel_font_boxes',
                where = "afterEnd",
-               ui = tags$div(id=paste0('panel_font_boxes_container',CurrentSessionIdx()),
-                             do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_sliders_panels, paste0('panel_font_', name), slider_cells, name, vals, optima, step),
+               ui = shiny::tags$div(id=paste0('panel_font_boxes_container',CurrentSessionIdx()),
+                             do.call(what=shiny::splitLayout, args = c(lapply(seq(1,nCells), split_sliders_panels, paste0('panel_font_', name), slider_cells, name, vals, optima, step),
                                                                 list(cellWidths=as.list(cellwidths)),
                                                                 list(width=list('500px')))))
       )
@@ -2033,11 +2052,11 @@ server <- function(input, output, session) {
       if (length(vals) < max_levels){
         input_cells = input_cells[1]
       }
-      insertUI(
+      shiny::insertUI(
         selector = '#manual_scales_boxes',
         where = "afterEnd",
-        ui = tags$div(id=paste0('manual_scales_boxes_container', CurrentSessionIdx()),
-                      do.call(what=splitLayout, args = c(lapply(seq(1,nCells), split_numeric_input2, paste0(dataset_options[which(dataset_options$option_name=='force_scale'),'shiny_varname'], '_', CurrentSessionIdx(), '_', name), input_cells, paste(name, paste0('(', levels, ')'), sep = ' '), vals, optima, step),  #@ added " '_', CurrentSessionIdx(), "
+        ui = shiny::tags$div(id=paste0('manual_scales_boxes_container', CurrentSessionIdx()),
+                      do.call(what=shiny::splitLayout, args = c(lapply(seq(1,nCells), split_numeric_input2, paste0(dataset_options[which(dataset_options$option_name=='force_scale'),'shiny_varname'], '_', CurrentSessionIdx(), '_', name), input_cells, paste(name, paste0('(', levels, ')'), sep = ' '), vals, optima, step),  #@ added " '_', CurrentSessionIdx(), "
                                                          list(cellWidths=as.list(cellwidths)),
                                                          list(width=list('500px')))))
       )
@@ -2058,7 +2077,7 @@ server <- function(input, output, session) {
       
       
       if ( opt_line$option_class == 'bool' ) {
-        updateCheckboxGroupInput(session,
+        shiny::updateCheckboxGroupInput(session,
                                  opt_line$shiny_varname,
                                  choices = names(opts),
                                  selected = names(opts)[unlist(opts)])
@@ -2090,21 +2109,21 @@ server <- function(input, output, session) {
           alt_name = gsub("[[:punct:]]", paste0('Z', which(names(opts)==name), 'Z'), alt_name)
           annot_id = paste0(opt_line$shiny_varname, '_XvalueX', CurrentSessionIdx(), '_', alt_name)
           if ( opt_line$option_class == 'text' ) {
-            insertUI(
+            shiny::insertUI(
               selector = paste0('#', anchor_elem),
               where = "afterEnd",
-              ui = tags$div(id=annot_id,
-                            textInput(annot_id,
+              ui = shiny::tags$div(id=annot_id,
+                            shiny::textInput(annot_id,
                                       label = name,
                                       value = DeparseOption(opts[[name]]))
               )
             )
           } else if ( opt_line$option_class == 'color' ) {
             val = ifelse(DeparseOption(opts[[name]])=='NULL', 'white', DeparseOption(opts[[name]]))
-            insertUI(
+            shiny::insertUI(
               selector = paste0('#', anchor_elem), ##TODO: check style of anchor
               where = "afterEnd",
-              ui = tags$div(id=annot_id,
+              ui = shiny::tags$div(id=annot_id,
                             colourpicker::colourInput(
                               inputId = paste0('xyz_',annot_id), 
                               label = name,
@@ -2114,22 +2133,22 @@ server <- function(input, output, session) {
                               closeOnClick = TRUE))
             )
           } else if ( opt_line$option_class == 'numeric' ) {
-            insertUI(
+            shiny::insertUI(
               selector = paste0('#', anchor_elem),
               where = "afterEnd",
-              ui = tags$div(id=annot_id,
-                            numericInput(inputId = annot_id,
+              ui = shiny::tags$div(id=annot_id,
+                            shiny::numericInput(inputId = annot_id,
                                          label = name,
                                          value = DeparseOption(opts[[name]]))
               )
             )
           } else if ( opt_line$option_class == 'text_choices' ) {
             opt_choices = strsplit(opt_line$option_options,',')[[1]]
-            insertUI(
+            shiny::insertUI(
               selector = paste0('#', anchor_elem),
               where = "afterEnd",
-              ui = tags$div(id = annot_id,
-                            radioButtons(inputId = annot_id,
+              ui = shiny::tags$div(id = annot_id,
+                            shiny::radioButtons(inputId = annot_id,
                                          label = name,
                                          choices = opt_choices,
                                          selected = DeparseOption(opts[[name]]),
@@ -2171,10 +2190,10 @@ server <- function(input, output, session) {
       alt_name = gsub("[[:punct:]]", paste0('Z', which(names(opts)==name), 'Z'), alt_name)
       color_id = paste0('track_colors', '_XvalueX', CurrentSessionIdx(), '_', alt_name)
       val = ifelse(DeparseOption(opts[[name]])=='NULL', 'black', DeparseOption(opts[[name]]))
-      insertUI(
+      shiny::insertUI(
         selector = paste0('#', 'track_colors'), ##TODO: check style of anchor
         where = "afterEnd",
-        ui = tags$div(id=color_id,
+        ui = shiny::tags$div(id=color_id,
                       colourpicker::colourInput(
                         inputId = paste0('xyz_',color_id), 
                         label = name,
@@ -2197,7 +2216,7 @@ server <- function(input, output, session) {
       return(NULL)
     }
     if ( !(grepl('.xml$', filename) | grepl('.xls$', filename) | grepl('.xlsx$', filename))  ) {
-      output$console = renderText({'Please provide valid template file in .xls or .xlsx format'}) #@ 'Please provide valid template file in .xls, .xlsx or igv session .xml file'
+      output$console = shiny::renderText({'Please provide valid template file in .xls or .xlsx format'}) #@ 'Please provide valid template file in .xls, .xlsx or igv session .xml file'
       return(NULL)
     }
     if ( CurrentSessionFname() != filename ) {
@@ -2214,12 +2233,12 @@ server <- function(input, output, session) {
                                     '-'=sub(".*,","", input$igv_strand_regex))
           }
           x = capture.output(loaded_session = seqNdisplayR::LoadIGVSession(fname, group_by=input$igv_groupby, strand_regex=igv_strand_regex))
-          output$console = renderText({paste(x, collapse  = "\n")})  
+          output$console = shiny::renderText({paste(x, collapse  = "\n")})  
         } else if ( grepl('.xls$', filename) | grepl('.xlsx$', filename) ) {
           x <- capture.output(loaded_session <- seqNdisplayR::LoadExcel(fname, load_annotations = input$load_annotations))
-          output$console = renderText({paste(x, collapse  = "\n")})
+          output$console = shiny::renderText({paste(x, collapse  = "\n")})
         } else {
-          output$console = renderText({'Please provide valid template file in .xls, .xlsx or igv session .xml file'})
+          output$console = shiny::renderText({'Please provide valid template file in .xls, .xlsx or igv session .xml file'})
         }
         if ( !is.null(loaded_session) ){
           #fill all option field with values from session
@@ -2246,7 +2265,7 @@ server <- function(input, output, session) {
   
   # status message for import ####
   # Note: this also ensures that the session is loaded automatically!
-  output$File_import_msg <- renderText(
+  output$File_import_msg <- shiny::renderText(
     if( !is.null(LoadTemplate()) ) {
       if ( CurrentSessionFname() == '' | is.null(CurrentSession()) ){
         'Please load a valid session file.'
@@ -2685,7 +2704,7 @@ server <- function(input, output, session) {
       }
     }
     
-    output$console <- renderText({textLog()})
+    output$console <- shiny::renderText({textLog()})
     
     template_session
   })
@@ -2693,7 +2712,7 @@ server <- function(input, output, session) {
   
   
   # create plot when hitting plot button ####
-  observeEvent(input$plot,
+  shiny::observeEvent(input$plot,
                {
                  if (is.null(input$input_file)) {
                    "Please load sNdR sample file and provide locus name or coordinates." #@ "Please load Excel or IGV template and provide locus name or coordinates."
@@ -2701,7 +2720,7 @@ server <- function(input, output, session) {
                    feature <- GetFeature()
                    locus <- GetLocus()
                    if (feature == '' & locus[1] == '') {
-                     output$console <- renderText({"Please provide locus name or coordinates for region to be plotted."})
+                     output$console <- shiny::renderText({"Please provide locus name or coordinates for region to be plotted."})
                    } else {
                      session_to_plot <- seqNdisplayR_session()
                      #cat(paste0(names(session_to_plot[['horizontal_panels_list']]), ': ', session_to_plot[['horizontal_panels_list']]), '\n') #@ 2023-12-18
@@ -2714,7 +2733,7 @@ server <- function(input, output, session) {
                          x <- capture.output(plot(session_to_plot, locus=locus, interface='shiny'))
                        }
                      },position = 'top-center',blocking_level='none', prefix='Plotting error', shiny=TRUE)
-                     output$console <- renderText({paste(x, collapse  = "\n")})
+                     output$console <- shiny::renderText({paste(x, collapse  = "\n")})
                      shinybusy::remove_modal_spinner()
                    }
                  }
@@ -2735,7 +2754,7 @@ server <- function(input, output, session) {
         locus_string = ''
       }
       if ( feature == ''  & locus[1] == '' ) {
-        output$console = renderText({"Please provide locus name or coordinates for region to be plotted."})
+        output$console = shiny::renderText({"Please provide locus name or coordinates for region to be plotted."})
       }else if ( feature != '' ){
         paste0("seqNdisplayR_", Sys.Date(), '_', feature, ifelse(new_R, '.pdf', ''))
       }else{
@@ -2744,12 +2763,12 @@ server <- function(input, output, session) {
     },
     content = function(file) {
       if ( is.null(input$input_file) ) {
-        output$console = renderText({"Please load sNdR sample file and provide locus name or coordinates."}) #@ "Please load Excel or IGV template and provide locus name or coordinates."
+        output$console = shiny::renderText({"Please load sNdR sample file and provide locus name or coordinates."}) #@ "Please load Excel or IGV template and provide locus name or coordinates."
       } else {
         feature = GetFeature()
         locus = GetLocus()
         if (feature == '' & locus[1] == '') {
-          output$console = renderText({"Please provide locus name or coordinates for region to be plotted."})
+          output$console = shiny::renderText({"Please provide locus name or coordinates for region to be plotted."})
         } else {
           session_to_plot = seqNdisplayR_session()
           shinybusy::show_modal_spinner(spin='circle', text=paste('Plotting to pdf, please be patient'))
@@ -2767,7 +2786,7 @@ server <- function(input, output, session) {
                                        pdf_dir = dirname(file)))
             }
           }, position = 'top-center', blocking_level='none', prefix='Plotting error', shiny=TRUE)
-          output$console = renderText({paste0('PDF creation log:\n', paste(x, collapse  = "\n"))}) #@ 2022-10-10 pdfdir, pdfname <- file  #@ 2022-10-26 basename(file), '.pdf' <- pdfname
+          output$console = shiny::renderText({paste0('PDF creation log:\n', paste(x, collapse  = "\n"))}) #@ 2022-10-10 pdfdir, pdfname <- file  #@ 2022-10-26 basename(file), '.pdf' <- pdfname
           shinybusy::remove_modal_spinner()
         }
       }
@@ -2783,7 +2802,7 @@ server <- function(input, output, session) {
     content = function(file) {
       #cat(file, '\n') #@ 2022-10-10
       if ( is.null(input$input_file) ) {
-        output$console = renderText("Please first load sNdR sample file") #@ "Please first load Excel or IGV template"
+        output$console = shiny::renderText("Please first load sNdR sample file") #@ "Please first load Excel or IGV template"
       } else {
         loaded_session = seqNdisplayR_session()
         seqNdisplayR::Session2xlsx(loaded_session, path = file)
@@ -2794,7 +2813,7 @@ server <- function(input, output, session) {
   
   # Various information buttons for debugging ####
   # TO DO: remove debugging buttons
-  observeEvent(input$show_settings, {
+  shiny::observeEvent(input$show_settings, {
     shiny_session_global_options <- GetShinyGlobalOptions()
     shiny_session_annotation_options <- GetShinyAnnotationOptions()
     if ( !is.null(shiny_session_annotation_options) ) {
@@ -2805,7 +2824,7 @@ server <- function(input, output, session) {
     
     cur_session <- seqNdisplayR_session()
     
-    output$console <- renderText(
+    output$console <- shiny::renderText(
       paste(
         lapply(intersect(opt_names,names(cur_session)),
                function(i) paste0(i, '  -->  ', DeparseOption(cur_session[[i]]),  '\t', class(cur_session[[i]]))  #@ 2022-10-07 seqNdisplayR::DeparseOption
@@ -2814,7 +2833,7 @@ server <- function(input, output, session) {
     )
   })
   
-  observeEvent(input$show_parameters, {
+  shiny::observeEvent(input$show_parameters, {
     template_session <- LoadTemplate()
     shiny_session_dataset_options <- GetShinyDatasetOptions()
     
@@ -2825,43 +2844,43 @@ server <- function(input, output, session) {
         textLog(paste0(textLog(), '  ', sample_name, ': ', DeparseOption(shiny_session_dataset_options[[para]][[sample_name]]), '\n')) #@ 2022-10-07 seqNdisplayR::DeparseOption
       }
     }
-    output$console <- renderText( textLog() )
+    output$console <- shiny::renderText( textLog() )
   })
   
-  observeEvent(input$show_samples, {
-    output$console  <- renderPrint({
+  shiny::observeEvent(input$show_samples, {
+    output$console  <- shiny::renderPrint({
       CurrentSession()$samples
     })
   })
   
-  observeEvent(input$which_samples, {
-    output$console  <- renderPrint({
+  shiny::observeEvent(input$which_samples, {
+    output$console  <- shiny::renderPrint({
       GetSelectedSamples()
     })
   })
   
   
   # Convenience buttons for shiny control #### 
-  observeEvent(input$clean_console, {
-    output$console = renderText('')
+  shiny::observeEvent(input$clean_console, {
+    output$console = shiny::renderText('')
   })
   
-  observeEvent(input$reset, {
+  shiny::observeEvent(input$reset, {
     CurrentSessionFname('')
     LoadTemplate()
-    output$console  <- renderPrint('All values were reset to template values')
+    output$console  <- shiny::renderPrint('All values were reset to template values')
   })
   
-  observeEvent(input$reload_app, {
-    refresh()
+  shiny::observeEvent(input$reload_app, {
+    shinyjs::refresh()
   })
   
-  observeEvent(input$debug, {
-    output$console  <- renderPrint(CurrentSession()$annot_panel_color)
+  shiny::observeEvent(input$debug, {
+    output$console  <- shiny::renderPrint(CurrentSession()$annot_panel_color)
   })
   
 }
 
 # Run the application
-shinyApp(ui = ui, server = server, options = list(width = 1600, height = 2000)) #@ keep an eye on options
+shiny::shinyApp(ui = ui, server = server, options = list(width = 1600, height = 2000)) #@ keep an eye on options
 

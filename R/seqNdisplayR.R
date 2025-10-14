@@ -1957,11 +1957,12 @@ ListExamplesSampleSheets = function(){
 #' @return placeholder
 #' 
 #' @import shiny
-#' @import shinyBS
-#' @import shinyjs
-#' @import shinyTree
-#' @import shinybusy
-#' @import spsComps
+#' @importFrom shinyTree shinyTree renderTree
+#' @importFrom shinybusy use_busy_spinner show_modal_spinner remove_modal_spinner
+#' @importFrom spsComps shinyCatch bsTooltip
+#' @importFrom shinyjs useShinyjs hide runjs toggle refresh
+#' @importFrom colourpicker colourInput updateColourInput
+#' @importFrom readxl read_excel
 #' 
 #' @export
 #'
