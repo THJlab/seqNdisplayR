@@ -438,7 +438,7 @@ seqNdisplay = function(
   #### -> check parameters part 1 - abort or auto correct
   .verbosity = structure(0:3, names=c('off', 'no warnings', 'normal', 'detailed'))[as.character(ScrutinizeExpandAndNameParameter(verbosity, 1, use_names=FALSE, default_value='normal', expect_standard=NULL, expect=c('off', 'no warnings', 'normal', 'detailed'), revert_to_default=TRUE, alt_par_name=NULL, verbosity=3))]
   .interface = as.character(ScrutinizeExpandAndNameParameter(interface, 1, use_names=FALSE, default_value='R', expect_standard=NULL, expect=c('R', 'shiny'), revert_to_default=TRUE, alt_par_name=NULL, verbosity=.verbosity))
-  if (verbosity > 2){ .detailed.output = list() }
+  if (.verbosity > 2){ .detailed.output = list() }
   #datasets, colors, bigwig_dirs, bigwigs, parameters,
   if (is.null(feature) & is.null(locus)){
     if (.verbosity > 0){ cat('ERROR: choose a genomic region for plotting by either assigning locus name or coordinates - aborting', '\n') }
@@ -826,10 +826,6 @@ seqNdisplay = function(
   }
   if (!EvaluateNumericValue(.genomic.scale.font.size, positive_val=TRUE, min_val=4, max_val=.rec.font.sizes['genomic_axis'], interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'genomic_scale_font_size', 'Genomic Scale Font'), .verbosity)){ return() }
   #### <- organize panels, font sizes and other parameters
-  if (.verbosity > 2){
-    t10 = Sys.time()
-    cat(paste('step 8 plotting time:', format(difftime(t10, t9))), '\n')
-  }
   if (.verbosity > 2){
     t11 = Sys.time()
     cat(paste('step 10 plotting time:', format(difftime(t11, t10))), '\n')
