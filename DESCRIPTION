@@ -1,7 +1,7 @@
 Package: seqNdisplayR
 Type: Package
 Title: Customizable and Reproducible Plotting of Sequencing Coverage Data
-Version: 1.1.1
+Version: 1.1.2
 Date: 2025-10-09
 Authors@R: c(
     person("Søren", "Lykke-Andersen", email = "sla@mbg.au.dk", role = c("cre", "aut"), comment = c(ORCID = "0000-0001-9357-2910")),
