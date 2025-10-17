@@ -3929,7 +3929,7 @@ UnpackSamples = function(seqtype, samples, which_samples, which_reps, bigwig_lis
 }
 
 
-#' Load And Transform Data For Track (new as of 25-10-09)
+#' Load And Transform Data For Track (new as of 25-10-09 + 25-10-17)
 #'
 #' @description Internal function for extracting BigWig signal
 #'   from a given genomic region for multiple samples, with options
@@ -3951,7 +3951,6 @@ UnpackSamples = function(seqtype, samples, which_samples, which_reps, bigwig_lis
 #'
 #' @import IRanges
 #' @import GenomicRanges
-#' @import RCurl
 #' @import bwimport
 #' @importFrom rlist list.flatten
 #' @importFrom limma removeBatchEffect
@@ -4041,49 +4040,37 @@ LoadAndTransformDataForTrack <- function(seqtype, plotted_region, samples, bigwi
       } else {
         # Iterate over BigWig files
         for (.sample.rep.name in .sample.rep.names){
-          .bw.file = .bw.files[[.sample.rep.name]]
-          if (file.exists(.bw.file) | url.exists(.bw.file)){
-            
-            # Use bwimport::bw_import() instead of rtracklayer::import()
-            .data.from.bw = tryCatch(
-              expr = { 
-                bwimport::bw_import(.bw.file, .chrom, .chrom.start, .chrom.end)
-              },
-              error = function(e){ FALSE }, 
-              warning = function(w){ FALSE }
+          .bw.file <- .bw.files[[.sample.rep.name]]
+          is_url   <- grepl("^(https?|ftp)://", .bw.file, ignore.case = TRUE)
+          # Only check existence for local files; do NOT preflight URLs (slow on Windows)
+          if (!is_url && !file.exists(.bw.file)) {
+            if (verbosity > 1) {
+              cat('WARNING(s):\n - non-existing local file\n\t.)', .bw.file, '\n')
+            }
+            .bw.list[[.sample.rep.name]] <- rep(0, .chrom.end - .chrom.start + 1)
+          } else {
+            # Try to read directly; let bw_import handle remote vs local
+            .data.from.bw <- tryCatch(
+              bwimport::bw_import(.bw.file, .chrom, .chrom.start, .chrom.end),
+              error   = function(e) FALSE,
+              warning = function(w) FALSE
             )
-            
-            # Fallback to alternate chromosome naming if needed
-            if (sum(.data.from.bw) == 0){
-              if (is.logical(.data.from.bw)){
-                .alt.chrom = sub("^chr", "", .chrom)
-                .alt.data.from.bw = tryCatch(
-                  expr = { bwimport::bw_import(.bw.file, .alt.chrom, .chrom.start, .chrom.end) },
-                  error = function(e){ FALSE }, 
-                  warning = function(w){ FALSE }
-                )
-                if (sum(.alt.data.from.bw) == 0){
-                  if (is.logical(.alt.data.from.bw)){
-                    .bw.list[[.sample.rep.name]] = rep(0, .chrom.end - .chrom.start + 1)
-                  } else {
-                    .bw.list[[.sample.rep.name]] = .alt.data.from.bw
-                  }
-                } else {
-                  .bw.list[[.sample.rep.name]] = .alt.data.from.bw
-                }
+            # Fallback: try alternate chromosome naming if first read failed/zero
+            if (identical(.data.from.bw, FALSE) || (is.numeric(.data.from.bw) && sum(.data.from.bw) == 0)) {
+              .alt.chrom <- sub("^chr", "", .chrom)
+              .alt.data  <- tryCatch(
+                bwimport::bw_import(.bw.file, .alt.chrom, .chrom.start, .chrom.end),
+                error   = function(e) FALSE,
+                warning = function(w) FALSE
+              )
+              if (identical(.alt.data, FALSE)) {
+                .bw.list[[.sample.rep.name]] <- rep(0, .chrom.end - .chrom.start + 1)
               } else {
-                .bw.list[[.sample.rep.name]] = .data.from.bw
+                .bw.list[[.sample.rep.name]] <- .alt.data
               }
             } else {
-              .bw.list[[.sample.rep.name]] = .data.from.bw
+              .bw.list[[.sample.rep.name]] <- .data.from.bw
             }
-          } else {
-            if (verbosity > 1){
-              cat('WARNING(s):', '\n')
-              cat(' - non-existing file', '\n')
-              cat(paste('\t', '.)', .bw.file), '\n')
-            }
-            .bw.list[[.sample.rep.name]] = rep(0, .chrom.end - .chrom.start + 1)
           }
         } # end for loop
         

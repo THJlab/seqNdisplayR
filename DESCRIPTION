@@ -37,7 +37,6 @@ Imports:
     jsonlite,
     xml2,
     dplyr (>= 0.7),
-    RCurl,
     rtracklayer
 biocViews:
     DataRepresentation,

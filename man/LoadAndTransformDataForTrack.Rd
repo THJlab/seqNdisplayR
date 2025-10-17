@@ -2,7 +2,7 @@
 % Please edit documentation in R/seqNdisplayR.R
 \name{LoadAndTransformDataForTrack}
 \alias{LoadAndTransformDataForTrack}
-\title{Load And Transform Data For Track (new as of 25-10-09)}
+\title{Load And Transform Data For Track (new as of 25-10-09 + 25-10-17)}
 \usage{
 LoadAndTransformDataForTrack(
   seqtype,
