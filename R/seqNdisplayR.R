@@ -484,6 +484,10 @@ seqNdisplay = function(
   .plot.widths.cm = PlotWidths(panels_max_width_cm, scale_panel_width_cm, margin_width_cm, track_width_cm, full_width_cm, incl_track_scales, .verbosity, .interface)
   if (is.null(.plot.widths.cm)){ return() }
   #### <- check parameters part 1 - abort or auto correct
+  if (.verbosity > 2){
+    t2 = Sys.time()
+    cat(paste('step 1 plotting time:', format(difftime(t2, t1))), '\n')
+  }
   #### -> load all annotations
   .annotations=NULL;.incl.feature.names=NULL;.feature.names.above=NULL;.annot.cols = NULL;.incl.feature.brackets=NULL;.incl.feature.shadings=NULL;.annotation.packing=NULL;.annot.cols=NULL;.annot.info=NULL
   if (!is.null(annots)){
@@ -530,6 +534,10 @@ seqNdisplay = function(
     if ( any(sapply(list(.annotations,.incl.feature.names,.feature.names.above,.annot.cols,.incl.feature.brackets,.incl.feature.shadings,.annotation.packing), function(parameter) is.null(parameter))) ){ return() }
   }
   #### <- load all annotations
+  if (.verbosity > 2){
+    t3 = Sys.time()
+    cat(paste('step 2 plotting time:', format(difftime(t3, t2))), '\n')
+  }
   #### -> check parameters part 3 - abort or auto correct
   .batch.correction = ScrutinizeExpandAndNameParameter(unlist(lapply(parameters, function(p) p$batchCorrect)), datasets, use_names=TRUE, default_value=FALSE, expect_standard='logical', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'batchCorrect', 'Batch Correction'), verbosity=.verbosity)
   .log2.transform = ScrutinizeExpandAndNameParameter(unlist(lapply(parameters, function(p) p$log2transform)), datasets, use_names=TRUE, default_value=FALSE, expect_standard='logical', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'log2transform', 'log2-Transform Data'), verbosity=.verbosity)
@@ -571,6 +579,10 @@ seqNdisplay = function(
                        .annot.panel.color,.panel.text.colors,.scale.font.color,.header.font.colors,.genomic.scale.font.color,
                        .feature.names.font.color,.strands.alpha), function(parameter) is.null(parameter))) ){ return() }
   #### <- check parameters part 3 - abort or auto correct
+  if (.verbosity > 2){
+    t4 = Sys.time()
+    cat(paste('step 3 plotting time:', format(difftime(t4, t3))), '\n')
+  }
   #### -> defining plotting region
   if (is.null(feature)){
     .plotted.region = RegionGRanges(locus, .plot.widths.cm['track.width.cm'], feature=NULL, .annotations, bin_start, extra_space, .verbosity, .interface)
@@ -612,11 +624,19 @@ seqNdisplay = function(
     }
   }
   #### <- strands display
+  if (.verbosity > 2){
+    t5 = Sys.time()
+    cat(paste('step 4 plotting time:', format(difftime(t5, t4))), '\n')
+  }
   #### -> organize annotations in region
   if (!is.null(.annotations)){
     .annot.info = lapply(.plotted.region, OrganizeAnnotatedFeaturesInRegion, .annotations)
   }
   #### <- organize annotations in region
+  if (.verbosity > 2){
+    t6 = Sys.time()
+    cat(paste('step 5 plotting time:', format(difftime(t6, t5))), '\n')
+  }
   #### -> organize panels, font sizes and other parameters
   .tracks.listed = lapply(structure(lapply(names(.plotted.region), function(.strand) structure(lapply(names(datasets), function(.seqtype) LoadAndTransformDataForTrack(.seqtype, .plotted.region[[.strand]], datasets, bigwigs, bigwig_dirs, parameters, get_subsamples=TRUE, print_order=FALSE, .verbosity)), names=names(datasets))), names=names(.plotted.region)), DeleteNULLs)
   if (length(.tracks.listed[['+']])==0){ #@ this whole thing added
@@ -658,6 +678,10 @@ seqNdisplay = function(
     }
     return()
   }
+  if (.verbosity > 2){
+    t7 = Sys.time()
+    cat(paste('step 6 plotting time:', format(difftime(t7, t6))), '\n')
+  }
   .est.min.annot.height = min(unlist(lapply(names(.plotted.region), function(.strand) unlist(.estimated.plot.heights[[.strand]][['annot.heights.incl.text']]))))
   if (!is.null(annotation_height_cm) & is.null(track_height_cm)){
     #@.est.min.annot.height = annotation_height_cm*as.numeric(.est.min.annot.height/.plot.vertical.parameters['annot'])/min(.est.track.height.cm.range)
@@ -675,6 +699,10 @@ seqNdisplay = function(
     .estimated.plot.heights[[s]][['max.combined.track.vector']] = .max.combined.track.vector
     .estimated.plot.heights[[s]][['min.combined.track.vector']] = .min.combined.track.vector
     .estimated.plot.heights[[s]][['track.vector']] = UpdateTrackVector(.estimated.plot.heights[[s]][['track.vector']], .plot.vertical.parameters)
+  }
+  if (.verbosity > 2){
+    t8 = Sys.time()
+    cat(paste('step 7 plotting time:', format(difftime(t8, t7))), '\n')
   }
   #@ .rec.font.sizes = RecommendedFontSizes(max(.est.track.height.cm.range), .est.min.annot.height, .plot.vertical.parameters)
   .rec.font.sizes = RecommendedFontSizes(max(.est.track.height.cm.range), .est.min.annot.height, mean(.est.track.height.cm.range)*.plot.vertical.parameters)
@@ -716,6 +744,10 @@ seqNdisplay = function(
   }else{
     if (.verbosity > 0) { cat('ERROR(s):\n - the dimensions of the plot are too small for any fonts to be visible - aborting', '\n') }
     return()
+  }
+  if (.verbosity > 2){
+    t9 = Sys.time()
+    cat(paste('step 8 plotting time:', format(difftime(t9, t8))), '\n')
   }
   .feature.text = structure(lapply(names(.plotted.region), function(.strand) OrganizeAnnotationText(.plotted.region[[.strand]], .annot.info[[.strand]], .annotation.packing, .letter.widths, center_of_mass, .verbosity)), names=names(.plotted.region))
   .feature.text.org = structure(lapply(names(.plotted.region), function(.strand) OrganizeAllAnnotationTextsInPlottedRegion(.feature.text[[.strand]], .plotted.region[[.strand]], .letter.widths)), names=names(.plotted.region))
@@ -771,6 +803,10 @@ seqNdisplay = function(
   }else{
     .minimal.units = c('annots'=NA, 'tracks'=ifelse(all(.stranded.datasets) & strands_intermingled, 2, 1))
   }
+  if (.verbosity > 2){
+    t10 = Sys.time()
+    cat(paste('step 9 plotting time:', format(difftime(t10, t9))), '\n')
+  }
   #@.basic.plot.parameters = AlignBasicPlotParameters(structure(lapply(names(.plotted.region), function(.strand) BasicPlotParameters(.strand, .plotted.region, .feature.names.font.size, .plot.height.parameters, .plot.width.parameters, .full.width.cm, full_height_cm, track_height_cm, .plot.vertical.parameters, .bin.size, .bins.per.cm, .plotting.segment.order, .tracks.listed, .unstranded.beds)), names=names(.plotted.region)), both_strands, .strands.intermingled, .fixed.plot.vertical.parameters, .vertical.parameters, .minimal.units, full_height_cm) 
   .basic.plot.parameters = AlignBasicPlotParameters(structure(lapply(names(.plotted.region), function(.strand) BasicPlotParameters(.strand, .plotted.region, .feature.names.font.size, .plot.height.parameters, .plot.width.parameters, .full.width.cm, full_height_cm, track_height_cm, .plot.vertical.parameters, .bin.size, .bins.per.cm, .plotting.segment.order, .tracks.listed, .unstranded.beds)), names=names(.plotted.region)), both_strands, .strands.intermingled, .fixed.plot.vertical.parameters, .vertical.parameters, .minimal.units, full_height_cm, .annotation.packing)
   if (both_strands){
@@ -790,6 +826,14 @@ seqNdisplay = function(
   }
   if (!EvaluateNumericValue(.genomic.scale.font.size, positive_val=TRUE, min_val=4, max_val=.rec.font.sizes['genomic_axis'], interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'genomic_scale_font_size', 'Genomic Scale Font'), .verbosity)){ return() }
   #### <- organize panels, font sizes and other parameters
+  if (.verbosity > 2){
+    t10 = Sys.time()
+    cat(paste('step 8 plotting time:', format(difftime(t10, t9))), '\n')
+  }
+  if (.verbosity > 2){
+    t11 = Sys.time()
+    cat(paste('step 10 plotting time:', format(difftime(t11, t10))), '\n')
+  }
   #### -> load tracks
   if (is.null(preloaded_tracks)){
     if (!dummy_plot){
@@ -835,6 +879,10 @@ seqNdisplay = function(
     }
   }
   #### <- load tracks
+  if (.verbosity > 2){
+    t12 = Sys.time()
+    cat(paste('step 11 plotting time:', format(difftime(t12, t11))), '\n')
+  }
   #### -> pdf or on-screen plotting?
   .height.in = .basic.plot.parameters[[ifelse(.strands.intermingled, 3, 1)]][['plot.dim.in']][2]
   #@.height.in = .basic.plot.parameters[[1]][['plot.dim.in']][2]
@@ -909,6 +957,10 @@ seqNdisplay = function(
     }
     .detailed.output[[ifelse(interface=='R', '"plotting_segment_order"', '"Plotting Segment Order"')]] = .detailed.output.vector
   }
+  if (.verbosity > 2){
+    t13 = Sys.time()
+    cat(paste('step 12 plotting time:', format(difftime(t13, t12))), '\n')
+  }
   PreparePlottingInterface(plot_dim=c(.width.in, .height.in), pdf, pdf_name, pdf_dir, header, .bin.size, feature, .scaling.factor)
   # .pdf.name = PreparePlottingInterface(plot_dim=c(.width.in, .height.in), pdf, pdf_name, pdf_dir, header, .bin.size, feature, .scaling.factor) #@ 2022-10-26 added .pdf.name =
   ##### <- pdf or on-screen plotting?
@@ -944,8 +996,8 @@ seqNdisplay = function(
       cat(paste0(' - ', .det.out, ':'), '\n')
       cat(paste(.detailed.output[[.det.out]], collapse='\n'), '\n')
     }
-    t2 = Sys.time()
-    cat(paste('total plotting time:', format(difftime(t2, t1))), '\n')
+    t_final = Sys.time()
+    cat(paste('total plotting time:', format(difftime(t_final, t1))), '\n')
   }
   if (.verbosity > 0){ cat('plot done', '\n') }
   ##### -> warnings
