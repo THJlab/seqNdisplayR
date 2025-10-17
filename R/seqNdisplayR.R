@@ -828,7 +828,7 @@ seqNdisplay = function(
   #### <- organize panels, font sizes and other parameters
   if (.verbosity > 2){
     t11 = Sys.time()
-    cat(paste('step 10 plotting time:', format(difftime(t11, t10))), '\n')
+    cat(paste('step 10 plotting time (updated:', format(difftime(t11, t10))), '\n')
   }
   #### -> load tracks
   if (is.null(preloaded_tracks)){
