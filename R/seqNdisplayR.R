@@ -4074,8 +4074,19 @@ LoadAndTransformDataForTrack <- function(seqtype, plotted_region, samples, bigwi
           }
         } # end for loop
         
-        .bw.matrix = do.call(cbind, .bw.list)
-        rownames(.bw.matrix) = .chrom.start:.chrom.end
+        #@ replaced block 25-10-17 ->
+        ## Build the matrix without repeated copies; avoid huge rownames 
+        len <- .chrom.end - .chrom.start + 1L
+        ns  <- length(.bw.list)
+        .bw.matrix <- matrix(
+          data = unlist(.bw.list, use.names = FALSE),
+          nrow = len,
+          ncol = ns,
+          byrow = FALSE,
+          dimnames = list(NULL, names(.bw.list))  # no rownames (big speedup on Windows)
+        )
+        #@ replaced block 25-10-17 <-
+        rownames(.bw.matrix) = .chrom.start:.chrom.end #@ 25-10-17 still keeping rownames as they are called later - but could be changed for speed
 
         # Batch correction, log2 transform, negative-value handling, mean calculation, etc.                
         if (FALSE){ #$ -> auto-detection of major sign in bw files (currently not active)
@@ -4109,70 +4120,67 @@ LoadAndTransformDataForTrack <- function(seqtype, plotted_region, samples, bigwi
           .bw.matrix = .signs.bw.matrix * log2(abs(.bw.matrix) + .pseudo.count)
         }
         rm('.bw.list')
-        if (.batch.correct){
-          if (is.null(.batch)){ # if no batch number is provided for each sample - the replicate number will be assumed as equivalent to batch number
-            .batch = as.integer(sapply(colnames(.bw.matrix), function(rep) rev(strsplit(rep, split='.rep', fixed=TRUE)[[1]])[1] ))
-          }else if (is.list(.batch)){
-            .batch = rlist::list.flatten(.batch)
-            .batch = structure(as.vector(unlist(.batch)), names=paste0(rep(names(.batch), lengths(.batch)), '.rep', as.character(unlist(sapply(lengths(.batch), function(x) 1:x)))))
+        #@ changed block 25-10-17 ->
+        if (.batch.correct) {
+          ## Prepare batch vector once
+          if (is.null(.batch)) {
+            .batch <- as.integer(sub(".*\\.rep", "", coln))
+          } else if (is.list(.batch)) {
+            .batch <- rlist::list.flatten(.batch)
+            .batch <- structure(
+              as.vector(unlist(.batch)),
+              names = paste0(rep(names(.batch), lengths(.batch)), ".rep", unlist(lapply(lengths(.batch), seq_len)))
+            )
           }
-          if (is.null(names(.batch))){ # add sample+rep names to batch numbers
-            names(.batch) = colnames(.bw.matrix)
-          }
-          .batch = .batch[colnames(.bw.matrix)]  # order batch numbers according to order of .bw.matrix
-          .batches = unique(.batch)
-          if (length(.batches) > 1){
-            if (!.log2.transform){ # if signals are not overall log2transformed, they need to be for the batch correction
-              .signs.bw.matrix = sign(.bw.matrix)
-              if (any(.signs.bw.matrix <= 0) | .pseudo.count < 1){
-                .abs.bw.matrix = abs(.bw.matrix) + .pseudo.count
-                if (any(.abs.bw.matrix < 1)){
-                  .adj.pseudo.count = 1 - min(abs(.bw.matrix))
-                  if (verbosity > 1){
-                    cat(paste0('WARNING(s):'), '\n')
-                    cat(paste0('\t', '.) ', 'automatically adjusting pseudocount from ', .pseudo.count, ' to ', .adj.pseudo.count, ' for ', seqtype, ' to allow batch correction, because the data contain values equal to or less than zero'), '\n')
-                  }
-                  .pseudo.count = .adj.pseudo.count
-                }
-                rm(.abs.bw.matrix)
+          if (is.null(names(.batch))) names(.batch) <- coln
+          .batch <- .batch[coln]
+          
+          if (length(unique(.batch)) > 1L) {
+            ## Do log2 only once; avoid re-parsing later
+            if (!.log2.transform) {
+              .signs <- sign(.bw.matrix)
+              absM   <- abs(.bw.matrix) + .pseudo.count
+              minAbs <- suppressWarnings(min(absM))
+              if (minAbs < 1) {
+                .pseudo.count <- 1 - min(abs(.bw.matrix))
+                absM <- abs(.bw.matrix) + .pseudo.count
+                if (verbosity > 1) cat("Adjusted pseudocount for batch correction\n")
               }
-              .bw.matrix = .signs.bw.matrix * log2(abs(.bw.matrix) + .pseudo.count)
+              .bw.matrix <- .signs * log2(absM)
             }
-            .group = factor(sub("\\.rep\\d+$", "", names(.batch))) #@ added 25-10-09
-            # .design = model.matrix(~0 + .group) #@ added 25-10-09
-            # colnames(.design) = levels(.group) #@ added 25-10-09 
-            .bw.matrix = limma::removeBatchEffect(.bw.matrix, batch=.batch, group=.group) #@ changed 25-10-09 .bw.matrix = limma::removeBatchEffect(.bw.matrix, batch=.batch)
-            if (!.log2.transform){ # if signals are not overall log2transformed, they need to be for the batch correction, and then they are re-transformed afterwards
-              .bw.matrix = .signs.bw.matrix * (2^abs(.bw.matrix) - .pseudo.count)
+            
+            .group <- factor(col_to_sample)  # group by sample name
+            .bw.matrix <- limma::removeBatchEffect(.bw.matrix, batch = .batch, group = .group)
+            
+            if (!.log2.transform) {
+              .bw.matrix <- .signs * (2^abs(.bw.matrix) - .pseudo.count)
             }
-          }else{
-            if (verbosity > 1){
-              cat(paste0('WARNING(s):'), '\n')
-              cat(paste0('\t', '.) ', 'batch correction is requested for ', seqtype, ' but no batch information is provided'), '\n')
-            }
+          } else if (verbosity > 1) {
+            cat("Batch correction requested but only one batch present; skipping\n")
           }
         }
+        #@ changed block 25-10-17 <-
         # Return processed track list
         track.list = list()
-        if (.calc.mean){
-          .sample.names = unique(sapply(.sample.rep.names, function(.sample.rep.name) strsplit(.sample.rep.name, split='.rep', fixed=TRUE)[[1]][1]))
-          for (.sample.name in .sample.names){
-            .all.replicate.names = sapply(colnames(.bw.matrix), function(x) strsplit(x, split='.rep', fixed=TRUE)[[1]][1])
-            .replicate.names = names(.all.replicate.names[which(.all.replicate.names == .sample.name)])
-            .mean.track = rowMeans(.bw.matrix[, .replicate.names, drop=FALSE])
-            if (.neg.vals.set.0){
-              .mean.track[which(.mean.track < 0)] = 0
-            }
-            track.list[[.sample.name]] = .mean.track
+        #@ replaced block 25-10-17 -> 
+        coln <- colnames(.bw.matrix)
+        ## Map columns → sample name (strip ".repN")
+        col_to_sample <- sub("\\.rep\\d+$", "", coln)
+        if (.calc.mean) {
+          .sample.names <- unique(col_to_sample)
+          for (.sample.name in .sample.names) {
+            idx <- which(col_to_sample == .sample.name)
+            .mean.track <- rowMeans(.bw.matrix[, idx, drop = FALSE])
+            if (.neg.vals.set.0) .mean.track[.mean.track < 0] <- 0
+            track.list[[.sample.name]] <- .mean.track
           }
         } else {
-          if (.neg.vals.set.0){
-            .bw.matrix[which(.bw.matrix < 0)] = 0
-          }
-          for (.sample.rep.name in colnames(.bw.matrix)){
-            track.list[[.sample.rep.name]] = .bw.matrix[, .sample.rep.name]
+          if (.neg.vals.set.0) .bw.matrix[.bw.matrix < 0] <- 0
+          for (j in seq_along(coln)) {
+            track.list[[coln[j]]] <- .bw.matrix[, j]
           }
         }
+        #@ replaced block 25-10-17 <- 
         return(track.list)
       }
     } else {
