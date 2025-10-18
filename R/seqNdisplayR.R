@@ -826,7 +826,7 @@ seqNdisplay = function(
   #### <- organize panels, font sizes and other parameters
   if (.verbosity > 2){
     t11 = Sys.time()
-    cat(paste('step 10 plotting time (updated:', format(difftime(t11, t10))), '\n')
+    cat(paste('step 10 plotting time (updated again):', format(difftime(t11, t10))), '\n')
   }
   #### -> load tracks
   if (is.null(preloaded_tracks)){
@@ -3930,8 +3930,7 @@ LoadAndTransformDataForTrack <- function(seqtype, plotted_region, samples, bigwi
         #@ replaced block 25-10-17 ->
         ## Build the matrix without repeated copies; avoid huge rownames 
         t_2s <- proc.time() #@ 25-10-18
-        # len <- .chrom.end - .chrom.start + 1L
-        # ns  <- length(.bw.list)
+        if (.Platform$OS.type == "windows") {bwimport::bw_cleanup()}
         .bw.matrix <- matrix(
           data = unlist(.bw.list, use.names = FALSE),
           nrow = .chrom.end - .chrom.start + 1L,
