@@ -792,7 +792,6 @@ seqNdisplay = function(
   if (!EvaluateNumericValue(.annotation.panel.font.size, positive_val=TRUE, min_val=4, max_val=12, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'annot_panel_font_size', 'Annotation Title Font Size'), .verbosity)){ return() }
   if (!is.null(bin_size)){ if (bin_size!='auto' & bin_size!='automatic'){if (!EvaluateNumericValue(bin_size, positive_val=TRUE, min_val=1, max_val=10000000, interval_obligatory=FALSE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'bin_size', 'Bin Size'), .verbosity)){ bin_size='auto'; if (.verbosity>1){cat(NULL, '\n')} }}}
   if (!EvaluateNumericValue(bins_per_cm, positive_val=TRUE, min_val=50, max_val=1000, interval_obligatory=TRUE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'bins_per_cm', 'Bins per cm'), .verbosity)){ bins_per_cm=250; if (.verbosity>1){cat(bins_per_cm, '\n')} }
-  #@.bins.per.cm = ScrutinizeExpandAndNameParameter(bins_per_cm, '1', use_names=FALSE, default_value=250, expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'bins_per_cm', 'Bins per cm'), verbosity=.verbosity)
   .bins.per.cm = as.integer(if(EvaluateNumericValue(bins_per_cm, positive_val=TRUE, min_val=50, max_val=1000, interval_obligatory=TRUE, turn_errors_to_warnings=TRUE, alt_par_name=ifelse(interface=='R', 'bins_per_cm', 'Bins per cm'), .verbosity)){bins_per_cm}else{ScrutinizeExpandAndNameParameter(250, 1, use_names=FALSE, default_value=250, expect_standard='numeric', expect=NULL, revert_to_default=TRUE, alt_par_name=ifelse(interface=='R', 'bins_per_cm', 'Bins per cm'), verbosity=0)})
   .bin.size = GetBinSize(bin_size, IRanges::width(.plotted.region[[.strand]]), .plot.width.parameters[['tracks.width.cm']], .bins.per.cm, .verbosity)
   if (!EvaluateNumericValue(.bin.size, positive_val=TRUE, min_val=1, max_val=1000000, interval_obligatory=FALSE, turn_errors_to_warnings=FALSE, alt_par_name=ifelse(interface=='R', 'bin_size', 'Bin Size'), .verbosity)){ return() }
@@ -807,7 +806,6 @@ seqNdisplay = function(
     t10 = Sys.time()
     cat(paste('step 9 plotting time:', format(difftime(t10, t9))), '\n')
   }
-  #@.basic.plot.parameters = AlignBasicPlotParameters(structure(lapply(names(.plotted.region), function(.strand) BasicPlotParameters(.strand, .plotted.region, .feature.names.font.size, .plot.height.parameters, .plot.width.parameters, .full.width.cm, full_height_cm, track_height_cm, .plot.vertical.parameters, .bin.size, .bins.per.cm, .plotting.segment.order, .tracks.listed, .unstranded.beds)), names=names(.plotted.region)), both_strands, .strands.intermingled, .fixed.plot.vertical.parameters, .vertical.parameters, .minimal.units, full_height_cm) 
   .basic.plot.parameters = AlignBasicPlotParameters(structure(lapply(names(.plotted.region), function(.strand) BasicPlotParameters(.strand, .plotted.region, .feature.names.font.size, .plot.height.parameters, .plot.width.parameters, .full.width.cm, full_height_cm, track_height_cm, .plot.vertical.parameters, .bin.size, .bins.per.cm, .plotting.segment.order, .tracks.listed, .unstranded.beds)), names=names(.plotted.region)), both_strands, .strands.intermingled, .fixed.plot.vertical.parameters, .vertical.parameters, .minimal.units, full_height_cm, .annotation.packing)
   if (both_strands){
     if (.strands.intermingled){
@@ -2857,152 +2855,6 @@ AnnotatedFeaturesInRegion = function(plotted_region, annotations){
 }
 
 
-AnnotatedFeaturesInRegion_obs = function(plotted_region, annotations){
-  .strand = as.character(BiocGenerics::strand(plotted_region))
-  .plot.width = IRanges::width(plotted_region)
-  .tracks.width = S4Vectors::mcols(plotted_region)$tracks.width
-  ##### pack the annotation into fewest possible lines - there should be a gap of at least 0.05 cm between annotations on same line
-  .gap = as.integer(0.05*.plot.width/.tracks.width)
-  .gap = ifelse(.gap > 1, .gap, 1)
-  #####
-  region.annotations = list()
-  for (.annotation in names(annotations)){
-    region.annotations[[.annotation]] = list()
-    ##### find annotated features overlapping with plotted region
-    ## if bed file has unstranded data - only place under plus strand visualization
-    .data.strand = as.character(BiocGenerics::strand(annotations[[.annotation]]))
-    if (all(.data.strand=="*")){
-      BiocGenerics::strand(annotations[[.annotation]]) = .strand
-    }
-    if ( GenomicRanges::seqnames(GenomicRanges::seqinfo(plotted_region)) %in% GenomicRanges::seqnames(GenomicRanges::seqinfo(annotations[[.annotation]])) ){
-      .subset.annotation = sort(IRanges::subsetByOverlaps(annotations[[.annotation]], plotted_region), decreasing = FALSE)
-    }else{
-      .subset.annotation = NULL
-    }
-    if (length(.subset.annotation) > 0){
-      if (.strand == '-'){
-        .subset.annotation = .subset.annotation[order(IRanges::end(.subset.annotation), decreasing=TRUE)]
-      }
-      ##### group based on feature name
-      .feat.names = unique(S4Vectors::mcols(.subset.annotation)$name) ## if different genes overlap, their transcripts will be displayed in separate clusters
-      ##### color - pick the most prevalent color in the collapsed set of transcripts
-      .collapsed.cols = unlist(lapply(.feat.names, function(.feat.name) sort(S4Vectors::mcols(S4Vectors::subset(.subset.annotation, name==.feat.name))$itemRgb)[1]))
-      ##### collapse .annotation based on feature name
-      .collapsed.annot = unlist(as(lapply(.feat.names, function(.feat.name) {.ann=S4Vectors::subset(.subset.annotation, name==.feat.name); return(GenomicRanges::GRanges(IRanges::subsetByOverlaps(GenomicRanges::reduce(.ann), plotted_region), name=.feat.name))}), 'GRangesList'))
-      if (!is.null(.collapsed.cols)){
-        S4Vectors::mcols(.collapsed.annot)$itemRgb = .collapsed.cols
-      }else{
-        S4Vectors::mcols(.collapsed.annot)$itemRgb = '#000000'
-      }
-      # are collapsed transcript models extending past plotted region
-      S4Vectors::mcols(.collapsed.annot)$on.from.start = FALSE
-      S4Vectors::mcols(.collapsed.annot)$on.from.end = FALSE
-      ##### check if feature regions overlap or not
-      .is.disjoint = GenomicRanges::isDisjoint(.collapsed.annot)
-      if (!.is.disjoint){
-        .red.collapsed.annot = GenomicRanges::reduce(.collapsed.annot, with.revmap=TRUE)
-        if (.strand == '-'){
-          .red.collapsed.annot = .red.collapsed.annot[GenomicRanges::order(IRanges::end(.red.collapsed.annot), decreasing=TRUE)]
-        }
-        .revmap = S4Vectors::mcols(.red.collapsed.annot)$revmap
-        .collapsed.names.list = list()
-        .collapsed.names = rep(NA, length(.revmap))
-        .collapsed.cols = rep(NA, length(.revmap))
-        .disjoint = rep(T, length(.revmap))
-        for (i in 1:length(.revmap)){
-          if (.strand=='-'){
-            .revmap.IVs = .revmap[[i]]
-          }else{
-            .revmap.IVs = rev(.revmap[[i]])
-          }
-          if (length(.revmap.IVs) > 1){
-            .disjoint[i] = F
-          }
-          .collapsed.names.list[[i]] = S4Vectors::mcols(.collapsed.annot)$name[ .revmap.IVs ]
-          .collapsed.cols[i] = sort(S4Vectors::mcols(.collapsed.annot)$itemRgb[ .revmap.IVs ])[1]
-          .collapsed.names[i] = paste(.collapsed.names.list[[i]], collapse=',')
-        }
-        .red.collapsed.annot = GenomicRanges::GRanges(GenomicRanges::granges(.red.collapsed.annot), name=.collapsed.names, itemRgb=.collapsed.cols, disjoint=.disjoint)
-        S4Vectors::mcols(.red.collapsed.annot)$collapsed.names = .collapsed.names.list
-      }else{
-        .red.collapsed.annot = .collapsed.annot
-        S4Vectors::mcols(.red.collapsed.annot)$disjoint = T
-        S4Vectors::mcols(.red.collapsed.annot)$collapsed.names = as(S4Vectors::mcols(.collapsed.annot)$name, 'list')
-      }
-      S4Vectors::mcols(.red.collapsed.annot)$on.from.start = FALSE
-      S4Vectors::mcols(.red.collapsed.annot)$on.from.end = FALSE
-      S4Vectors::mcols(.red.collapsed.annot) = S4Vectors::mcols(.red.collapsed.annot)[c('name', 'itemRgb', 'on.from.start', 'on.from.end', 'disjoint', 'collapsed.names')]
-      # are collapsed transcript models extending past plotted region
-      if (any(IRanges::start(.collapsed.annot) < IRanges::start(plotted_region)) | any(IRanges::end(.collapsed.annot) > IRanges::end(plotted_region))){
-        # subset of transcript models that either start or end outside of plotted region
-        .subset = which(IRanges::start(.collapsed.annot) < IRanges::start(plotted_region) | IRanges::end(.collapsed.annot) > IRanges::end(plotted_region))
-        S4Vectors::mcols(.collapsed.annot)$on.from.start[.subset] = sapply(.subset, function(.n.trn) ifelse(IRanges::start(.collapsed.annot)[.n.trn] < IRanges::start(plotted_region), TRUE, FALSE) )
-        S4Vectors::mcols(.collapsed.annot)$on.from.end[.subset] = sapply(.subset, function(.n.trn) ifelse(IRanges::end(.collapsed.annot)[.n.trn] > IRanges::end(plotted_region), TRUE, FALSE) )
-        IRanges::start(.collapsed.annot)[S4Vectors::mcols(.collapsed.annot)$on.from.start] = IRanges::start(plotted_region)
-        IRanges::end(.collapsed.annot)[S4Vectors::mcols(.collapsed.annot)$on.from.end] = IRanges::end(plotted_region)
-      }
-      if (any(IRanges::start(.red.collapsed.annot) < IRanges::start(plotted_region)) | any(IRanges::end(.red.collapsed.annot) > IRanges::end(plotted_region))){
-        # subset of transcript models that either start or end outside of plotted region
-        .subset = which(IRanges::start(.red.collapsed.annot) < IRanges::start(plotted_region) | IRanges::end(.red.collapsed.annot) > IRanges::end(plotted_region))
-        S4Vectors::mcols(.red.collapsed.annot)$on.from.start[.subset] = sapply(.subset, function(.n.trn) ifelse(IRanges::start(.red.collapsed.annot)[.n.trn] < IRanges::start(plotted_region), TRUE, FALSE) )
-        S4Vectors::mcols(.red.collapsed.annot)$on.from.end[.subset] = sapply(.subset, function(.n.trn) ifelse(IRanges::end(.red.collapsed.annot)[.n.trn] > IRanges::end(plotted_region), TRUE, FALSE) )
-        IRanges::start(.red.collapsed.annot)[S4Vectors::mcols(.red.collapsed.annot)$on.from.start] = IRanges::start(plotted_region)
-        IRanges::end(.red.collapsed.annot)[S4Vectors::mcols(.red.collapsed.annot)$on.from.end] = IRanges::end(plotted_region)
-      }
-      .feature.annotations = list()
-      .annotation.lines = list()
-      for (.feat.name in .feat.names){
-        #cat(.feat.name, '\n')
-        .feat.annot = S4Vectors::subset(.subset.annotation, name==.feat.name)
-        .annotation.lines[[.feat.name]] = OrganizeOverlappingIVs(.feat.annot, .gap)
-        # are transcript models (exon-intron structure) interrupted
-        S4Vectors::mcols(.feat.annot)$on.from.start = IRanges::start(.feat.annot) < IRanges::start(plotted_region) #@ 2023-06-20 added this line
-        S4Vectors::mcols(.feat.annot)$on.from.end = IRanges::end(.feat.annot) > IRanges::end(plotted_region) #@ 2023-06-20 added this line
-        if (!('blocks' %in% colnames((S4Vectors::mcols(.feat.annot))))){
-          S4Vectors::mcols(.feat.annot)$blocks = IRanges::IRangesList(sapply(1:length(.feat.annot), function(x) IRanges::IRanges(start=1, end=IRanges::width(IRanges::ranges(.feat.annot[x])) + 1)))
-        }
-        exons = S4Vectors::mcols(.feat.annot)$blocks
-        .exon.ranges = lapply(1:length(.feat.annot), function(.n.trn) GenomicRanges::sort(IRanges::overlapsRanges(IRanges::IRanges(start=IRanges::start(.feat.annot)[.n.trn]-1 + IRanges::start(exons[[.n.trn]]), end=IRanges::start(.feat.annot)[.n.trn]-1 + (IRanges::end(exons[[.n.trn]]) - 1)), IRanges::ranges(plotted_region)), decreasing = FALSE) ) #@ 2023-06-20 (IRanges::end(exons[[.n.trn]]) - 1) <- IRanges::end(exons[[.n.trn]])
-        S4Vectors::mcols(.feat.annot)$intron.from.start = sapply( 1:length(.exon.ranges), function(.n.trn)  if (length(.exon.ranges[[.n.trn]]) > 0){ ifelse( min(IRanges::start(.exon.ranges[[.n.trn]])) == IRanges::start(plotted_region), FALSE, S4Vectors::mcols(.feat.annot)$on.from.start[.n.trn]) }else{ TRUE } )
-        S4Vectors::mcols(.feat.annot)$intron.from.end = sapply( 1:length(.exon.ranges), function(.n.trn) if (length(.exon.ranges[[.n.trn]]) > 0){ ifelse( max(IRanges::end(.exon.ranges[[.n.trn]])) == IRanges::end(plotted_region), FALSE, S4Vectors::mcols(.feat.annot)$on.from.end[.n.trn]) }else{ TRUE } )
-        if (any(S4Vectors::mcols(.feat.annot)$on.from.start) | any(S4Vectors::mcols(.feat.annot)$on.from.end)){
-          .trunc.starts = sapply(IRanges::start(.feat.annot), function(.trn.start)  ifelse(.trn.start < IRanges::start(plotted_region), IRanges::start(plotted_region), .trn.start) )
-          .trunc.ends = sapply(IRanges::end(.feat.annot), function(.trn.end)  ifelse(.trn.end > IRanges::end(plotted_region), IRanges::end(plotted_region), .trn.end) )
-          IRanges::start(.feat.annot) = sapply( 1:length(.exon.ranges), function(.n.trn) ifelse(length(.exon.ranges[[.n.trn]]) > 0, min(IRanges::start(.exon.ranges[[.n.trn]])), .trunc.starts[.n.trn]) )
-          IRanges::end(.feat.annot) = sapply( 1:length(.exon.ranges), function(.n.trn) ifelse(length(.exon.ranges[[.n.trn]]) > 0, max(IRanges::end(.exon.ranges[[.n.trn]])), .trunc.ends[.n.trn]) )
-          .exon.ranges = lapply( 1:length(.exon.ranges), function(.n.trn) {if (length(.exon.ranges[[.n.trn]]) > 0){IRanges::shift(.exon.ranges[[.n.trn]], shift=-min(IRanges::start(.exon.ranges[[.n.trn]]))+1 )}else{IRanges::shift(IRanges::ranges(.feat.annot)[.n.trn], -IRanges::start(.feat.annot)[.n.trn]+1)}} )
-          S4Vectors::mcols(.feat.annot)$blocks = as(.exon.ranges, 'IRangesList')
-          if ("thick" %in% names(S4Vectors::mcols(.feat.annot))){
-            if (any(S4Vectors::mcols(.feat.annot)$thick %outside% ranges(plotted_region))){
-              S4Vectors::mcols(.feat.annot)$thick[S4Vectors::mcols(.feat.annot)$thick %outside% ranges(plotted_region)] = IRanges::IRanges(start(.feat.annot), width=0)[S4Vectors::mcols(.feat.annot)$thick %outside% ranges(plotted_region)]
-            }
-            if (any(width(S4Vectors::mcols(.feat.annot)$thick) == 0)){
-              S4Vectors::mcols(.feat.annot)$thick[width(S4Vectors::mcols(.feat.annot)$thick) == 0] = IRanges::IRanges(start(.feat.annot), width=0)[width(S4Vectors::mcols(.feat.annot)$thick) == 0]
-            }
-            if (any(width(S4Vectors::mcols(.feat.annot)$thick) > 0)){
-              S4Vectors::mcols(.feat.annot)$thick[width(S4Vectors::mcols(.feat.annot)$thick) > 0] = IRanges::overlapsRanges(S4Vectors::mcols(.feat.annot)$thick[width(S4Vectors::mcols(.feat.annot)$thick) > 0], ranges(plotted_region))
-            }
-            IRanges::start(S4Vectors::mcols(.feat.annot)$thick) = sapply( 1:length(.feat.annot), function(.n.trn) ifelse(IRanges::start(S4Vectors::mcols(.feat.annot)$thick)[.n.trn] < IRanges::start(.feat.annot)[.n.trn], IRanges::start(.feat.annot)[.n.trn], IRanges::start(S4Vectors::mcols(.feat.annot)$thick)[.n.trn] ))
-            IRanges::end(S4Vectors::mcols(.feat.annot)$thick) = sapply( 1:length(.feat.annot), function(.n.trn) ifelse(IRanges::end(S4Vectors::mcols(.feat.annot)$thick)[.n.trn] > IRanges::end(.feat.annot)[.n.trn], IRanges::end(.feat.annot)[.n.trn], IRanges::end(S4Vectors::mcols(.feat.annot)$thick)[.n.trn] ))
-          }
-        }
-        .feature.annotations[[.feat.name]] = .feat.annot
-      }
-      .feature.annotations = as(.feature.annotations, "GRangesList")
-    }else{
-      .red.collapsed.annot=NULL
-      .collapsed.annot=NULL
-      .feature.annotations=NULL
-      .annotation.lines=NULL
-    }
-    region.annotations[[.annotation]][['collapsed']] = .red.collapsed.annot ## per definition the collapsed 'feature' is a one line representation
-    region.annotations[[.annotation]][['collapsed2']] = .collapsed.annot ## collapsed2 is equal to collapsed if there is no overlap between regions defined by different feature names - otherwise it will use the number of lines necessary
-    region.annotations[[.annotation]][['expanded']] = .feature.annotations
-    region.annotations[[.annotation]][['packing']] = .annotation.lines
-  }
-  return(region.annotations)
-}
-
 #' Organize Overlapping Loci
 #'
 #' @description Internal function: 
@@ -4039,6 +3891,7 @@ LoadAndTransformDataForTrack <- function(seqtype, plotted_region, samples, bigwi
         }
       } else {
         # Iterate over BigWig files
+        t_1s <- proc.time() #@ 25-10-18
         for (.sample.rep.name in .sample.rep.names){
           .bw.file <- .bw.files[[.sample.rep.name]]
           is_url   <- grepl("^(https?|ftp)://", .bw.file, ignore.case = TRUE)
@@ -4073,22 +3926,29 @@ LoadAndTransformDataForTrack <- function(seqtype, plotted_region, samples, bigwi
             }
           }
         } # end for loop
-        
+        t_1e <- proc.time(); cat("reading bigwigs:", (t_1e - t_1s)[["elapsed"]], "s\n") #@ 25-10-18
         #@ replaced block 25-10-17 ->
         ## Build the matrix without repeated copies; avoid huge rownames 
-        len <- .chrom.end - .chrom.start + 1L
-        ns  <- length(.bw.list)
+        t_2s <- proc.time() #@ 25-10-18
+        # len <- .chrom.end - .chrom.start + 1L
+        # ns  <- length(.bw.list)
         .bw.matrix <- matrix(
           data = unlist(.bw.list, use.names = FALSE),
-          nrow = len,
-          ncol = ns,
+          nrow = .chrom.end - .chrom.start + 1L,
+          ncol = length(.bw.list),
           byrow = FALSE,
           dimnames = list(NULL, names(.bw.list))  # no rownames (big speedup on Windows)
         )
         #@ replaced block 25-10-17 <-
         rownames(.bw.matrix) = .chrom.start:.chrom.end #@ 25-10-17 still keeping rownames as they are called later - but could be changed for speed
-
+        t_2e <- proc.time(); cat("matrix build:", (t_2e - t_2s)[["elapsed"]], "s\n") #@ 25-10-18
+        
+        ## Map columns → sample name (strip ".repN")
+        coln = colnames(.bw.matrix)
+        col_to_sample = sub("\\.rep\\d+$", "", coln)
+        
         # Batch correction, log2 transform, negative-value handling, mean calculation, etc.                
+        t_3s <- proc.time() #@ 25-10-18
         if (FALSE){ #$ -> auto-detection of major sign in bw files (currently not active)
           cumPos = sum(.bw.matrix[which(.bw.matrix > 0)])
           cumNeg = sum(.bw.matrix[which(.bw.matrix < 0)])
@@ -4132,7 +3992,7 @@ LoadAndTransformDataForTrack <- function(seqtype, plotted_region, samples, bigwi
               names = paste0(rep(names(.batch), lengths(.batch)), ".rep", unlist(lapply(lengths(.batch), seq_len)))
             )
           }
-          if (is.null(names(.batch))) names(.batch) <- coln
+          if (is.null(names(.batch))) { names(.batch) <- coln }
           .batch <- .batch[coln]
           
           if (length(unique(.batch)) > 1L) {
@@ -4160,12 +4020,10 @@ LoadAndTransformDataForTrack <- function(seqtype, plotted_region, samples, bigwi
           }
         }
         #@ changed block 25-10-17 <-
+        t_3e <- proc.time(); cat("transforms:", (t_3e - t_3s)[["elapsed"]], "s\n") #@ 25-10-18
         # Return processed track list
         track.list = list()
         #@ replaced block 25-10-17 -> 
-        coln <- colnames(.bw.matrix)
-        ## Map columns → sample name (strip ".repN")
-        col_to_sample <- sub("\\.rep\\d+$", "", coln)
         if (.calc.mean) {
           .sample.names <- unique(col_to_sample)
           for (.sample.name in .sample.names) {
