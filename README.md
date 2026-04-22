@@ -2,7 +2,22 @@
 
 ## Installation:
 
-see https://rdrr.io/github/THJlab/seqNdisplayR/
+`seqNdisplayR` depends on several Bioconductor packages, so install those first, then install `seqNdisplayR` from GitHub:
+
+```r
+# 1. Bioconductor dependencies
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install(c("rtracklayer", "GenomicRanges", "BiocGenerics",
+                       "GenomeInfoDb", "S4Vectors", "IRanges", "limma"))
+
+# 2. seqNdisplayR from GitHub
+if (!requireNamespace("remotes", quietly = TRUE))
+    install.packages("remotes")
+remotes::install_github("THJlab/seqNdisplayR")
+```
+
+To install a specific release, use e.g. `remotes::install_github("THJlab/seqNdisplayR@v1.1.2")`.
 
 ## Requirements:
 R (>= 4.0), 

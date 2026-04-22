@@ -6,3 +6,5 @@
 test/test_output/*.*
 *.Rproj
 ^test$
+*.bak
+test/Pushing_and_pulling.R
