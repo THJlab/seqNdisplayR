@@ -28,3 +28,9 @@
 
 # Stray logo PNG at package root (not referenced by README/vignettes)
 ^sNd logo\.png$
+
+# Nested source-tree copy left over from install-testing; shows up as
+# seqNdisplayR/seqNdisplayR/ inside a rebuild if not filtered.
+^seqNdisplayR$
+^R_old$
+^seqNdisplayR\.Rcheck$

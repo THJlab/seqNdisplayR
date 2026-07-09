@@ -91,6 +91,15 @@ the app for collaborators.
   `IGV2Session()` (literal `(){}` in a character class), strand suffix
   leakage from track names into subgroup_1 on re-import, and a number
   of structural fixes verified by `tests/test_igv_roundtrip.R`.
+- **Windows: remote bigwig plots now work at full speed.**  Requires
+  `bwimport (>= 0.2.3)` -- earlier versions unconditionally converted
+  `/` to `\` on Windows in the C wrapper, mangling every `http://` URL
+  into `http:\\...`. libBigWig then couldn't parse it as a URL, every
+  remote track failed silently, and some hosts caused a ~50 s hang per
+  file (fopen retrying an invalid Windows path with the URL host
+  treated as a UNC share). See `bwimport` NEWS 0.2.3 for the underlying
+  fix. On a fresh Windows install of seqNdisplayR 2.0.0 the shipped
+  LMO4 example plot now renders in seconds, matching macOS/Linux.
 - **libBigWig `[bwHdrRead]` / `[bwOpen]` chatter silenced.** When a
   remote bigwig fetch's first attempt fails (transient curl hiccup,
   header retry, alt-chrom fallback), libBigWig used to print a pair of

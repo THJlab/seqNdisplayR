@@ -20,7 +20,7 @@ Encoding: UTF-8
 Depends: R (>= 4.0)
 SystemRequirements: GLPK (>= 4.57; libglpk-dev on Debian/Ubuntu, glpk on Homebrew)
 Imports:
-    bwimport (>= 0.2.1),
+    bwimport (>= 0.2.3),
     GenomicRanges,
     BiocGenerics,
     GenomeInfoDb,
