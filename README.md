@@ -73,6 +73,44 @@ The release tarball can also be fetched directly from
 the GitHub Release attachment via
 [`remotes::install_url(...)`](https://remotes.r-lib.org/reference/install_url.html).
 
+#### Windows-friendly alternative: `pak` + binary-only install
+
+On Windows we recommend `pak` — it resolves the whole dependency
+graph (including `Remotes:`) in one pass, downloads binaries wherever
+available, and gives a clean summary before doing anything.  Combined
+with `pkgType = "binary"`, this side-steps the slowest failure mode
+on Windows: a stray Fortran source build (e.g. `survival`) that
+appears to hang for tens of minutes because R fell back to
+compiling from source.
+
+Run this from a **fresh R session** (close and re-open R first so no
+old Bioconductor packages are attached):
+
+```r
+# 1) Never fall back to source. All packages must arrive as binaries.
+options(pkgType = "binary")
+options(install.packages.check.source = "no")
+
+# 2) Bring Bioconductor to a single, consistent release. Choose "All"
+#    (or type y to the confirmation) when it offers to update packages.
+install.packages("BiocManager")
+BiocManager::install(ask = FALSE, update = TRUE)
+
+# 3) Sanity check: GenomicRanges and GenomeInfoDb must be from the same
+#    Bioc release (currently 3.22: GenomicRanges ~1.62.x, GenomeInfoDb ~1.46.x).
+packageVersion("GenomicRanges")
+packageVersion("GenomeInfoDb")
+
+# 4) Install seqNdisplayR. `pak` follows Remotes: slaish/bwimport
+#    automatically. `upgrade = FALSE` avoids reshuffling packages you
+#    just synced in step 2.
+install.packages("pak")
+pak::pak("slaish/seqNdisplayR@main", upgrade = FALSE)
+```
+
+If step 2 refuses to update a package because it's *"loaded"*, quit
+R (`q()`), reopen a fresh session, and re-run.
+
 ## Quick start
 
 ```r
@@ -184,29 +222,21 @@ diagnostic now mentions this when an HTTPS path is unreachable.
 
 **7.  Install fails at lazy-load with `'class "Seqinfo" is not exported by namespace:GenomeInfoDb'`, or similar S4 class / generic-not-found errors mentioning a Bioconductor package.**
 
-This is a Bioconductor version mismatch, not a `seqNdisplayR` bug.
-It happens when your installed Bioc packages are on a mix of Bioc
-releases (e.g. `GenomicRanges` from Bioc 3.20 but `GenomeInfoDb`
-still at Bioc 3.19).  The classes / generics one package expects
-from another aren't there because the two were built against
-different releases.
+Bioconductor version mismatch, not a `seqNdisplayR` bug.  Your
+installed Bioc packages are on a mix of releases (e.g. `GenomicRanges`
+from Bioc 3.20 but `GenomeInfoDb` still at Bioc 3.19), so the
+classes / generics one expects from another aren't there.
 
-Fix by syncing everything to a single Bioconductor release:
+Follow the [Windows-friendly recipe](#windows-friendly-alternative-pak--binary-only-install)
+above — steps 2 & 3 (`BiocManager::install(update = TRUE)` + version
+check) are the specific ones that resolve this.  When any installer
+prompts *"Which would you like to update?"*, always choose **`1: All`**
+rather than skipping — leaving Bioc packages mid-migration is what
+triggers the mismatch.
 
-```r
-install.packages("BiocManager")
-BiocManager::install(version = "3.20", ask = FALSE, update = TRUE)  # or the current release
-remotes::install_github("slaish/seqNdisplayR", ref = "main")
-```
-
-When the installer prompts *"These packages have more recent
-versions available... Which would you like to update?"*, choose
-**`1: All`** rather than skipping — leaving Bioc packages mid-
-migration is what triggers the mismatch.
-
-If updating all is impossible for some reason (frozen environment,
-IT policy), install the older Bioc release consistently instead:
-`BiocManager::install(version = "3.19", ask = FALSE, update = TRUE)`.
+If updating all is impossible (frozen environment, IT policy),
+pin the older Bioc release consistently instead:
+`BiocManager::install(version = "3.19", ask = FALSE, update = TRUE, type = "binary")`.
 
 **8.  Windows: `pkg install` stalls, or `remotes::install_github()` warns "install_github() was deprecated in devtools 2.5.0".**
 
