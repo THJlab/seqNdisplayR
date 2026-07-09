@@ -1,0 +1,422 @@
+---
+title: "seqNdisplayR"
+author: "Søren Lykke-Andersen, Jerome Rouviere, Manfred Schmid, Maria Gockert, Torben Heick Jensen"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{seqNdisplayR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  # Default all chunks to non-evaluating so vignette builds don't fetch
+  # remote bigwigs. To run the vignette interactively, either flip this
+  # to TRUE or run individual chunks by hand.
+  eval = FALSE
+)
+```
+
+## Introduction
+
+`seqNdisplayR` produces customisable, reproducible genome-coverage plots
+for comparative sequencing visualisation.  There are two usage paths:
+
+- **Shiny app (primary).**  A point-and-click interface for loading an
+  Excel sample sheet, choosing a locus, tweaking layout, and drawing a
+  publication-ready plot.  Most users only ever need this.  Launch it
+  with `run_seqNdisplayR_app()`.
+- **R API / scripting (advanced).**  The same underlying
+  `seqNdisplay()` function is exported for pipelines and batch plotting.
+  Useful when you want to generate many plots from a script, or embed
+  plotting in a larger workflow.
+
+Both paths share the same Excel template and produce identical plots
+from identical inputs.  This vignette walks the Shiny path first, then
+shows the scripting equivalent so you can see how the Excel columns
+map to R structures.
+
+
+## Installation
+
+Full install instructions with troubleshooting live in the
+[README](https://github.com/slaish/seqNdisplayR#installation).  The
+recipe below is the shortest happy path.
+
+### 1. GLPK (system dependency)
+
+The annotation-name placement uses the GNU Linear Programming Kit via
+`ROI.plugin.glpk` / `ompr.roi`.  Install once, at the OS level:
+
+| OS                    | Command                                              |
+|-----------------------|------------------------------------------------------|
+| Debian / Ubuntu       | `sudo apt-get install libglpk-dev`                   |
+| macOS (Homebrew)      | `brew install glpk`                                  |
+| Windows               | bundled with the Rtools toolchain (R 4.0+)           |
+
+### 2. Bioconductor dependencies
+
+```{r, eval=FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install(c("rtracklayer", "GenomicRanges", "BiocGenerics",
+                       "GenomeInfoDb", "S4Vectors", "IRanges", "limma"),
+                     update = FALSE, ask = FALSE)
+```
+
+### 3. The package itself
+
+```{r, eval=FALSE}
+if (!requireNamespace("remotes", quietly = TRUE))
+    install.packages("remotes")
+remotes::install_github("slaish/seqNdisplayR", ref = "main")
+```
+
+This pulls in the GitHub-only `bwimport` automatically via the
+package's `Remotes:` field.  On Windows the
+[`pak`-based recipe](https://github.com/slaish/seqNdisplayR#windows-friendly-alternative-pak--binary-only-install)
+is cleaner and avoids source-build stalls (`survival` etc.); see the
+README.
+
+
+## Quick start (Shiny)
+
+Launch the app:
+
+```{r, eval=FALSE}
+library(seqNdisplayR)
+run_seqNdisplayR_app()
+```
+
+A browser tab opens with the app.  The layout has a left sidebar (data
+loading + controls) and a right main pane (the plot).
+
+- **Load Excel** — click `Browse...` and pick a sample sheet.  For a
+  first look, use the shipped simple example:
+  `system.file("extdata", "sNdR_sample_example_simple.xlsx",
+   package = "seqNdisplayR")`.  A more elaborate example lives at
+  `sNdR_sample_example_elaborate.xlsx`.
+- **Data Overview** — a tree of datasets / subgroups / samples with
+  checkboxes.  Uncheck rows to hide them from the plot.
+- **Plot Segments & Strands** — a drag-reorderable table controlling
+  the top-to-bottom order of the plot (header, scale, annotations,
+  spacers, individual datasets).  Add / remove rows with the buttons
+  on each row.  The strand-display controls (`bothstrands`,
+  `intermingled`, the intermingled colour picker, `neg_as_neg`,
+  `reverse_strand`) live here too.
+- **Track Colors** — per-sample colour pickers, populated from the
+  Excel or the last edit.
+- **Plot Layout** — panel widths, margins, scale-panel behaviour,
+  "Use full panel width", and the auto-widening toggle for label-heavy
+  panels.
+- **IGV Export** — writes an IGV session XML for the currently loaded
+  configuration; you'll be prompted for a target genome (default `hg38`).
+- **Console (click to show / hide)** — a collapsible bottom panel with
+  package-side messages.  Useful when debugging a plot that doesn't
+  render.
+
+To draw a plot: type a gene symbol (e.g. `LMO4`) or coordinates
+(`chr1:87297784-87379607`) into **Locus of Interest**, then click
+**Draw Plot**.  On first plot the tracks are fetched from their remote
+URLs; subsequent plots at the same or different loci reuse the
+per-session bigwig cache and are much faster.
+
+
+## The Excel template as the bridge
+
+An Excel sample sheet has four sheets:
+
+- **SAMPLES** — one row per bigwig track: `color`, `bigwig_directory`,
+  `bigwig_file`, `strand`, `batch`, `dataset`, `subgroup_1` (and
+  optionally `subgroup_2`, `subgroup_3`).  The `dataset` /
+  `subgroup_*` columns define the nesting the plot uses.
+- **DATASET_OPTIONS** — per-dataset parameters: `bin_stats`,
+  `log2transform`, `pseudoCount`, `batchCorrect`, `enhance_signals`,
+  etc.
+- **ANNOTATIONS** — one row per BED file with layout options
+  (`incl_feature_names`, `annotation_packing`, `annot_cols`, ...).
+- **GLOBAL_OPTIONS** — layout / plot-level options that would otherwise
+  be arguments to `seqNdisplay()` (margins, `neg_as_neg`,
+  `bothstrands`, `intermingled`, etc.).
+
+The Shiny app lets you round-trip: load an xlsx, edit interactively,
+export the current state back to xlsx with **Save Excel** (calls
+`Session2xlsx()` under the hood).  The exported xlsx is the
+authoritative record of a plot's configuration.
+
+You can also inspect and convert between formats programmatically:
+
+```{r, eval=FALSE}
+xl_path <- system.file("extdata", "sNdR_sample_example_simple.xlsx",
+                       package = "seqNdisplayR")
+session <- LoadExcel(xl_path)      # -> seqNdisplayRSession
+print(session)                     # summary
+Session2Df(session)                # tabular view (data.frame)
+Session2xlsx(session, "my_edited.xlsx")
+```
+
+
+## R API / scripting
+
+Everything the Shiny app does is available as R functions.  Below is
+the CLI equivalent of loading the shipped simple example and plotting
+`LMO4`.
+
+### Sample structure
+
+A nested list mirrors the SAMPLES sheet: dataset → subgroup → samples.
+For the shipped simple example (three stranded datasets with siCTRL /
+siEXOSC3 subgroups, plus an unstranded ChIP dataset):
+
+```{r}
+samples <- list(
+  "3-seq"   = list('siCTRL' = 'siGFP', 'siEXOSC3' = 'siRRP40'),
+  "TT-seq"  = list('siCTRL' = 'siGFP', 'siEXOSC3' = 'siRRP40'),
+  "RNA-seq" = list('siCTRL' = 'siGFP', 'siEXOSC3' = 'siRRP40'),
+  "ChIP-seq" = c('ChIP')
+)
+```
+
+### Colors
+
+Same nesting; deepest leaf is a named vector.
+
+```{r}
+colors <- list(
+  "3-seq"   = list('siCTRL' = c('siGFP' = '#505160'),
+                   'siEXOSC3' = c('siRRP40' = '#68829E')),
+  "TT-seq"  = list('siCTRL' = c('siGFP' = '#505160'),
+                   'siEXOSC3' = c('siRRP40' = '#68829E')),
+  "RNA-seq" = list('siCTRL' = c('siGFP' = '#505160'),
+                   'siEXOSC3' = c('siRRP40' = '#68829E')),
+  "ChIP-seq" = c('ChIP' = '#B0B0B0')
+)
+```
+
+### BigWig directories and files
+
+Directories per dataset (public URLs; use `https://user:password@host/...`
+for password-protected lab servers):
+
+```{r}
+bigwig_dirs <- c(
+  "3-seq"    = 'http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/',
+  "TT-seq"   = 'http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_TTseq/',
+  "RNA-seq"  = 'http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_RNAseq/',
+  "ChIP-seq" = 'http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_ChIPseq/'
+)
+```
+
+Individual track filenames, split by strand (omit the `-` entry for
+unstranded data; the ChIP-seq dataset is unstranded):
+
+```{r}
+bigwigs <- list(
+  '+' = list(
+    "3-seq"   = list('siCTRL'   = list('siGFP'  = c('siGFP_xPAP_in_batch1_plus.bw',
+                                                    'siGFP_xPAP_in_batch2_plus.bw',
+                                                    'siGFP_xPAP_in_batch3_plus.bw')),
+                     'siEXOSC3' = list('siRRP40'= c('siRRP40_xPAP_in_batch1_plus.bw',
+                                                    'siGFP_xPAP_in_batch2_plus.bw',
+                                                    'siRRP40_xPAP_in_batch3_plus.bw'))),
+    "TT-seq"  = list('siCTRL'   = list('siGFP'  = c('L_EGFP_rep1_tt_corr_ff_noJncReads_plus.bw',
+                                                    'L_EGFP_rep2_tt_corr_ff_noJncReads_plus.bw')),
+                     'siEXOSC3' = list('siRRP40'= c('L_RRP40_rep1_tt_corr_ff_noJncReads_plus.bw',
+                                                    'L_RRP40_rep2_tt_corr_ff_noJncReads_plus.bw'))),
+    "RNA-seq" = list('siCTRL'   = list('siGFP'  = c('T_EGFP_rep1_tt_corr_plus.bw',
+                                                    'T_EGFP_rep2_tt_corr_plus.bw')),
+                     'siEXOSC3' = list('siRRP40'= c('T_RRP40_rep1_tt_corr_plus.bw',
+                                                    'T_RRP40_rep2_tt_corr_plus.bw'))),
+    "ChIP-seq" = list('ChIP' =
+        c('GSM2642506_WIGfs_Hela-H9_WT_siFFL_Pol_II_N20_MA733_bin50_Scaled_BGSub_Hg38.bw',
+          'GSM2642508_WIGfs_Hela-H9_WT_siFFL_Pol_II_N20_MA736_bin50_Scaled_BGSub_Hg38.bw'))
+  ),
+  '-' = list(
+    "3-seq"   = list('siCTRL'   = list('siGFP'  = c('siGFP_xPAP_in_batch1_minus.bw',
+                                                    'siGFP_xPAP_in_batch2_minus.bw',
+                                                    'siGFP_xPAP_in_batch3_minus.bw')),
+                     'siEXOSC3' = list('siRRP40'= c('siRRP40_xPAP_in_batch1_minus.bw',
+                                                    'siGFP_xPAP_in_batch2_minus.bw',
+                                                    'siRRP40_xPAP_in_batch3_minus.bw'))),
+    "TT-seq"  = list('siCTRL'   = list('siGFP'  = c('L_EGFP_rep1_tt_corr_ff_noJncReads_minus.bw',
+                                                    'L_EGFP_rep2_tt_corr_ff_noJncReads_minus.bw')),
+                     'siEXOSC3' = list('siRRP40'= c('L_RRP40_rep1_tt_corr_ff_noJncReads_minus.bw',
+                                                    'L_RRP40_rep2_tt_corr_ff_noJncReads_minus.bw'))),
+    "RNA-seq" = list('siCTRL'   = list('siGFP'  = c('T_EGFP_rep1_tt_corr_minus.bw',
+                                                    'T_EGFP_rep2_tt_corr_minus.bw')),
+                     'siEXOSC3' = list('siRRP40'= c('T_RRP40_rep1_tt_corr_minus.bw',
+                                                    'T_RRP40_rep2_tt_corr_minus.bw')))
+  )
+)
+```
+
+### Parameters
+
+Per-dataset transformation and replicate-handling settings.  Any field
+omitted here falls back to `DefaultParameters()`.
+
+```{r}
+parameters <- list(
+  "3-seq"    = list(bin_stats = 'mean', log2transform = FALSE, pseudoCount = 1,
+                    batchCorrect = TRUE, batch = c(1, 2, 3, 1, 2, 3),
+                    calcMean = TRUE, enhance_signals = TRUE, negValsSet0 = TRUE),
+  "TT-seq"   = list(bin_stats = 'mean', log2transform = FALSE, pseudoCount = 1,
+                    batchCorrect = TRUE, batch = c(1, 2, 1, 2),
+                    calcMean = TRUE, enhance_signals = FALSE, negValsSet0 = TRUE),
+  "RNA-seq"  = list(bin_stats = 'mean', log2transform = FALSE, pseudoCount = 1,
+                    batchCorrect = TRUE, batch = c(1, 2, 1, 2),
+                    calcMean = TRUE, enhance_signals = FALSE, negValsSet0 = TRUE),
+  "ChIP-seq" = list(bin_stats = 'mean', log2transform = FALSE, pseudoCount = 1,
+                    batchCorrect = FALSE, calcMean = TRUE,
+                    enhance_signals = FALSE, negValsSet0 = TRUE)
+)
+```
+
+Field notes: `bin_stats` picks the per-bin aggregation (`mean`, `sum`,
+etc.); `enhance_signals` applies a subtle non-linear boost so low-signal
+regions become visible; `batchCorrect` runs `limma::removeBatchEffect`
+across replicates when `batch` groups them; `calcMean = FALSE` displays
+individual replicates rather than the per-condition mean.
+
+### Annotations
+
+Pre-load once with `ReadInAnnotations()` so the same GRanges are reused
+across all plots (avoids downloading the BED files on every call):
+
+```{r}
+annotations <- ReadInAnnotations(list(
+  'gencode v38' = 'http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/annotations/gencode.v38.annotation.bed',
+  'in-house'    = 'http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/annotations/HeLa_major_isoform_hg38_gc34.bed',
+  'ChIP-peaks'  = 'http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/annotations/RNAPII_ChIP_peaks.bed'
+))
+```
+
+### Plot
+
+Direct call:
+
+```{r}
+seqNdisplay(samples, colors, bigwig_dirs, bigwigs, parameters,
+            annots = annotations, feature = 'LMO4')
+```
+
+Or via a `seqNdisplayRSession` object, which bundles the arguments and
+supports `plot()` / `print()` / xlsx round-trip:
+
+```{r}
+session <- seqNdisplayRSession(samples     = samples,
+                               colors      = colors,
+                               bigwig_dirs = bigwig_dirs,
+                               bigwigs     = bigwigs,
+                               parameters  = parameters,
+                               annotations = annotations)
+print(session)                          # summary
+plot(session, feature = 'LMO4')         # same as seqNdisplay(...)
+plot(session, feature = 'chr1:87297784-87379607')  # coordinates work too
+```
+
+Both routes give the same plot as clicking **Draw Plot** in the Shiny
+app with the same Excel loaded.
+
+
+## IGV import / export (v2.0.0)
+
+`seqNdisplayR` reads and writes IGV session XML files so you can jump
+between the two tools without re-authoring configurations.
+
+**Export.**  From an existing `seqNdisplayRSession`:
+
+```{r}
+Session2IGV(session,
+            genome = 'hg38',
+            out    = 'my_session.xml')
+```
+
+The Shiny app's IGV Export button wraps the same call and prompts for
+the target genome via a small modal (common identifiers listed;
+defaults to `hg38`).
+
+**Import.**  From an IGV session:
+
+```{r}
+imported <- IGV2Session('my_session.xml')
+print(imported)
+```
+
+When `IGV2Session()` can't infer a required field from the XML
+(synthetic `solo_N` / `group_N` dataset names, missing batches or
+subgroups), it writes `<FILL_ME: ...>` sentinel strings into the
+generated xlsx.  Loading that xlsx in the Shiny app auto-runs
+`CheckSampleFile()`, which surfaces the sentinels as warnings pointing
+at each row that needs completion.
+
+For a walk-through of a full XLSX ⇄ IGV round-trip see
+`inst/docs/igv_import.md` in the source.
+
+
+## Performance tips
+
+- **Parallel bigwig fetch.**  Install `future` and `future.apply` to
+  enable parallel per-track loading.  seqNdisplayR detects them and
+  fans out fetches across a persistent worker pool (cross-platform,
+  Windows-compatible).  Falls back to sequential otherwise.
+  Turn off explicitly with
+  `options(seqNdisplayR.disable_parallel_bw = TRUE)`.
+- **Session-level result caches.**  The bigwig fetcher caches results
+  by `(file, chrom, start, end)`; replotting the same locus, or
+  overlapping loci for the same bigwigs, is near-instant.  Free memory
+  with `clear_bigwig_cache()`, inspect with `bigwig_cache_size()`.
+  The annotation-processing pipeline has a similar cache
+  (`clear_annotation_cache()` / `annotation_cache_size()`).
+- **Fast Windows remote fetch.**  Windows plots require
+  `bwimport (>= 0.2.3)` for the byte-range fast path;  earlier
+  versions mangled URLs and downloaded every bigwig in full.  The
+  pin in `DESCRIPTION` enforces this, but check with
+  `packageVersion("bwimport")` if you inherited an old install.
+- **libBigWig quiet mode.**  Transient first-attempt failures
+  (`[bwHdrRead]` / `[bwOpen]` chatter) are suppressed by default
+  (seqNdisplayR sets `BWIMPORT_QUIET = "1"` in `.onLoad`).  Set
+  `Sys.setenv(BWIMPORT_QUIET = "")` before `library(seqNdisplayR)` to
+  see the original diagnostics.
+
+
+## Troubleshooting
+
+The full list is in the
+[README](https://github.com/slaish/seqNdisplayR#troubleshooting).  Top
+hits:
+
+- **Install fails at lazy-load with
+  `class "Seqinfo" is not exported by namespace:GenomeInfoDb`.**
+  Bioconductor version mismatch.  Sync everything to the current
+  release: `BiocManager::install(ask = FALSE, update = TRUE)`, then
+  retry.
+- **`"GLPK not found"` / `ROI.plugin.glpk` install errors.**
+  Install GLPK at the OS level (§Installation §1), then reinstall
+  `ROI.plugin.glpk`.
+- **Shiny app fails to launch with
+  `"there is no package called 'XYZ'"`.**  Reinstall with
+  `remotes::install_github("slaish/seqNdisplayR", dependencies = TRUE,
+   upgrade = "never")`.
+- **`install_github()` was deprecated in devtools 2.5.0** — harmless
+  notice; the underlying call still works.  Prefer
+  `pak::pak("slaish/seqNdisplayR@main")` on Windows.
+- **Windows plot is very slow.**  Check `packageVersion("bwimport") >=
+  "0.2.3"` and consider installing `future` + `future.apply` for
+  parallel fetch.
+
+
+## Where to go next
+
+- The [README](https://github.com/slaish/seqNdisplayR/blob/main/README.md)
+  has the full install / troubleshooting reference.
+- [`docs/deployment.md`](https://github.com/slaish/seqNdisplayR/blob/main/docs/deployment.md)
+  covers hosting the Shiny app for collaborators (Shiny Server,
+  Docker + ShinyProxy).
+- [`inst/docs/igv_import.md`](https://github.com/slaish/seqNdisplayR/blob/main/inst/docs/igv_import.md)
+  walks through the IGV round-trip in detail.
+- [`NEWS.md`](https://github.com/slaish/seqNdisplayR/blob/main/NEWS.md)
+  documents every change in v2.0.0 with the underlying rationale.
