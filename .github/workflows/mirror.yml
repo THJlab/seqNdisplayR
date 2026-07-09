@@ -26,7 +26,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # all history + tags (needed for --mirror)
+          fetch-depth: 0            # all history + tags (needed for --mirror)
+          persist-credentials: false # don't leave GITHUB_TOKEN in git config;
+                                     # otherwise it clobbers MIRROR_TOKEN below
       - name: Push to THJlab mirror
         env:
           MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
