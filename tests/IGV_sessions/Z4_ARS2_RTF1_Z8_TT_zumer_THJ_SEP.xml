@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Session genome="mm39" locus="chr7:132575363-132716678" nextAutoscaleGroup="99" version="8">
+    <Resources>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_dTAG_1h_rep2_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_dTAG_R1_4h_minus_mm39.bw" type="bw"/>
+        <Resource path="/Users/aneamundarainiraola/Desktop/POSTDOC/LAB/PROJECT/DATA/DATASETS/SEQUENCING/USEFUL TOOLS/Bed_files/BIOTYPES IN MOUSE/GOOD ANNOTATIONS/mm39_combined_refseq_inhouse_GOOD.bed" type="bed"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_dTAG_R2_4h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_DMSO_R2_1h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_dTAG_R2_4h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_dTAG_R2_1h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2024_Sandelin_QS_RNAseq_TLDRseq/RNAseq/RNASeq_ZCCHC8_minus_posVal.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_DMSO_R2_1h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_dTAG_R1_1h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE199805_Hughes_(Klose)_2022_ChIP-seq_RNA-seq_TT-seq/ChIP-seq/mm39/GSE199801_SET1ABRNAPIINTD0hr_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_DMSO_R2_1h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE146328_Narita_(Choudhary)_2021_ChIPseq_ATAseq/mm39/GSE146324_ChIP.ESC_Ctrl_TBP_TC0.n2.smooth_Mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE261039_Feldmann_(Pruessing)_2024_ChIPseq/mm39/GSE261039_E14_ra0h_SER5P_UniqMapped_sorted_rmdup_MERGED_downsampled.bam_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_DMSO_4h_rep1_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_DMSO_R2_4h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE261039_Feldmann_(Pruessing)_2024_ChIPseq/mm39/GSE261039_E14TC_ChIPK4me1_ra0h_merged_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE199805_Hughes_(Klose)_2022_ChIP-seq_RNA-seq_TT-seq/ChIP-seq/mm39/GSE199801_ZC3H4_ChIP_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_DMSO_R2_1h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_DMSO_R2_4h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_dTAG_R1_1h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2024_Sandelin_QS_RNAseq_TLDRseq/RNAseq/RNASeq_ZC3H4_minus_posVal.bw" type="bw"/>
+        <Resource path="/Users/aneamundarainiraola/Desktop/POSTDOC/LAB/PROJECT/DATA/DATASETS/SEQUENCING/USEFUL TOOLS/Bed_files/BIOTYPES IN MOUSE/mm39/flynn_TE_mm39.bed" type="bed"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_DMSO_R1_1h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_dTAG_R2_1h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_dTAG_R2_4h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_dTAG_R2_1h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_dTAG_4h_rep1_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_DMSO_R1_1h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE146328_Narita_(Choudhary)_2021_ChIPseq_ATAseq/mm39/GSE146325_ATACSeq.ESC_Ctrl_Mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2024_Sandelin_QS_RNAseq_TLDRseq/RNAseq/RNASeq_ARS2_minus_posVal.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE44286_Newman_(Young)_2013_ChIP/mm39/Sox2_mm10_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_DMSO_R1_1h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_dTAG_1h_rep1_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_dTAG_R1_1h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_dTAG_R1_4h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_dTAG_1h_rep1_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_dTAG_1h_rep2_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE261039_Feldmann_(Pruessing)_2024_ChIPseq/mm39/GSE261039_E14_ra0h_PolII_UniqMapped_sorted_rmdup_MERGED_downsampled.bam_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_dTAG_R1_4h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE199805_Hughes_(Klose)_2022_ChIP-seq_RNA-seq_TT-seq/ChIP-seq/mm39/GSE199801_T7SET1AChIP_0hrMERGE_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_DMSO_4h_rep2_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE261039_Feldmann_(Pruessing)_2024_ChIPseq/mm39/GSE261039_E14_ra0h_SER2P_UniqMapped_sorted_rmdup_MERGED_downsampled.bam_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_dTAG_R1_4h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE261039_Feldmann_(Pruessing)_2024_ChIPseq/mm39/GSE261039_E14_ra0h_H3K27me3_rmdup_MERGED_downsampled.bam_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_dTAG_R2_4h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_DMSO_R1_4h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_DMSO_R1_4h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_dTAG_R1_1h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2024_Sandelin_QS_RNAseq_TLDRseq/RNAseq/RNASeq_WT_plus_div_by_2.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_DMSO_1h_rep1_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2024_Sandelin_QS_RNAseq_TLDRseq/RNAseq/RNASeq_ZC3H4_plus.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE44286_Newman_(Young)_2013_ChIP/mm39/Nanog_mm10_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_dTAG_R2_1h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_dTAG_R2_4h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_dTAG_4h_rep2_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_DMSO_R2_4h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_DMSO_R1_1h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_DMSO_R1_4h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2024_Sandelin_QS_RNAseq_TLDRseq/RNAseq/RNASeq_ZCCHC8_plus.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2024_Sandelin_QS_RNAseq_TLDRseq/RNAseq/RNASeq_ARS2_plus.bw" type="bw"/>
+        <Resource path="/Users/aneamundarainiraola/Desktop/POSTDOC/LAB/PROJECT/DATA/DATASETS/SEQUENCING/USEFUL TOOLS/Bed_files/BIOTYPES IN MOUSE/GOOD ANNOTATIONS/Mouse_inHouse_Annotation_final_20230225_without_M_chromosome_mm39.bed" type="bed"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_DMSO_R2_1h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_dTAG_4h_rep2_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE199805_Hughes_(Klose)_2022_ChIP-seq_RNA-seq_TT-seq/ChIP-seq/mm39/GSE199801_SET1ABH3K4me30hrdownsampledMERGE_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_dTAG_4h_rep1_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_DMSO_R2_4h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2024_Sandelin_QS_RNAseq_TLDRseq/RNAseq/RNASeq_WT_minus_posVal_div_by_2.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_DMSO_1h_rep1_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_DMSO_R1_4h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_dTAG_R1_1h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_dTAG_R1_4h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_DMSO_1h_rep2_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_DMSO_R1_4h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_DMSO_R1_4h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_DMSO_R1_1h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_dTAG_R1_4h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_DMSO_4h_rep2_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_DMSO_1h_rep2_minus_mm39.bw" type="bw"/>
+        <Resource path="/Users/aneamundarainiraola/Desktop/POSTDOC/LAB/PROJECT/DATA/DATASETS/SEQUENCING/USEFUL TOOLS/Bed_files/BIOTYPES IN MOUSE/mm39/flynn_SE_mm39.bed" type="bed"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_DMSO_4h_rep1_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE261039_Feldmann_(Pruessing)_2024_ChIPseq/mm39/GSE261039_E14_ra0h_H3K27ac_rmdup_MERGED_reps1to3_downsampled.bam_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_DMSO_R2_4h_plus_mm39.bw" type="bw"/>
+        <Resource path="/Users/aneamundarainiraola/Desktop/POSTDOC/LAB/PROJECT/DATA/DATASETS/SEQUENCING/USEFUL TOOLS/Bed_files/BIOTYPES IN MOUSE/mm39/se_annot_wythe_mm39.bed" type="bed"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE44286_Newman_(Young)_2013_ChIP/mm39/Oct4_mm10_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_dTAG_R2_1h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_dTAG_R2_4h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_DMSO_R1_1h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_dTAG_R2_1h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_DMSO_R2_1h_minus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_DMSO_R2_4h_plus_mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE146328_Narita_(Choudhary)_2021_ChIPseq_ATAseq/mm39/GSE146324_ChIP.ESC_Ctrl_Med1_TC0.n2.rpkm.smooth_Mm39.bw" type="bw"/>
+        <Resource path="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_dTAG_R1_1h_minus_mm39.bw" type="bw"/>
+        <Resource path="/Users/aneamundarainiraola/Desktop/POSTDOC/LAB/PROJECT/DATA/DATASETS/SEQUENCING/USEFUL TOOLS/Bed_files/BIOTYPES IN MOUSE/mm39/flynn_promoters_mm39.bed" type="bed"/>
+    </Resources>
+    <Panel height="2240" name="DataPanel" width="1663">
+        <Track attributeKey="GSE146325_ATACSeq.ESC_Ctrl_Mm39.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="153,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE146328_Narita_(Choudhary)_2021_ChIPseq_ATAseq/mm39/GSE146325_ATACSeq.ESC_Ctrl_Mm39.bw" name="GSE146325_ATACSeq.ESC_Ctrl_Mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="105.56499" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GSE261039_E14_ra0h_H3K27ac_rmdup_MERGED_reps1to3_downsampled.bam_mm39.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="204,0,204" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE261039_Feldmann_(Pruessing)_2024_ChIPseq/mm39/GSE261039_E14_ra0h_H3K27ac_rmdup_MERGED_reps1to3_downsampled.bam_mm39.bw" name="GSE261039_E14_ra0h_H3K27ac_rmdup_MERGED_reps1to3_downsampled.bam_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="210.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GSE199801_SET1ABH3K4me30hrdownsampledMERGE_mm39.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="153,102,255" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE199805_Hughes_(Klose)_2022_ChIP-seq_RNA-seq_TT-seq/ChIP-seq/mm39/GSE199801_SET1ABH3K4me30hrdownsampledMERGE_mm39.bw" name="GSE199801_SET1ABH3K4me30hrdownsampledMERGE_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="125.53191" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GSE261039_E14TC_ChIPK4me1_ra0h_merged_mm39.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="255,102,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE261039_Feldmann_(Pruessing)_2024_ChIPseq/mm39/GSE261039_E14TC_ChIPK4me1_ra0h_merged_mm39.bw" name="GSE261039_E14TC_ChIPK4me1_ra0h_merged_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="21.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GSE261039_E14_ra0h_H3K27me3_rmdup_MERGED_downsampled.bam_mm39.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="204,51,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE261039_Feldmann_(Pruessing)_2024_ChIPseq/mm39/GSE261039_E14_ra0h_H3K27me3_rmdup_MERGED_downsampled.bam_mm39.bw" name="GSE261039_E14_ra0h_H3K27me3_rmdup_MERGED_downsampled.bam_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="18.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GSE199801_SET1ABRNAPIINTD0hr_mm39.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="0,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE199805_Hughes_(Klose)_2022_ChIP-seq_RNA-seq_TT-seq/ChIP-seq/mm39/GSE199801_SET1ABRNAPIINTD0hr_mm39.bw" name="GSE199801_SET1ABRNAPIINTD0hr_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="245.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GSE261039_E14_ra0h_PolII_UniqMapped_sorted_rmdup_MERGED_downsampled.bam_mm39.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="51,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE261039_Feldmann_(Pruessing)_2024_ChIPseq/mm39/GSE261039_E14_ra0h_PolII_UniqMapped_sorted_rmdup_MERGED_downsampled.bam_mm39.bw" name="GSE261039_E14_ra0h_PolII_UniqMapped_sorted_rmdup_MERGED_downsampled.bam_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="116.066666" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GSE261039_E14_ra0h_SER5P_UniqMapped_sorted_rmdup_MERGED_downsampled.bam_mm39.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="102,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE261039_Feldmann_(Pruessing)_2024_ChIPseq/mm39/GSE261039_E14_ra0h_SER5P_UniqMapped_sorted_rmdup_MERGED_downsampled.bam_mm39.bw" name="GSE261039_E14_ra0h_SER5P_UniqMapped_sorted_rmdup_MERGED_downsampled.bam_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="114.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GSE261039_E14_ra0h_SER2P_UniqMapped_sorted_rmdup_MERGED_downsampled.bam_mm39.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="153,204,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE261039_Feldmann_(Pruessing)_2024_ChIPseq/mm39/GSE261039_E14_ra0h_SER2P_UniqMapped_sorted_rmdup_MERGED_downsampled.bam_mm39.bw" name="GSE261039_E14_ra0h_SER2P_UniqMapped_sorted_rmdup_MERGED_downsampled.bam_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="64.44444" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Nanog_mm10_mm39.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="204,204,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE44286_Newman_(Young)_2013_ChIP/mm39/Nanog_mm10_mm39.bw" name="Nanog_mm10_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="67.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Oct4_mm10_mm39.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="204,204,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE44286_Newman_(Young)_2013_ChIP/mm39/Oct4_mm10_mm39.bw" name="Oct4_mm10_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="57.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Sox2_mm10_mm39.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="204,204,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE44286_Newman_(Young)_2013_ChIP/mm39/Sox2_mm10_mm39.bw" name="Sox2_mm10_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="33.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GSE146324_ChIP.ESC_Ctrl_Med1_TC0.n2.rpkm.smooth_Mm39.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="0,153,153" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE146328_Narita_(Choudhary)_2021_ChIPseq_ATAseq/mm39/GSE146324_ChIP.ESC_Ctrl_Med1_TC0.n2.rpkm.smooth_Mm39.bw" name="GSE146324_ChIP.ESC_Ctrl_Med1_TC0.n2.rpkm.smooth_Mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.3221" minimum="-2.18886" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GSE146324_ChIP.ESC_Ctrl_TBP_TC0.n2.smooth_Mm39.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="0,102,102" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE146328_Narita_(Choudhary)_2021_ChIPseq_ATAseq/mm39/GSE146324_ChIP.ESC_Ctrl_TBP_TC0.n2.smooth_Mm39.bw" name="GSE146324_ChIP.ESC_Ctrl_TBP_TC0.n2.smooth_Mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="3.33795" minimum="-1.56142" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GSE199801_ZC3H4_ChIP_mm39.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="153,0,204" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE199805_Hughes_(Klose)_2022_ChIP-seq_RNA-seq_TT-seq/ChIP-seq/mm39/GSE199801_ZC3H4_ChIP_mm39.bw" name="GSE199801_ZC3H4_ChIP_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="158.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="GSE199801_T7SET1AChIP_0hrMERGE_mm39.bw" autoScale="true" clazz="org.broad.igv.track.DataSourceTrack" color="153,204,255" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/GEO/GSE199805_Hughes_(Klose)_2022_ChIP-seq_RNA-seq_TT-seq/ChIP-seq/mm39/GSE199801_T7SET1AChIP_0hrMERGE_mm39.bw" name="GSE199801_T7SET1AChIP_0hrMERGE_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="60.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="RNASeq_WT_plus_div_by_2.bw" autoScale="false" autoscaleGroup="94" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2024_Sandelin_QS_RNAseq_TLDRseq/RNAseq/RNASeq_WT_plus_div_by_2.bw" name="RNASeq_WT_plus_div_by_2.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="1037.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="RNASeq_ZCCHC8_plus.bw" autoScale="false" autoscaleGroup="94" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2024_Sandelin_QS_RNAseq_TLDRseq/RNAseq/RNASeq_ZCCHC8_plus.bw" name="RNASeq_ZCCHC8_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="1037.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="RNASeq_ARS2_plus.bw" autoScale="false" autoscaleGroup="94" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2024_Sandelin_QS_RNAseq_TLDRseq/RNAseq/RNASeq_ARS2_plus.bw" name="RNASeq_ARS2_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="1037.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="RNASeq_ZC3H4_plus.bw" autoScale="false" autoscaleGroup="94" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2024_Sandelin_QS_RNAseq_TLDRseq/RNAseq/RNASeq_ZC3H4_plus.bw" name="RNASeq_ZC3H4_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="1037.0" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="87" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="840841ba-6e9d-40ef-982e-230b3d8e6958" name="ARS2_1H_DMSO_PLUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ARS2_DMSO_R1_1h_plus_mm39.bw" autoScale="false" autoscaleGroup="87" color="0,102,51" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_DMSO_R1_1h_plus_mm39.bw" name="ARS2_DMSO_R1_1h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ARS2_DMSO_R2_1h_plus_mm39.bw" autoScale="false" autoscaleGroup="87" color="0,102,51" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_DMSO_R2_1h_plus_mm39.bw" name="ARS2_DMSO_R2_1h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="92.11825" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="87" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="6b132476-d0c8-4f5d-8ff9-af0df31597e6" name="ARS2_DTAG_1H_PLUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ARS2_dTAG_R1_1h_plus_mm39.bw" autoScale="false" autoscaleGroup="87" color="153,204,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_dTAG_R1_1h_plus_mm39.bw" name="ARS2_dTAG_R1_1h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ARS2_dTAG_R2_1h_plus_mm39.bw" autoScale="false" autoscaleGroup="87" color="153,204,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_dTAG_R2_1h_plus_mm39.bw" name="ARS2_dTAG_R2_1h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="269.19" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="87" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="28e86a8e-c426-409d-97a4-810831e22131" name="ARS2_4H_DMSO_PLUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ARS2_DMSO_R1_4h_plus_mm39.bw" autoScale="false" autoscaleGroup="87" color="0,102,51" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_DMSO_R1_4h_plus_mm39.bw" name="ARS2_DMSO_R1_4h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ARS2_DMSO_R2_4h_plus_mm39.bw" autoScale="false" autoscaleGroup="87" color="0,102,51" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_DMSO_R2_4h_plus_mm39.bw" name="ARS2_DMSO_R2_4h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="55.509247" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="87" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="15ea4332-e980-41fd-a2f1-2922e3ba7e85" name="ARS2_4H_PLUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ARS2_dTAG_R1_4h_plus_mm39.bw" autoScale="false" autoscaleGroup="87" color="51,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_dTAG_R1_4h_plus_mm39.bw" name="ARS2_dTAG_R1_4h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ARS2_dTAG_R2_4h_plus_mm39.bw" autoScale="false" autoscaleGroup="87" color="51,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_dTAG_R2_4h_plus_mm39.bw" name="ARS2_dTAG_R2_4h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="97.427" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="88" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="efc7f6e1-e7fe-4580-b363-102b099ccbae" name="RTF1_1H_DMSO_PLUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="RTF1_DMSO_R1_1h_plus_mm39.bw" autoScale="false" autoscaleGroup="88" color="0,0,153" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_DMSO_R1_1h_plus_mm39.bw" name="RTF1_DMSO_R1_1h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="RTF1_DMSO_R2_1h_plus_mm39.bw" autoScale="false" autoscaleGroup="88" color="0,0,153" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_DMSO_R2_1h_plus_mm39.bw" name="RTF1_DMSO_R2_1h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="92.11825" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="88" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="2e40f90d-cfd3-4aa2-9f0e-6d42d6487089" name="RTF1_DTAG_1H_PLUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="RTF1_dTAG_R1_1h_plus_mm39.bw" autoScale="false" autoscaleGroup="88" color="0,102,204" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_dTAG_R1_1h_plus_mm39.bw" name="RTF1_dTAG_R1_1h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="RTF1_dTAG_R2_1h_plus_mm39.bw" autoScale="false" autoscaleGroup="88" color="0,102,204" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_dTAG_R2_1h_plus_mm39.bw" name="RTF1_dTAG_R2_1h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="635.62" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="88" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="05667d49-1d7b-4bf0-9bc3-52a4da54cc78" name="RTF1_4H_PLUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="RTF1_dTAG_R1_4h_plus_mm39.bw" autoScale="false" autoscaleGroup="88" color="0,51,204" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_dTAG_R1_4h_plus_mm39.bw" name="RTF1_dTAG_R1_4h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="RTF1_dTAG_R2_4h_plus_mm39.bw" autoScale="false" autoscaleGroup="88" color="0,51,204" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_dTAG_R2_4h_plus_mm39.bw" name="RTF1_dTAG_R2_4h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="97.427" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="83" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="fc941799-97b9-4c76-b31a-56356057f65d" name="Z4_DMSO_1H_PLIS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ZC3H4_DMSO_R1_1h_plus_mm39.bw" autoScale="false" autoscaleGroup="83" color="153,0,102" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_DMSO_R1_1h_plus_mm39.bw" name="ZC3H4_DMSO_R1_1h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ZC3H4_DMSO_R2_1h_plus_mm39.bw" autoScale="false" autoscaleGroup="83" color="153,0,102" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_DMSO_R2_1h_plus_mm39.bw" name="ZC3H4_DMSO_R2_1h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="92.11825" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="83" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="b979414b-806f-4c65-8a6c-652c9bea7297" name="Z4_DTAG_1H_PLUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ZC3H4_dTAG_R1_1h_plus_mm39.bw" autoScale="false" autoscaleGroup="83" color="204,102,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_dTAG_R1_1h_plus_mm39.bw" name="ZC3H4_dTAG_R1_1h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ZC3H4_dTAG_R2_1h_plus_mm39.bw" autoScale="false" autoscaleGroup="83" color="204,102,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_dTAG_R2_1h_plus_mm39.bw" name="ZC3H4_dTAG_R2_1h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="303.773" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="83" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="c87c75b0-7871-4ea0-8523-6861dff8b189" name="Z4_4H_DMSO_PLUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ZC3H4_DMSO_R1_4h_plus_mm39.bw" autoScale="false" autoscaleGroup="83" color="153,0,102" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_DMSO_R1_4h_plus_mm39.bw" name="ZC3H4_DMSO_R1_4h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ZC3H4_DMSO_R2_4h_plus_mm39.bw" autoScale="false" autoscaleGroup="83" color="153,0,102" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_DMSO_R2_4h_plus_mm39.bw" name="ZC3H4_DMSO_R2_4h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="55.509247" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="83" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="093974a3-00cd-4f99-9dc3-19cc75fbdc2f" name="Z4_4H_PLUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ZC3H4_dTAG_R1_4h_plus_mm39.bw" autoScale="false" autoscaleGroup="83" color="204,51,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_dTAG_R1_4h_plus_mm39.bw" name="ZC3H4_dTAG_R1_4h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ZC3H4_dTAG_R2_4h_plus_mm39.bw" autoScale="false" autoscaleGroup="83" color="204,51,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_dTAG_R2_4h_plus_mm39.bw" name="ZC3H4_dTAG_R2_4h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="97.427" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="true" autoscaleGroup="98" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="cc80447f-8880-442e-8b78-5954dc239744" name="Z8_dmso_1h_plus" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ZCCHC8_DMSO_1h_rep1_plus_mm39.bw" autoScale="false" autoscaleGroup="98" color="153,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_DMSO_1h_rep1_plus_mm39.bw" name="ZCCHC8_DMSO_1h_rep1_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ZCCHC8_DMSO_1h_rep2_plus_mm39.bw" autoScale="false" autoscaleGroup="98" color="153,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_DMSO_1h_rep2_plus_mm39.bw" name="ZCCHC8_DMSO_1h_rep2_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="95.65301" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="true" autoscaleGroup="98" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="f2ef57d3-ca7a-4ae6-9703-b85fc9e47cd5" name="Z8_dtag_1h_plus" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ZCCHC8_dTAG_1h_rep1_plus_mm39.bw" autoScale="false" autoscaleGroup="98" color="102,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_dTAG_1h_rep1_plus_mm39.bw" name="ZCCHC8_dTAG_1h_rep1_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ZCCHC8_dTAG_1h_rep2_plus_mm39.bw" autoScale="false" autoscaleGroup="98" color="102,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_dTAG_1h_rep2_plus_mm39.bw" name="ZCCHC8_dTAG_1h_rep2_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="98.316444" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="true" autoscaleGroup="98" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="ffea9308-21fb-418d-863f-2bf3af7d6d89" name="Z8_dmso_4h_dmso_plus" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ZCCHC8_DMSO_4h_rep1_plus_mm39.bw" autoScale="false" autoscaleGroup="98" color="153,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_DMSO_4h_rep1_plus_mm39.bw" name="ZCCHC8_DMSO_4h_rep1_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ZCCHC8_DMSO_4h_rep2_plus_mm39.bw" autoScale="false" autoscaleGroup="98" color="153,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_DMSO_4h_rep2_plus_mm39.bw" name="ZCCHC8_DMSO_4h_rep2_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="99.1752" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="true" autoscaleGroup="98" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="b8f7e03d-3ab0-4c8b-9cfb-cb95dc38b645" name="Z8_dtag_4h_plus" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ZCCHC8_dTAG_4h_rep1_plus_mm39.bw" autoScale="false" autoscaleGroup="98" color="102,102,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_dTAG_4h_rep1_plus_mm39.bw" name="ZCCHC8_dTAG_4h_rep1_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ZCCHC8_dTAG_4h_rep2_plus_mm39.bw" autoScale="false" autoscaleGroup="98" color="102,102,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_dTAG_4h_rep2_plus_mm39.bw" name="ZCCHC8_dTAG_4h_rep2_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="131.27196" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="RNASeq_WT_minus_posVal_div_by_2.bw" autoScale="false" autoscaleGroup="95" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2024_Sandelin_QS_RNAseq_TLDRseq/RNAseq/RNASeq_WT_minus_posVal_div_by_2.bw" name="RNASeq_WT_minus_posVal_div_by_2.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="4989.5" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="RNASeq_ZCCHC8_minus_posVal.bw" autoScale="false" autoscaleGroup="95" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2024_Sandelin_QS_RNAseq_TLDRseq/RNAseq/RNASeq_ZCCHC8_minus_posVal.bw" name="RNASeq_ZCCHC8_minus_posVal.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="4989.5" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="RNASeq_ARS2_minus_posVal.bw" autoScale="false" autoscaleGroup="95" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2024_Sandelin_QS_RNAseq_TLDRseq/RNAseq/RNASeq_ARS2_minus_posVal.bw" name="RNASeq_ARS2_minus_posVal.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="4989.5" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="RNASeq_ZC3H4_minus_posVal.bw" autoScale="false" autoscaleGroup="95" clazz="org.broad.igv.track.DataSourceTrack" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2024_Sandelin_QS_RNAseq_TLDRseq/RNAseq/RNASeq_ZC3H4_minus_posVal.bw" name="RNASeq_ZC3H4_minus_posVal.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="4989.5" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="85" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="a2e0cb5c-b966-4a9d-a66d-909a3b1d3729" name="ARS2_DMSO_1H_MINUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ARS2_DMSO_R1_1h_minus_mm39.bw" autoScale="false" autoscaleGroup="85" color="0,102,51" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_DMSO_R1_1h_minus_mm39.bw" name="ARS2_DMSO_R1_1h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ARS2_DMSO_R2_1h_minus_mm39.bw" autoScale="false" autoscaleGroup="85" color="0,102,51" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_DMSO_R2_1h_minus_mm39.bw" name="ARS2_DMSO_R2_1h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="108.35575" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="85" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="b4c48178-8885-417f-933a-f78438a2f437" name="ARS2_DTAG_1H_MINUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ARS2_dTAG_R1_1h_minus_mm39.bw" autoScale="false" autoscaleGroup="85" color="153,204,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_dTAG_R1_1h_minus_mm39.bw" name="ARS2_dTAG_R1_1h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ARS2_dTAG_R2_1h_minus_mm39.bw" autoScale="false" autoscaleGroup="85" color="153,204,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_dTAG_R2_1h_minus_mm39.bw" name="ARS2_dTAG_R2_1h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="20618.883" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="85" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="f390188b-3de1-4fde-988b-23ce1d50d0aa" name="ARS2_DMSO_4H_MINUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ARS2_DMSO_R1_4h_minus_mm39.bw" autoScale="false" autoscaleGroup="85" color="0,102,51" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_DMSO_R1_4h_minus_mm39.bw" name="ARS2_DMSO_R1_4h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ARS2_DMSO_R2_4h_minus_mm39.bw" autoScale="false" autoscaleGroup="85" color="0,102,51" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_DMSO_R2_4h_minus_mm39.bw" name="ARS2_DMSO_R2_4h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="77.3495" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="85" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="1c79b86e-b524-4ea0-be31-ea7d2280393b" name="ARS2_DTAG_4H_MINUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ARS2_dTAG_R1_4h_minus_mm39.bw" autoScale="false" autoscaleGroup="85" color="51,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_dTAG_R1_4h_minus_mm39.bw" name="ARS2_dTAG_R1_4h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ARS2_dTAG_R2_4h_minus_mm39.bw" autoScale="false" autoscaleGroup="85" color="51,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ARS2_dTAG_R2_4h_minus_mm39.bw" name="ARS2_dTAG_R2_4h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="269.19" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="86" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="83e9ab75-ee74-4fee-9159-327efc73e554" name="RTF1_1H_DMSO_MINUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="RTF1_DMSO_R1_1h_minus_mm39.bw" autoScale="false" autoscaleGroup="86" color="0,0,153" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_DMSO_R1_1h_minus_mm39.bw" name="RTF1_DMSO_R1_1h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="RTF1_DMSO_R2_1h_minus_mm39.bw" autoScale="false" autoscaleGroup="86" color="0,0,153" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_DMSO_R2_1h_minus_mm39.bw" name="RTF1_DMSO_R2_1h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="108.35575" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="86" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="9b127e96-a027-4aab-8461-5734ff7a3977" name="RTF1_DTAG_1H_MINUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="RTF1_dTAG_R1_1h_minus_mm39.bw" autoScale="false" autoscaleGroup="86" color="0,102,204" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_dTAG_R1_1h_minus_mm39.bw" name="RTF1_dTAG_R1_1h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="RTF1_dTAG_R2_1h_minus_mm39.bw" autoScale="false" autoscaleGroup="86" color="0,102,204" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_dTAG_R2_1h_minus_mm39.bw" name="RTF1_dTAG_R2_1h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="36.166496" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="86" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="79695391-4efc-4548-a639-67f134f6a575" name="RTF1_DTAG_4H_MINUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="RTF1_dTAG_R1_4h_minus_mm39.bw" autoScale="false" autoscaleGroup="86" color="0,51,204" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_dTAG_R1_4h_minus_mm39.bw" name="RTF1_dTAG_R1_4h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="RTF1_dTAG_R2_4h_minus_mm39.bw" autoScale="false" autoscaleGroup="86" color="0,51,204" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_dTAG_R2_4h_minus_mm39.bw" name="RTF1_dTAG_R2_4h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="475.34296" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="89" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="22952b46-8eb3-4922-830e-2eb1527dd433" name="Z4_1H_DMSO_MINUS" renderer="LINE_PLOT" visible="true">
+            <Track altColor="0,0,178" attributeKey="ZC3H4_DMSO_R1_1h_minus_mm39.bw" autoScale="false" autoscaleGroup="89" color="153,0,102" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_DMSO_R1_1h_minus_mm39.bw" name="ZC3H4_DMSO_R1_1h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ZC3H4_DMSO_R2_1h_minus_mm39.bw" autoScale="false" autoscaleGroup="89" color="153,0,102" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_DMSO_R2_1h_minus_mm39.bw" name="ZC3H4_DMSO_R2_1h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="108.35575" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="89" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="580e150a-e5a8-41fc-a34c-737f107884bd" name="Z4_DTAG_1H_MINUS" renderer="LINE_PLOT" visible="true">
+            <Track altColor="0,0,178" attributeKey="ZC3H4_dTAG_R1_1h_minus_mm39.bw" autoScale="false" autoscaleGroup="89" color="204,102,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_dTAG_R1_1h_minus_mm39.bw" name="ZC3H4_dTAG_R1_1h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ZC3H4_dTAG_R2_1h_minus_mm39.bw" autoScale="false" autoscaleGroup="89" color="204,102,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_dTAG_R2_1h_minus_mm39.bw" name="ZC3H4_dTAG_R2_1h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="303.773" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="89" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="a19118a4-a349-40e4-9d6c-7b4f36a22fc2" name="Z4_4H_DMSO_MINUS" renderer="LINE_PLOT" visible="true">
+            <Track altColor="0,0,178" attributeKey="ZC3H4_DMSO_R1_4h_minus_mm39.bw" autoScale="false" autoscaleGroup="89" color="153,0,102" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_DMSO_R1_4h_minus_mm39.bw" name="ZC3H4_DMSO_R1_4h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ZC3H4_DMSO_R2_4h_minus_mm39.bw" autoScale="false" autoscaleGroup="89" color="153,0,102" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_DMSO_R2_4h_minus_mm39.bw" name="ZC3H4_DMSO_R2_4h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="77.3495" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="89" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="93c28b8b-f40f-4c03-a279-9b0d47cc40e7" name="Z4_DTAG_4H_MINUS" renderer="LINE_PLOT" visible="true">
+            <Track altColor="0,0,178" attributeKey="ZC3H4_dTAG_R1_4h_minus_mm39.bw" autoScale="false" autoscaleGroup="89" color="204,51,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_dTAG_R1_4h_minus_mm39.bw" name="ZC3H4_dTAG_R1_4h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ZC3H4_dTAG_R2_4h_minus_mm39.bw" autoScale="false" autoscaleGroup="89" color="204,51,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/ZC3H4_dTAG_R2_4h_minus_mm39.bw" name="ZC3H4_dTAG_R2_4h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="130.68" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="true" autoscaleGroup="97" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="f6c3754f-055f-4b15-b7b2-ab88cd61fe35" name="Z8_dmso_1h_minus" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ZCCHC8_DMSO_1h_rep1_minus_mm39.bw" autoScale="false" autoscaleGroup="97" color="153,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_DMSO_1h_rep1_minus_mm39.bw" name="ZCCHC8_DMSO_1h_rep1_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ZCCHC8_DMSO_1h_rep2_minus_mm39.bw" autoScale="false" autoscaleGroup="97" color="153,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_DMSO_1h_rep2_minus_mm39.bw" name="ZCCHC8_DMSO_1h_rep2_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="23.142" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="true" autoscaleGroup="97" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="8ec3bf8a-9d79-4d0c-930a-9a5d4136ebb1" name="Z8_dtag_1h_minus" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ZCCHC8_dTAG_1h_rep1_minus_mm39.bw" autoScale="false" autoscaleGroup="97" color="102,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_dTAG_1h_rep1_minus_mm39.bw" name="ZCCHC8_dTAG_1h_rep1_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ZCCHC8_dTAG_1h_rep2_minus_mm39.bw" autoScale="false" autoscaleGroup="97" color="102,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_dTAG_1h_rep2_minus_mm39.bw" name="ZCCHC8_dTAG_1h_rep2_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="35.863" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="true" autoscaleGroup="97" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="2d8ed12f-cb9d-44f0-aaf1-84989649c2d0" name="Z8_dmso_4h_minus" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ZCCHC8_DMSO_4h_rep1_minus_mm39.bw" autoScale="false" autoscaleGroup="97" color="153,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_DMSO_4h_rep1_minus_mm39.bw" name="ZCCHC8_DMSO_4h_rep1_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ZCCHC8_DMSO_4h_rep2_minus_mm39.bw" autoScale="false" autoscaleGroup="97" color="153,153,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_DMSO_4h_rep2_minus_mm39.bw" name="ZCCHC8_DMSO_4h_rep2_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="25.176" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="true" autoscaleGroup="97" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="7ce6d268-2387-43af-b090-f5474513bf66" name="Z8_dtag_4h_minus" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="ZCCHC8_dTAG_4h_rep1_minus_mm39.bw" autoScale="false" autoscaleGroup="97" color="102,102,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_dTAG_4h_rep1_minus_mm39.bw" name="ZCCHC8_dTAG_4h_rep1_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="ZCCHC8_dTAG_4h_rep2_minus_mm39.bw" autoScale="false" autoscaleGroup="97" color="102,102,0" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2026_Amundarain_Zumer_TTseq/mm39/ZCCHC8_dTAG_4h_rep2_minus_mm39.bw" name="ZCCHC8_dTAG_4h_rep2_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="34.646" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="88" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="11a5cafe-42be-40b7-a030-05a36c6db782" name="RTF1_4H_DMSO_PLUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="RTF1_DMSO_R1_4h_plus_mm39.bw" autoScale="false" autoscaleGroup="88" color="0,0,153" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_DMSO_R1_4h_plus_mm39.bw" name="RTF1_DMSO_R1_4h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="RTF1_DMSO_R2_4h_plus_mm39.bw" autoScale="false" autoscaleGroup="88" color="0,0,153" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_DMSO_R2_4h_plus_mm39.bw" name="RTF1_DMSO_R2_4h_plus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="55.509247" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="Overlay" autoScale="false" autoscaleGroup="86" clazz="org.broad.igv.track.MergedTracks" fontSize="10" id="a5e464a6-3c5c-4a7c-b8f5-23c2941cca0b" name="RTF1_4H_DMSO_MINUS" renderer="BAR_CHART" visible="true">
+            <Track altColor="0,0,178" attributeKey="RTF1_DMSO_R1_4h_minus_mm39.bw" autoScale="false" autoscaleGroup="86" color="0,0,153" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_DMSO_R1_4h_minus_mm39.bw" name="RTF1_DMSO_R1_4h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <Track altColor="0,0,178" attributeKey="RTF1_DMSO_R2_4h_minus_mm39.bw" autoScale="false" autoscaleGroup="86" color="0,0,153" fontSize="10" id="https://genome-ftp.mbg.au.dk/files/THJ/NGS/Mouse/THJ/2025_oct_Zumer_ARS2_RTF1_Z4_TTseq/mm39/RTF1_DMSO_R2_4h_minus_mm39.bw" name="RTF1_DMSO_R2_4h_minus_mm39.bw" renderer="BAR_CHART" visible="true" windowFunction="mean"/>
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="77.3495" minimum="0.0" type="LINEAR"/>
+        </Track>
+    </Panel>
+    <Panel height="280" name="FeaturePanel" width="1663">
+        <Track attributeKey="Reference sequence" clazz="org.broad.igv.track.SequenceTrack" fontSize="10" id="Reference sequence" name="Reference sequence" sequenceTranslationStrandValue="+" shouldShowTranslation="false" visible="true"/>
+        <Track attributeKey="Refseq Curated" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;431.0;255,255,255;0,0,178" fontSize="10" groupByStrand="false" id="https://hgdownload.soe.ucsc.edu/goldenPath/mm39/database/ncbiRefSeqCurated.txt.gz" name="Refseq Curated" visible="true"/>
+        <Track attributeKey="flynn_SE_mm39.bed" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;7.0;255,255,255;0,0,178" fontSize="10" groupByStrand="false" id="/Users/aneamundarainiraola/Desktop/POSTDOC/LAB/PROJECT/DATA/DATASETS/SEQUENCING/USEFUL TOOLS/Bed_files/BIOTYPES IN MOUSE/mm39/flynn_SE_mm39.bed" name="flynn_SE_mm39.bed" visible="true"/>
+        <Track attributeKey="flynn_TE_mm39.bed" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;25.0;255,255,255;0,0,178" fontSize="10" groupByStrand="false" id="/Users/aneamundarainiraola/Desktop/POSTDOC/LAB/PROJECT/DATA/DATASETS/SEQUENCING/USEFUL TOOLS/Bed_files/BIOTYPES IN MOUSE/mm39/flynn_TE_mm39.bed" name="flynn_TE_mm39.bed" visible="true"/>
+        <Track attributeKey="Mouse_inHouse_Annotation_final_20230225_without_M_chromosome_mm39.bed" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;400.0;255,255,255;0,0,178" fontSize="10" groupByStrand="false" id="/Users/aneamundarainiraola/Desktop/POSTDOC/LAB/PROJECT/DATA/DATASETS/SEQUENCING/USEFUL TOOLS/Bed_files/BIOTYPES IN MOUSE/GOOD ANNOTATIONS/Mouse_inHouse_Annotation_final_20230225_without_M_chromosome_mm39.bed" name="Mouse_inHouse_Annotation_final_20230225_without_M_chromosome_mm39.bed" visible="true"/>
+        <Track attributeKey="se_annot_wythe_mm39.bed" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;4.0;255,255,255;0,0,178" fontSize="10" groupByStrand="false" id="/Users/aneamundarainiraola/Desktop/POSTDOC/LAB/PROJECT/DATA/DATASETS/SEQUENCING/USEFUL TOOLS/Bed_files/BIOTYPES IN MOUSE/mm39/se_annot_wythe_mm39.bed" name="se_annot_wythe_mm39.bed" visible="true"/>
+        <Track attributeKey="flynn_promoters_mm39.bed" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;129.0;255,255,255;0,0,178" fontSize="10" groupByStrand="false" id="/Users/aneamundarainiraola/Desktop/POSTDOC/LAB/PROJECT/DATA/DATASETS/SEQUENCING/USEFUL TOOLS/Bed_files/BIOTYPES IN MOUSE/mm39/flynn_promoters_mm39.bed" name="flynn_promoters_mm39.bed" visible="true"/>
+        <Track attributeKey="mm39_combined_refseq_inhouse_GOOD.bed" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;432.0;255,255,255;0,0,178" fontSize="10" groupByStrand="false" id="/Users/aneamundarainiraola/Desktop/POSTDOC/LAB/PROJECT/DATA/DATASETS/SEQUENCING/USEFUL TOOLS/Bed_files/BIOTYPES IN MOUSE/GOOD ANNOTATIONS/mm39_combined_refseq_inhouse_GOOD.bed" name="mm39_combined_refseq_inhouse_GOOD.bed" visible="true"/>
+    </Panel>
+    <PanelLayout dividerFractions="0.8703241895261845"/>
+    <HiddenAttributes>
+        <Attribute name="DATA FILE"/>
+        <Attribute name="DATA TYPE"/>
+        <Attribute name="NAME"/>
+    </HiddenAttributes>
+</Session>

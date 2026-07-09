@@ -1,0 +1,42 @@
+# Mirror this canonical repo (slaish/seqNdisplayR) to the lab mirror
+# (THJlab/seqNdisplayR). Triggered on every branch and every tag push so
+# both repos stay in lock-step.
+#
+# Setup (one-time):
+#   1. On github.com (as user `slaish`): create a fine-grained PAT with
+#      Repository → Contents: Read & Write on THJlab/seqNdisplayR.
+#   2. Settings → Secrets and variables → Actions → New repository secret:
+#        Name:  MIRROR_TOKEN
+#        Value: <the PAT>
+#
+# `git push --mirror` propagates branches, tags, AND deletes. If you want
+# a strictly additive mirror, swap the push line for:
+#   git push mirror --all && git push mirror --tags
+
+name: Mirror to THJlab
+
+on:
+  push:
+    branches: ['**']
+    tags: ['**']
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # all history + tags (needed for --mirror)
+      - name: Push to THJlab mirror
+        env:
+          MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
+        run: |
+          if [ -z "$MIRROR_TOKEN" ]; then
+            echo "::error::MIRROR_TOKEN secret is not set on this repo." \
+                 "Skip the mirror push; create the PAT and add it as a" \
+                 "repo secret to enable the mirror."
+            exit 1
+          fi
+          git remote add mirror \
+            "https://x-access-token:${MIRROR_TOKEN}@github.com/THJlab/seqNdisplayR.git"
+          git push --mirror mirror

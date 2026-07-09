@@ -1,0 +1,41 @@
+Please continue...
+
+A couple of comments:
+In all of the below, impossible placements should of course be excluded. Currently, tweaking the Collapsed2 display option.
+1) The optimal placement is in-line with the feature bar (which has fixed x-dimensions) – either left or right. Preferably the distance from the feature to the in-line name should be fixed such that the distance between the right coordinate of the text to the left coordinate of the feature or between the left coordinate of the text to the right coordinate of the feature is always the same in physical units (cm/inches or whatever). I don't think this is currently fixed like that, can this be fixed?
+2) Second-best option is placement of name below the feature. Here, the distance between the center of the feature (that is, the part of the feature that is plotted in the plotting window) and the center of name should be minimized. In this case, a centered placement of the name below its feature is best if possible, but alternative placements should be possible – e.g. if the feature is close to the right edge of the plotted region, the right coordinate of the text can be fixed to the right edge of the plotted region (or left coordinate of the text fixed to the left edge of the plotted region, respectively).
+3) Third-best option is placement of name above its feature – with the same contraints as for the below placement.
+4) Skipping of rows should be penalized like before. 
+
+I don't know exactly how it is calculated now, but perhaps the mentioned "minimization of distance between the center of the feature (that is, the part of the feature that is plotted in the plotting window) and the center of name" could be a good metric to include. Isolated without additional penalties, the distance between the center of feature (x_f, y_f) and center of name (x_n, y_n) would be d = sqrt((y_f-y_n)^2 + (x_f-x_n)^2). Subtract 1, and we would get zero penalty for a centered placement of name one row below its feature. Could this somehow be incorporated. 
+
+###############################
+
+I plotted this region chr11:93700000-93740000 (paste 1)
+
+There is something with the distances between in-line names and their respective features. We agreed that the distance should be one character width, right?
+
+[Plotting error-INFO] 2026-04-07 19:43:48.140952 [c2names] annotation: gencode v38  |  n.packing2.groups: 1  |  n.collapsed2.genes: 5
+
+[Plotting error-INFO] 2026-04-07 19:43:48.920775 [c2names]   done: max.display.row=3  max.name.row=3  extra.rows=0  n.placements=5
+
+[Plotting error-INFO] 2026-04-07 19:43:48.92169 [c2names] annotation: in-house  |  n.packing2.groups: 1  |  n.collapsed2.genes: 1
+
+[Plotting error-INFO] 2026-04-07 19:43:48.960078 [c2names]   done: max.display.row=1  max.name.row=1  extra.rows=0  n.placements=1
+
+[Plotting error-INFO] 2026-04-07 19:43:49.719576 [c2names] annotation: gencode v38  |  n.packing2.groups: 2  |  n.collapsed2.genes: 11
+
+[Plotting error-INFO] 2026-04-07 19:43:49.757265 [c2names]   paired 9 enclosed genes of host 'TAF1D': SNORA25->row2(L) SNORA32->row2(R) SNORD6->row3(L) SNORA1->row3(R) SNORA8->row4(L) SNORD5->row4(R) SNORA18->row5(L) MIR1304->row5(R) SNORA40->row6(L)
+
+[Plotting error-INFO] 2026-04-07 19:43:49.758379 [c2names]   packing2_display rebuilt for 'TAF1D,SNORA25,SNORA32,SNORD6,SNORA1,SNORA8,SNORD5,SNORA18,MIR1304,SNORA40': row1:[1] row2:[9,10] row3:[7,8] row4:[5,6] row5:[3,4] row6:[2]
+
+[Plotting error-INFO] 2026-04-07 19:43:55.213949 [c2names]   done: max.display.row=6  max.name.row=7  extra.rows=1  n.placements=11
+
+[Plotting error-INFO] 2026-04-07 19:43:55.21489 [c2names] annotation: in-house  |  n.packing2.groups: 1  |  n.collapsed2.genes: 1
+
+[Plotting error-INFO] 2026-04-07 19:43:55.251287 [c2names]   done: max.display.row=1  max.name.row=1  extra.rows=0  n.placements=1
+
+Also the classical TAF1D plot (paste 2):
+Why is the Y_RNA.v464 so far away from its feature? Again, I think with this layout, the feature could be pushed one row down with its name in-line to the left.
+
+Don't change too much, because it is getting close now, but these small things could be better. Can the scoring penalties be made a bit better?

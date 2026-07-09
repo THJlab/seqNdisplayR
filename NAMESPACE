@@ -1,0 +1,59 @@
+# Generated manually for seqNdisplayR v2.0.0
+# Will be replaced by roxygen2 output once @export tags are verified
+
+# Exported functions
+export(seqNdisplay)
+export(seqNdisplayRSession)
+export(ReadInAnnotations)
+export(LoadExcel)
+export(LoadIGVSession)
+export(IGV2Session)
+export(Session2IGV)
+export(Session2Df)
+export(Session2xlsx)
+export(ExamplesSampleSheetsFolder)
+export(ListExamplesSampleSheets)
+export(run_seqNdisplayR_app)
+export(ParseOption)
+export(DeparseOption)
+export(DefaultPlotOptions)
+export(DefaultAnnotationOptions)
+export(DefaultParameters)
+export(GlimpseSession)
+export(OpenOptionsTable)
+export(CheckSampleFile)
+export(ListDepth)
+export(GetColors)
+export(sNdR_log)
+export(sNdR_clear_log)
+export(clear_bigwig_cache)
+export(bigwig_cache_size)
+export(clear_annotation_cache)
+export(annotation_cache_size)
+
+# S3 methods
+S3method(plot, seqNdisplayRSession)
+S3method(print, seqNdisplayRSession)
+
+# Imports — Bioconductor
+import(GenomicRanges)
+import(IRanges)
+import(S4Vectors)
+import(BiocGenerics)
+import(GenomeInfoDb)
+importFrom(rtracklayer, import)
+importFrom(limma, removeBatchEffect)
+
+# Imports — bwimport
+import(bwimport)
+
+# Imports — CRAN
+importFrom(readxl, read_excel, excel_sheets)
+importFrom(writexl, write_xlsx)
+importFrom(xml2, read_xml, xml_find_all, xml_attr, xml_name, xml_children)
+
+# Imports — base packages (explicit)
+importFrom(grDevices, col2rgb, rgb, hcl, dev.off, pdf, dev.new, dev.size, adjustcolor)
+importFrom(graphics, par, plot, rect, segments, text, polygon, lines, abline, strwidth, strheight, mtext, axis)
+importFrom(stats, setNames)
+importFrom(utils, capture.output)

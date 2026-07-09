@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Session genome="hg38" locus="All" nextAutoscaleGroup="3" version="8">
+    <Resources>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_4HdTAG_rep2_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_4HdTAG_rep3_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_4HdTAG_rep3_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_4HdTAG_rep3_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_nodTAG_rep2_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_nodTAG_rep2_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_nodTAG_rep3_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_4HdTAG_rep3_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_nodTAG_rep3_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_nodTAG_rep1_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_4HdTAG_rep1_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_4HdTAG_rep3_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_4HdTAG_rep3_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_nodTAG_rep1_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_nodTAG_rep3_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_4HdTAG_rep2_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_4HdTAG_rep1_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_4HdTAG_rep1_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_nodTAG_rep1_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_4HdTAG_rep2_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_4HdTAG_rep2_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_4HdTAG_rep1_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_4HdTAG_rep2_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_nodTAG_rep2_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_nodTAG_rep2_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_nodTAG_rep3_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_4HdTAG_rep1_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_nodTAG_rep3_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_nodTAG_rep1_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_nodTAG_rep2_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_4HdTAG_rep3_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_4HdTAG_rep1_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_nodTAG_rep1_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_4HdTAG_rep1_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_nodTAG_rep3_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_nodTAG_rep3_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_4HdTAG_rep3_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_nodTAG_rep1_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_nodTAG_rep3_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_nodTAG_rep1_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_4HdTAG_rep2_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_nodTAG_rep1_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_nodTAG_rep2_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_4HdTAG_rep2_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_nodTAG_rep2_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_4HdTAG_rep1_plus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_4HdTAG_rep2_minus.bw" type="bw"/>
+        <Resource path="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_nodTAG_rep2_minus.bw" type="bw"/>
+    </Resources>
+    <Panel height="1008" name="DataPanel" width="1719">
+        <Track attributeKey="FNBP4_nodTAG_rep1_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="31,151,151" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_nodTAG_rep1_plus.bw" name="FNBP4_nodTAG_rep1_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="FNBP4_nodTAG_rep2_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="31,151,151" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_nodTAG_rep2_plus.bw" name="FNBP4_nodTAG_rep2_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="FNBP4_nodTAG_rep3_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="31,151,151" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_nodTAG_rep3_plus.bw" name="FNBP4_nodTAG_rep3_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="FNBP4_4HdTAG_rep1_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="0,153,204" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_4HdTAG_rep1_plus.bw" name="FNBP4_4HdTAG_rep1_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="FNBP4_4HdTAG_rep2_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="0,153,204" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_4HdTAG_rep2_plus.bw" name="FNBP4_4HdTAG_rep2_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="FNBP4_4HdTAG_rep3_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="0,153,204" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_4HdTAG_rep3_plus.bw" name="FNBP4_4HdTAG_rep3_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF4B_nodTAG_rep1_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="160,27,160" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_nodTAG_rep1_plus.bw" name="PRPF4B_nodTAG_rep1_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF4B_nodTAG_rep2_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="160,27,160" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_nodTAG_rep2_plus.bw" name="PRPF4B_nodTAG_rep2_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF4B_nodTAG_rep3_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="160,27,160" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_nodTAG_rep3_plus.bw" name="PRPF4B_nodTAG_rep3_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF4B_4HdTAG_rep1_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="189,125,189" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_4HdTAG_rep1_plus.bw" name="PRPF4B_4HdTAG_rep1_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF4B_4HdTAG_rep2_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="189,125,189" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_4HdTAG_rep2_plus.bw" name="PRPF4B_4HdTAG_rep2_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF4B_4HdTAG_rep3_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="189,125,189" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_4HdTAG_rep3_plus.bw" name="PRPF4B_4HdTAG_rep3_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF40A_nodTAG_rep1_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="0,102,0" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_nodTAG_rep1_plus.bw" name="PRPF40A_nodTAG_rep1_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF40A_nodTAG_rep2_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="0,102,0" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_nodTAG_rep2_plus.bw" name="PRPF40A_nodTAG_rep2_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF40A_nodTAG_rep3_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="0,102,0" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_nodTAG_rep3_plus.bw" name="PRPF40A_nodTAG_rep3_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF40A_4HdTAG_rep1_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="50,174,112" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_4HdTAG_rep1_plus.bw" name="PRPF40A_4HdTAG_rep1_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF40A_4HdTAG_rep2_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="50,174,112" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_4HdTAG_rep2_plus.bw" name="PRPF40A_4HdTAG_rep2_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF40A_4HdTAG_rep3_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="50,174,112" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_4HdTAG_rep3_plus.bw" name="PRPF40A_4HdTAG_rep3_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="ZC3H18_nodTAG_rep1_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="155,105,10" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_nodTAG_rep1_plus.bw" name="ZC3H18_nodTAG_rep1_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="ZC3H18_nodTAG_rep2_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="155,105,10" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_nodTAG_rep2_plus.bw" name="ZC3H18_nodTAG_rep2_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="ZC3H18_nodTAG_rep3_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="155,105,10" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_nodTAG_rep3_plus.bw" name="ZC3H18_nodTAG_rep3_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="ZC3H18_4HdTAG_rep1_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="221,178,86" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_4HdTAG_rep1_plus.bw" name="ZC3H18_4HdTAG_rep1_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="ZC3H18_4HdTAG_rep2_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="221,178,86" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_4HdTAG_rep2_plus.bw" name="ZC3H18_4HdTAG_rep2_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="ZC3H18_4HdTAG_rep3_plus.bw" autoScale="false" autoscaleGroup="1" clazz="org.broad.igv.track.DataSourceTrack" color="221,178,86" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_4HdTAG_rep3_plus.bw" name="ZC3H18_4HdTAG_rep3_plus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="32.992012" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="FNBP4_nodTAG_rep1_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="31,151,151" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_nodTAG_rep1_minus.bw" name="FNBP4_nodTAG_rep1_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="FNBP4_nodTAG_rep2_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="31,151,151" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_nodTAG_rep2_minus.bw" name="FNBP4_nodTAG_rep2_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="FNBP4_nodTAG_rep3_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="31,151,151" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_nodTAG_rep3_minus.bw" name="FNBP4_nodTAG_rep3_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="FNBP4_4HdTAG_rep1_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="0,153,204" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_4HdTAG_rep1_minus.bw" name="FNBP4_4HdTAG_rep1_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="FNBP4_4HdTAG_rep2_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="0,153,204" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_4HdTAG_rep2_minus.bw" name="FNBP4_4HdTAG_rep2_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="FNBP4_4HdTAG_rep3_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="0,153,204" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/FNBP4_4HdTAG_rep3_minus.bw" name="FNBP4_4HdTAG_rep3_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF4B_nodTAG_rep1_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="160,27,160" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_nodTAG_rep1_minus.bw" name="PRPF4B_nodTAG_rep1_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF4B_nodTAG_rep2_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="160,27,160" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_nodTAG_rep2_minus.bw" name="PRPF4B_nodTAG_rep2_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF4B_nodTAG_rep3_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="160,27,160" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_nodTAG_rep3_minus.bw" name="PRPF4B_nodTAG_rep3_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF4B_4HdTAG_rep1_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="189,125,189" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_4HdTAG_rep1_minus.bw" name="PRPF4B_4HdTAG_rep1_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF4B_4HdTAG_rep2_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="189,125,189" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_4HdTAG_rep2_minus.bw" name="PRPF4B_4HdTAG_rep2_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF4B_4HdTAG_rep3_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="189,125,189" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF4B_4HdTAG_rep3_minus.bw" name="PRPF4B_4HdTAG_rep3_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF40A_nodTAG_rep1_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="0,102,0" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_nodTAG_rep1_minus.bw" name="PRPF40A_nodTAG_rep1_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF40A_nodTAG_rep2_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="0,102,0" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_nodTAG_rep2_minus.bw" name="PRPF40A_nodTAG_rep2_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF40A_nodTAG_rep3_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="0,102,0" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_nodTAG_rep3_minus.bw" name="PRPF40A_nodTAG_rep3_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF40A_4HdTAG_rep1_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="50,174,112" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_4HdTAG_rep1_minus.bw" name="PRPF40A_4HdTAG_rep1_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF40A_4HdTAG_rep2_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="50,174,112" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_4HdTAG_rep2_minus.bw" name="PRPF40A_4HdTAG_rep2_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="PRPF40A_4HdTAG_rep3_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="50,174,112" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/PRPF40A_4HdTAG_rep3_minus.bw" name="PRPF40A_4HdTAG_rep3_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="ZC3H18_nodTAG_rep1_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="155,105,10" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_nodTAG_rep1_minus.bw" name="ZC3H18_nodTAG_rep1_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="ZC3H18_nodTAG_rep2_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="155,105,10" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_nodTAG_rep2_minus.bw" name="ZC3H18_nodTAG_rep2_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="ZC3H18_nodTAG_rep3_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="155,105,10" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_nodTAG_rep3_minus.bw" name="ZC3H18_nodTAG_rep3_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="ZC3H18_4HdTAG_rep1_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="221,178,86" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_4HdTAG_rep1_minus.bw" name="ZC3H18_4HdTAG_rep1_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="ZC3H18_4HdTAG_rep2_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="221,178,86" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_4HdTAG_rep2_minus.bw" name="ZC3H18_4HdTAG_rep2_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+        <Track attributeKey="ZC3H18_4HdTAG_rep3_minus.bw" autoScale="false" autoscaleGroup="2" clazz="org.broad.igv.track.DataSourceTrack" color="221,178,86" fontSize="10" height="21" id="http://mbg-ftp-ro:MBG-F-RO-17461@genome-ftp.mbg.au.dk/files/THJ/NGS/Human/THJ/2024_LeRest_RNAseq/ZC3H18_4HdTAG_rep3_minus.bw" name="ZC3H18_4HdTAG_rep3_minus.bw" renderer="BAR_CHART" visible="true" windowFunction="mean">
+            <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="27.551554" minimum="0.0" type="LINEAR"/>
+        </Track>
+    </Panel>
+    <Panel height="94" name="FeaturePanel" width="1719">
+        <Track attributeKey="Reference sequence" clazz="org.broad.igv.track.SequenceTrack" fontSize="10" id="Reference sequence" name="Reference sequence" sequenceTranslationStrandValue="POSITIVE" shouldShowTranslation="false" visible="true"/>
+        <Track attributeKey="Refseq Genes" clazz="org.broad.igv.track.FeatureTrack" colorScale="ContinuousColorScale;0.0;836.0;255,255,255;0,0,178" fontSize="10" groupByStrand="false" id="https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/ncbiRefSeq.txt.gz" name="Refseq Genes" visible="true"/>
+    </Panel>
+    <PanelLayout dividerFractions="0.8820023837902264"/>
+    <HiddenAttributes>
+        <Attribute name="DATA FILE"/>
+        <Attribute name="DATA TYPE"/>
+        <Attribute name="NAME"/>
+    </HiddenAttributes>
+</Session>

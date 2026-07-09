@@ -1,0 +1,25 @@
+# RStudio / R interactive session artefacts
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# macOS
+.DS_Store
+
+# R CMD check output
+*.Rcheck/
+
+# Built tarballs and backup copies
+*.tar.gz
+*.bak
+*.bak-*
+
+# Developer scratch / legacy source backups
+R_old/
+
+# Nested source copy left over from install-testing
+/seqNdisplayR/
+
+# Unreferenced stray asset at package root
+sNd logo.png

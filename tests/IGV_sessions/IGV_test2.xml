@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Session genome="hg38" hasGeneTrack="true" hasSequenceTrack="true" locus="GADD45A" version="8">
+  <Resources>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siGFP_xPAP_in_batch1_plus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siGFP_xPAP_in_batch2_plus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siGFP_xPAP_in_batch3_plus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siGFP_xPAP_in_batch1_minus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siGFP_xPAP_in_batch2_minus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siGFP_xPAP_in_batch3_minus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siRRP40_xPAP_in_batch1_plus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siRRP40_xPAP_in_batch3_plus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siRRP40_xPAP_in_batch1_minus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siRRP40_xPAP_in_batch3_minus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_TTseq/L_EGFP_rep1_tt_corr_ff_noJncReads_plus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_TTseq/L_EGFP_rep2_tt_corr_ff_noJncReads_plus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_TTseq/L_EGFP_rep1_tt_corr_ff_noJncReads_minus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_TTseq/L_EGFP_rep2_tt_corr_ff_noJncReads_minus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_TTseq/L_RRP40_rep1_tt_corr_ff_noJncReads_plus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_TTseq/L_RRP40_rep2_tt_corr_ff_noJncReads_plus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_TTseq/L_RRP40_rep1_tt_corr_ff_noJncReads_minus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_TTseq/L_RRP40_rep2_tt_corr_ff_noJncReads_minus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_RNAseq/T_EGFP_rep1_tt_corr_plus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_RNAseq/T_EGFP_rep2_tt_corr_plus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_RNAseq/T_EGFP_rep1_tt_corr_minus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_RNAseq/T_EGFP_rep2_tt_corr_minus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_RNAseq/T_RRP40_rep1_tt_corr_plus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_RNAseq/T_RRP40_rep2_tt_corr_plus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_RNAseq/T_RRP40_rep1_tt_corr_minus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_RNAseq/T_RRP40_rep2_tt_corr_minus.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_ChIPseq/GSM2642506_WIGfs_Hela-H9_WT_siFFL_Pol_II_N20_MA733_bin50_Scaled_BGSub_Hg38.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_ChIPseq/GSM2642508_WIGfs_Hela-H9_WT_siFFL_Pol_II_N20_MA736_bin50_Scaled_BGSub_Hg38.bw"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/annotations/gencode.v38.annotation.bed" name="gencode v38"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/annotations/HeLa_major_isoform_hg38_gc34.bed" name="in-house"/>
+    <Resource path="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/annotations/RNAPII_ChIP_peaks.bed" name="ChIP-peaks"/>
+  </Resources>
+  <Panel name="DataPanel" height="1300">
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siGFP_xPAP_in_batch1_plus.bw" name="3-seq siCTRL (+)" color="80,81,96" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="1">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siGFP_xPAP_in_batch2_plus.bw" name="3-seq siCTRL (+)" color="80,81,96" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="1">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siGFP_xPAP_in_batch3_plus.bw" name="3-seq siCTRL (+)" color="80,81,96" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="1">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siGFP_xPAP_in_batch1_minus.bw" name="3-seq siCTRL (-)" color="80,81,96" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="1">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siGFP_xPAP_in_batch2_minus.bw" name="3-seq siCTRL (-)" color="80,81,96" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="1">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siGFP_xPAP_in_batch3_minus.bw" name="3-seq siCTRL (-)" color="80,81,96" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="1">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siRRP40_xPAP_in_batch1_plus.bw" name="3-seq siEXOSC3 (+)" color="104,130,158" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="1">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siGFP_xPAP_in_batch2_plus.bw" name="3-seq siEXOSC3 (+)" color="104,130,158" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="1">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siRRP40_xPAP_in_batch3_plus.bw" name="3-seq siEXOSC3 (+)" color="104,130,158" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="1">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siRRP40_xPAP_in_batch1_minus.bw" name="3-seq siEXOSC3 (-)" color="104,130,158" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="1">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siGFP_xPAP_in_batch2_minus.bw" name="3-seq siEXOSC3 (-)" color="104,130,158" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="1">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_3pseq/siRRP40_xPAP_in_batch3_minus.bw" name="3-seq siEXOSC3 (-)" color="104,130,158" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="1">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_TTseq/L_EGFP_rep1_tt_corr_ff_noJncReads_plus.bw" name="TT-seq siCTRL (+)" color="80,81,96" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="2">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_TTseq/L_EGFP_rep2_tt_corr_ff_noJncReads_plus.bw" name="TT-seq siCTRL (+)" color="80,81,96" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="2">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_TTseq/L_EGFP_rep1_tt_corr_ff_noJncReads_minus.bw" name="TT-seq siCTRL (-)" color="80,81,96" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="2">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_TTseq/L_EGFP_rep2_tt_corr_ff_noJncReads_minus.bw" name="TT-seq siCTRL (-)" color="80,81,96" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="2">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_TTseq/L_RRP40_rep1_tt_corr_ff_noJncReads_plus.bw" name="TT-seq siEXOSC3 (+)" color="104,130,158" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="2">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_TTseq/L_RRP40_rep2_tt_corr_ff_noJncReads_plus.bw" name="TT-seq siEXOSC3 (+)" color="104,130,158" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="2">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_TTseq/L_RRP40_rep1_tt_corr_ff_noJncReads_minus.bw" name="TT-seq siEXOSC3 (-)" color="104,130,158" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="2">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_TTseq/L_RRP40_rep2_tt_corr_ff_noJncReads_minus.bw" name="TT-seq siEXOSC3 (-)" color="104,130,158" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="2">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_RNAseq/T_EGFP_rep1_tt_corr_plus.bw" name="RNA-seq siCTRL (+)" color="80,81,96" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="3">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_RNAseq/T_EGFP_rep2_tt_corr_plus.bw" name="RNA-seq siCTRL (+)" color="80,81,96" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="3">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_RNAseq/T_EGFP_rep1_tt_corr_minus.bw" name="RNA-seq siCTRL (-)" color="80,81,96" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="3">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_RNAseq/T_EGFP_rep2_tt_corr_minus.bw" name="RNA-seq siCTRL (-)" color="80,81,96" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="3">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_RNAseq/T_RRP40_rep1_tt_corr_plus.bw" name="RNA-seq siEXOSC3 (+)" color="104,130,158" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="3">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_RNAseq/T_RRP40_rep2_tt_corr_plus.bw" name="RNA-seq siEXOSC3 (+)" color="104,130,158" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="3">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_RNAseq/T_RRP40_rep1_tt_corr_minus.bw" name="RNA-seq siEXOSC3 (-)" color="104,130,158" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="3">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_RNAseq/T_RRP40_rep2_tt_corr_minus.bw" name="RNA-seq siEXOSC3 (-)" color="104,130,158" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="3">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_ChIPseq/GSM2642506_WIGfs_Hela-H9_WT_siFFL_Pol_II_N20_MA733_bin50_Scaled_BGSub_Hg38.bw" name="ChIP-seq RNAPII (+)" color="42,49,50" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="4">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+    <Track clazz="org.broad.igv.track.DataSourceTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/tracks/HeLa_ChIPseq/GSM2642508_WIGfs_Hela-H9_WT_siFFL_Pol_II_N20_MA736_bin50_Scaled_BGSub_Hg38.bw" name="ChIP-seq RNAPII (+)" color="42,49,50" altColor="0,0,178" autoScale="false" displayMode="COLLAPSED" height="40" renderer="BAR_CHART" visible="true" windowFunction="mean" normalize="false" autoscaleGroup="4">
+      <DataRange baseline="0.0" drawBaseline="true" flipAxis="false" maximum="50.0" minimum="0.0" type="LINEAR"/>
+    </Track>
+  </Panel>
+  <Panel name="FeaturePanel" height="230">
+    <Track clazz="org.broad.igv.track.FeatureTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/annotations/gencode.v38.annotation.bed" name="gencode v38" color="0,0,178" displayMode="SQUISHED" height="35" renderer="BASIC_FEATURE" visible="true"/>
+    <Track clazz="org.broad.igv.track.FeatureTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/annotations/HeLa_major_isoform_hg38_gc34.bed" name="in-house" color="0,0,178" displayMode="SQUISHED" height="35" renderer="BASIC_FEATURE" visible="true"/>
+    <Track clazz="org.broad.igv.track.FeatureTrack" id="http://genome-ftp.mbg.au.dk/public/THJ/seqNdisplayR/examples/annotations/RNAPII_ChIP_peaks.bed" name="ChIP-peaks" color="0,0,178" displayMode="SQUISHED" height="35" renderer="BASIC_FEATURE" visible="true"/>
+  </Panel>
+  <HiddenAttributes>
+    <Attribute name="DATA FILE"/>
+    <Attribute name="DATA TYPE"/>
+    <Attribute name="NAME"/>
+  </HiddenAttributes>
+</Session>

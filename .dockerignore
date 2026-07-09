@@ -1,0 +1,29 @@
+# Trim the Docker build context: only DESCRIPTION/NAMESPACE/R/inst/man/data
+# are COPY'd by the Dockerfile, but a smaller context still speeds up
+# `docker build` significantly on slow networks/disks.
+
+.git
+.git*
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Local backups and benchmark artefacts
+R/*.bak
+R/*.bak-*
+tests/baseline_timings.csv
+tests/baseline_placements.rds
+tests/bench_pdfs/
+tests/IGV_test.xml
+tests/IGV_sessions/
+
+# Editor / OS scratch
+.DS_Store
+*.swp
+*.swo
+
+# Built / generated
+*.tar.gz
+docs/
+NEWS*

@@ -1,0 +1,30 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+
+# Editor / OS scratch
+^\.DS_Store$
+^\.Rhistory$
+
+# Developer backups anywhere in the tree (name*.bak, name*.bak-pre-*, etc.)
+\.bak.*$
+
+# tests/ contains dev benchmark + verification scripts that depend on
+# fixtures excluded from the tarball; run them from a source clone, not
+# from an installed package.
+^tests$
+
+# Internal v2.0.0 design notes (kept in-tree for dev, not for users)
+^docs/notes$
+
+# Deployment artefacts (separate from the source tarball; see docs/deployment.md)
+^Dockerfile$
+^\.dockerignore$
+
+# Built tarballs themselves
+^seqNdisplayR_.*\.tar\.gz$
+
+# Stray PDFs from interactive test runs
+^Rplots.*\.pdf$
+
+# Stray logo PNG at package root (not referenced by README/vignettes)
+^sNd logo\.png$
