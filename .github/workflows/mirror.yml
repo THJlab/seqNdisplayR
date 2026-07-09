@@ -9,9 +9,12 @@
 #        Name:  MIRROR_TOKEN
 #        Value: <the PAT>
 #
-# `git push --mirror` propagates branches, tags, AND deletes. If you want
-# a strictly additive mirror, swap the push line for:
-#   git push mirror --all && git push mirror --tags
+# The push uses --all + --tags (branches + tags, additive). We deliberately
+# do NOT use --mirror: actions/checkout only creates a local branch for the
+# ref that triggered the workflow (typically main), so --mirror would try to
+# delete every other branch on the target (including THJlab's `master`).
+# Instead we pre-create local branches from all remote-tracking refs first,
+# then push --all + --tags.
 
 name: Mirror to THJlab
 
@@ -41,4 +44,24 @@ jobs:
           fi
           git remote add mirror \
             "https://x-access-token:${MIRROR_TOKEN}@github.com/THJlab/seqNdisplayR.git"
-          git push --mirror mirror
+
+          # Pre-create local branches from every remote-tracking ref so
+          # `git push --all` sees them. Otherwise only the ref that
+          # triggered this workflow (e.g. main) is a local branch.
+          for r in $(git for-each-ref --format='%(refname:short)' refs/remotes/origin/); do
+            b="${r#origin/}"
+            [ "$b" = "HEAD" ] && continue
+            git branch --force "$b" "$r" >/dev/null
+          done
+
+          git push mirror --all
+          git push mirror --tags
+
+          # One-shot cleanup: earlier --mirror pushes leaked
+          # refs/remotes/origin/{main,master} onto THJlab as literal refs.
+          # These aren't real branches (not under refs/heads/) so users don't
+          # see them, but they're clutter. Safe to run repeatedly.
+          git push mirror \
+            :refs/remotes/origin/main \
+            :refs/remotes/origin/master \
+            2>/dev/null || true
