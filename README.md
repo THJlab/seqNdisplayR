@@ -45,7 +45,22 @@ remotes::install_github("slaish/seqNdisplayR")
 This pulls in the GitHub-only [`bwimport`](https://github.com/slaish/bwimport)
 automatically via the package's `Remotes:` field.
 
-To install a specific release: `remotes::install_github("slaish/seqNdisplayR@v2.0.0")`.
+To install a specific release, or if you want to be explicit about
+which line of history you get, pin the ref:
+
+```r
+remotes::install_github("slaish/seqNdisplayR@v2.0.0")   # tag
+remotes::install_github("slaish/seqNdisplayR", ref = "main")  # tip of v2.x
+```
+
+> **A note on the `master` branch.**  Both repos still carry a
+> `master` branch that points at the v1.1.2 tip.  It's preserved so
+> that anyone with old clones or bookmarks tracking `master` isn't
+> broken.  The default branch is now `main`, so
+> `install_github("slaish/seqNdisplayR")` and a plain `git clone`
+> both give you v2.x.  If you ever see the installer building
+> `seqNdisplayR_1.1.2.tar.gz`, you've somehow ended up on `master` —
+> add `ref = "main"` to force v2.x.
 
 To install from a downloaded release tarball:
 
@@ -166,6 +181,51 @@ If the resource is on a password-protected lab server, embed the
 credentials in the URL:
 `https://user:password@host/path/to/file.bw`.  The Check File
 diagnostic now mentions this when an HTTPS path is unreachable.
+
+**7.  Install fails at lazy-load with `'class "Seqinfo" is not exported by namespace:GenomeInfoDb'`, or similar S4 class / generic-not-found errors mentioning a Bioconductor package.**
+
+This is a Bioconductor version mismatch, not a `seqNdisplayR` bug.
+It happens when your installed Bioc packages are on a mix of Bioc
+releases (e.g. `GenomicRanges` from Bioc 3.20 but `GenomeInfoDb`
+still at Bioc 3.19).  The classes / generics one package expects
+from another aren't there because the two were built against
+different releases.
+
+Fix by syncing everything to a single Bioconductor release:
+
+```r
+install.packages("BiocManager")
+BiocManager::install(version = "3.20", ask = FALSE, update = TRUE)  # or the current release
+remotes::install_github("slaish/seqNdisplayR", ref = "main")
+```
+
+When the installer prompts *"These packages have more recent
+versions available... Which would you like to update?"*, choose
+**`1: All`** rather than skipping — leaving Bioc packages mid-
+migration is what triggers the mismatch.
+
+If updating all is impossible for some reason (frozen environment,
+IT policy), install the older Bioc release consistently instead:
+`BiocManager::install(version = "3.19", ask = FALSE, update = TRUE)`.
+
+**8.  Windows: `pkg install` stalls, or `remotes::install_github()` warns "install_github() was deprecated in devtools 2.5.0".**
+
+The deprecation notice is harmless — `install_github()` still works
+(newer devtools just delegates to `pak`).  If you prefer the newer
+API:
+
+```r
+install.packages("pak")
+pak::pak("slaish/seqNdisplayR@main")
+```
+
+If an install run stalls on a specific package for a long time
+(e.g. a Bioconductor package that takes minutes to compile), give
+it more time — Windows source builds of heavy Bioc packages
+routinely take 5–15 minutes and are not hung.  If it truly hangs
+past ~30 minutes, install that specific package as a binary first
+with `install.packages("<name>")` and then re-run the seqNdisplayR
+install.
 
 ## Report bugs
 
