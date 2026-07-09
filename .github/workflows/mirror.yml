@@ -48,9 +48,13 @@ jobs:
           # Pre-create local branches from every remote-tracking ref so
           # `git push --all` sees them. Otherwise only the ref that
           # triggered this workflow (e.g. main) is a local branch.
+          # Skip the currently checked-out branch (already a local branch,
+          # and `git branch --force` refuses to update HEAD's ref).
+          current=$(git symbolic-ref --short HEAD 2>/dev/null || echo "")
           for r in $(git for-each-ref --format='%(refname:short)' refs/remotes/origin/); do
             b="${r#origin/}"
             [ "$b" = "HEAD" ] && continue
+            [ "$b" = "$current" ] && continue
             git branch --force "$b" "$r" >/dev/null
           done
 
